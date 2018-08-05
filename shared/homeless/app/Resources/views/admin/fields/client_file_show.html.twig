@@ -1,0 +1,8 @@
+{% extends 'SonataAdminBundle:CRUD:base_show_field.html.twig' %}
+
+{% block field %}
+    {% set fieldValueObj = object.getAdditionalFieldValueObject(field_description.name|slice(15)) %}
+    {% if fieldValueObj is not empty and fieldValueObj.filename is not empty %}
+        <a href="{{ vich_uploader_asset(fieldValueObj, 'file') }}" download>{{ fieldValueObj.filename }}</a>
+    {% endif %}
+{% endblock %}

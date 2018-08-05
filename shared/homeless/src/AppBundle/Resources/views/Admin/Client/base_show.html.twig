@@ -1,0 +1,79 @@
+{% extends 'SonataAdminBundle:CRUD:show.html.twig' %}
+
+{% block field_row %}
+    {% for code in groups %}
+        {% set show_group = admin.showgroups[code] %}
+
+        {% if show_group.type  is not defined or show_group.type != 'additional-info' %}
+            <div class="{{ show_group.class|default('col-md-12') }} {{ no_padding|default(false) ? 'nopadding' }} client-show">
+                <div class="{{ show_group.box_class }}">
+                    <div class="box-header">
+                        <h4 class="box-title">
+                            {% block show_title %}
+                                {{ show_group.label|trans({}, show_group.translation_domain|default(admin.translationDomain)) }}
+                            {% endblock %}
+                        </h4>
+                    </div>
+                    <div class="box-body table-responsive no-padding">
+                        <table class="table">
+                            <tbody>
+                            {% for field_name in show_group.fields %}
+                                {% block show_field %}
+                                    <tr class="sonata-ba-view-container">
+                                        {% if elements[field_name] is defined %}
+                                            {{ elements[field_name]|render_view_element(object)}}
+                                        {% endif %}
+                                    </tr>
+                                {% endblock %}
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="{{ show_group.class|default('col-md-12') }} {{ no_padding|default(false) ? 'nopadding' }} client-show">
+                <div class="{{ show_group.box_class }}">
+                    <div class="box-header">
+                        <h4 class="box-title">
+                            {{ show_group.label|trans({}, show_group.translation_domain|default(admin.translationDomain)) }}
+                        </h4>
+                    </div>
+                    <div class="box-body no-padding">
+                        <table class="table table-bordered">
+                            <tbody>
+                        {% set i = 0 %}
+                        {% for field_name in show_group.fields %}
+                            {% if (elements[field_name]|render_view_element(object)|replace({ (elements[field_name].options.label): '' })|raw|striptags|trim) %}
+                                {% set i = i+1 %}
+                                {% if i % 3 == 1 %}
+                                    <tr>
+                                {% endif %}
+                                    <td width="33%">
+                                        {% if elements[field_name] is defined %}
+                                            <div class="col-md-12 no-padding">
+                                                <div class="col-md-5 no-padding">
+                                                    <strong>{{ elements[field_name].options.label }}</strong>
+                                                </div>
+                                                <div class="col-md-6 no-padding">
+                                                    {{ elements[field_name]|render_view_element(object)|replace({ (elements[field_name].options.label): '' })|raw|striptags|trim }}
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    </td>
+                                {% if i % 3 == 0 %}
+                                    </tr>
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                        {% if i % 3 != 0 %}
+                            </tr>
+                        {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    {% endfor %}
+{% endblock %}

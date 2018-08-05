@@ -1,0 +1,12 @@
+<td class="sonata-ba-list-field">
+    {% if object.type.syncId == constant('AppBundle\\Entity\\CertificateType::REGISTRATION')  %}
+    <select name="country" id="document_{{ object.id }}">
+        {% for key,document in object.client.documents|reverse %}
+            <option value="{{ document.id }}" {{  (key == 0 ? ' selected ' : '') }}>{{ document }}</option>
+        {% endfor %}
+    </select>
+    {% endif %}
+    {% if object.type.syncId == constant('AppBundle\\Entity\\CertificateType::TRAVEL')  %}
+        <input type="text" id="city_{{ object.id }}" class=" form-control" placeholder="Введите место назначения">
+    {% endif %}
+</td>

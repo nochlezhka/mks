@@ -1,0 +1,14 @@
+{% extends 'SonataAdminBundle:CRUD:base_show_field.html.twig' %}
+
+{% block field %}
+    {% if value.owner.shelterHistories[value.owner.shelterHistories|length - 1] is defined %}
+        {% set shelterHistor = value.owner.shelterHistories[value.owner.shelterHistories|length - 1] %}
+        {% if shelterHistor.dateFrom|date('Y-m-d') < "now"|date('Y-m-d') and (shelterHistor.dateTo|date('Y-m-d') > "now"|date('Y-m-d') or (not shelterHistor.dateTo)) %}
+            Проживает
+        {% else %}
+            Проживал ранее
+        {% endif %}
+    {% else %}
+        Не проживал
+    {% endif %}
+{% endblock %}

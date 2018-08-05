@@ -1,0 +1,42 @@
+sonata_block:
+    default_contexts: [sonata_page_bundle]
+    blocks:
+        sonata.admin.block.stats:
+            contexts:   [admin]
+        sonata.admin.block.admin_list:
+            contexts:   [admin]
+        sonata.admin.block.search_result:
+            contexts:   [admin]
+
+        sonata.block.service.text:
+            templates:
+               - { name: 'homeless', template: 'Block/block_text.html.twig' }
+        sonata.block.service.rss:
+        sonata.block.service.ckeditor:
+        sonata.block.service.request_form:
+
+        sonata.user.block.menu:    # used to display the menu in profile pages
+        sonata.user.block.account: # used to display menu option (login option)
+        sonata.block.service.text: # used to if you plan to use Sonata user routes
+
+        # Ecommerce bundles
+        sonata.order.block.recent_orders:
+        sonata.product.block.recent_products:
+        sonata.product.block.similar_products:
+        sonata.product.block.categories_menu:
+        sonata.product.block.filters_menu:
+        sonata.product.block.variations_form:
+        sonata.customer.block.recent_customers:
+        sonata.basket.block.nb_items:
+            cache: sonata.page.cache.js_async
+            contexts: [user]
+        sonata.user.block.account:
+            cache: sonata.page.cache.js_async
+            #cache: sonata.page.cache.esi
+            contexts: [user]
+        sonata.user.block.menu:
+            contexts: [user]
+
+        # Some specific block from the SonataMediaBundle
+        sonata.media.block.media:
+        sonata.media.block.gallery:

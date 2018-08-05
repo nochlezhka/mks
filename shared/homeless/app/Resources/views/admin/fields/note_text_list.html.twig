@@ -1,0 +1,9 @@
+{% extends 'SonataAdminBundle:CRUD:base_list_field.html.twig' %}
+
+{% block field %}
+    {% if object.important %}
+        <span style="font-weight: bold"> {{ value|raw }}</span>
+    {% else %}
+        {{ value|raw }}
+    {% endif %}
+{% endblock %}

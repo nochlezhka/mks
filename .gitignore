@@ -1,0 +1,6 @@
+.idea
+shared/logs/
+shared/mysql
+.env
+docker-compose.yml
+backup/

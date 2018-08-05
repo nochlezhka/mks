@@ -1,0 +1,357 @@
+imports:
+    - { resource: parameters.yml }
+    - { resource: security.yml }
+    - { resource: services.yml }
+#    - { resource: sonata_media.yml }
+    - { resource: sonata_block.yml }
+framework:
+    #esi:             ~
+    translator:      { fallbacks: ["%locale%"] }
+    secret:          "%secret%"
+    router:
+        resource: "%kernel.root_dir%/config/routing/routing.yml"
+        strict_requirements: ~
+    form:            ~
+    csrf_protection: ~
+    validation:      { enable_annotations: true }
+    #serializer:      { enable_annotations: true }
+    templating:
+        engines: ['twig']
+    default_locale:  "ru"
+    trusted_hosts:   ~
+    trusted_proxies: ~
+    session:
+        handler_id: ~
+        cookie_lifetime: 605080
+        gc_maxlifetime: 252000
+        # http://symfony.com/doc/current/reference/configuration/framework.html#handler-id
+        handler_id:  session.handler.native_file
+        save_path:   "%kernel.root_dir%/../var/sessions/%kernel.environment%"
+    fragments:       ~
+    http_method_override: true
+    assets:
+      version: 'v2'
+
+# Twig Configuration
+twig:
+    debug:            "%kernel.debug%"
+    strict_variables: "%kernel.debug%"
+    form_themes:
+        - 'VichUploaderBundle:Form:fields.html.twig'
+        - 'form/fields.html.twig'
+    form:
+        resources:
+            - 'SonataFormatterBundle:Form:formatter.html.twig'
+#            - 'SonataMediaBundle:Form:media_widgets.html.twig'
+            - 'SonataCoreBundle:Form:datepicker.html.twig'
+            - 'VichUploaderBundle:Form:fields.html.twig'
+    exception_controller: 'FOS\RestBundle\Controller\ExceptionController::showAction'
+
+sonata_formatter:
+    formatters:
+#        markdown:
+#            service: sonata.formatter.text.markdown
+#            extensions:
+#                - sonata.formatter.twig.control_flow
+#                - sonata.formatter.twig.gist
+#                - sonata.media.formatter.twig #keep this commented unless you are using media bundle.
+#        text:
+#            service: sonata.formatter.text.text
+#            extensions:
+#                - sonata.formatter.twig.control_flow
+#                - sonata.formatter.twig.gist
+#                - sonata.media.formatter.twig
+#        rawhtml:
+#            service: sonata.formatter.text.raw
+#            extensions:
+#                - sonata.formatter.twig.control_flow
+#                - sonata.formatter.twig.gist
+#                - sonata.media.formatter.twig
+        richhtml:
+            service: sonata.formatter.text.raw
+            extensions:
+                - sonata.formatter.twig.control_flow
+                - sonata.formatter.twig.gist
+#               - sonata.media.formatter.twig
+#        twig:
+#            service: sonata.formatter.text.twigengine
+#            extensions: [] # Twig formatter cannot have extensions
+
+# Doctrine Configuration
+doctrine:
+    dbal:
+        host:     "%database_host%"
+        port:     "%database_port%"
+        dbname:   "%database_name%"
+        user:     "%database_user%"
+        password: "%database_password%"
+        charset:  UTF8
+        types:
+            json: Sonata\Doctrine\Types\JsonType
+        # if using pdo_sqlite as your database driver:
+        #   1. add the path in parameters.yml
+        #     e.g. database_path: "%kernel.root_dir%/data/data.db3"
+        #   2. Uncomment database_path in parameters.yml.dist
+        #   3. Uncomment next line:
+        #     path:     "%database_path%"
+
+    orm:
+        auto_generate_proxy_classes: true #"%kernel.debug%"
+        naming_strategy: doctrine.orm.naming_strategy.underscore
+        auto_mapping: true
+#        metadata_cache_driver: apc
+#        query_cache_driver: apc
+#        result_cache_driver: apc
+        dql:
+            string_functions:
+                custom_part: Application\DoctrineExtensions\Query\Mysql\CustomPart
+
+# Swiftmailer Configuration
+swiftmailer:
+    transport: "%mailer_transport%"
+    host:      "%mailer_host%"
+    username:  "%mailer_user%"
+    password:  "%mailer_password%"
+    port:      "%mailer_port%"
+    spool:
+        type: file
+        path: '%kernel.root_dir%/spool'
+
+fos_user:
+    db_driver:      orm # can be orm or odm
+    firewall_name:  main
+    user_class:     Application\Sonata\UserBundle\Entity\User
+
+    group:
+        group_class:   Application\Sonata\UserBundle\Entity\Group
+        group_manager: sonata.user.orm.group_manager                    # If you're using doctrine orm (use sonata.user.mongodb.group_manager for mongodb)
+
+    service:
+        user_manager: sonata.user.orm.user_manager                      # If you're using doctrine orm (use sonata.user.mongodb.user_manager for mongodb)
+        mailer: fos_user.mailer.twig_swift
+
+sonata_admin:
+    title:      ' '
+    title_logo: /assetic/logo.png
+    security:
+        handler: sonata.admin.security.handler.role
+    breadcrumbs:
+        child_admin_route: show
+    templates:
+        layout: admin/layout.html.twig
+        tab_menu_template: admin/tab_menu_template.html.twig
+        select: AppBundle:Admin:CRUD:list__select.html.twig
+    dashboard:
+         groups:
+             app.clients:
+                 label: Клиенты
+                 icon: '<i class="fa fa-users"></i>'
+                 items:
+                      - route: my_clients
+                        label: 'Мои клиенты'
+                      - route: add_client
+                        label: 'Добавить клиента'
+                      - route: my_ex_clients
+                        label: 'Мои бывшие клиенты'
+             app.profile:
+                 label: Личный кабинет
+                 icon: '<i class="fa fa-user"></i>'
+                 items:
+                      - route: my_services
+                        label: 'Оказанные мной услуги'
+                      - route: profile
+                        label: 'Мой профиль'
+             app.settings:
+                 label: Настройки
+                 icon: '<i class="fa fa-wrench"></i>'
+                 items:
+                      - app.client_field.admin
+                      - app.region.admin
+                      - app.service_type.admin
+                      - app.contract_item_type.admin
+                      - app.generated_document_type.admin
+                      - app.generated_document_start_text.admin
+                      - app.generated_document_end_text.admin
+                      - app.certificate_type.admin
+                      - app.menu_item.admin
+                      - sonata.user.admin.user
+                      - sonata.user.admin.group
+                 roles:
+                      [ROLE_ADMIN]
+sonata_user:
+    security_acl: false
+    manager_type: orm # can be orm or mongodb
+    profile:
+        menu:
+            - { route: 'sonata_user_profile_edit', label: 'link_edit_profile', domain: 'SonataUserBundle'}
+            - { route: 'sonata_user_profile_edit_authentication', label: 'link_edit_authentication', domain: 'SonataUserBundle'}
+    admin:                  # Admin Classes
+        user:
+            class:          Application\Sonata\UserBundle\Admin\UserAdmin
+            controller:     SonataAdminBundle:CRUD
+            translation:    SonataUserBundle
+        group:
+            class:          Application\Sonata\UserBundle\Admin\GroupAdmin
+            controller:     SonataAdminBundle:CRUD
+            translation:    SonataUserBundle
+    impersonating:
+        route: sonata_admin_dashboard
+
+ivory_ck_editor:
+    configs:
+    default_config: default
+    configs:
+        news:
+            # default toolbar plus Format button
+            toolbar:
+            - [Bold, Italic, Underline, -, Cut, Copy, Paste, PasteText, PasteFromWord, -, Undo, Redo, -, NumberedList, BulletedList, -, Outdent, Indent, -, Blockquote, -, Image, Link, Unlink, Table]
+            - [Format, Maximize, Source]
+            filebrowserBrowseRoute: admin_sonata_media_media_ckeditor_browser
+            filebrowserImageBrowseRoute: admin_sonata_media_media_ckeditor_browser
+            # Display images by default when clicking the image dialog browse button
+            filebrowserImageBrowseRouteParameters:
+                provider: sonata.media.provider.image
+            filebrowserUploadRoute: admin_sonata_media_media_ckeditor_upload
+            filebrowserUploadRouteParameters:
+                provider: sonata.media.provider.file
+            # Upload file as image when sending a file from the image dialog
+            filebrowserImageUploadRoute: admin_sonata_media_media_ckeditor_upload
+            filebrowserImageUploadRouteParameters:
+                provider: sonata.media.provider.image
+                context: default # Optional, to upload in a custom context
+        homeless:
+            # default toolbar plus Format button
+            allowedContent: true
+            toolbar: [ [ "Bold", "Italic", "Underline", '-', 'NumberedList', 'BulletedList', '-', 'Source', 'TextColor'] ]
+        default:
+            toolbar: [ [ "Source", "-", "Save" ], "/", [ "Anchor" ], "/", [ "Maximize" ] ]
+
+assetic:
+    debug:          "%kernel.debug%"
+    use_controller: false
+    bundles:        [ ]
+    filters:
+        cssrewrite: ~
+    assets:
+        jpeg_camera:
+            inputs:
+                - '%kernel.root_dir%/Resources/js/swfobject.min.js'
+                - '%kernel.root_dir%/Resources/js/canvas-to-blob.min.js'
+                - '%kernel.root_dir%/Resources/js/jpeg_camera.min.js'
+        logo:
+            inputs:
+                - '%kernel.root_dir%/Resources/img/logo.png'
+
+fos_rest:
+    param_fetcher_listener: true
+    view:
+        view_response_listener: true
+        formats:
+            json: true
+            xml: true
+    format_listener:
+        rules:
+            - { path: ^/api, priorities: [ 'json' ], fallback_format: json, prefer_extension: true }
+            - { path: ^/, stop: true }
+    serializer:
+        serialize_null: true
+
+
+sensio_framework_extra:
+    view: { annotations: false }
+    router:  { annotations: true }
+    request: { converters: true }
+
+sonata_notification:
+
+    admin:
+        enabled: false
+
+    # Other backends you can use:
+    #
+    # sonata.notification.backend.postpone
+    # sonata.notification.backend.doctrine
+    # sonata.notification.backend.rabbitmq
+    backend: sonata.notification.backend.runtime
+    backends:
+        rabbitmq:
+            exchange: alarm # Required
+            connection:
+                host:                 localhost
+                port:                 5672
+                user:                 guest
+                pass:                 guest
+                vhost:                guest
+                console_url:          'http://localhost:55672/api'
+    consumers:
+        # If set to true, SwiftMailerConsumer and LoggerConsumer will be registered as services
+        register_default:     true
+
+liip_imagine:
+    resolvers:
+       default:
+          web_path: ~
+
+    filter_sets:
+        cache: ~
+        preview:
+            quality: 75
+            filters:
+                thumbnail: { size: [120, 90], mode: outbound }
+
+mopa_bootstrap:
+    form: ~  # Adds twig form theme  support
+    menu: ~  # enables twig helpers for menu
+
+vich_uploader:
+    db_driver: orm
+
+    mappings:
+        client_photo:
+            uri_prefix:         /uploads/images/client/photo
+            upload_destination: %kernel.root_dir%/../web/uploads/images/client/photo
+            namer:              vich_uploader.namer_hash
+            directory_namer:    vich_uploader.directory_namer_subdir
+            inject_on_load:     false
+            delete_on_update:   true
+            delete_on_remove:   true
+        client_field_file:
+            uri_prefix:         /uploads/files/client/field
+            upload_destination: %kernel.root_dir%/../web/uploads/files/client/field
+            directory_namer:    vich_uploader.directory_namer_subdir
+            inject_on_load:     false
+            delete_on_update:   true
+            delete_on_remove:   true
+        document_file:
+            uri_prefix:         /uploads/files/document
+            upload_destination: %kernel.root_dir%/../web/uploads/files/document
+            directory_namer:    vich_uploader.directory_namer_subdir
+            inject_on_load:     false
+            delete_on_update:   true
+            delete_on_remove:   true
+
+knp_paginator:
+    page_range: 5                      # default page range used in pagination control
+    default_options:
+        page_name: page                # page query parameter name
+        sort_field_name: ~             # sort field query parameter name
+        sort_direction_name: direction # sort direction query parameter name
+        distinct: true                 # ensure distinct results, useful when ORM queries are using GROUP BY statements
+    template:
+        pagination: /Pagination/sliding.html.twig     # sliding pagination controls template
+        sortable: /Pagination/sortable_link.html.twig # sort link template
+        filtration: /Pagination/filtration.html.twig
+
+knp_snappy:
+    pdf:
+        enabled:    true
+        binary:     /var/www/symfony/vendor/h4cc/wkhtmltopdf-amd64/bin/wkhtmltopdf-amd64
+        options:    []
+    image:
+        enabled:    true
+        binary:     /var/www/symfony/vendor/h4cc/wkhtmltopdf-amd64/bin/wkhtmltopdf-amd64
+        options:    []
+
+sonata_doctrine_orm_admin:
+    templates:
+        form: [ AppBundle:Admin:form_admin_fields.html.twig ]

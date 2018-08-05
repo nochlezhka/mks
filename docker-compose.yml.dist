@@ -1,0 +1,46 @@
+version: '2'
+services:
+  nginx:
+    build:
+      context: ./docker/nginx
+      dockerfile: Dockerfile
+      args:
+        UID: $UID
+        GUID: $GUID
+    links:
+      - php
+    ports:
+      - $PORT:80
+      - $HTTPS_PORT:443
+    volumes_from:
+      - php
+    volumes:
+      - "./shared/logs/nginx:/var/log/nginx"
+    networks:
+      default:
+        aliases:
+          - $NGINX_ALIAS
+  php:
+    build:
+      context: ./docker/php
+      dockerfile: Dockerfile
+      args:
+        UID: $UID
+        GUID: $GUID
+    links:
+      - db
+    volumes:
+      - "./shared/homeless:/var/www/symfony"
+  db:
+    image: codepilotscom/mks-mariadb:10.3
+    expose:
+        - "3306"
+    ports:
+        - $MYSQL_PORT:3306
+    volumes:
+        - "./shared/mysql/data/db:/var/lib/mysql"
+    environment:
+        MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
+        MYSQL_DATABASE: $MYSQL_DATABASE
+        MYSQL_USER: $MYSQL_USER
+        MYSQL_PASSWORD: $MYSQL_PASSWORD

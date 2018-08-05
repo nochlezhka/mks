@@ -1,0 +1,28 @@
+{% extends '/pdf/certificate/layout.html.twig' %}
+
+{% block header_left %}
+    Справка № <u>{{ certificate.id }}</u><br/>
+    для любых заинтересованных государственно-административных органов
+{% endblock %}
+
+{% block header_right %}
+    {% if certificate.client %}
+        {{ certificate.client.fullname }},<br/>
+        {% if certificate.client.birthDate %}Дата рождения: {{ certificate.client.birthDate|format_date('dd.MM.YYYY') }}
+            <br/>{% endif %}
+        получает социальную помощь в СПб БОО «Название организации», работающей в Санкт-Петербурге с бездомными
+        и малоимущими гражданами.
+    {% endif %}
+{% endblock %}
+
+{% block body_right %}
+    Убедительно просим Вас не пренебрегать в отношении этого гражданина элементарными правами человека.<br/>
+    Благодарим за содействие!<br/><br/>
+
+    {% if certificate.dateFrom %}
+        Дата выдачи: {{ certificate.dateFrom|format_date('dd.MM.YYYY') }}<br/>
+        Справка действительна в течение 90 дней.
+    {% endif %}
+{% endblock %}
+
+{% block date %}{% endblock %}

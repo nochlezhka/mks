@@ -1,0 +1,37 @@
+<td class="sonata-ba-list-field">
+{% if admin.hasRoute('download') and object.type and object.type.downloadable %}
+    <a href="{{ admin.generateObjectUrl('download', object) }}" title="Скачать" id="link_{{ object.id }}">
+        {{ object.type.name }}
+    </a>
+{% else %}
+    <span>
+        {{ object.type.name }}
+    </span>
+{% endif %}
+</td>
+<script type="application/javascript">
+    $('#link_{{ object.id }}').on('click', function (e) {
+        e.preventDefault();
+        var href = "{{ admin.generateObjectUrl('download', object) }}?";
+        var city = $('#city_{{ object.id }}');
+        if (city.length) {
+            if (city.val()) {
+                href += 'city=' + city.val();
+                console.log(city.val());
+            } else {
+                alert('Введите город');
+                return;
+            }
+        }
+        var document = $('#document_{{ object.id }}');
+        if (document.length) {
+            if (document.val()) {
+                href += 'document=' + document.val();
+            } else {
+                alert('Не выбран документ');
+                return;
+            }
+        }
+        window.location.href = href;
+    });
+</script>

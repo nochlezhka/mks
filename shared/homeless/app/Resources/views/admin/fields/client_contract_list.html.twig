@@ -1,0 +1,12 @@
+{% extends 'SonataAdminBundle:CRUD:base_list_field.html.twig' %}
+
+{% block field %}
+    {% if object.contracts is not empty %}
+        {% for contract in object.contracts %}
+            {{ contract }}
+            <br/>
+        {% endfor %}
+    {% else %}
+        &mdash;
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,14 @@
+AppBundle\Entity\ClientField:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
+             fields: code
+             errorPath: code
+             message: 'Код должен быть уникальным. Этот код уже используется.'
+    properties:
+        code:
+            - NotBlank:
+                message: 'Заполните код'
+            - Regex:
+                pattern: '/(.*)additionalField(.*)/i'
+                match:   false
+                message: 'Код не может содержать строку "additionalField"'

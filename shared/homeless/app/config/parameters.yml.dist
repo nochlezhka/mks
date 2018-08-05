@@ -1,0 +1,29 @@
+# This file is a "template" of what your parameters.yml file should look like
+# Set parameters here that may be different on each deployment target of the app, e.g. development, staging, production.
+# http://symfony.com/doc/current/best_practices/configuration.html#infrastructure-related-configuration
+parameters:
+    database_driver:   pdo_mysql
+    database_host:     db
+    database_port:     ~
+    database_name:     homeless
+    database_user:     homeless
+    database_password: XXXXXXXXXX
+    # You should uncomment this if you want use pdo_sqlite
+    # database_path: "%kernel.root_dir%/data.db3"
+
+    mailer_transport:  smtp
+    mailer_host:       mailhog
+    mailer_user:       null
+    mailer_password:   null
+    mailer_port:       1025
+
+    # A secret key that's used to generate certain security-related tokens
+    secret:            ThisTokenIsNotSoSecretChangeIt
+    locale: ru
+    router.request_context.host:   homeless.dev
+    router.request_context.scheme: http
+    # Admin
+    admin_format_date: d.m.Y
+    admin_format_datetime: 'd.m.Y H:i:s'
+    admin_model_timezone: Europe/Ulyanovsk
+    admin_view_timezone: Europe/Minsk

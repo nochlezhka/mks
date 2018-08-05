@@ -1,0 +1,116 @@
+{% block app_file_widget %}
+    {% if download_uri is not null %}
+        <p><a href="{{ download_uri }}" download>{{ filename }}</a></p>
+    {% endif %}
+    {{ block('file_widget') }}
+{% endblock %}
+
+{% block app_homeless_from_date_widget %}
+    {% spaceless %}
+        {% if widget == 'single_text' %}
+            {{ block('form_widget_simple') }}
+        {% else %}
+            {% if row is not defined or row == true %}
+                {% set attr = attr|merge({'class': attr.class|default('') ~ ' row' }) %}
+            {% endif %}
+            {% set input_wrapper_class = input_wrapper_class|default('col-sm-6') %}
+            <div {{ block('widget_container_attributes') }}>
+                {{ date_pattern|replace({
+                    '{{ year }}':  '<div class="'~ input_wrapper_class ~ '">' ~ form_widget(form.year) ~ '</div>',
+                    '{{ month }}': '<div class="'~ input_wrapper_class ~ '">' ~ form_widget(form.month) ~ '</div>',
+                })|raw }}
+            </div>
+        {% endif %}
+    {% endspaceless %}
+{% endblock %}
+
+{% block app_photo_widget %}
+    {% spaceless %}
+        <div id="user-webcam-photo">
+            <p><a href="#" id="do-file-photo">Загрузить файл с фотографией</a></p>
+
+            <div id="camera">
+                <div class="placeholder">
+                    Ваш браузер не поддерживает доступ к веб-камере.<br>
+                    Мы рекомендуем
+                    <a href="https://www.google.com/chrome/" target="_blank">Chrome</a>
+                    &mdash; современный, безопасный, быстрый браузер от Google.<br>
+                    Это бесплатно.
+                </div>
+            </div>
+            <br>
+
+            <button id="take_snapshots">Сфотографировать</button>
+            <button id="show_stream">Показать изображение с камеры</button>
+            <br>
+
+            <div id="snapshots_container">
+                <p>Выберите фотографию:</p>
+                <div id="snapshots"></div>
+            </div>
+        </div>
+
+        <div id="user-file-photo">
+            <p><a href="#" id="do-webcam-photo">Сделать фотографию на веб-камеру</a></p>
+
+            <div class="vich-image">
+                {% if form.delete is defined %}
+                    {{ form_row(form.delete) }}
+                {% endif %}
+
+                {% if download_uri is defined and download_uri %}
+                    <p><img src="{{ download_uri }}" alt="" style="max-height: 300px; max-width: 250px;"/></p>
+                {% endif %}
+
+                {% if show_download_link and download_uri is defined and download_uri %}
+                    <a href="{{ download_uri }}">{{ 'download'|trans({}, 'VichUploaderBundle') }}</a>
+                {% endif %}
+            </div>
+        </div>
+
+        {{ form_widget(form.file) }}
+    {% endspaceless %}
+{% endblock %}
+
+{% block app_document_file_widget %}
+    {% spaceless %}
+        <div id="user-file-photo">
+            <div class="vich-image">
+                {% if form.delete is defined %}
+                    {{ form_row(form.delete) }}
+                {% endif %}
+
+                {% if download_uri is defined and download_uri %}
+                    <p>
+                        <a href="{{ download_uri }}" data-lightbox="download_uri" ><img width="100px"   src="{{ download_uri }}" alt="" style="max-height: 300px; max-width: 250px;"/></a></p>
+                {% endif %}
+
+                {% if show_download_link and download_uri is defined and download_uri %}
+                    <a download  href="{{ download_uri }}">{{ 'download'|trans({}, 'VichUploaderBundle') }}</a>
+                {% endif %}
+            </div>
+        </div>
+
+        {{ form_widget(form.file) }}
+    {% endspaceless %}
+{% endblock %}
+
+{% block app_contract_duration_widget %}
+    {% set title = 'Срок действия неизвестен' %}
+    {% set color = 'black' %}
+
+    {% if value is not null %}
+        {% if value < 3 %}
+            {% set title = 'Краткосрочный' %}
+            {% set color = 'green' %}
+        {% elseif value >= 3 and value <= 6 %}
+            {% set title = 'Среднесрочный' %}
+            {% set color = 'yellow' %}
+        {% elseif value > 6 %}
+            {% set title = 'Долгосрочный' %}
+            {% set color = 'red' %}
+        {% endif %}
+    {% endif %}
+
+    <a href="#" title="{{ title }}" style="color: {{ color }}">&#11044;</a>
+{% endblock %}

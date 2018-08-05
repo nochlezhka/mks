@@ -1,0 +1,5 @@
+{% if admin.hasRoute('download') and object.type and object.type.downloadable %}
+    <a href="{{ admin.generateObjectUrl('download', object) }}" class="btn btn-sm btn-default" title="Скачать">
+        <i class="fa fa-download" aria-hidden="true"></i>
+    </a>
+{% endif %}

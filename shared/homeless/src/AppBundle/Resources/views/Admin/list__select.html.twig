@@ -1,0 +1,8 @@
+{% extends 'SonataAdminBundle:CRUD:list__select.html.twig' %}
+
+{% block field %}
+    <a class="btn btn-primary" href="{{ admin.generateUrl('list') }}">
+        <i class="fa fa-check" aria-hidden="true"></i>
+        {{ 'list_select'|trans({}, 'SonataAdminBundle') }}
+    </a>
+{% endblock %}

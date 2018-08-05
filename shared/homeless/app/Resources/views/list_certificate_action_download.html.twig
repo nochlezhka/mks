@@ -1,0 +1,7 @@
+{% if admin.hasRoute('download') and object.type and object.type.downloadable %}
+     <li>
+         <a class="sonata-action-element" href="{{ admin.generateObjectUrl('download', object) }}" target="_blank"><i class="fa fa-download" aria-hidden="true"></i>
+             Скачать
+         </a>
+     </li>
+{% endif %}

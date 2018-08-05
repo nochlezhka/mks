@@ -1,0 +1,35 @@
+<td>
+    {% block field %}
+        {% for service in value|slice(0, 5) %}
+            <p>{{ service.createdAt|date('d.m.Y') }} {{ service.type }} ({{ service.createdBy.lastname }}) {% if service.comment %}. {{ service.comment }}{% endif %}</p>
+        {% endfor %}
+    {% endblock %}
+    <p style="    float: left;
+    display: inline-block;">
+        {% set id = object.id ~ 'list' %}
+        <a href="{{ path('admin_app_client_service_list', {id: object.id}) }}?type=custom_modal" data-toggle="modal" data-target="#field_dialog_{{ id }}" role="button" aria-pressed="true">
+            Все услуги
+        </a>
+        <style>
+            #field_dialog_{{ id }} .modal-content {
+                border-radius: 6px;
+                padding: 15px 10px 1px 10px;
+            }
+        </style>
+        {% include 'SonataDoctrineORMAdminBundle:CRUD:edit_modal.html.twig' %}
+
+         |
+
+        {% set id = object.id %}
+        <a href="{{ path('admin_app_client_service_create', {id: object.id}) }}?type=custom_modal" data-toggle="modal" data-target="#field_dialog_{{ id }}" class="btn btn-success  btn-sm" role="button" aria-pressed="true">
+            Добавить услугу
+        </a>
+        <style>
+            #field_dialog_{{ id }} .modal-content {
+                border-radius: 6px;
+                padding: 15px 10px 1px 10px;
+            }
+        </style>
+        {% include 'SonataDoctrineORMAdminBundle:CRUD:edit_modal.html.twig' %}
+    </p>
+</td>
