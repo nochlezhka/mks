@@ -1,6 +1,7 @@
 version: '2'
 services:
   nginx:
+    container_name: mks-nginx
     build:
       context: ./docker/nginx
       dockerfile: Dockerfile
@@ -21,6 +22,7 @@ services:
         aliases:
           - $NGINX_ALIAS
   php:
+    container_name: mks-app
     build:
       context: ./docker/php
       dockerfile: Dockerfile
@@ -32,11 +34,12 @@ services:
     volumes:
       - "./shared/homeless:/var/www/symfony"
   db:
-    image: codepilotscom/mks-mariadb:10.3
+    container_name: mks-db
+    image: mariadb:10.3
     expose:
         - "3306"
     ports:
-        - $MYSQL_PORT:3306
+        - 127.0.0.1:$MYSQL_PORT:3306
     volumes:
         - "./shared/mysql/data/db:/var/lib/mysql"
     environment:
