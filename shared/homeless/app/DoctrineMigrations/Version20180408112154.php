@@ -20,7 +20,7 @@ class Version20180408112154 extends AbstractMigration
 
         $stmt = $this->connection->prepare('show tables like \'fos_user_user\'');
         $stmt->execute();
-        if (count($stmt->fetch())) {
+        if (count($stmt->fetchAll())) {
             return;
         }
 

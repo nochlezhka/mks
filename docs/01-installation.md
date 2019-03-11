@@ -109,8 +109,8 @@ sudo chmod +x /usr/local/bin/docker-compose
 11. Сгенерируйте необходимые assets:
 
     > ./app/console fos:js-routing:dump
-
+    > ./app/console assets:install
     > ./app/console assetic:dump --symlink
 
 12. Настройте хост для проекта, перейдите по адресу хоста, 
-если пароль не был изменен на шаге 9 - залогиньтесь с доступом `admin/password`.
+если пароль не был изменен на шаге 10 - залогиньтесь с доступом `admin/password`.
