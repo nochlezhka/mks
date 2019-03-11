@@ -1,15 +1,14 @@
 {% extends '/pdf/certificate/layout.html.twig' %}
 
 {% block header_left %}
-    Направление № <span class="underline">{{ certificate.id }}</span> в ГУ «Санкт-Петербургская городская дезинфекционная станция Минздрава России»
+    Направление № <span class="underline">{{ certificate.id }}</span> в {{ sanitation_name }}
     <br/>
-    Адрес: ул. Ивашенцева, 5<br/>
-    Режим работы: 10:00-16:00
+    Адрес: {{ sanitation_address }}<br/>
+    Режим работы: {{ sanitation_time }}
 {% endblock %}
 
 {% block header_right %}
-    Благотворительная общественная организация «Название организации», работающая в Санкт-Петербурге
-    по программе помощи бездомным и малоимущим просит Вас провести санитарную обработку
+    {{ org_description }} Вас провести санитарную обработку
 {% endblock %}
 
 {% block body_left %}{% endblock %}

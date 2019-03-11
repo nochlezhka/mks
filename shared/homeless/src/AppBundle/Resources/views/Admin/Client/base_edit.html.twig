@@ -1,0 +1,71 @@
+{% extends 'SonataAdminBundle:CRUD:base_edit.html.twig' %}
+
+{% block form %}
+    {{ block('parentForm') }}
+
+    <script>
+        $(document).ready(function () {
+            if ($('.changeSelectinsData').parents('.form-group').find('[type="checkbox"]').prop('checked')) {
+                $('.select2-result-label,.select2-chosen').each(function(key, item) {
+                    if ($(item).text() === 'Не отвечает') {
+                        $(item).text('Нет ответа')
+                    }
+                });
+                $('select option').each(function(key, item) {
+                    if ($(item).text() === 'Не отвечает') {
+                        $(item).text('Нет ответа')
+                    }
+                });
+                $('.enabled-for-homeless').parent().parent().hide();
+            } else {
+                $('.select2-result-label,.select2-chosen').each(function(key, item) {
+                    if ($(item).text() === 'Нет ответа') {
+                        $(item).text('Не отвечает')
+                    }
+                });
+                $('select option').each(function(key, item) {
+                    if ($(item).text() === 'Нет ответа') {
+                        $(item).text('Не отвечает')
+                    }
+                });
+                $('.mandatory-for-homeless').parent().parent().children('label').each(function (key, item) {
+                    $(item).addClass('required');
+                });
+                $('.enabled-for-homeless').parent().parent().show();
+            }
+            $('.changeSelectinsData, .changeSelectinsData .iCheck-helper').on('click', function (event) {
+                if ($(event.currentTarget).parents('.form-group').find('[type="checkbox"]').prop('checked')) {
+                    $('.select2-result-label,.select2-chosen').each(function(key, item) {
+                        if ($(item).text() === 'Не отвечает') {
+                            $(item).text('Нет ответа')
+                        }
+                    });
+                    $('select option').each(function(key, item) {
+                        if ($(item).text() === 'Не отвечает') {
+                            $(item).text('Нет ответа')
+                        }
+                    });
+                    $('.mandatory-for-homeless').parent().parent().children('label').each(function (key, item) {
+                        $(item).removeClass('required');
+                    });
+                    $('.enabled-for-homeless').parent().parent().hide();
+                } else {
+                    $('.select2-result-label,.select2-chosen').each(function(key, item) {
+                        if ($(item).text() === 'Нет ответа') {
+                            $(item).text('Не отвечает')
+                        }
+                    });
+                    $('select option').each(function(key, item) {
+                        if ($(item).text() === 'Нет ответа') {
+                            $(item).text('Не отвечает')
+                        }
+                    });
+                    $('.mandatory-for-homeless').parent().parent().children('label').each(function (key, item) {
+                        $(item).addClass('required');
+                    });
+                    $('.enabled-for-homeless').parent().parent().show();
+                }
+            })
+        });
+    </script>
+{% endblock %}

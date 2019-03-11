@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Должность пользователя
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\PositionRepository")
  */
 class Position extends BaseEntity
 {

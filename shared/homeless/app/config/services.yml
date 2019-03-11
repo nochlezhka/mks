@@ -36,6 +36,7 @@ services:
           - [addChild, ['@app.document_file.admin']]
           - [addChild, ['@app.contract.admin']]
           - [addChild, ['@app.shelter_history.admin']]
+          - [addChild, ['@app.resident_questionnaire.admin']]
           - [addChild, ['@app.certificate.admin']]
           - [addChild, ['@app.contract.admin']]
           - [addChild, ['@app.generated_document.admin']]
@@ -123,6 +124,14 @@ services:
       tags:
           - { name: sonata.admin, manager_type: orm, label: 'Сервисные планы' }
       arguments: [null, AppBundle\Entity\Contract, AppBundle:CRUD]
+      calls:
+          - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
+
+  app.resident_questionnaire.admin:
+      class: AppBundle\Admin\ResidentQuestionnaireAdmin
+      tags:
+          - { name: sonata.admin, manager_type: orm, label: 'Анкета проживающего' }
+      arguments: [null, AppBundle\Entity\ResidentQuestionnaire, AppBundle:CRUD]
       calls:
           - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
 
@@ -223,6 +232,14 @@ services:
       calls:
           - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
 
+  app.position.admin:
+      class: AppBundle\Admin\PositionAdmin
+      tags:
+          - { name: sonata.admin, manager_type: orm, label: 'Должности' }
+      arguments: [null, AppBundle\Entity\Position, SonataAdminBundle:CRUD]
+      calls:
+          - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
+
   app.file_type:
       class: AppBundle\Form\Type\AppFileType
       tags:
@@ -261,6 +278,15 @@ services:
   app.certificate_type_to_choice_field_mask_type.transformer:
     class: AppBundle\Form\DataTransformer\CertificateTypeToChoiceFieldMaskTypeTransformer
     arguments: ['@app.certificate_type.repository']
+
+  app.position_to_choice_field_mask_type.transformer:
+    class: AppBundle\Form\DataTransformer\PositionToChoiceFieldMaskTypeTransformer
+    arguments: ['@app.position_option.repository']
+
+  app.position_option.repository:
+    class: AppBundle\Repository\PositionRepository
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments: ['AppBundle\Entity\Position']
 
   app.client_field_option.repository:
     class: AppBundle\Repository\ClientFieldOptionRepository

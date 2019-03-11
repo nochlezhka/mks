@@ -3,6 +3,8 @@
 namespace AppBundle\Repository;
 
 use AppBundle\Entity\Client;
+use AppBundle\Entity\Notice;
+use AppBundle\Entity\ResidentQuestionnaire;
 use AppBundle\Entity\ShelterHistory;
 use AppBundle\Entity\ShelterStatus;
 use Application\Sonata\UserBundle\Entity\User;
@@ -33,53 +35,6 @@ class NoticeRepository extends EntityRepository
     }
 
     /**
-     * Автоматические напоминания
-     * @param Client $client
-     * @return mixed
-     */
-    public function getAutoNotices(Client $client)
-    {
-        $shelterHistory = $this
-            ->getEntityManager()
-            ->getRepository('AppBundle:ShelterHistory')
-            ->createQueryBuilder('sh')
-            ->leftJoin('sh.status', 'shst')
-            ->where('sh.client = :client')
-            ->andWhere('shst.syncId = :status')
-            ->orderBy('sh.dateFrom', 'desc')
-            ->addOrderBy('sh.id', 'DESC')
-            ->setParameters(['client' => $client, 'status' => ShelterStatus::IN_PROCESS])
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getOneOrNullResult();
-        $notices = [];
-
-        if (!$shelterHistory instanceof ShelterHistory) {
-            return $notices;
-        }
-
-        if (!$shelterHistory->getFluorographyDate() instanceof \DateTime) {
-            $notices[] = 'Отсутствует дата прохождения флюорографии';
-        } elseif ($shelterHistory->getFluorographyDate()->diff(new \DateTime())->days > 180) {
-            $notices[] = 'С даты прохождения флюорографии прошло более 180 дней';
-        }
-
-        if (!$shelterHistory->getDiphtheriaVaccinationDate() instanceof \DateTime) {
-            $notices[] = 'Отсутствует дата прививки от дифтерии';
-        }
-
-        if (!$shelterHistory->getHepatitisVaccinationDate() instanceof \DateTime) {
-            $notices[] = 'Отсутствует дата прививки от гепатита';
-        }
-
-        if (!$shelterHistory->getTyphusVaccinationDate() instanceof \DateTime) {
-            $notices[] = 'Отсутствует дата прививки от тифа';
-        }
-
-        return $notices;
-    }
-
-    /**
      * @param Client $client
      * @param User $user
      * @return mixed
@@ -93,6 +48,7 @@ class NoticeRepository extends EntityRepository
             ->andWhere(':user NOT MEMBER OF n.viewedBy')
             ->andWhere('n.date <= :now')
             ->setParameters(['client' => $client, 'user' => $user, 'now' => new \DateTime()])
+            ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();
 
@@ -111,10 +67,10 @@ class NoticeRepository extends EntityRepository
             ->createQueryBuilder('cont')
             ->where('cont.createdBy=:contractCreatedBy')
             ->andWhere('cont.status=:contractStatus')
-            ->setParameters(array(
+            ->setParameters([
                 'contractCreatedBy' => $filter['contractCreatedBy'],
-                'contractStatus' => $filter['contractStatus']
-            ))
+                'contractStatus' => $filter['contractStatus'],
+            ])
             ->getQuery();
 
         return $result;
@@ -172,5 +128,78 @@ class NoticeRepository extends EntityRepository
         }
 
         return $result;
+    }
+
+    /**
+     * Автоматические напоминания
+     * @param Client $client
+     * @return mixed
+     */
+    public function getAutoNotices(Client $client)
+    {
+        $shelterHistory = $this
+            ->getEntityManager()
+            ->getRepository(ShelterHistory::class)
+            ->createQueryBuilder('sh')
+            ->where('sh.client = :client')
+            ->orderBy('sh.dateTo', 'ASC')
+            ->addOrderBy('sh.id', 'ASC')
+            ->setParameters(['client' => $client])
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+        $notices = [];
+
+        if (!$shelterHistory instanceof ShelterHistory || !$shelterHistory->getDateTo()) {
+            return $notices;
+        }
+        $dateTo3 = clone($shelterHistory->getDateTo());
+        $dateTo3->modify('92 days');
+        $dateTo6 = clone($shelterHistory->getDateTo());
+        $dateTo6->modify('183 days');
+        $dateTo12 = clone($shelterHistory->getDateTo());
+        $dateTo12->modify('365 days');
+
+        $type3 = $this
+            ->getEntityManager()
+            ->getRepository(Notice::class)
+            ->findOneBy(['date' => $dateTo3, 'text' => 'Необходимо заполнить анкету проживающего (3 месяца)', 'client' => $client, 'createdBy' => $shelterHistory->getCreatedBy()]);
+        if (!$type3) {
+            $type3 = new Notice();
+            $type3->setClient($client);
+            $type3->setCreatedBy($shelterHistory->getCreatedBy());
+            $type3->setDate($dateTo3);
+            $type3->setText('Необходимо заполнить анкету проживающего (3 месяца)');
+            $this->getEntityManager()->persist($type3);
+            $this->getEntityManager()->flush();
+        }
+        $type6 = $this
+            ->getEntityManager()
+            ->getRepository(Notice::class)
+            ->findOneBy(['date' => $dateTo6, 'text' => 'Необходимо заполнить анкету проживающего (6 месяцев)', 'client' => $client, 'createdBy' => $shelterHistory->getCreatedBy()]);
+        if (!$type6) {
+            $type6 = new Notice();
+            $type6->setClient($client);
+            $type6->setCreatedBy($shelterHistory->getCreatedBy());
+            $type6->setDate($dateTo6);
+            $type6->setText('Необходимо заполнить анкету проживающего (6 месяцев)');
+            $this->getEntityManager()->persist($type6);
+            $this->getEntityManager()->flush();
+        }
+        $type12 = $this
+            ->getEntityManager()
+            ->getRepository(Notice::class)
+            ->findOneBy(['date' => $dateTo12, 'text' => 'Необходимо заполнить анкету проживающего (1 год)', 'client' => $client, 'createdBy' => $shelterHistory->getCreatedBy()]);
+        if (!$type12) {
+            $type12 = new Notice();
+            $type12->setClient($client);
+            $type12->setCreatedBy($shelterHistory->getCreatedBy());
+            $type12->setDate($dateTo12);
+            $type12->setText('Необходимо заполнить анкету проживающего (1 год)');
+            $this->getEntityManager()->persist($type12);
+            $this->getEntityManager()->flush();
+        }
+
+        return $notices;
     }
 }

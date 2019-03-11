@@ -21,7 +21,10 @@ class ClientFieldAdmin extends BaseAdmin
     {
         $formMapper
             ->add('enabled', null, [
-                'label' => 'Включено',
+                'label' => 'Включено для всех',
+            ])
+            ->add('enabledForHomeless', null, [
+                'label' => 'Включено для бездомных',
             ])
             ->add('name', null, [
                 'label' => 'Название',
@@ -36,7 +39,10 @@ class ClientFieldAdmin extends BaseAdmin
                 'required' => true,
             ])
             ->add('required', null, [
-                'label' => 'Обязательное',
+                'label' => 'Обязательное для всех',
+            ])
+            ->add('mandatoryForHomeless', null, [
+                'label' => 'Обязательное для бездомных',
             ])
             ->add('type', 'choice', [
                 'label' => 'Тип',
@@ -78,10 +84,16 @@ class ClientFieldAdmin extends BaseAdmin
                 'label' => 'Порядок сортировки',
             ])
             ->add('required', null, [
-                'label' => 'Обязательное',
+                'label' => 'Обязательное для всех',
+            ])
+            ->add('mandatoryForHomeless', null, [
+                'label' => 'Обязательное для бездомных',
             ])
             ->add('enabled', null, [
-                'label' => 'Включено',
+                'label' => 'Включено для всех',
+            ])
+            ->add('enabledForHomeless', null, [
+                'label' => 'Включено для бездомных',
             ])
             ->add('_action', null, [
                 'label' => 'Действие',

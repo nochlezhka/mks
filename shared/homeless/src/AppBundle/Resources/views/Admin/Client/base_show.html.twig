@@ -21,7 +21,7 @@
                                 {% block show_field %}
                                     <tr class="sonata-ba-view-container">
                                         {% if elements[field_name] is defined %}
-                                            {{ elements[field_name]|render_view_element(object)}}
+                                            {{ elements[field_name]|render_view_element(object) }}
                                         {% endif %}
                                     </tr>
                                 {% endblock %}
@@ -42,13 +42,13 @@
                     <div class="box-body no-padding">
                         <table class="table table-bordered">
                             <tbody>
-                        {% set i = 0 %}
-                        {% for field_name in show_group.fields %}
-                            {% if (elements[field_name]|render_view_element(object)|replace({ (elements[field_name].options.label): '' })|raw|striptags|trim) %}
-                                {% set i = i+1 %}
-                                {% if i % 3 == 1 %}
-                                    <tr>
-                                {% endif %}
+                            {% set i = 0 %}
+                            {% for field_name in show_group.fields %}
+                                {% if (elements[field_name]|render_view_element(object)|replace({ (elements[field_name].options.label): '' })|raw|striptags|trim) %}
+                                    {% set i = i+1 %}
+                                    {% if i % 3 == 1 %}
+                                        <tr>
+                                    {% endif %}
                                     <td width="33%">
                                         {% if elements[field_name] is defined %}
                                             <div class="col-md-12 no-padding">
@@ -56,19 +56,23 @@
                                                     <strong>{{ elements[field_name].options.label }}</strong>
                                                 </div>
                                                 <div class="col-md-6 no-padding">
-                                                    {{ elements[field_name]|render_view_element(object)|replace({ (elements[field_name].options.label): '' })|raw|striptags|trim }}
+                                                    {% if object.isHomeless == true and elements[field_name]|render_view_element(object)|replace({ (elements[field_name].options.label): '' })|raw|striptags|trim == 'Нет ответа' %}
+                                                        Не отвечает
+                                                    {% else %}
+                                                        {{ elements[field_name]|render_view_element(object)|replace({ (elements[field_name].options.label): '' })|raw|striptags|trim }}
+                                                    {% endif %}
                                                 </div>
                                             </div>
                                         {% endif %}
                                     </td>
-                                {% if i % 3 == 0 %}
-                                    </tr>
+                                    {% if i % 3 == 0 %}
+                                        </tr>
+                                    {% endif %}
                                 {% endif %}
+                            {% endfor %}
+                            {% if i % 3 != 0 %}
+                                </tr>
                             {% endif %}
-                        {% endfor %}
-                        {% if i % 3 != 0 %}
-                            </tr>
-                        {% endif %}
                             </tbody>
                         </table>
                     </div>
@@ -76,4 +80,60 @@
             </div>
         {% endif %}
     {% endfor %}
+{% endblock %}
+
+{% block title %}
+    {{ "title_show"|trans({'%name%': admin.toString(object)|truncate(15) }, 'SonataAdminBundle') }}
+    <script>
+        $(document).ready(function () {
+            if ($('.changeSelectinsData').parents('.form-group').find('[type="checkbox"]').prop('checked')) {
+                $('.select2-result-label,.select2-chosen').each(function (key, item) {
+                    if ($(item).text() === 'Нет ответа') {
+                        $(item).text('Не отвечает')
+                    }
+                });
+                $('select option').each(function (key, item) {
+                    if ($(item).text() === 'Нет ответа') {
+                        $(item).text('Не отвечает')
+                    }
+                });
+            } else {
+                $('.select2-result-label,.select2-chosen').each(function (key, item) {
+                    if ($(item).text() === 'Не отвечает') {
+                        $(item).text('Нет ответа')
+                    }
+                });
+                $('select option').each(function (key, item) {
+                    if ($(item).text() === 'Не отвечает') {
+                        $(item).text('Нет ответа')
+                    }
+                });
+            }
+            $('.changeSelectinsData, .changeSelectinsData .iCheck-helper').on('click', function (event) {
+                if ($(event.currentTarget).parents('.form-group').find('[type="checkbox"]').prop('checked')) {
+                    $('.select2-result-label,.select2-chosen').each(function (key, item) {
+                        if ($(item).text() === 'Нет ответа') {
+                            $(item).text('Не отвечает')
+                        }
+                    });
+                    $('select option').each(function (key, item) {
+                        if ($(item).text() === 'Нет ответа') {
+                            $(item).text('Не отвечает')
+                        }
+                    });
+                } else {
+                    $('.select2-result-label,.select2-chosen').each(function (key, item) {
+                        if ($(item).text() === 'Не отвечает') {
+                            $(item).text('Нет ответа')
+                        }
+                    });
+                    $('select option').each(function (key, item) {
+                        if ($(item).text() === 'Не отвечает') {
+                            $(item).text('Нет ответа')
+                        }
+                    });
+                }
+            })
+        });
+    </script>
 {% endblock %}

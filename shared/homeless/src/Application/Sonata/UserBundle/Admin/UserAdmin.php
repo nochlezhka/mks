@@ -1,14 +1,5 @@
 <?php
 
-/*
- * This file is part of the Sonata Project package.
- *
- * (c) Thomas Rabaix <thomas.rabaix@sonata-project.org>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace Application\Sonata\UserBundle\Admin;
 
 use AppBundle\Admin\BaseAdminTrait;
@@ -16,18 +7,16 @@ use AppBundle\Entity\Position;
 use Application\Sonata\UserBundle\Entity\User;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Form\FormMapper;
+use Sonata\AdminBundle\Form\Type\ChoiceFieldMaskType;
 use Sonata\AdminBundle\Form\Type\ModelType;
 use Sonata\CoreBundle\Form\Type\DatePickerType;
 use Sonata\UserBundle\Admin\Entity\UserAdmin as BaseUserAdmin;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
-
 class UserAdmin extends BaseUserAdmin
 {
-
     use BaseAdminTrait;
 
     /**
@@ -42,9 +31,6 @@ class UserAdmin extends BaseUserAdmin
             throw new AccessDeniedException();
         }
 
-        //parent::configureFormFields($formMapper);
-
-        // define group zoning
         if ($isSuperAdmin) {
             $formMapper
                 ->tab('User');
@@ -53,7 +39,6 @@ class UserAdmin extends BaseUserAdmin
         $formMapper
             ->with('Profile', array('class' => 'col-md-6'))->end()
             ->with('General', array('class' => 'col-md-6'))->end();
-        //->with('Social', array('class' => 'col-md-6'))->end()
 
         if ($isSuperAdmin) {
             $formMapper
@@ -65,16 +50,18 @@ class UserAdmin extends BaseUserAdmin
                 ->tab('Security')
                 ->with('Status', array('class' => 'col-md-4'))->end()
                 ->with('Groups', array('class' => 'col-md-4'))->end()
-                //->with('Keys', array('class' => 'col-md-4'))->end()
-                //->with('Roles', array('class' => 'col-md-12'))->end()
                 ->end();
         }
-
-        $now = new \DateTime();
 
         if ($isSuperAdmin) {
             $formMapper
                 ->tab('User');
+        }
+        $positions = [
+            '' => 'Другая должность'
+        ];
+        foreach ($this->getConfigurationPool()->getContainer()->get('app.position_option.repository')->findAll() as $item) {
+            $positions[$item->getId()] = $item->getName();
         }
 
         $formMapper
@@ -86,52 +73,34 @@ class UserAdmin extends BaseUserAdmin
             ))
             ->end()
             ->with('Profile')
-            /*
-            ->add('dateOfBirth', DatePickerType::class, array(
-                'years' => range(1900, $now->format('Y')),
-                'dp_min_date' => '1-1-1900',
-                'dp_max_date' => $now->format('c'),
-                'required' => false,
-            ))
-            */
             ->add('lastname', null, array('required' => false))
             ->add('firstname', null, array('required' => false))
             ->add('middlename', null, array('required' => false, 'label' => 'Отчество'))
-            ->add('position', EntityType::class, array(
+            ->add('position', ChoiceFieldMaskType::class, array(
                 'required' => false,
                 'label' => 'Должность',
-                'class' => Position::class,
-                'property' => 'name',
+                'choices' => $positions,
                 'multiple' => false,
+                'map' => [
+                    '' => ['positionText']
+                ],
             ))
+            ->add('positionText', TextType::class, [
+                'required' => false,
+                'label' => 'Другая должность',
+            ])
             ->add('proxyDate', DatePickerType::class, array(
                 'required' => false,
                 'label' => 'Дата доверенности',
             ))
             ->add('proxyNum', null, array('required' => false, 'label' => 'Номер доверенности'))
             ->add('passport', TextareaType::class, array('required' => false, 'label' => 'Паспортные данные'))
-            /*
-            ->add('website', UrlType::class, array('required' => false))
-            ->add('biography', TextType::class, array('required' => false))
-            ->add('gender', UserGenderListType::class, array(
-                'required' => true,
-                'translation_domain' => $this->getTranslationDomain(),
-            ))
-            ->add('locale', LocaleType::class, array('required' => false))
-            ->add('timezone', TimezoneType::class, array('required' => false))
-            ->add('phone', null, array('required' => false))
-            */
             ->end();
-        /*
-        ->with('Social')
-        ->add('facebookUid', null, array('required' => false))
-        ->add('facebookName', null, array('required' => false))
-        ->add('twitterUid', null, array('required' => false))
-        ->add('twitterName', null, array('required' => false))
-        ->add('gplusUid', null, array('required' => false))
-        ->add('gplusName', null, array('required' => false))
-        ->end()
-        */
+
+        $transformer = $this
+            ->getConfigurationPool()
+            ->getContainer()->get('app.position_to_choice_field_mask_type.transformer');
+        $formMapper->getFormBuilder()->get('position')->addModelTransformer($transformer);
         if ($isSuperAdmin) {
             $formMapper
                 ->end();
@@ -153,20 +122,6 @@ class UserAdmin extends BaseUserAdmin
                     'multiple' => true,
                 ))
                 ->end()
-                /*
-                ->with('Roles')
-                ->add('realRoles', SecurityRolesType::class, array(
-                    'label' => 'form.label_roles',
-                    'expanded' => true,
-                    'multiple' => true,
-                    'required' => false,
-                ))
-                ->end()
-                ->with('Keys')
-                ->add('token', null, array('required' => false))
-                ->add('twoStepVerificationCode', null, array('required' => false))
-                ->end()
-                */
                 ->end();
         }
     }

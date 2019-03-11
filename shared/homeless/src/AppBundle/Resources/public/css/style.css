@@ -1,4 +1,3 @@
-Влад Пасечник, [13.04.18 00:55]
 form .sonata-ba-form-actions.stuck{
     position: initial;
 }
@@ -206,4 +205,12 @@ input#filter_search_value{
 }
 .skin-black .main-header>.logo img{
     padding: 0;
+}
+
+.text-red {
+    color: #C62828;
+}
+
+.text-bold {
+    font-weight: bold;
 }

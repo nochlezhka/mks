@@ -103,7 +103,7 @@ class RenderService
             'contract' => $contract,
             'client' => $client,
             'user' => $user,
-            'specialty' => 'Специалист по социальной работе',
+            'specialty' => ($user->getPositionText() ? $user->getPositionText() : ($user->getPosition() ? $user->getPosition()->getName() : 'Специалист по социальной работе')),
             'webDir' => $this->kernel->getRootDir() . '/../web',
             'image' => $image,
             'height' => $height,

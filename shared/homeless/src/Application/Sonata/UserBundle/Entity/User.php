@@ -52,6 +52,11 @@ class User extends BaseUser implements BaseEntityInterface
      */
     private $viewedClients;
 
+    /**
+     * Должность текстом
+     */
+    private $positionText;
+
     private $syncId;
     private $sort;
     private $createdBy;
@@ -407,7 +412,30 @@ class User extends BaseUser implements BaseEntityInterface
 
     public function isGranted($role)
     {
-        var_dump($this->getRoles()); die;
         return in_array($role, $this->getRoles());
+    }
+
+    /**
+     * Get positionText
+     *
+     * @return mixed
+     */
+    public function getPositionText()
+    {
+        return $this->positionText;
+    }
+
+    /**
+     * Set positionText
+     *
+     * @param mixed $positionText
+     *
+     * @return User
+     */
+    public function setPositionText($positionText)
+    {
+        $this->positionText = $positionText;
+
+        return $this;
     }
 }

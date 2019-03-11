@@ -46,6 +46,22 @@ twig:
             - 'SonataCoreBundle:Form:datepicker.html.twig'
             - 'VichUploaderBundle:Form:fields.html.twig'
     exception_controller: 'FOS\RestBundle\Controller\ExceptionController::showAction'
+    globals:
+        org_name_short: "%org_name_short%"
+        org_name: "%org_name%"
+        org_description: "%org_description%"
+        org_description_short: "%org_description_short%"
+        org_contacts_full: "%org_contacts_full%"
+        org_city: "%org_city%"
+        dispensary_name: "%dispensary_name%"
+        dispensary_address: "%dispensary_address%"
+        dispensary_phone: "%dispensary_phone%"
+        employment_name: "%employment_name%"
+        employment_address: "%employment_address%"
+        employment_inspection: "%employment_inspection%"
+        sanitation_name: "%sanitation_name%"
+        sanitation_address: "%sanitation_address%"
+        sanitation_time: "%sanitation_time%"
 
 sonata_formatter:
     formatters:
@@ -137,6 +153,25 @@ sonata_admin:
         handler: sonata.admin.security.handler.role
     breadcrumbs:
         child_admin_route: show
+    assets:
+        javascripts:
+            - bundles/sonatacore/vendor/jquery/dist/jquery.min.js
+            - bundles/sonataadmin/vendor/jquery.scrollTo/jquery.scrollTo.min.js
+            - bundles/sonatacore/vendor/moment/min/moment.min.js
+            - bundles/sonataadmin/vendor/jqueryui/ui/minified/jquery-ui.min.js
+            - bundles/sonataadmin/vendor/jqueryui/ui/minified/i18n/jquery-ui-i18n.min.js
+            - bundles/sonatacore/vendor/bootstrap/dist/js/bootstrap.min.js
+            - bundles/sonatacore/vendor/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js
+            - bundles/sonataadmin/vendor/jquery-form/jquery.form.js
+            - bundles/sonataadmin/jquery/jquery.confirmExit.js
+            - bundles/sonataadmin/vendor/x-editable/dist/bootstrap3-editable/js/bootstrap-editable.min.js
+            - bundles/sonatacore/vendor/select2/select2.min.js
+            - bundles/sonataadmin/vendor/admin-lte/dist/js/app.min.js
+            - bundles/sonataadmin/vendor/iCheck/icheck.min.js
+            - bundles/sonataadmin/vendor/waypoints/lib/jquery.waypoints.min.js
+            - bundles/sonataadmin/vendor/waypoints/lib/shortcuts/sticky.min.js
+            - bundles/sonataadmin/Admin.js
+            - bundles/sonataadmin/treeview.js
     templates:
         layout: admin/layout.html.twig
         tab_menu_template: admin/tab_menu_template.html.twig
@@ -149,18 +184,28 @@ sonata_admin:
                  items:
                       - route: my_clients
                         label: 'Мои клиенты'
+                        roles:
+                          [ROLE_APP_CLIENT_ADMIN_LIST, ROLE_ADMIN]
                       - route: add_client
                         label: 'Добавить клиента'
+                        roles:
+                          [ROLE_APP_CLIENT_ADMIN_CREATE, ROLE_ADMIN]
                       - route: my_ex_clients
                         label: 'Мои бывшие клиенты'
+                        roles:
+                          [ROLE_APP_CLIENT_ADMIN_LIST, ROLE_ADMIN]
              app.profile:
                  label: Личный кабинет
                  icon: '<i class="fa fa-user"></i>'
                  items:
                       - route: my_services
                         label: 'Оказанные мной услуги'
+                        roles:
+                          [ROLE_APP_SERVICE_ADMIN_ALL, ROLE_ADMIN]
                       - route: profile
                         label: 'Мой профиль'
+                        roles:
+                          [ROLE_SONATA_USER_ADMIN_USER_EDIT, ROLE_ADMIN]
              app.settings:
                  label: Настройки
                  icon: '<i class="fa fa-wrench"></i>'
@@ -174,6 +219,7 @@ sonata_admin:
                       - app.generated_document_end_text.admin
                       - app.certificate_type.admin
                       - app.menu_item.admin
+                      - app.position.admin
                       - sonata.user.admin.user
                       - sonata.user.admin.group
                  roles:

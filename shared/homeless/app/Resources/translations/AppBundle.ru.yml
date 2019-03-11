@@ -32,6 +32,9 @@ breadcrumb:
       link_shelter_history_list: Проживание в приюте
       link_shelter_history_create: Создать
       link_shelter_history_delete: Удалить
+      link_resident_questionnaire_list: Анкета проживающего
+      link_resident_questionnaire_create: Создать
+      link_resident_questionnaire_delete: Удалить
       link_certificate_list: Выдать справку
       link_certificate_create: Создать
       link_certificate_delete: Удалить

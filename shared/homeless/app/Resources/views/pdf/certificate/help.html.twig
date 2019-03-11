@@ -10,8 +10,7 @@
         {{ certificate.client.fullname }},<br/>
         {% if certificate.client.birthDate %}Дата рождения: {{ certificate.client.birthDate|format_date('dd.MM.YYYY') }}
             <br/>{% endif %}
-        получает социальную помощь в СПб БОО «Название организации», работающей в Санкт-Петербурге с бездомными
-        и малоимущими гражданами.
+        получает социальную помощь в {{ org_description_short }}.
     {% endif %}
 {% endblock %}
 

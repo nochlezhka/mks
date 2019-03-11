@@ -1,7 +1,7 @@
 <td>
     {% block field %}
         {% for note in value|slice(0, 3) %}
-            {% set id = object.id ~ '_' ~ note.id  %}
+            {% set id = object.id ~ '_note_' ~ note.id  %}
             <p>
                 <a href="{{ path('admin_app_client_note_edit', {id: object.id, childId: note.id}) }}?type=custom_modal" data-toggle="modal" data-target="#field_dialog_{{ id }}" role="button" aria-pressed="true">
                     <strong>
@@ -24,7 +24,7 @@
     <p>
         <a href="{{ path('admin_app_client_note_list', {id: object.id}) }}">Все примечания</a> |
 
-        {% set id = object.id %}
+        {% set id = object.id ~ '_note' %}
         <a href="{{ path('admin_app_client_note_create', {id: object.id}) }}?type=custom_modal" data-toggle="modal" data-target="#field_dialog_{{ id }}" class="btn btn-success  btn-sm" role="button" aria-pressed="true">
             Добавить примечание
         </a>

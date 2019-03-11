@@ -101,6 +101,7 @@
 {% block side_bar_nav %}
     {{ block('side_bar_nav', 'SonataAdminBundle::standard_layout.html.twig') }}
 
+    {%  if is_granted('ROLE_SUPER_ADMIN') or is_granted('ROLE_SONATA_USER_ADMIN_USER_EDIT') %}
     <ul class="sidebar-menu">
         <li class="treeview">
             <a href="{{ path('report') }}">
@@ -110,6 +111,8 @@
             </a>
         </li>
     </ul>
+    {% endif %}
+
     {% if app.user and (app.user.viewedClients is not empty) %}
         <br/><br/><br/>
         <ul class="sidebar-menu">

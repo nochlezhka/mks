@@ -8,7 +8,7 @@ use Symfony\Component\Form\Extension\Core\Type\BirthdayType;
 
 /**
  * Дополнительное поле клиента
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\ClientFieldRepository")
  */
 class ClientField extends BaseEntity
 {
@@ -51,6 +51,12 @@ class ClientField extends BaseEntity
     private $enabled = true;
 
     /**
+     * Включено для бездомных
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $enabledForHomeless = true;
+
+    /**
      * Тип
      * @ORM\Column(type="integer", nullable=true)
      */
@@ -61,6 +67,12 @@ class ClientField extends BaseEntity
      * @ORM\Column(type="boolean", nullable=true)
      */
     private $required = false;
+
+    /**
+     * Обязательное для бездомных
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $mandatoryForHomeless = false;
 
     /**
      * Допускается выбор нескольких вариантов одновременно
@@ -363,5 +375,48 @@ class ClientField extends BaseEntity
     public function getDescription()
     {
         return $this->description;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getMandatoryForHomeless()
+    {
+        return $this->mandatoryForHomeless || $this->required;
+    }
+
+    /**
+     * @param bool $mandatoryForHomeless
+     * @return ClientField
+     */
+    public function setMandatoryForHomeless($mandatoryForHomeless)
+    {
+        $this->mandatoryForHomeless = $mandatoryForHomeless;
+
+        return $this;
+    }
+
+    /**
+     * Get enabledForHomeless
+     *
+     * @return mixed
+     */
+    public function getEnabledForHomeless()
+    {
+        return $this->enabledForHomeless || $this->enabled;
+    }
+
+    /**
+     * Set enabledForHomeless
+     *
+     * @param mixed $enabledForHomeless
+     *
+     * @return ClientField
+     */
+    public function setEnabledForHomeless($enabledForHomeless)
+    {
+        $this->enabledForHomeless = $enabledForHomeless;
+
+        return $this;
     }
 }

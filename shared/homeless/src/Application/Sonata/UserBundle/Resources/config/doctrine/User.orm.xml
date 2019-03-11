@@ -16,6 +16,7 @@
         <field name="proxyDate" type="date" nullable="true"/>
         <field name="proxyNum" type="string" nullable="true"/>
         <field name="passport" type="text" nullable="true"/>
+        <field name="positionText" type="text" nullable="true"/>
 
         <one-to-many target-entity="AppBundle\Entity\ViewedClient" field="viewedClients" mapped-by="createdBy">
             <order-by>

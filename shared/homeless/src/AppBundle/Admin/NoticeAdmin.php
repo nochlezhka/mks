@@ -247,7 +247,7 @@ class NoticeAdmin extends BaseAdmin
                 ->getConfigurationPool()
                 ->getContainer()
                 ->get('doctrine.orm.entity_manager')
-                ->getRepository('AppBundle:Notice')
+                ->getRepository(Notice::class)
                 ->getAutoNotices($this->getParent()->getSubject());
         }
     }

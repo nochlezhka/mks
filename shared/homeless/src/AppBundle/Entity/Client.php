@@ -67,6 +67,12 @@ class Client extends BaseEntity
     private $lastname;
 
     /**
+     * Фамилия
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $isHomeless = true;
+
+    /**
      * Место последнего проживания
      * @ORM\ManyToOne(targetEntity="District")
      * @ORM\JoinColumn(name="last_residence_district_id", referencedColumnName="id")
@@ -913,5 +919,53 @@ class Client extends BaseEntity
     public function getGeneratedDocuments()
     {
         return $this->generatedDocuments;
+    }
+
+    /**
+     * Get isHomeless
+     *
+     * @return mixed
+     */
+    public function getisHomeless()
+    {
+        return $this->isHomeless;
+    }
+
+    /**
+     * Set isHomeless
+     *
+     * @param mixed $isHomeless
+     *
+     * @return Client
+     */
+    public function setIsHomeless($isHomeless)
+    {
+        $this->isHomeless = $isHomeless;
+
+        return $this;
+    }
+
+    /**
+     * Get NotIsHomeless
+     *
+     * @return mixed
+     */
+    public function getNotIsHomeless()
+    {
+        return !$this->isHomeless;
+    }
+
+    /**
+     * Set notIsHomeless
+     *
+     * @param mixed $notIsHomeless
+     *
+     * @return Client
+     */
+    public function setNotIsHomeless($notIsHomeless)
+    {
+        $this->isHomeless = !$notIsHomeless;
+
+        return $this;
     }
 }

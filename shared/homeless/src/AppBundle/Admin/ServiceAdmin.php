@@ -175,6 +175,9 @@ class ServiceAdmin extends BaseAdmin
             case 'edit':
                 $name = 'AppBundle:Admin\Service:base_edit.html.twig';
                 break;
+            case 'outer_list_rows_list':
+                $name = '@SonataAdmin/CRUD/list_outer_rows_list.html.twig';
+                break;
             default:
                 $name = parent::getTemplate($name);
                 break;

@@ -6,7 +6,7 @@
     {% endblock %}
     <p style="    float: left;
     display: inline-block;">
-        {% set id = object.id ~ 'list' %}
+        {% set id = object.id ~ '_service_list' %}
         <a href="{{ path('admin_app_client_service_list', {id: object.id}) }}?type=custom_modal" data-toggle="modal" data-target="#field_dialog_{{ id }}" role="button" aria-pressed="true">
             Все услуги
         </a>
@@ -20,7 +20,7 @@
 
          |
 
-        {% set id = object.id %}
+        {% set id = object.id ~ '_service' %}
         <a href="{{ path('admin_app_client_service_create', {id: object.id}) }}?type=custom_modal" data-toggle="modal" data-target="#field_dialog_{{ id }}" class="btn btn-success  btn-sm" role="button" aria-pressed="true">
             Добавить услугу
         </a>

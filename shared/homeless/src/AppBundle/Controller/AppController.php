@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\ClientField;
 use AppBundle\Entity\ContractStatus;
 use Application\Sonata\UserBundle\Entity\User;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -169,9 +170,25 @@ class AppController extends Controller
     public function reportAction(Request $request)
     {
         $report = $this->get('app.report_service');
+
+        /** @var ClientField $fieldHomelessReason */
+        /** @var ClientField $fieldDisease */
+        /** @var ClientField $fieldHomelessBreadwinner */
+        $fieldHomelessReason = $this->getDoctrine()->getRepository(ClientField::class)->findOneBy(['code' => 'homelessReason']);
+        $optionsHomelessReason = $fieldHomelessReason ? $fieldHomelessReason->getOptionsArray() : [];
+        $fieldDisease = $this->getDoctrine()->getRepository(ClientField::class)->findOneBy(['code' => 'disease']);
+        $optionsDisease = $fieldDisease ? $fieldDisease->getOptionsArray() : [];
+        $fieldHomelessBreadwinner = $this->getDoctrine()->getRepository(ClientField::class)->findOneBy(['code' => 'breadwinner']);
+        $optionsBreadwinner = $fieldHomelessBreadwinner ? $fieldHomelessBreadwinner->getOptionsArray() : [];
+
         return $this->render('@App/Admin/report.html.twig', [
-            'users' => $this->getDoctrine()->getEntityManager()->getRepository('ApplicationSonataUserBundle:User')->findAll(),
+            'users' => $this->getDoctrine()->getEntityManager()->getRepository('ApplicationSonataUserBundle:User')->findBy([
+                'locked' => false,
+            ]),
             'types' => $report->getTypes(),
+            'optionsHomelessReason' => $optionsHomelessReason,
+            'optionsDisease' => $optionsDisease,
+            'optionsBreadwinner' => $optionsBreadwinner,
         ]);
     }
 
@@ -183,6 +200,20 @@ class AppController extends Controller
     public function reportDownloadAction(Request $request)
     {
         $report = $this->get('app.report_service');
-        $report->generate($request->get('type'), $request->get('dateFrom', null), $request->get('dateTo', null), $request->get('userId', null));
+        $report->generate(
+            $request->get('type'),
+            $request->get('dateFrom', null),
+            $request->get('dateTo', null),
+            $request->get('userId', null),
+
+            $request->get('createClientdateFrom', null),
+            $request->get('createClientFromTo', null),
+            $request->get('createServicedateFrom', null),
+            $request->get('createServiceFromTo', null),
+
+            $request->get('homelessReason', null),
+            $request->get('disease', null),
+            $request->get('breadwinner', null)
+        );
     }
 }
