@@ -25,8 +25,8 @@ parameters:
     # Admin
     admin_format_date: d.m.Y
     admin_format_datetime: 'd.m.Y H:i:s'
-    admin_model_timezone: Europe/Ulyanovsk
-    admin_view_timezone: Europe/Minsk
+    admin_model_timezone: Europe/Moscow
+    admin_view_timezone: Europe/Moscow
 
     org_name_short: 'Название организации'
     org_name: 'СПб БОО «Название организации»'
