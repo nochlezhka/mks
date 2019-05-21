@@ -3,7 +3,7 @@
 {% block field %}
     {% if value.owner.shelterHistories[value.owner.shelterHistories|length - 1] is defined %}
         {% set shelterHistor = value.owner.shelterHistories[value.owner.shelterHistories|length - 1] %}
-        {% if shelterHistor.dateFrom|date('Y-m-d') <= "now"|date('Y-m-d') and (shelterHistor.dateTo|date('Y-m-d') >= "now"|date('Y-m-d') or (not shelterHistor.dateTo)) %}
+        {% if shelterHistor.status.id == 1 %}
             Проживает
         {% else %}
             <span class="text-red text-bold">

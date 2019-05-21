@@ -22,7 +22,7 @@ class DocumentRepository extends EntityRepository
         $qb
             ->where('d.client =  :client')
             ->orderBy('d.createdAt', 'DESC')
-            ->innerJoin('d.type','d_t', Join::WITH,'d_t.type = 1')
+            ->innerJoin('d.type','d_t', Join::WITH,'d_t.type IN (1,3)')
             ->setParameter('client', $client);
 
         return $qb;

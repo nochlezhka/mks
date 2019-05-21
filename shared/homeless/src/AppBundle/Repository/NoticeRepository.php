@@ -163,7 +163,7 @@ class NoticeRepository extends EntityRepository
         $type3 = $this
             ->getEntityManager()
             ->getRepository(Notice::class)
-            ->findOneBy(['date' => $dateTo3, 'text' => 'Необходимо заполнить анкету проживающего (3 месяца)', 'client' => $client, 'createdBy' => $shelterHistory->getCreatedBy()]);
+            ->findOneBy(['text' => 'Необходимо заполнить анкету проживающего (3 месяца)', 'client' => $client, 'createdBy' => $shelterHistory->getCreatedBy()]);
         if (!$type3) {
             $type3 = new Notice();
             $type3->setClient($client);
@@ -176,7 +176,7 @@ class NoticeRepository extends EntityRepository
         $type6 = $this
             ->getEntityManager()
             ->getRepository(Notice::class)
-            ->findOneBy(['date' => $dateTo6, 'text' => 'Необходимо заполнить анкету проживающего (6 месяцев)', 'client' => $client, 'createdBy' => $shelterHistory->getCreatedBy()]);
+            ->findOneBy(['text' => 'Необходимо заполнить анкету проживающего (6 месяцев)', 'client' => $client, 'createdBy' => $shelterHistory->getCreatedBy()]);
         if (!$type6) {
             $type6 = new Notice();
             $type6->setClient($client);
@@ -189,7 +189,7 @@ class NoticeRepository extends EntityRepository
         $type12 = $this
             ->getEntityManager()
             ->getRepository(Notice::class)
-            ->findOneBy(['date' => $dateTo12, 'text' => 'Необходимо заполнить анкету проживающего (1 год)', 'client' => $client, 'createdBy' => $shelterHistory->getCreatedBy()]);
+            ->findOneBy(['text' => 'Необходимо заполнить анкету проживающего (1 год)', 'client' => $client, 'createdBy' => $shelterHistory->getCreatedBy()]);
         if (!$type12) {
             $type12 = new Notice();
             $type12->setClient($client);

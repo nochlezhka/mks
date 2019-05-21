@@ -27,7 +27,7 @@
                 </script>
 
             {% else %}
-                <div url-show="http://docs.google.com/viewer?url={{ app.request.uriForPath(vich_uploader_asset(object, 'file'))|replace({' ': '%20', '/app_dev.php': ''}) }}&amp;embedded=true" class="show_docs" onclick="showDocs{{ object.id }}(this); return false;">
+                <div url-show="https://docs.google.com/viewer?url={{ app.request.uriForPath(vich_uploader_asset(object, 'file'))|replace({' ': '%20', '/app_dev.php': ''}) }}&amp;embedded=true" class="show_docs" onclick="showDocs{{ object.id }}(this); return false;">
                     <span>{{ object.filename }} Посмотреть</span>
                     <div class="file_block" style="height: 0px;">
                         <iframe src="" height="400" width="600"></iframe>

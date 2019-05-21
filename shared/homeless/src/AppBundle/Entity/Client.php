@@ -180,7 +180,7 @@ class Client extends BaseEntity
 
     public function getPhotoSize($width, $height)
     {
-        if (!file_exists($this->getPhotoPath())) {
+        if (!$this->isImage()) {
             return [$width, $height];
         }
 
@@ -201,11 +201,16 @@ class Client extends BaseEntity
 
     public function getPhotoFileBase64()
     {
-        if (!file_exists($this->getPhotoPath())) {
+        if (!$this->isImage()) {
             return null;
         }
 
         return 'data:image/png;base64,' . base64_encode(file_get_contents($this->getPhotoPath()));
+    }
+
+    private function isImage()
+    {
+        return file_exists($this->getPhotoPath()) && @is_array(getimagesize($this->getPhotoPath()));
     }
 
     public function setPhoto($photo = null)

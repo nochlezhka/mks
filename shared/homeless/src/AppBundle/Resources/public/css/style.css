@@ -145,7 +145,7 @@ input#filter_search_value{
     margin-left: 0;
 }
 
-.treeview-menu.menu_level_1.menu-open{
+.history.treeview-menu.menu_level_1.menu-open{
     height: 300px;
     overflow-x: auto;
 }
@@ -153,9 +153,6 @@ input#filter_search_value{
 .sonata-ba-show .box{
     margin-bottom: 5px;
 }
-
-Влад Пасечник, [13.04.18 00:55]
-
 
 .sonata-ba-show .col-lg-1,.sonata-ba-show .col-lg-10,.sonata-ba-show .col-lg-11,.sonata-ba-show .col-lg-12,.sonata-ba-show .col-lg-2,.sonata-ba-show .col-lg-3,.sonata-ba-show .col-lg-4,.sonata-ba-show .col-lg-5,.sonata-ba-show .col-lg-6,.sonata-ba-show .col-lg-7,.sonata-ba-show .col-lg-8,.sonata-ba-show .col-lg-9,.sonata-ba-show .col-md-1,.sonata-ba-show .col-md-10,.sonata-ba-show .col-md-11,.sonata-ba-show .col-md-12,.sonata-ba-show .col-md-2,.sonata-ba-show .col-md-3,.sonata-ba-show .col-md-4,.sonata-ba-show .col-md-5,.sonata-ba-show .col-md-6,.sonata-ba-show .col-md-7,.sonata-ba-show .col-md-8,.sonata-ba-show .col-md-9,.sonata-ba-show .col-sm-1,.sonata-ba-show .col-sm-10,.sonata-ba-show .col-sm-11,.sonata-ba-show .col-sm-12,.sonata-ba-show .col-sm-2,.sonata-ba-show .col-sm-3,.sonata-ba-show .col-sm-4,.sonata-ba-show .col-sm-5,.sonata-ba-show .col-sm-6,.sonata-ba-show .col-sm-7,.sonata-ba-show .col-sm-8,.sonata-ba-show .col-sm-9,.sonata-ba-show .col-xs-1,.sonata-ba-show .col-xs-10,.sonata-ba-show .col-xs-11,.sonata-ba-show .col-xs-12,.sonata-ba-show .col-xs-2,.sonata-ba-show .col-xs-3,.sonata-ba-show .col-xs-4,.sonata-ba-show .col-xs-5,.sonata-ba-show .col-xs-6,.sonata-ba-show .col-xs-7,.sonata-ba-show .col-xs-8,.sonata-ba-show .col-xs-9{
     padding-right: 5px;

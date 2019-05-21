@@ -469,7 +469,7 @@
                 <li class="treeview active">
                     <a href="#"><span>История просмотров<br/>анкет клиентов</span><span
                                 class="pull-right-container"></span></a>
-                    <ul class="active treeview-menu menu_level_1 menu-open" style="display: block;">
+                    <ul class="active treeview-menu menu_level_1 menu-open history" style="display: block;">
                         {% for viewedClient in app.user.viewedClients %}
                             <li class="first">
                                 <a href="{{ path('admin_app_client_show', {id: viewedClient.client.id}) }}"><i

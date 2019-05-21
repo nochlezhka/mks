@@ -68,16 +68,25 @@ sudo chmod +x /usr/local/bin/docker-compose
     > cd mks
 
 3. Создайте локальные копии файлов `docker-compose.yml.dist` и `.env.dist`:
-
+    
     > cp docker-compose.yml.dist docker-compose.yml
-
+    
     > cp .env.dist .env
-
+    
     > cp shared/homeless/app/config/parameters.yml.dist shared/homeless/app/config/parameters.yml
 
     При необходимости укажите нужные настройки в этих файлах.
 
 4. Запустите сборку контейнеров:
+
+    Если докен не установлен, то сначала
+    
+    ``` 
+    curl -fsSL get.docker.com -o get-docker.sh
+    sh get-docker.sh
+    ```
+    
+    после собираем контейнеры
 
     > docker-compose build
     

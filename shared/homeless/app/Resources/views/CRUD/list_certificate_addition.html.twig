@@ -2,7 +2,7 @@
     {% if object.type.syncId == constant('AppBundle\\Entity\\CertificateType::REGISTRATION')  %}
     <select name="country" id="document_{{ object.id }}">
         {% for key,document in object.client.documents|reverse %}
-            {% if document.type.id == 1 %}
+            {% if document.type.id == 1 or document.type.id == 3 %}
                 <option value="{{ document.id }}" {{  (key == 0 ? ' selected ' : '') }}>{{ document }}</option>
             {% endif %}
         {% endfor %}
