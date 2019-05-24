@@ -33,7 +33,7 @@
                 {% block sonata_tab_content %}
                     {% set has_tab = ((admin.formtabs|length == 1 and admin.formtabs|keys[0] != 'default') or admin.formtabs|length > 1 ) %}
 
-                    <div class="col-md-9">
+                    <div class="{% if isModal == TRUE %}col-md-9{% else %}col-md-12{% endif %}">
                         {% if has_tab %}
                             <div class="nav-tabs-custom">
                                 <ul class="nav nav-tabs" role="tablist">
@@ -69,7 +69,7 @@
             {{ form_rest(form) }}
 
             {% block formactions %}
-                <div class="col-md-2 col-md-offset-1 sonata-ba-form-actions well well-small form-actions">
+                <div class="{% if isModal == TRUE %}col-md-2 col-md-offset-1{% else %}col-md-12{% endif %} sonata-ba-form-actions well well-small form-actions">
                     {% block sonata_form_actions %}
                         {% if app.request.isxmlhttprequest %}
                             {% if admin.id(object) is not null %}
