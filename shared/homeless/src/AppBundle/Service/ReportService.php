@@ -445,13 +445,8 @@ class ReportService
         if ($createServicedateFrom || $createServiceFromTo) {
             $stmt = $this->em->getConnection()->prepare('SELECT c.id
             FROM client c
-            JOIN contract con ON con.client_id = c.id
-            JOIN contract_item ci1 ON con.id = ci1.contract_id AND ci1.date IS NOT NULL
-            JOIN contract_item_type cit1 ON ci1.type_id = cit1.id
-            JOIN contract_item ci2 ON con.id = ci2.contract_id AND ci2.date IS NULL
-            JOIN contract_item_type cit2 ON ci2.type_id = cit2.id
-            JOIN contract_status cs ON con.status_id = cs.id
-            WHERE con.date_to >= :createServicedateFrom AND con.date_to <= :createServiceFromTo AND
+            JOIN service s ON s.client_id = c.id
+            WHERE s.created_at >= :createServicedateFrom AND s.created_at <= :createServiceFromTo AND
                   c.created_at >= :createClientdateFrom AND c.created_at <= :createClientFromTo '
             );
             $parameters = [
@@ -585,13 +580,8 @@ union
         if ($createServicedateFrom || $createServiceFromTo) {
             $stmt = $this->em->getConnection()->prepare('SELECT c.id
             FROM client c
-            JOIN contract con ON con.client_id = c.id
-            JOIN contract_item ci1 ON con.id = ci1.contract_id AND ci1.date IS NOT NULL
-            JOIN contract_item_type cit1 ON ci1.type_id = cit1.id
-            JOIN contract_item ci2 ON con.id = ci2.contract_id AND ci2.date IS NULL
-            JOIN contract_item_type cit2 ON ci2.type_id = cit2.id
-            JOIN contract_status cs ON con.status_id = cs.id
-            WHERE con.date_to >= :createServicedateFrom AND con.date_to <= :createServiceFromTo AND
+            JOIN service s ON s.client_id = c.id
+            WHERE s.created_at >= :createServicedateFrom AND s.created_at <= :createServiceFromTo AND
                   c.created_at >= :createClientdateFrom AND c.created_at <= :createClientFromTo '
             );
             $parameters = [
