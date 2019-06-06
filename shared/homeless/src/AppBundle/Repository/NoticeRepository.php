@@ -9,6 +9,7 @@ use AppBundle\Entity\ShelterHistory;
 use AppBundle\Entity\ShelterStatus;
 use Application\Sonata\UserBundle\Entity\User;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\ResultSetMappingBuilder;
 
 
 class NoticeRepository extends EntityRepository
@@ -77,22 +78,20 @@ class NoticeRepository extends EntityRepository
     }
 
     /**
-     * @param $filter
-     * @param User $user
-     * @return array
+     * @param array $filter
+     * @return \Doctrine\ORM\Query
      */
-    public function getMyClientsNotice($filter, User $user)
+    public function getAllContractsResidentQuestionnaire(array $filter)
     {
-        $result = [];
-
-        $arContracts = $this->getAllActiveContracts($filter);
-
-        foreach ($arContracts->getResult() as $itm) {
-            $arAllUserClientsNotice = $this->getAllUserClientsNotice($itm->getClient(), $user);
-            if (!empty($arAllUserClientsNotice['id'])) {
-                $result[] = $arAllUserClientsNotice['id'];
-            }
-        }
+        $result = $this
+            ->getEntityManager()
+            ->getRepository('AppBundle:Contract')
+            ->createQueryBuilder('cont')
+            ->where('cont.createdBy=:contractCreatedBy')
+            ->setParameters([
+                'contractCreatedBy' => $filter['contractCreatedBy'],
+            ])
+            ->getQuery();
 
         return $result;
     }
@@ -104,7 +103,7 @@ class NoticeRepository extends EntityRepository
      */
     public function getMyClientsNoticeHeaderCount($filter, User $user)
     {
-        return count($this->getMyClientsNotice($filter, $user));
+        return count($this->getMyClientsNoticeHeader($filter, $user));
     }
 
     /**
@@ -127,6 +126,43 @@ class NoticeRepository extends EntityRepository
             $result[$arAllUserClientsNotice['id']]['client'] = $itm->getClient();
         }
 
+        $sql = "SELECT cl.*
+                FROM client cl
+                JOIN (SELECT MAX(id) id, client_id FROM contract GROUP BY client_id) ct ON ct.client_id= cl.id
+                JOIN contract c on c.id = ct.id
+                JOIN (SELECT MAX(id) id, client_id, MAX(date_to) date_to, MAX(date_from) date_from FROM shelter_history WHERE date_to IS NOT NULL GROUP BY client_id) sh ON sh.client_id= c.client_id
+                LEFT JOIN resident_questionnaire rq3 ON rq3.client_id = c.client_id AND rq3.type_id = 1
+                LEFT JOIN resident_questionnaire rq6 ON rq6.client_id = c.client_id AND rq6.type_id = 2
+                LEFT JOIN resident_questionnaire rq12 ON rq12.client_id = c.client_id AND rq12.type_id = 3
+                WHERE c.created_by_id = ? AND (
+                        (rq3.id IS NULL AND rq6.id IS NULL AND rq12.id IS NULL AND DATE_ADD(sh.date_to, INTERVAL 3 MONTH) < NOW()) OR
+                        (rq6.id IS NULL AND rq12.id IS NULL AND DATE_ADD(sh.date_to, INTERVAL 6 MONTH) < NOW()) OR
+                        (rq12.id IS NULL AND DATE_ADD(sh.date_to, INTERVAL 12 MONTH) < NOW())
+                    );";
+
+        $rsm = new ResultSetMappingBuilder($this->getEntityManager());
+        $rsm->addRootEntityFromClassMetadata(Client::class, 'c');
+
+        $query = $this->getEntityManager()->createNativeQuery($sql, $rsm);
+        $query->setParameter(1, $user->getId());
+
+        /** @var Client[] $clients */
+        $clients = $query->getResult();
+        foreach ($clients as $client) {
+            $isSearch = false;
+            foreach ($result as $item) {
+                if ($item['client']->getId() === $client->getId()) {
+                    $isSearch = true;
+                    break;
+                }
+            }
+            if (!$isSearch) {
+                $result[] = [
+                    'text' => 'Необходимо заполнить анкету проживающего',
+                    'client' => $client,
+                ];
+            }
+        }
         return $result;
     }
 
@@ -152,52 +188,6 @@ class NoticeRepository extends EntityRepository
 
         if (!$shelterHistory instanceof ShelterHistory || !$shelterHistory->getDateTo()) {
             return $notices;
-        }
-        $dateTo3 = clone($shelterHistory->getDateTo());
-        $dateTo3->modify('92 days');
-        $dateTo6 = clone($shelterHistory->getDateTo());
-        $dateTo6->modify('183 days');
-        $dateTo12 = clone($shelterHistory->getDateTo());
-        $dateTo12->modify('365 days');
-
-        $type3 = $this
-            ->getEntityManager()
-            ->getRepository(Notice::class)
-            ->findOneBy(['text' => 'Необходимо заполнить анкету проживающего (3 месяца)', 'client' => $client, 'createdBy' => $shelterHistory->getCreatedBy()]);
-        if (!$type3) {
-            $type3 = new Notice();
-            $type3->setClient($client);
-            $type3->setCreatedBy($shelterHistory->getCreatedBy());
-            $type3->setDate($dateTo3);
-            $type3->setText('Необходимо заполнить анкету проживающего (3 месяца)');
-            $this->getEntityManager()->persist($type3);
-            $this->getEntityManager()->flush();
-        }
-        $type6 = $this
-            ->getEntityManager()
-            ->getRepository(Notice::class)
-            ->findOneBy(['text' => 'Необходимо заполнить анкету проживающего (6 месяцев)', 'client' => $client, 'createdBy' => $shelterHistory->getCreatedBy()]);
-        if (!$type6) {
-            $type6 = new Notice();
-            $type6->setClient($client);
-            $type6->setCreatedBy($shelterHistory->getCreatedBy());
-            $type6->setDate($dateTo6);
-            $type6->setText('Необходимо заполнить анкету проживающего (6 месяцев)');
-            $this->getEntityManager()->persist($type6);
-            $this->getEntityManager()->flush();
-        }
-        $type12 = $this
-            ->getEntityManager()
-            ->getRepository(Notice::class)
-            ->findOneBy(['text' => 'Необходимо заполнить анкету проживающего (1 год)', 'client' => $client, 'createdBy' => $shelterHistory->getCreatedBy()]);
-        if (!$type12) {
-            $type12 = new Notice();
-            $type12->setClient($client);
-            $type12->setCreatedBy($shelterHistory->getCreatedBy());
-            $type12->setDate($dateTo12);
-            $type12->setText('Необходимо заполнить анкету проживающего (1 год)');
-            $this->getEntityManager()->persist($type12);
-            $this->getEntityManager()->flush();
         }
 
         return $notices;
