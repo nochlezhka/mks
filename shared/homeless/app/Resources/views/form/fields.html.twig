@@ -99,7 +99,7 @@
     {% set title = 'Срок действия неизвестен' %}
     {% set color = 'black' %}
 
-    {% if value is not null %}
+    {% if value is not null and value != '' %}
         {% if value < 3 %}
             {% set title = 'Краткосрочный' %}
             {% set color = 'green' %}
