@@ -72,7 +72,7 @@ class ContractAdmin extends BaseAdmin
                 'dp_default_date' => (new \DateTime())->format('Y-m-d'),
                 'format' => 'dd.MM.yyyy',
                 'label' => 'Дата окончания',
-                'required' => true,
+                'required' => false,
             ])
             ->add('comment', null, [
                 'label' => 'Комментарий',
