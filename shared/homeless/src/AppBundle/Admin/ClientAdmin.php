@@ -85,12 +85,16 @@ class ClientAdmin extends BaseAdmin
             ])
             ->add('createdAt', 'date', [
                 'label' => 'Дата добавления',
-            ])
-            ->add('shelterHistories', 'entity', [
+            ]);
+        /** @var Client $client */
+        $client = $this->getSubject();
+        if ($client->getShelterHistories()->count()) {
+            $showMapper->add('shelterHistories', 'entity', [
                 'label' => 'Проживание в приюте',
-                'template' => '/admin/fields/client_shelter_histories_show.html.twig'
-            ])
-            ->end();
+                'template' => '/admin/fields/client_shelter_histories_show.html.twig',
+            ]);
+        }
+        $showMapper->end();
 
         $securityContext = $this->getConfigurationPool()->getContainer()->get('security.context');
         if ($securityContext->isGranted('ROLE_SUPER_ADMIN') || $securityContext->isGranted('ROLE_APP_SERVICE_ADMIN_LIST') || $securityContext->isGranted('ROLE_APP_SERVICE_ADMIN_ALL')) {
