@@ -86,9 +86,14 @@ class ClientAdmin extends BaseAdmin
             ->add('createdAt', 'date', [
                 'label' => 'Дата добавления',
             ]);
-        /** @var Client $client */
-        $client = $this->getSubject();
-        if ($client->getShelterHistories()->count()) {
+        /** @var MenuItem $menuItemShelterHistory */
+        $menuItemShelterHistory = $this
+            ->getConfigurationPool()
+            ->getContainer()
+            ->get('doctrine.orm.entity_manager')
+            ->getRepository(MenuItem::class)
+            ->findByCode(MenuItem::CODE_SHELTER_HISTORY);
+        if ($menuItemShelterHistory && $menuItemShelterHistory->getEnabled()) {
             $showMapper->add('shelterHistories', 'entity', [
                 'label' => 'Проживание в приюте',
                 'template' => '/admin/fields/client_shelter_histories_show.html.twig',

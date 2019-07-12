@@ -7,11 +7,15 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * Для настройки отображения пунктов меню в анкете клиента
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\MenuItemRepository")
  * @UniqueEntity("code")
  */
 class MenuItem extends BaseEntity
 {
+    const CODE_SHELTER_HISTORY = 'shelter_history';
+    const CODE_CERTIFICATE = 'certificate';
+    const CODE_GENERATED_DOCUMENT = 'generated_document';
+
     /**
      * Название
      * @ORM\Column(type="string", nullable=true)
