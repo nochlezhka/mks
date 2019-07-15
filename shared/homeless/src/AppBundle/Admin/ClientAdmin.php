@@ -38,10 +38,10 @@ class ClientAdmin extends BaseAdmin
 {
     protected $searchResultActions = ['show'];
 
-    protected $datagridValues = array(
+    protected $datagridValues = [
         '_sort_order' => 'DESC',
         '_sort_by' => 'contracts.dateFrom',
-    );
+    ];
 
     protected $translationDomain = 'AppBundle';
 
@@ -78,13 +78,6 @@ class ClientAdmin extends BaseAdmin
             ])
             ->add('birthPlace', null, [
                 'label' => 'Место рождения',
-            ])
-            ->add('isHomeless', null, [
-                'label' => 'Статус',
-                'template' => '/admin/fields/client_notIsHomeless.html.twig'
-            ])
-            ->add('createdAt', 'date', [
-                'label' => 'Дата добавления',
             ]);
         /** @var MenuItem $menuItemShelterHistory */
         $menuItemShelterHistory = $this
@@ -93,6 +86,15 @@ class ClientAdmin extends BaseAdmin
             ->get('doctrine.orm.entity_manager')
             ->getRepository(MenuItem::class)
             ->findByCode(MenuItem::CODE_SHELTER_HISTORY);
+        if ($menuItemShelterHistory && $menuItemShelterHistory->getEnabled()) {
+            $showMapper->add('isHomeless', null, [
+                'label' => 'Статус',
+                'template' => '/admin/fields/client_notIsHomeless.html.twig',
+            ]);
+        }
+        $showMapper->add('createdAt', 'date', [
+            'label' => 'Дата добавления',
+        ]);
         if ($menuItemShelterHistory && $menuItemShelterHistory->getEnabled()) {
             $showMapper->add('shelterHistories', 'entity', [
                 'label' => 'Проживание в приюте',
@@ -107,7 +109,7 @@ class ClientAdmin extends BaseAdmin
                 ->with('Последние услуги', ['class' => 'col-md-4'])
                 ->add('services', 'array', [
                     'label' => ' ',
-                    'template' => '/admin/fields/client_services_show.html.twig'
+                    'template' => '/admin/fields/client_services_show.html.twig',
                 ])
                 ->end();
         }
@@ -118,7 +120,7 @@ class ClientAdmin extends BaseAdmin
                 ->with('Последние примечания')
                 ->add('notes', 'array', [
                     'label' => ' ',
-                    'template' => '/admin/fields/client_notes_show.html.twig'
+                    'template' => '/admin/fields/client_notes_show.html.twig',
                 ])
                 ->end();
         }
@@ -129,7 +131,7 @@ class ClientAdmin extends BaseAdmin
                     'class' => 'col-md-12',
                     'box_class' => 'box box-primary box-client-field-all',
                     'type' => 'additional-info',
-                    'subtype' => 'main-block-start'
+                    'subtype' => 'main-block-start',
                 ]);
 
             $showMapperAdditionalInfo = [];
@@ -139,8 +141,8 @@ class ClientAdmin extends BaseAdmin
                     'class' => 'col-md-4',
                     'box_class' => 'box-client-field',
                     'type' => 'additional-info',
-                    'subtype' => 'item'
-                ]]
+                    'subtype' => 'item',
+                ]],
             ];
 
             // Дополнительные поля клиента
@@ -160,7 +162,7 @@ class ClientAdmin extends BaseAdmin
                                 'class' => 'col-md-4 additional-info-block',
                                 'box_class' => 'box-client-field',
                                 'type' => 'additional-info',
-                                'subtype' => 'item'
+                                'subtype' => 'item',
                             ]],
                         ];
                         $blankTabName .= ' ';
@@ -218,21 +220,28 @@ class ClientAdmin extends BaseAdmin
             ->getConfigurationPool()
             ->getContainer()
             ->get('doctrine.orm.entity_manager');
-        $formMapper->getFormBuilder()->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) use ($em){
+        $formMapper->getFormBuilder()->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) use ($em) {
             $client = $event->getForm()->getData();
 
             if (!$client instanceof Client) {
                 return;
             }
-            if ($client->getisHomeless()) {
-                /** @var $em EntityManagerInterface */
-                $clientsFields = $em->getRepository(ClientField::class)->findAll();
-                foreach ($clientsFields as $clientsField) {
-                    /** @var $clientsField ClientField */
-                    if ($clientsField->getMandatoryForHomeless()) {
-                        $fieldForm = $event->getForm()->get('additionalField' . $clientsField->getCode());
-                        if (!$fieldForm->getData() || ($fieldForm->getData() instanceof ArrayCollection && $fieldForm->getData()->count() === 0)) {
-                            $event->getForm()->get('additionalField' . $clientsField->getCode())->addError(new FormError('Поле обязательное для заполнения'));
+
+            /** @var MenuItem $menuItemShelterHistory */
+            $menuItemShelterHistory = $em
+                ->getRepository(MenuItem::class)
+                ->findByCode(MenuItem::CODE_SHELTER_HISTORY);
+            if ($menuItemShelterHistory && $menuItemShelterHistory->getEnabled()) {
+                if ($client->getisHomeless()) {
+                    /** @var $em EntityManagerInterface */
+                    $clientsFields = $em->getRepository(ClientField::class)->findAll();
+                    foreach ($clientsFields as $clientsField) {
+                        /** @var $clientsField ClientField */
+                        if ($clientsField->getMandatoryForHomeless()) {
+                            $fieldForm = $event->getForm()->get('additionalField' . $clientsField->getCode());
+                            if (!$fieldForm->getData() || ($fieldForm->getData() instanceof ArrayCollection && $fieldForm->getData()->count() === 0)) {
+                                $event->getForm()->get('additionalField' . $clientsField->getCode())->addError(new FormError('Поле обязательное для заполнения'));
+                            }
                         }
                     }
                 }
@@ -311,13 +320,19 @@ class ClientAdmin extends BaseAdmin
             ->add('birthPlace', null, [
                 'label' => 'Место рождения',
                 'required' => true,
-            ])
-            ->add('notIsHomeless', CheckboxType::class, [
+            ]);
+        /** @var MenuItem $menuItemShelterHistory */
+        $menuItemShelterHistory = $em
+            ->getRepository(MenuItem::class)
+            ->findByCode(MenuItem::CODE_SHELTER_HISTORY);
+        if ($menuItemShelterHistory && $menuItemShelterHistory->getEnabled()) {
+            $formMapper->add('notIsHomeless', CheckboxType::class, [
                 'label' => 'Не бездомный',
-                'label_attr'=> ['class'=> 'changeSelectinsData'],
+                'label_attr' => ['class' => 'changeSelectinsData'],
                 'required' => false,
-            ])
-            ->end();
+            ]);
+        }
+        $formMapper->end();
 
         //дополнительные поля клиента
         $formMapper
@@ -335,7 +350,7 @@ class ClientAdmin extends BaseAdmin
             $options = [
                 'label' => $field->getName(),
                 'required' => $field->getRequired(),
-                'attr' => ["class" => ($field->getMandatoryForHomeless() ? 'mandatory-for-homeless' : '') . ' ' . (!$field->getEnabled() && $field->getEnabledForHomeless() ? 'enabled-for-homeless' : '')]
+                'attr' => ["class" => ($field->getMandatoryForHomeless() ? 'mandatory-for-homeless' : '') . ' ' . (!$field->getEnabled() && $field->getEnabledForHomeless() ? 'enabled-for-homeless' : '')],
             ];
 
             switch ($field->getType()) {
@@ -480,11 +495,11 @@ class ClientAdmin extends BaseAdmin
                 'route' => ['name' => 'show'],
             ])
             ->add('birthDate', 'date', [
-                'label' => 'Дата рождения'
+                'label' => 'Дата рождения',
             ])
             ->add('contracts.dateFrom', null, [
                 'template' => '/admin/fields/client_contract_list.html.twig',
-                'label' => 'Договор'
+                'label' => 'Договор',
             ])
             ->add('createdAt', 'date', [
                 'label' => 'Когда добавлен',
@@ -495,7 +510,7 @@ class ClientAdmin extends BaseAdmin
                     'show' => [],
                     'edit' => [],
                     'delete' => [],
-                ]
+                ],
             ]);
     }
 
@@ -557,12 +572,12 @@ class ClientAdmin extends BaseAdmin
                 [
                     'field_options_start' => [
                         'label' => 'От',
-                        'format' => 'dd.MM.yyyy'
+                        'format' => 'dd.MM.yyyy',
                     ],
                     'field_options_end' => [
                         'label' => 'До',
-                        'format' => 'dd.MM.yyyy'
-                    ]
+                        'format' => 'dd.MM.yyyy',
+                    ],
                 ]
             )
             ->add('contractCreatedBy', 'doctrine_orm_callback', [
@@ -859,8 +874,14 @@ class ClientAdmin extends BaseAdmin
                 ['uri' => $admin->generateUrl('app.contract.admin.list', ['id' => $id])]
             );
         }
-
-        if ($securityContext->isGranted('ROLE_SUPER_ADMIN') || $securityContext->isGranted('ROLE_APP_SHELTER_HISTORY_ADMIN_LIST') || $securityContext->isGranted('ROLE_APP_SHELTER_HISTORY_ADMIN_ALL')) {
+        /** @var MenuItem $menuItemShelterHistory */
+        $menuItemShelterHistory = $this
+            ->getConfigurationPool()
+            ->getContainer()
+            ->get('doctrine.orm.entity_manager')
+            ->getRepository(MenuItem::class)
+            ->findByCode(MenuItem::CODE_SHELTER_HISTORY);
+        if ($menuItemShelterHistory && $menuItemShelterHistory->getEnabled() && $securityContext->isGranted('ROLE_SUPER_ADMIN') || $securityContext->isGranted('ROLE_APP_SHELTER_HISTORY_ADMIN_LIST') || $securityContext->isGranted('ROLE_APP_SHELTER_HISTORY_ADMIN_ALL')) {
             if ($this->isMenuItemEnabled('shelter_history') && $this->isMenuItemEnabledShelterHistory($id)) {
                 $menu->addChild(
                     'Проживание в приюте',
@@ -904,20 +925,20 @@ class ClientAdmin extends BaseAdmin
                 ->getToken()
                 ->getUser();
 
-        $noticesCount = $this
-            ->getConfigurationPool()
-            ->getContainer()
-            ->get('doctrine.orm.entity_manager')
-            ->getRepository(Notice::class)
-            ->getUnviewedCount($this->getSubject(), $user);
-
-        $noticesCount += count(
-            $this->getConfigurationPool()
+            $noticesCount = $this
+                ->getConfigurationPool()
                 ->getContainer()
                 ->get('doctrine.orm.entity_manager')
                 ->getRepository(Notice::class)
-                ->getAutoNotices($this->getSubject())
-        );
+                ->getUnviewedCount($this->getSubject(), $user);
+
+            $noticesCount += count(
+                $this->getConfigurationPool()
+                    ->getContainer()
+                    ->get('doctrine.orm.entity_manager')
+                    ->getRepository(Notice::class)
+                    ->getAutoNotices($this->getSubject())
+            );
 
             $menu->addChild(
                 'Напоминания' . ($noticesCount > 0 ? " ($noticesCount)" : ''),

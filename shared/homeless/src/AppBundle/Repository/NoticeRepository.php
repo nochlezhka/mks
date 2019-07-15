@@ -3,6 +3,7 @@
 namespace AppBundle\Repository;
 
 use AppBundle\Entity\Client;
+use AppBundle\Entity\MenuItem;
 use AppBundle\Entity\Notice;
 use AppBundle\Entity\ResidentQuestionnaire;
 use AppBundle\Entity\ShelterHistory;
@@ -126,7 +127,13 @@ class NoticeRepository extends EntityRepository
             $result[$arAllUserClientsNotice['id']]['client'] = $itm->getClient();
         }
 
-        $sql = "SELECT cl.*
+        /** @var MenuItem $menuItemShelterHistory */
+        $menuItemShelterHistory = $this
+            ->getEntityManager()
+            ->getRepository(MenuItem::class)
+            ->findByCode(MenuItem::CODE_SHELTER_HISTORY);
+        if ($menuItemShelterHistory && $menuItemShelterHistory->getEnabled()) {
+            $sql = "SELECT cl.*
                 FROM client cl
                 JOIN (SELECT MAX(id) id, client_id FROM contract GROUP BY client_id) ct ON ct.client_id= cl.id
                 JOIN contract c on c.id = ct.id
@@ -140,27 +147,28 @@ class NoticeRepository extends EntityRepository
                         (rq12.id IS NULL AND DATE_ADD(sh.date_to, INTERVAL 12 MONTH) < NOW())
                     ) AND sh.date_to >= '2019-01-01';";
 
-        $rsm = new ResultSetMappingBuilder($this->getEntityManager());
-        $rsm->addRootEntityFromClassMetadata(Client::class, 'c');
+            $rsm = new ResultSetMappingBuilder($this->getEntityManager());
+            $rsm->addRootEntityFromClassMetadata(Client::class, 'c');
 
-        $query = $this->getEntityManager()->createNativeQuery($sql, $rsm);
-        $query->setParameter(1, $user->getId());
+            $query = $this->getEntityManager()->createNativeQuery($sql, $rsm);
+            $query->setParameter(1, $user->getId());
 
-        /** @var Client[] $clients */
-        $clients = $query->getResult();
-        foreach ($clients as $client) {
-            $isSearch = false;
-            foreach ($result as $item) {
-                if ($item['client']->getId() === $client->getId()) {
-                    $isSearch = true;
-                    break;
+            /** @var Client[] $clients */
+            $clients = $query->getResult();
+            foreach ($clients as $client) {
+                $isSearch = false;
+                foreach ($result as $item) {
+                    if ($item['client']->getId() === $client->getId()) {
+                        $isSearch = true;
+                        break;
+                    }
                 }
-            }
-            if (!$isSearch) {
-                $result[] = [
-                    'text' => 'Необходимо заполнить анкету проживающего',
-                    'client' => $client,
-                ];
+                if (!$isSearch) {
+                    $result[] = [
+                        'text' => 'Необходимо заполнить анкету проживающего',
+                        'client' => $client,
+                    ];
+                }
             }
         }
         return $result;
