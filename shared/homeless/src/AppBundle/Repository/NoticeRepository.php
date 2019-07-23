@@ -127,12 +127,11 @@ class NoticeRepository extends EntityRepository
             $result[$arAllUserClientsNotice['id']]['client'] = $itm->getClient();
         }
 
-        /** @var MenuItem $menuItemShelterHistory */
         $menuItemShelterHistory = $this
             ->getEntityManager()
             ->getRepository(MenuItem::class)
-            ->findByCode(MenuItem::CODE_SHELTER_HISTORY);
-        if ($menuItemShelterHistory && $menuItemShelterHistory->getEnabled()) {
+            ->isEnableCode(MenuItem::CODE_NOTIFICATIONS);
+        if ($menuItemShelterHistory) {
             $sql = "SELECT cl.*
                 FROM client cl
                 JOIN (SELECT MAX(id) id, client_id FROM contract GROUP BY client_id) ct ON ct.client_id= cl.id

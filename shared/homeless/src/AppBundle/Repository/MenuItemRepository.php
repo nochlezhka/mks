@@ -2,28 +2,31 @@
 
 namespace AppBundle\Repository;
 
-use AppBundle\Entity\MenuItem;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 
 class MenuItemRepository extends EntityRepository
 {
     /**
-     * Получение раздела по его коду
+     * Активность раздела по его коду
      *
      * @param string $code
-     * @return MenuItem|null
+     * @return bool
      */
-    public function findByCode($code)
+    public function isEnableCode($code)
     {
         try {
-            return $this->createQueryBuilder('mi')
+            $menuItem = $this->createQueryBuilder('mi')
                 ->andWhere('mi.code = :code')
                 ->setParameter('code', $code)
                 ->getQuery()
                 ->getOneOrNullResult();
+            if (!$menuItem) {
+                return false;
+            }
+            return $menuItem->getEnabled();
         } catch (NonUniqueResultException $e) {
-            return null;
+            return false;
         }
     }
 }

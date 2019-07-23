@@ -79,14 +79,7 @@ class ClientAdmin extends BaseAdmin
             ->add('birthPlace', null, [
                 'label' => 'Место рождения',
             ]);
-        /** @var MenuItem $menuItemShelterHistory */
-        $menuItemShelterHistory = $this
-            ->getConfigurationPool()
-            ->getContainer()
-            ->get('doctrine.orm.entity_manager')
-            ->getRepository(MenuItem::class)
-            ->findByCode(MenuItem::CODE_SHELTER_HISTORY);
-        if ($menuItemShelterHistory && $menuItemShelterHistory->getEnabled()) {
+        if ($this->isMenuItemEnabled(MenuItem::CODE_STATUS_HOMELESS)) {
             $showMapper->add('isHomeless', null, [
                 'label' => 'Статус',
                 'template' => '/admin/fields/client_notIsHomeless.html.twig',
@@ -95,7 +88,7 @@ class ClientAdmin extends BaseAdmin
         $showMapper->add('createdAt', 'date', [
             'label' => 'Дата добавления',
         ]);
-        if ($menuItemShelterHistory && $menuItemShelterHistory->getEnabled()) {
+        if ($this->isMenuItemEnabled(MenuItem::CODE_SHELTER_HISTORY)) {
             $showMapper->add('shelterHistories', 'entity', [
                 'label' => 'Проживание в приюте',
                 'template' => '/admin/fields/client_shelter_histories_show.html.twig',
@@ -227,11 +220,7 @@ class ClientAdmin extends BaseAdmin
                 return;
             }
 
-            /** @var MenuItem $menuItemShelterHistory */
-            $menuItemShelterHistory = $em
-                ->getRepository(MenuItem::class)
-                ->findByCode(MenuItem::CODE_SHELTER_HISTORY);
-            if ($menuItemShelterHistory && $menuItemShelterHistory->getEnabled()) {
+            if ($this->isMenuItemEnabled(MenuItem::CODE_STATUS_HOMELESS)) {
                 if ($client->getisHomeless()) {
                     /** @var $em EntityManagerInterface */
                     $clientsFields = $em->getRepository(ClientField::class)->findAll();
@@ -321,11 +310,7 @@ class ClientAdmin extends BaseAdmin
                 'label' => 'Место рождения',
                 'required' => true,
             ]);
-        /** @var MenuItem $menuItemShelterHistory */
-        $menuItemShelterHistory = $em
-            ->getRepository(MenuItem::class)
-            ->findByCode(MenuItem::CODE_SHELTER_HISTORY);
-        if ($menuItemShelterHistory && $menuItemShelterHistory->getEnabled()) {
+        if ($this->isMenuItemEnabled(MenuItem::CODE_STATUS_HOMELESS)) {
             $formMapper->add('notIsHomeless', CheckboxType::class, [
                 'label' => 'Не бездомный',
                 'label_attr' => ['class' => 'changeSelectinsData'],
@@ -874,15 +859,8 @@ class ClientAdmin extends BaseAdmin
                 ['uri' => $admin->generateUrl('app.contract.admin.list', ['id' => $id])]
             );
         }
-        /** @var MenuItem $menuItemShelterHistory */
-        $menuItemShelterHistory = $this
-            ->getConfigurationPool()
-            ->getContainer()
-            ->get('doctrine.orm.entity_manager')
-            ->getRepository(MenuItem::class)
-            ->findByCode(MenuItem::CODE_SHELTER_HISTORY);
-        if ($menuItemShelterHistory && $menuItemShelterHistory->getEnabled() && $securityContext->isGranted('ROLE_SUPER_ADMIN') || $securityContext->isGranted('ROLE_APP_SHELTER_HISTORY_ADMIN_LIST') || $securityContext->isGranted('ROLE_APP_SHELTER_HISTORY_ADMIN_ALL')) {
-            if ($this->isMenuItemEnabled('shelter_history') && $this->isMenuItemEnabledShelterHistory($id)) {
+        if ($this->isMenuItemEnabled(MenuItem::CODE_SHELTER_HISTORY) && $securityContext->isGranted('ROLE_SUPER_ADMIN') || $securityContext->isGranted('ROLE_APP_SHELTER_HISTORY_ADMIN_LIST') || $securityContext->isGranted('ROLE_APP_SHELTER_HISTORY_ADMIN_ALL')) {
+            if ($this->isMenuItemEnabled(MenuItem::CODE_SHELTER_HISTORY) && $this->isMenuItemEnabledShelterHistory($id)) {
                 $menu->addChild(
                     'Проживание в приюте',
                     ['uri' => $admin->generateUrl('app.shelter_history.admin.list', ['id' => $id])]
@@ -891,7 +869,7 @@ class ClientAdmin extends BaseAdmin
         }
 
         if ($securityContext->isGranted('ROLE_SUPER_ADMIN') || $securityContext->isGranted('ROLE_APP_RESIDENT_QUESTIONNAIRE_ADMIN_LIST') || $securityContext->isGranted('ROLE_APP_RESIDENT_QUESTIONNAIRE_ADMIN_ALL')) {
-            if ($this->isMenuItemEnabled('shelter_history') && $this->isMenuItemEnabledShelterHistory($id)) {
+            if ($this->isMenuItemEnabled(MenuItem::CODE_QUESTIONNAIRE_LIVING) && $this->isMenuItemEnabledShelterHistory($id)) {
                 $menu->addChild(
                     'Анкета',
                     ['uri' => $admin->generateUrl('app.resident_questionnaire.admin.list', ['id' => $id])]
@@ -900,7 +878,7 @@ class ClientAdmin extends BaseAdmin
         }
 
         if ($securityContext->isGranted('ROLE_SUPER_ADMIN') || $securityContext->isGranted('ROLE_APP_CERTIFICATE_ADMIN_LIST') || $securityContext->isGranted('ROLE_APP_CERTIFICATE_ADMIN_ALL')) {
-            if ($this->isMenuItemEnabled('certificate')) {
+            if ($this->isMenuItemEnabled(MenuItem::CODE_CERTIFICATE)) {
                 $menu->addChild(
                     'Выдать справку',
                     ['uri' => $admin->generateUrl('app.certificate.admin.list', ['id' => $id])]
@@ -909,7 +887,7 @@ class ClientAdmin extends BaseAdmin
         }
 
         if ($securityContext->isGranted('ROLE_SUPER_ADMIN') || $securityContext->isGranted('ROLE_APP_GENERATED_DOCUMENT_ADMIN_LIST') || $securityContext->isGranted('ROLE_APP_GENERATED_DOCUMENT_ADMIN_ALL')) {
-            if ($this->isMenuItemEnabled('generated_document')) {
+            if ($this->isMenuItemEnabled(MenuItem::CODE_GENERATED_DOCUMENT)) {
                 $menu->addChild(
                     'Построить документ',
                     ['uri' => $admin->generateUrl('app.generated_document.admin.list', ['id' => $id])]
@@ -954,18 +932,12 @@ class ClientAdmin extends BaseAdmin
      */
     public function isMenuItemEnabled($menuItemCode)
     {
-        $menuItem = $this
+        return $this
             ->getConfigurationPool()
             ->getContainer()
             ->get('doctrine.orm.entity_manager')
-            ->getRepository('AppBundle:MenuItem')
-            ->findOneBy(['code' => $menuItemCode]);
-
-        if (!$menuItem instanceof MenuItem) {
-            return false;
-        }
-
-        return $menuItem->getEnabled();
+            ->getRepository(MenuItem::class)
+            ->isEnableCode($menuItemCode);
     }
 
     public function isMenuItemEnabledShelterHistory($client)

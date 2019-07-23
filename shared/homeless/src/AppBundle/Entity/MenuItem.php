@@ -15,6 +15,9 @@ class MenuItem extends BaseEntity
     const CODE_SHELTER_HISTORY = 'shelter_history';
     const CODE_CERTIFICATE = 'certificate';
     const CODE_GENERATED_DOCUMENT = 'generated_document';
+    const CODE_NOTIFICATIONS = 'notifications';
+    const CODE_STATUS_HOMELESS = 'status_homeless';
+    const CODE_QUESTIONNAIRE_LIVING = 'questionnaire_living';
 
     /**
      * Название
