@@ -114,6 +114,13 @@ class NoticeRepository extends EntityRepository
      */
     public function getMyClientsNoticeHeader($filter, User $user)
     {
+        $isNotification = $this
+            ->getEntityManager()
+            ->getRepository(MenuItem::class)
+            ->isEnableCode(MenuItem::CODE_NOTIFICATIONS);
+        if (!$isNotification) {
+            return  [];
+        }
         $result = [];
 
         $arContracts = $this->getAllActiveContracts($filter);
@@ -127,11 +134,11 @@ class NoticeRepository extends EntityRepository
             $result[$arAllUserClientsNotice['id']]['client'] = $itm->getClient();
         }
 
-        $menuItemShelterHistory = $this
+        $isQuestionnaireLiving = $this
             ->getEntityManager()
             ->getRepository(MenuItem::class)
-            ->isEnableCode(MenuItem::CODE_NOTIFICATIONS);
-        if ($menuItemShelterHistory) {
+            ->isEnableCode(MenuItem::CODE_QUESTIONNAIRE_LIVING);
+        if ($isQuestionnaireLiving) {
             $sql = "SELECT cl.*
                 FROM client cl
                 JOIN (SELECT MAX(id) id, client_id FROM contract GROUP BY client_id) ct ON ct.client_id= cl.id
@@ -180,6 +187,13 @@ class NoticeRepository extends EntityRepository
      */
     public function getAutoNotices(Client $client)
     {
+        $isNotification = $this
+            ->getEntityManager()
+            ->getRepository(MenuItem::class)
+            ->isEnableCode(MenuItem::CODE_NOTIFICATIONS);
+        if (!$isNotification) {
+            return  [];
+        }
         $shelterHistory = $this
             ->getEntityManager()
             ->getRepository(ShelterHistory::class)

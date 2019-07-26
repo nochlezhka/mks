@@ -3,20 +3,26 @@
 namespace AppBundle\Admin;
 
 use AppBundle\Entity\ContractStatus;
+use AppBundle\Entity\MenuItem;
 
 trait BaseAdminTrait
 {
-
     public function getMyClientsNoticeCount()
     {
+        $em = $this
+            ->getConfigurationPool()
+            ->getContainer()
+            ->get('doctrine.orm.entity_manager');
+        if (!$em
+            ->getRepository(MenuItem::class)
+            ->isEnableCode(MenuItem::CODE_NOTIFICATIONS)) {
+            return 0;
+        }
         $user = $this->getConfigurationPool()->getContainer()->get('security.context')->getToken()->getUser();
 
         $filter = ['contractCreatedBy' => $user->getId()];
 
-        $inProcessStatus = $this
-            ->getConfigurationPool()
-            ->getContainer()
-            ->get('doctrine.orm.entity_manager')
+        $inProcessStatus = $em
             ->getRepository('AppBundle:ContractStatus')
             ->findOneBy(['syncId' => ContractStatus::IN_PROCESS]);
 
@@ -24,10 +30,7 @@ trait BaseAdminTrait
             $filter['contractStatus'] = ['value' => [(string)$inProcessStatus->getId()]];
         }
 
-        $arNoticesId = $this
-            ->getConfigurationPool()
-            ->getContainer()
-            ->get('doctrine.orm.entity_manager')
+        $arNoticesId = $em
             ->getRepository('AppBundle:Notice')
             ->getMyClientsNoticeHeaderCount($filter, $user);
 
@@ -41,6 +44,15 @@ trait BaseAdminTrait
      */
     public function getMyClientsNoticeHeader()
     {
+        $em = $this
+            ->getConfigurationPool()
+            ->getContainer()
+            ->get('doctrine.orm.entity_manager');
+        if (!$em
+            ->getRepository(MenuItem::class)
+            ->isEnableCode(MenuItem::CODE_NOTIFICATIONS)) {
+            return [];
+        }
         $user = $this
             ->getConfigurationPool()
             ->getContainer()
