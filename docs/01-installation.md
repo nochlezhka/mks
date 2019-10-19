@@ -59,6 +59,8 @@ sudo chmod +x /usr/local/bin/docker-compose
 
 ```
 
+Перед установкой прочитайте [рекомендации](06-dumps.md) по защите данных.
+
 1. Склонируйте репозиторий проекта:
 
     > git clone https://github.com/nochlezhka/mks.git
