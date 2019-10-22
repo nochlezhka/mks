@@ -9,7 +9,7 @@
 
 Если возникли проблемы с базой данных, необходимо в mysql выгрузить последний дамп БД:
 
-    > mysql MYSQL_DATABASE -uMYSQL_USER -pMYSQL_PASSWORD -h127.0.0.1 --portMYSQL_PORT < dump.sql
+    > mysql MYSQL_DATABASE -uMYSQL_USER -pMYSQL_PASSWORD -h127.0.0.1 --port MYSQL_PORT < dump.sql
     > Параметры MYSQL_DATABASE, MYSQL_USER, MYSQL_PASSWORD, MYSQL_PORT необходимо поменять не те, которые указаны в файле, а dump.sql - на имя файла с последним дампом базы данных
 
 и пройти все шаги начиная 9 (см. [документацию](05-update.md) по обновлению) 
