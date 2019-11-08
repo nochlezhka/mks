@@ -77,7 +77,14 @@ sudo chmod +x /usr/local/bin/docker-compose
     
     > cp shared/homeless/app/config/parameters.yml.dist shared/homeless/app/config/parameters.yml
 
-    При необходимости можно поменять параметры подключения к БД в этих файлах.
+    Обязательно нужно поменять параметры подключения к БД в .env:
+    
+    > MYSQL_PASSWORD = 
+    > MYSQL_ROOT_PASSWORD =
+    
+    в файле shared/homeless/app/config/parameters.yml нужно указать тот же пароль, что и в MYSQL_PASSWORD:
+    
+    > database_password: 
 
 4. Запустите сборку контейнеров:
 
