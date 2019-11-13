@@ -42,6 +42,7 @@ services:
           - [addChild, ['@app.generated_document.admin']]
           - [addChild, ['@app.notice.admin']]
           - [addChild, ['@app.history_download.admin']]
+          - [addChild, ['@app.resident_form_response.admin']]
           - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
           - [ setTemplate, ['layout', 'admin/client_show.html.twig']]
 
@@ -239,6 +240,31 @@ services:
       arguments: [null, AppBundle\Entity\Position, SonataAdminBundle:CRUD]
       calls:
           - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
+
+  app.client_form.admin:
+      class: AppBundle\Admin\ClientFormAdmin
+      tags:
+          - { name: sonata.admin, manager_type: orm, label: 'Редактирование форм' }
+      arguments: [~, AppBundle\Entity\ClientForm, SonataAdminBundle:CRUD]
+      calls:
+          - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
+          - [addChild, ['@app.client_form_field.admin', 'form']]
+
+  app.client_form_field.admin:
+    class: AppBundle\Admin\ClientFormFieldAdmin
+    tags:
+      - { name: sonata.admin, manager_type: orm, label: 'ClientFormField' }
+    arguments: [~, AppBundle\Entity\ClientFormField, SonataAdminBundle:CRUD]
+    calls:
+      - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
+
+  app.resident_form_response.admin:
+    class: AppBundle\Admin\ResidentFormResponseAdmin
+    tags:
+      - { name: sonata.admin, manager_type: orm, label: 'Анкета проживающего' }
+    arguments: [~, AppBundle\Entity\ClientFormResponse, SonataAdminBundle:CRUD]
+    calls:
+      - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
 
   app.file_type:
       class: AppBundle\Form\Type\AppFileType

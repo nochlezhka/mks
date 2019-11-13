@@ -874,6 +874,10 @@ class ClientAdmin extends BaseAdmin
                     'Анкета',
                     ['uri' => $admin->generateUrl('app.resident_questionnaire.admin.list', ['id' => $id])]
                 );
+                $menu->addChild(
+                    'Анкета проживавшего',
+                    ['uri' => $admin->generateUrl('app.resident_form_response.admin.list', ['id' => $id])]
+                );
             }
         }
 
