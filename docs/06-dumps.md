@@ -2,6 +2,10 @@
 
 Для сохранности данных в базе данных и статического контента (фотографий и документов клиентов) рекомендуется настроить регулярное копирование сначала в локальную директорию, а потом на удаленный сервер.
 
+Cron-задача для регулярного резервного копирования БД и статических данных
+
+    > 0 5	 * * *  root	docker stop mks-app && mysqldump MYSQL_DATABASE -uMYSQL_USER -pMYSQL_PASSWORD -h127.0.0.1 --port MYSQL_PORT > /PATH/TO/BACKUP/DIRECTORY/mks-dbbackup-`date +\%Y\%m\%d`.sql && docker start mks-app
+    > 10 5	 * * 6	root	mkdir /PATH/TO/BACKUP/DIRECTORY/`date +\%Y\%m\%d` && cp -r /PATH/TO/MKS/mks/shared/homeless/web/uploads/ /PATH/TO/BACKUP/DIRECTORY/`date +\%Y\%m\%d`
 
 ## Восстановление из резервной копии
 
