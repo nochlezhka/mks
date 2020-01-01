@@ -21,6 +21,7 @@ services:
       default:
         aliases:
           - $NGINX_ALIAS
+    restart: always
   php:
     container_name: mks-app
     build:
@@ -33,6 +34,7 @@ services:
       - db
     volumes:
       - "./shared/homeless:/var/www/symfony"
+    restart: always
   db:
     container_name: mks-db
     image: mariadb:10.3
@@ -47,3 +49,4 @@ services:
         MYSQL_DATABASE: $MYSQL_DATABASE
         MYSQL_USER: $MYSQL_USER
         MYSQL_PASSWORD: $MYSQL_PASSWORD
+    restart: always
