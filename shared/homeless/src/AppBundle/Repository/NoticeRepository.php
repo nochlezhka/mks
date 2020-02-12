@@ -3,6 +3,8 @@
 namespace AppBundle\Repository;
 
 use AppBundle\Entity\Client;
+use AppBundle\Entity\ClientFormField;
+use AppBundle\Entity\ClientFormResponseValue;
 use AppBundle\Entity\MenuItem;
 use AppBundle\Entity\Notice;
 use AppBundle\Entity\ResidentQuestionnaire;
@@ -139,7 +141,14 @@ class NoticeRepository extends EntityRepository
             ->getRepository(MenuItem::class)
             ->isEnableCode(MenuItem::CODE_QUESTIONNAIRE_LIVING);
         if ($isQuestionnaireLiving) {
-            $sql = "SELECT cl.*
+            $old = true;
+            $sql = null;
+            $qnrTypeFieldId = ClientFormField::RESIDENT_QUESTIONNAIRE_TYPE_FIELD_ID;
+            $qnrType3Mon = ClientFormResponseValue::RESIDENT_QUESTIONNAIRE_TYPE_3_MONTHS;
+            $qnrType6Mon = ClientFormResponseValue::RESIDENT_QUESTIONNAIRE_TYPE_6_MONTHS;
+            $qnrType1Year = ClientFormResponseValue::RESIDENT_QUESTIONNAIRE_TYPE_1_YEAR;
+            if ($old) {
+                $sql = "SELECT cl.*
                 FROM client cl
                 JOIN (SELECT MAX(id) id, client_id FROM contract GROUP BY client_id) ct ON ct.client_id= cl.id
                 JOIN contract c on c.id = ct.id
@@ -152,6 +161,24 @@ class NoticeRepository extends EntityRepository
                         (rq6.id IS NULL AND rq12.id IS NULL AND DATE_ADD(sh.date_to, INTERVAL 6 MONTH) < NOW()) OR
                         (rq12.id IS NULL AND DATE_ADD(sh.date_to, INTERVAL 12 MONTH) < NOW())
                     ) AND sh.date_to >= '2019-01-01';";
+            } else {
+                $sql = "SELECT cl.*
+                FROM client cl
+                JOIN (SELECT MAX(id) id, client_id FROM contract GROUP BY client_id) ct ON ct.client_id= cl.id
+                JOIN contract c on c.id = ct.id
+                JOIN (SELECT MAX(id) id, client_id, MAX(date_to) date_to, MAX(date_from) date_from FROM shelter_history WHERE date_to IS NOT NULL GROUP BY client_id) sh ON sh.client_id= c.client_id
+                LEFT JOIN client_form_response_value rq3
+                    ON rq3.client_id = c.client_id AND rq3.client_form_field_id = $qnrTypeFieldId AND rq3.value = '$qnrType3Mon'
+                LEFT JOIN client_form_response_value rq6
+                    ON rq6.client_id = c.client_id AND rq6.client_form_field_id = $qnrTypeFieldId AND rq6.value = '$qnrType6Mon'
+                LEFT JOIN client_form_response_value rq12
+                    ON rq12.client_id = c.client_id AND rq12.client_form_field_id = $qnrTypeFieldId AND rq12.value = '$qnrType1Year'
+                WHERE c.created_by_id = ? AND (
+                        (rq3.id IS NULL AND rq6.id IS NULL AND rq12.id IS NULL AND DATE_ADD(sh.date_to, INTERVAL 3 MONTH) < NOW()) OR
+                        (rq6.id IS NULL AND rq12.id IS NULL AND DATE_ADD(sh.date_to, INTERVAL 6 MONTH) < NOW()) OR
+                        (rq12.id IS NULL AND DATE_ADD(sh.date_to, INTERVAL 12 MONTH) < NOW())
+                    ) AND sh.date_to >= '2019-01-01';";
+            }
 
             $rsm = new ResultSetMappingBuilder($this->getEntityManager());
             $rsm->addRootEntityFromClassMetadata(Client::class, 'c');

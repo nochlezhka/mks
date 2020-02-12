@@ -337,3 +337,20 @@ services:
     class: AppBundle\Service\DOCXNamingService
   app.pdf_naming_service:
     class: AppBundle\Service\PDFNamingService
+
+  app.client_form_response.repository:
+    class: AppBundle\Repository\ClientFormResponseRepository
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments: ['AppBundle\Entity\ClientFormResponse']
+
+  app.client_form.repository:
+    class: AppBundle\Repository\ClientFormRepository
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments: ['AppBundle\Entity\ClientForm']
+
+  app.resident_questionnaire_converter:
+    class: AppBundle\Service\ResidentQuestionnaireConverter
+    arguments:
+      - '@doctrine.orm.entity_manager'
+      - '@app.client_form_response.repository'
+      - '@app.client_form.repository'

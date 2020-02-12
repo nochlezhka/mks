@@ -3,12 +3,14 @@
 
 namespace AppBundle\Admin;
 
-
 use AppBundle\Entity\ClientForm;
 use AppBundle\Entity\ClientFormField;
 use AppBundle\Entity\ClientFormResponse;
-use AppBundle\Entity\ClientFormResponseValue;
 use AppBundle\Form\DataTransformer\ClientFormCheckboxTransformer;
+use AppBundle\Form\DataTransformer\ClientFormMultiselectTransformer;
+use AppBundle\Repository\ClientFormResponseRepository;
+use AppBundle\Util\BaseEntityUtil;
+use AppBundle\Util\ClientFormUtil;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
@@ -108,20 +110,15 @@ class ClientFormResponseAdmin extends BaseAdmin
      */
     protected function configureFormFields(FormMapper $formMapper)
     {
-        $formMapper
-            ->add('name', null, [
-                'label' => 'Название',
-                'required' => true,
-            ]);
-
         // из полей текущей формы составляем фейковые поля админки
         // значения этих полей будут читаться и сохраняться в объекте ClientFormResponse через магические методы
-        $formFields = $this->getCurrentForm()->getFields();
+        $formFields = $this->getCurrentForm()->getFields()->toArray();
+        /**
+         * @var $formFields ClientFormField[]
+         */
+        BaseEntityUtil::sortEntities($formFields);
         $subject = $this->getSubject();
         foreach ($formFields as $field) {
-            /**
-             * @var $field ClientFormField
-             */
             $fieldName = "field_" . $field->getId();
             $fieldDesc = $this->getFieldDescription($field, $fieldName, $subject);
             $formMapper
@@ -129,14 +126,23 @@ class ClientFormResponseAdmin extends BaseAdmin
             if ($fieldDesc['type'] == CheckboxType::class) {
                 // для полей-чекбоксов ещё навешиваем преобразователь типов, т.к. у всех полей значения строкового типа.
                 $formMapper->getFormBuilder()->get($fieldName)
-                    ->addViewTransformer(
+                    ->addModelTransformer(
                         new ClientFormCheckboxTransformer(
                             $subject !== null && $subject->getId() !== null ? $subject->getId() : null,
                             $field->getId()
-                        ),
-                        // важно указать здесь forcePrepend, иначе преобразователь BooleanType для поля-чекбокса
-                        // симфонии ругнётся на строку
-                        true
+                        )
+                    );
+            } elseif ($fieldDesc['type'] == ChoiceType::class && isset($fieldDesc['options']['multiple'])
+                && $fieldDesc['options']['multiple']
+            ) {
+                // для селектов со множественным выбором навешиваем преобразователь типов из строк в массив строк
+                // и обратно
+                $formMapper->getFormBuilder()->get($fieldName)
+                    ->addModelTransformer(
+                        new ClientFormMultiselectTransformer(
+                            $subject !== null && $subject->getId() !== null ? $subject->getId() : null,
+                            $field->getId()
+                        )
                     );
             }
         }
@@ -165,30 +171,31 @@ class ClientFormResponseAdmin extends BaseAdmin
             case ClientFormField::TYPE_OPTION:
                 $type = ChoiceType::class;
                 $optionsText = $field->getOptions();
-                $choiceList = preg_split("/[\r\n]+/", $optionsText);
-                // не включаем пустые строки в список для выбора
-                $choiceList = array_filter($choiceList, function ($str) {
-                    return trim($str) != '';
-                });
-                if ($choiceList === false) {
-                    $choiceList = [];
-                }
+                $choiceList = ClientFormUtil::optionsTextToArray($optionsText);
                 $options['choices'] = array_combine($choiceList, $choiceList);
                 // если в редактируемой анкете у этого поля выставлено значение, которого нет в списке для выбора,
                 // пишем об этом в лог и добавляем значение в список
                 if ($subject !== null && $subject->getId() !== null) {
-                    $fieldValue = $subject->__get($fieldName);
-                    $emptyAllowed = false;
-                    if ($fieldValue === null && !$field->isRequired()) {
-                        $emptyAllowed = true;
+                    $value = $subject->__get($fieldName);
+                    $fieldValues = [];
+                    if ($value !== null) {
+                        if ($field->isMultiselect()) {
+                            $fieldValues = ClientFormUtil::optionsTextToArray($value);
+                        } else {
+                            $fieldValues = [$value];
+                        }
                     }
-                    if (!array_key_exists($fieldValue, $options['choices']) && !$emptyAllowed) {
-                        error_log("Missing choice " .
-                            ($fieldValue === null ? 'null' : "'$fieldValue'") .
-                            " in field $fieldName of client form response " . $subject->getId()
-                        );
-                        $options['choices'][$fieldValue] = $fieldValue;
+                    foreach ($fieldValues as $fieldValue) {
+                        if (!array_key_exists($fieldValue, $options['choices'])) {
+                            error_log("Missing choice " . ($fieldValue === null ? 'null' : "'$fieldValue'") .
+                                " in field $fieldName of client form response " . $subject->getId()
+                            );
+                            $options['choices'][$fieldValue] = $fieldValue;
+                        }
                     }
+                }
+                if ($field->isMultiselect()) {
+                    $options['multiple'] = true;
                 }
                 break;
             case ClientFormField::TYPE_CHECKBOX:
@@ -208,81 +215,21 @@ class ClientFormResponseAdmin extends BaseAdmin
 
     public function prePersist($object)
     {
-        $this->processFieldValues($object);
+        $this->getClientFormResponseRepository()->prepareForCreateOrUpdate($object, $this->getCurrentForm());
     }
 
     public function preUpdate($object)
     {
-        $this->processFieldValues($object);
+        $this->getClientFormResponseRepository()->prepareForCreateOrUpdate($object, $this->getCurrentForm());
     }
 
     /**
-     * @param ClientFormResponse $object
+     * @return ClientFormResponseRepository
      */
-    private function processFieldValues(ClientFormResponse $object)
+    private function getClientFormResponseRepository()
     {
-        $submittedFields = $object->_getSubmittedFields();
-        // пока не умеем удалять поля формы
-        $toRemove = [];
-        $currentForm = $this->getCurrentForm();
-        $object->setForm($currentForm);
-
-        // обновляем значения уже привязанных к анкете полей
-        // после этого в $submittedFields останутся только значения новых полей
-        foreach ($object->getValues() as $fieldValue) {
-            /**
-             * @var $fieldValue ClientFormResponseValue
-             */
-            $fieldId = $fieldValue->getClientFormField()->getId();
-            if (array_key_exists($fieldId, $submittedFields)) {
-                $value = $submittedFields[$fieldId];
-                if ($value === null) {
-                    $toRemove[] = $fieldId;
-                } else {
-                    $fieldValue->setValue($value);
-                }
-                unset($submittedFields[$fieldId]);
-            }
-        }
-
-        if (count($toRemove) > 0) {
-            $idsMap = array_fill_keys($toRemove, 1);
-
-            $formValues = $object->getValues();
-            for ($i = count($formValues) - 1; $i >= 0; --$i) {
-                $fieldValue = $formValues[$i];
-                $fieldId = $fieldValue->getClientFormField()->getId();
-                if (array_key_exists($fieldId, $idsMap)) {
-                    $object->getValues()->removeElement($fieldValue);
-                }
-            }
-        }
-
-        // если есть новые поля, привязываем их
-        // у новой анкеты все поля - новые, т.к. привязанных ещё не было
-        if (count($submittedFields) > 0) {
-            $fields = $this->getModelManager()->findBy(ClientFormField::class, [
-                'id' => array_keys($submittedFields)
-            ]);
-            $fieldsById = [];
-            foreach ($fields as $field) {
-                /**
-                 * @var $field ClientFormField
-                 */
-                $fieldsById[$field->getId()] = $field;
-            }
-
-            $formValues = $object->getValues();
-            foreach ($submittedFields as $fieldId => $value) {
-                $fieldValue = new ClientFormResponseValue();
-                $fieldValue->setClientFormResponse($object);
-                $fieldValue->setClientFormField($fieldsById[$fieldId]);
-                $fieldValue->setValue($value);
-
-                $formValues[] = $fieldValue;
-            }
-            $object->setValues($formValues);
-        }
+        return $this->getConfigurationPool()->getContainer()->get('doctrine.orm.entity_manager')
+            ->getRepository(ClientFormResponse::class);
     }
 
     /**
@@ -290,9 +237,23 @@ class ClientFormResponseAdmin extends BaseAdmin
      */
     protected function configureListFields(ListMapper $listMapper)
     {
+        $firstField = $this->getCurrentForm()->getFirstField();
+        if ($firstField === null) {
+            return;
+        }
         $listMapper
-            ->addIdentifier('name', null, [
-                'label' => 'Название',
+            ->addIdentifier('firstFieldValue', null, [
+                'label' => $firstField->getName(),
+            ])->add('isFull', 'boolean', [
+                'label' => 'Заполнено',
+            ]);
+        $listMapper
+            ->add('_action', null, [
+                'label' => 'Действие',
+                'actions' => [
+                    'edit' => [],
+                    'delete' => [],
+                ]
             ]);
     }
 }

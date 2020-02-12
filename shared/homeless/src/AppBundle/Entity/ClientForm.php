@@ -3,13 +3,14 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Util\BaseEntityUtil;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping AS ORM;
 
 /**
  * Редактируемая форма
  *
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\ClientFormRepository")
  */
 class ClientForm extends BaseEntity
 {
@@ -81,5 +82,25 @@ class ClientForm extends BaseEntity
     public function __toString()
     {
         return '' . $this->getName();
+    }
+
+    /**
+     * Возвращает первое поле формы, если отсортировать поля по значению `sort`.
+     *
+     * Если у формы нет полей, то возвращает `null`
+     *
+     * @return ClientFormField|null
+     */
+    public function getFirstField()
+    {
+        $formFields = $this->getFields()->toArray();
+        /**
+         * @var $formFields ClientFormField[]
+         */
+        BaseEntityUtil::sortEntities($formFields);
+        if (count($formFields) == 0) {
+            return null;
+        }
+        return $formFields[0];
     }
 }
