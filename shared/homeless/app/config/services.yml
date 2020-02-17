@@ -42,6 +42,7 @@ services:
           - [addChild, ['@app.generated_document.admin']]
           - [addChild, ['@app.notice.admin']]
           - [addChild, ['@app.history_download.admin']]
+          - [addChild, ['@app.resident_form_response.admin']]
           - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
           - [ setTemplate, ['layout', 'admin/client_show.html.twig']]
 
@@ -240,6 +241,31 @@ services:
       calls:
           - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
 
+  app.client_form.admin:
+      class: AppBundle\Admin\ClientFormAdmin
+      tags:
+          - { name: sonata.admin, manager_type: orm, label: 'Редактирование форм' }
+      arguments: [~, AppBundle\Entity\ClientForm, SonataAdminBundle:CRUD]
+      calls:
+          - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
+          - [addChild, ['@app.client_form_field.admin', 'form']]
+
+  app.client_form_field.admin:
+    class: AppBundle\Admin\ClientFormFieldAdmin
+    tags:
+      - { name: sonata.admin, manager_type: orm, label: 'ClientFormField' }
+    arguments: [~, AppBundle\Entity\ClientFormField, SonataAdminBundle:CRUD]
+    calls:
+      - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
+
+  app.resident_form_response.admin:
+    class: AppBundle\Admin\ResidentFormResponseAdmin
+    tags:
+      - { name: sonata.admin, manager_type: orm, label: 'Анкета проживающего' }
+    arguments: [~, AppBundle\Entity\ClientFormResponse, SonataAdminBundle:CRUD]
+    calls:
+      - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
+
   app.file_type:
       class: AppBundle\Form\Type\AppFileType
       tags:
@@ -311,3 +337,20 @@ services:
     class: AppBundle\Service\DOCXNamingService
   app.pdf_naming_service:
     class: AppBundle\Service\PDFNamingService
+
+  app.client_form_response.repository:
+    class: AppBundle\Repository\ClientFormResponseRepository
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments: ['AppBundle\Entity\ClientFormResponse']
+
+  app.client_form.repository:
+    class: AppBundle\Repository\ClientFormRepository
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments: ['AppBundle\Entity\ClientForm']
+
+  app.resident_questionnaire_converter:
+    class: AppBundle\Service\ResidentQuestionnaireConverter
+    arguments:
+      - '@doctrine.orm.entity_manager'
+      - '@app.client_form_response.repository'
+      - '@app.client_form.repository'

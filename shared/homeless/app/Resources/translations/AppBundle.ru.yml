@@ -65,6 +65,14 @@ breadcrumb:
       link_menu_item_list: Отображение разделов
       link_menu_item_create: Создать
       link_menu_item_delete: Удалить
+      link_client_form_list: Редактирование форм
+      link_client_form_create: Создание формы
+      link_client_form_field_list: Список полей формы
+      link_client_form_field_create: Создание поля формы
+      link_resident_form_response_list: Анкеты проживавшего
+      link_resident_form_response_create: Заполнение анкеты проживавшего
+
+ClientFormField: Поле формы
 
 list:
       label_id: ID

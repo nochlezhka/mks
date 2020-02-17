@@ -3,6 +3,8 @@
 namespace AppBundle\Admin;
 
 use AppBundle\Entity\ResidentQuestionnaire;
+use AppBundle\Service\ResidentQuestionnaireConverter;
+use Doctrine\ORM\EntityManager;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 
@@ -92,5 +94,41 @@ class ResidentQuestionnaireAdmin extends BaseAdmin
                     'delete' => [],
                 ]
             ]);
+    }
+
+    public function preUpdate($object)
+    {
+        // сохранить копию формы в новом формате
+        $this->getConverter()->createOrUpdateClientFormResponse($object);
+    }
+
+    public function postPersist($object)
+    {
+        // сохранить копию формы в новом формате
+        $this->getConverter()->createOrUpdateClientFormResponse($object);
+        $this->getEntityManager()->flush();
+    }
+
+    public function preRemove($object)
+    {
+        // удалить копию формы в новом формате
+        $this->getConverter()->deleteClientFormResponse($object);
+    }
+
+
+    /**
+     * @return EntityManager
+     */
+    private function getEntityManager()
+    {
+        return $this->getConfigurationPool()->getContainer()->get('doctrine.orm.entity_manager');
+    }
+
+    /**
+     * @return ResidentQuestionnaireConverter
+     */
+    private function getConverter()
+    {
+        return $this->getConfigurationPool()->getContainer()->get('app.resident_questionnaire_converter');
     }
 }

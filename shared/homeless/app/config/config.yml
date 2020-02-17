@@ -222,6 +222,7 @@ sonata_admin:
                       - app.position.admin
                       - sonata.user.admin.user
                       - sonata.user.admin.group
+                      - app.client_form.admin
                  roles:
                       [ROLE_ADMIN]
 sonata_user:

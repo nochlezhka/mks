@@ -150,6 +150,14 @@ class ResidentQuestionnaire
     private $client;
 
     /**
+     * @return mixed
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
      * Set client
      *
      * @param \AppBundle\Entity\Client $client

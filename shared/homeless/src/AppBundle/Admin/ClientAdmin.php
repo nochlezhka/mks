@@ -876,6 +876,14 @@ class ClientAdmin extends BaseAdmin
                 );
             }
         }
+        if ($securityContext->isGranted('ROLE_SUPER_ADMIN') || $securityContext->isGranted('ROLE_APP_RESIDENT_FORM_RESPONSE_ADMIN_LIST') || $securityContext->isGranted('ROLE_APP_RESIDENT_FORM_RESPONSE_ADMIN_ALL')) {
+            if ($this->isMenuItemEnabled(MenuItem::CODE_QUESTIONNAIRE_LIVING) && $this->isMenuItemEnabledShelterHistory($id)) {
+                $menu->addChild(
+                    'Новая анкета',
+                    ['uri' => $admin->generateUrl('app.resident_form_response.admin.list', ['id' => $id])]
+                );
+            }
+        }
 
         if ($securityContext->isGranted('ROLE_SUPER_ADMIN') || $securityContext->isGranted('ROLE_APP_CERTIFICATE_ADMIN_LIST') || $securityContext->isGranted('ROLE_APP_CERTIFICATE_ADMIN_ALL')) {
             if ($this->isMenuItemEnabled(MenuItem::CODE_CERTIFICATE)) {
