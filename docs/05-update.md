@@ -4,6 +4,13 @@
 
   > shared/homeless/web/uploads/images/client/photo
   > shared/homeless/web/uploads/files/
+  
+  И конфигурационные файлы:
+  
+  > docker-compose.yml
+  > .env
+  > shared/homeless/app/config/parameters.yml
+  
 
 1. Перейти в корневую директорию МКС
 2. Стянуть изменения из репозитория:
