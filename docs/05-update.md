@@ -3,12 +3,15 @@
 0. Создать бекап базы данных и всех статических данных (загруженные картинки и документы)
 
   > shared/homeless/web/uploads/images/client/photo
+  
   > shared/homeless/web/uploads/files/
   
   И конфигурационные файлы:
   
   > docker-compose.yml
+  
   > .env
+  
   > shared/homeless/app/config/parameters.yml
   
 
