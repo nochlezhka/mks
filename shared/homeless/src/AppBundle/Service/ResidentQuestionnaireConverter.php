@@ -9,6 +9,7 @@ use AppBundle\Entity\ClientFormResponse;
 use AppBundle\Entity\ResidentQuestionnaire;
 use AppBundle\Repository\ClientFormRepository;
 use AppBundle\Repository\ClientFormResponseRepository;
+use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManager;
 
 class ResidentQuestionnaireConverter
@@ -43,14 +44,33 @@ class ResidentQuestionnaireConverter
     }
 
     /**
-     * Ищет копию анкеты проживавшего, составленную из `$qnr`, в новом формате.
-     * Если такая есть - обновляет её, если нет - создаёт новую копию.
+     * Лочит в БД копию анкеты проживающего `$qnr`.
+     * Если копия не найдена, возвращает `null`.
      *
      * @param ResidentQuestionnaire $qnr
+     * @return ClientFormResponse|null
+     * @throws \Doctrine\ORM\TransactionRequiredException
      */
-    public function createOrUpdateClientFormResponse(ResidentQuestionnaire $qnr)
+    public function lockClientForm(ResidentQuestionnaire $qnr)
     {
-        $resp = $this->clientFormResponseRepository->findOneBy(['residentQuestionnaireId' => $qnr->getId()]);
+        $q = $this->entityManager->createQuery("
+            SELECT cfr FROM ".ClientFormResponse::class." cfr
+            WHERE cfr.residentQuestionnaireId = :qnrId");
+        $q->setParameter('qnrId', $qnr->getId());
+        $q->setLockMode(LockMode::PESSIMISTIC_WRITE);
+        $res = $q->getResult();
+        return count($res) > 0 ? $res[0] : null;
+    }
+
+    /**
+     * Если параметр `$resp` не `null`, обновляет копию анкеты `$resp` из анкеты в старом формате `$qnr`
+     * Если `$resp` - `null`, создаёт новую копию анкеты на основе значений из `$qnr`
+     *
+     * @param ResidentQuestionnaire $qnr
+     * @param ClientFormResponse|null $resp
+     */
+    public function createOrUpdateClientFormResponse(ResidentQuestionnaire $qnr, $resp)
+    {
         if ($resp === null) {
             $resp = new ClientFormResponse();
             $resp->setClient($qnr->getClient());

@@ -96,25 +96,55 @@ class ResidentQuestionnaireAdmin extends BaseAdmin
             ]);
     }
 
-    public function preUpdate($object)
+    /**
+     * При создании анкеты, в транзакции создаём её копию в новом формате.
+     *
+     * @param mixed $object
+     * @return bool|mixed
+     * @throws \Exception
+     */
+    public function create($object)
     {
-        // сохранить копию формы в новом формате
-        $this->getConverter()->createOrUpdateClientFormResponse($object);
+        return $this->getEntityManager()->transactional(function(EntityManager $em) use($object) {
+            $rv = parent::create($object);
+            $cfr = $this->getConverter()->lockClientForm($object);
+            $this->getConverter()->createOrUpdateClientFormResponse($object, $cfr);
+            $em->flush();
+            return $rv;
+        });
     }
 
-    public function postPersist($object)
+    /**
+     * При обновлени анкеты, в транзакции создаём или обновляем её копию в новом формате.
+     *
+     * @param mixed $object
+     * @return bool|mixed
+     * @throws \Exception
+     */
+    public function update($object)
     {
-        // сохранить копию формы в новом формате
-        $this->getConverter()->createOrUpdateClientFormResponse($object);
-        $this->getEntityManager()->flush();
+        return $this->getEntityManager()->transactional(function(EntityManager $em) use($object) {
+            $cfr = $this->getConverter()->lockClientForm($object);
+            $rv = parent::update($object);
+            $this->getConverter()->createOrUpdateClientFormResponse($object, $cfr);
+            return $rv;
+        });
     }
 
-    public function preRemove($object)
+    /**
+     * При удалении анкеты, в транзакции удалить её копию в нофом формате.
+     *
+     * @param mixed $object
+     * @throws \Exception
+     */
+    public function delete($object)
     {
-        // удалить копию формы в новом формате
-        $this->getConverter()->deleteClientFormResponse($object);
+        $this->getEntityManager()->transactional(function($em) use($object) {
+            $this->getConverter()->lockClientForm($object);
+            $this->getConverter()->deleteClientFormResponse($object);
+            parent::delete($object);
+        });
     }
-
 
     /**
      * @return EntityManager

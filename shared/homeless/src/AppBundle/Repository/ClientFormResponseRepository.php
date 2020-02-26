@@ -6,6 +6,7 @@ use AppBundle\Entity\ClientForm;
 use AppBundle\Entity\ClientFormField;
 use AppBundle\Entity\ClientFormResponse;
 use AppBundle\Entity\ClientFormResponseValue;
+use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityRepository;
 
 /**
@@ -89,5 +90,10 @@ class ClientFormResponseRepository extends EntityRepository
             }
             $object->setValues($formValues);
         }
+    }
+
+    public function lockForUpdate(ClientFormResponse $cfr)
+    {
+        $this->find($cfr->getId(), LockMode::PESSIMISTIC_WRITE);
     }
 }
