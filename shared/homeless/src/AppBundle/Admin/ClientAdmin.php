@@ -18,6 +18,7 @@ use AppBundle\Entity\ShelterHistory;
 use AppBundle\Entity\Notice;
 use AppBundle\Form\DataTransformer\ImageStringToFileTransformer;
 use AppBundle\Form\Type\AppHomelessFromDateType;
+use AppBundle\Service\MetaService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
@@ -44,6 +45,16 @@ class ClientAdmin extends BaseAdmin
     ];
 
     protected $translationDomain = 'AppBundle';
+
+    /**
+     * @var MetaService
+     */
+    private $metaService;
+
+    public function configure()
+    {
+        $this->metaService = $this->getConfigurationPool()->getContainer()->get('app.meta_service');
+    }
 
     /**
      * @param ShowMapper $showMapper
@@ -868,18 +879,21 @@ class ClientAdmin extends BaseAdmin
             }
         }
 
+        $clientFormsEnabled = $this->metaService->isClientFormsEnabled();
         if ($securityContext->isGranted('ROLE_SUPER_ADMIN') || $securityContext->isGranted('ROLE_APP_RESIDENT_QUESTIONNAIRE_ADMIN_LIST') || $securityContext->isGranted('ROLE_APP_RESIDENT_QUESTIONNAIRE_ADMIN_ALL')) {
             if ($this->isMenuItemEnabled(MenuItem::CODE_QUESTIONNAIRE_LIVING) && $this->isMenuItemEnabledShelterHistory($id)) {
+                $name = $clientFormsEnabled ? 'Старая анкета' : 'Анкета';
                 $menu->addChild(
-                    'Анкета',
+                    $name,
                     ['uri' => $admin->generateUrl('app.resident_questionnaire.admin.list', ['id' => $id])]
                 );
             }
         }
         if ($securityContext->isGranted('ROLE_SUPER_ADMIN') || $securityContext->isGranted('ROLE_APP_RESIDENT_FORM_RESPONSE_ADMIN_LIST') || $securityContext->isGranted('ROLE_APP_RESIDENT_FORM_RESPONSE_ADMIN_ALL')) {
             if ($this->isMenuItemEnabled(MenuItem::CODE_QUESTIONNAIRE_LIVING) && $this->isMenuItemEnabledShelterHistory($id)) {
+                $name = $clientFormsEnabled ? 'Анкета' : 'Новая анкета';
                 $menu->addChild(
-                    'Новая анкета',
+                    $name,
                     ['uri' => $admin->generateUrl('app.resident_form_response.admin.list', ['id' => $id])]
                 );
             }

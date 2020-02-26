@@ -5,12 +5,12 @@ namespace AppBundle\Admin;
 
 
 use AppBundle\Entity\ClientForm;
-use AppBundle\Entity\ClientFormField;
 use AppBundle\Entity\ClientFormResponse;
+use AppBundle\Service\MetaService;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
- * Дочерний класс `ClientFormResponseAdmin` для работы с анкетой проживавшего.
+ * Дочерний класс `ClientFormResponseAdmin` для работы с анкетой проживающего.
  * ID формы анкеты захардкожен в `$this->formId`
  *
  * @package AppBundle\Admin
@@ -30,6 +30,12 @@ class ResidentFormResponseAdmin extends ClientFormResponseAdmin
      */
     public function hasAccess($action, $object = null)
     {
+        if ($this->getMetaService()->isClientFormsEnabled()) {
+            return parent::hasAccess($action, $object);
+        }
+        // если анкеты в новом формате ещё не открыли, запрещаем удаление синхронных копий,
+        // составленных из анкет в старом формате
+
         // на всякий случай запрещаем массовое удаление
         if ($action == 'batchDelete') {
             return false;
@@ -46,11 +52,25 @@ class ResidentFormResponseAdmin extends ClientFormResponseAdmin
      */
     public function preValidate($object)
     {
+        if ($this->getMetaService()->isClientFormsEnabled()) {
+            parent::preValidate($object);
+            return;
+        }
+        // если анкеты в новом формате ещё не открыли, запрещаем редактирование синхронных копий,
+        // составленных из анкет в старом формате
         if ($object->getResidentQuestionnaireId() !== null) {
             throw new AccessDeniedException(sprintf(
                 "Изменение копии анкеты запрещено."
             ));
         }
         parent::preValidate($object);
+    }
+
+    /**
+     * @return MetaService
+     */
+    private function getMetaService()
+    {
+        return $this->getConfigurationPool()->getContainer()->get('app.meta_service');
     }
 }
