@@ -3,6 +3,10 @@
 
 security:
 
+    # выключает кеширование грантов в сессии, чтобы можно было отнимать/выдавать людям права без перелогина
+    # добавляет один поход в базу на каждой странице
+    always_authenticate_before_granting: true
+
     providers:
         fos_userbundle:
             id: fos_user.user_manager
