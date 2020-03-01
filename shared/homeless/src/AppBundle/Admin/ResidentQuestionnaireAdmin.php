@@ -3,10 +3,12 @@
 namespace AppBundle\Admin;
 
 use AppBundle\Entity\ResidentQuestionnaire;
+use AppBundle\Service\MetaService;
 use AppBundle\Service\ResidentQuestionnaireConverter;
 use Doctrine\ORM\EntityManager;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class ResidentQuestionnaireAdmin extends BaseAdmin
 {
@@ -147,6 +149,33 @@ class ResidentQuestionnaireAdmin extends BaseAdmin
     }
 
     /**
+     * @inheritDoc
+     * @param ResidentQuestionnaire $object
+     */
+    public function hasAccess($action, $object = null)
+    {
+        if ($this->getMetaService()->isClientFormsEnabled()
+            && ($action == 'edit' || $action == 'create' || $action == 'delete' || $action == 'batchDelete')
+        ) {
+            return false;
+        }
+        return parent::hasAccess($action, $object);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function checkAccess($action, $object = null)
+    {
+        if ($this->getMetaService()->isClientFormsEnabled()
+            && ($action == 'edit' || $action == 'create' || $action == 'delete' || $action == 'batchDelete')
+        ) {
+            throw new AccessDeniedException("Изменение анкет в старом формате запрещено.");
+        }
+        parent::checkAccess($action, $object);
+    }
+
+    /**
      * @return EntityManager
      */
     private function getEntityManager()
@@ -160,5 +189,13 @@ class ResidentQuestionnaireAdmin extends BaseAdmin
     private function getConverter()
     {
         return $this->getConfigurationPool()->getContainer()->get('app.resident_questionnaire_converter');
+    }
+
+    /**
+     * @return MetaService
+     */
+    private function getMetaService()
+    {
+        return $this->getConfigurationPool()->getContainer()->get('app.meta_service');
     }
 }
