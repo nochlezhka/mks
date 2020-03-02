@@ -104,8 +104,6 @@ class ResidentQnrCheckNSwitchCommand extends ResidentQnrCommon
             JOIN cfr.values values
             WHERE $qnrRangeConditionDql
         ")->setParameters($queryParams)->getResult();
-        // просим Doctrine не отслеживать выбранные объекты, т.к. они не будут меняться
-        $this->massDetach($cfrRes);
 
         $qnrById = $this->mapById($qnrArray);
         $cfrByQnrId = $this->mapByQnrId($cfrRes);

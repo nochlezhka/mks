@@ -116,6 +116,8 @@ abstract class ResidentQnrCommon extends ContainerAwareCommand
     {
         $finished = false;
         $lastId = 0;
+        // на всякий случай делаем flush, т.к. будем делать entityManager->clear() внутри цикла
+        $this->entityManager->flush();
         // на всякий случай явно указываем, что хотим получать в транзакции фиксированные версии строк
         $this->entityManager->getConnection()->setTransactionIsolation(Connection::TRANSACTION_REPEATABLE_READ);
         while (!$finished) {
@@ -127,8 +129,6 @@ abstract class ResidentQnrCommon extends ContainerAwareCommand
                         WHERE qnr.id > :lastId AND $where
                         ORDER BY qnr.id
                     ")->setMaxResults($batchSize)->setParameter('lastId', $lastId)->getResult();
-                    // просим Doctrine не отслеживать выбранные анкеты, т.к. они не будут меняться
-                    $this->massDetach($qnrRes);
                     if (count($qnrRes) > 0) {
                         $prevLastId = $lastId;
                         $lastId = $qnrRes[count($qnrRes) - 1]->getId();
@@ -137,19 +137,10 @@ abstract class ResidentQnrCommon extends ContainerAwareCommand
                         $cb([], $lastId, null);
                         $finished = true;
                     }
-                });
-        }
-    }
-
-    /**
-     * Вызывает $em->detach на все элементы массива.
-     *
-     * @param array $entities
-     */
-    protected function massDetach(array $entities)
-    {
-        foreach ($entities as $e) {
-            $this->entityManager->detach($e);
+                }
+            );
+            // clear сильно ускоряет работу, если анкет очень много
+            $this->entityManager->clear();
         }
     }
 

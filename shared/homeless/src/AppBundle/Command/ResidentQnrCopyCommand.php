@@ -50,11 +50,12 @@ class ResidentQnrCopyCommand extends ResidentQnrCommon
      * @param ResidentQuestionnaire[] $qnrArray массив анкет проживающего
      * @throws TransactionRequiredException
      */
-    protected function processQnrArray(array $qnrArray)
+    protected function processQnrArray(array $qnrArray, $idFrom, $idUntil)
     {
         if (count($qnrArray) == 0) {
             return;
         }
+        $this->logger->info("copying range ($idFrom," . ($idUntil === null ? "inf)" : "$idUntil]"));
         $qnrIdsDql = join(',', array_map(function (ResidentQuestionnaire $qnr) {
             return $this->entityManager->getConnection()->quote($qnr->getId());
         }, $qnrArray));
