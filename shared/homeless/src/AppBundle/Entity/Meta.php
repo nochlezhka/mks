@@ -20,7 +20,7 @@ class Meta
 
     /**
      * @var string
-     * @ORM\Column(type="string", length=32, unique=true)
+     * @ORM\Column(type="string", length=32, unique=true, name="`key`")
      */
     private $key;
 
