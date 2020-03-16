@@ -69,8 +69,8 @@ breadcrumb:
       link_client_form_create: Создание формы
       link_client_form_field_list: Список полей формы
       link_client_form_field_create: Создание поля формы
-      link_resident_form_response_list: Анкеты проживавшего
-      link_resident_form_response_create: Заполнение анкеты проживавшего
+      link_resident_form_response_list: Анкеты проживающего
+      link_resident_form_response_create: Заполнение анкеты проживающего
 
 ClientFormField: Поле формы
 

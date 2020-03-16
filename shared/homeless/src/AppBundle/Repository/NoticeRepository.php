@@ -102,19 +102,21 @@ class NoticeRepository extends EntityRepository
     /**
      * @param $filter
      * @param User $user
+     * @param $clientFormsEnabled
      * @return int
      */
-    public function getMyClientsNoticeHeaderCount($filter, User $user)
+    public function getMyClientsNoticeHeaderCount($filter, User $user, $clientFormsEnabled)
     {
-        return count($this->getMyClientsNoticeHeader($filter, $user));
+        return count($this->getMyClientsNoticeHeader($filter, $user, $clientFormsEnabled));
     }
 
     /**
      * @param $filter
      * @param User $user
+     * @param $clientFormsEnabled
      * @return array
      */
-    public function getMyClientsNoticeHeader($filter, User $user)
+    public function getMyClientsNoticeHeader($filter, User $user, $clientFormsEnabled)
     {
         $isNotification = $this
             ->getEntityManager()
@@ -141,13 +143,12 @@ class NoticeRepository extends EntityRepository
             ->getRepository(MenuItem::class)
             ->isEnableCode(MenuItem::CODE_QUESTIONNAIRE_LIVING);
         if ($isQuestionnaireLiving) {
-            $old = true;
             $sql = null;
             $qnrTypeFieldId = ClientFormField::RESIDENT_QUESTIONNAIRE_TYPE_FIELD_ID;
             $qnrType3Mon = ClientFormResponseValue::RESIDENT_QUESTIONNAIRE_TYPE_3_MONTHS;
             $qnrType6Mon = ClientFormResponseValue::RESIDENT_QUESTIONNAIRE_TYPE_6_MONTHS;
             $qnrType1Year = ClientFormResponseValue::RESIDENT_QUESTIONNAIRE_TYPE_1_YEAR;
-            if ($old) {
+            if (!$clientFormsEnabled) {
                 $sql = "SELECT cl.*
                 FROM client cl
                 JOIN (SELECT MAX(id) id, client_id FROM contract GROUP BY client_id) ct ON ct.client_id= cl.id

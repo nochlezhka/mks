@@ -11,6 +11,7 @@ use AppBundle\Form\DataTransformer\ClientFormMultiselectTransformer;
 use AppBundle\Repository\ClientFormResponseRepository;
 use AppBundle\Util\BaseEntityUtil;
 use AppBundle\Util\ClientFormUtil;
+use Doctrine\ORM\EntityManager;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
@@ -213,14 +214,44 @@ class ClientFormResponseAdmin extends BaseAdmin
         ];
     }
 
-    public function prePersist($object)
+    /**
+     * Создание анкеты. Оборачиваем в транзакцию, т.к. нужно консистентно писать в несколько таблиц.
+     *
+     * @param mixed $object
+     * @return bool|mixed
+     * @throws \Exception
+     */
+    public function create($object)
     {
-        $this->getClientFormResponseRepository()->prepareForCreateOrUpdate($object, $this->getCurrentForm());
+        return $this->getEntityManager()->transactional(function (EntityManager $em) use ($object) {
+            $this->getClientFormResponseRepository()->prepareForCreateOrUpdate($object, $this->getCurrentForm());
+            return parent::create($object);
+        });
     }
 
-    public function preUpdate($object)
+    /**
+     * Обновление анкеты. Оборачиваем в транзакцию для консистентности таблицы `_value`
+     * и лочимся об запись в `client_form_response`, чтобы случайно не смешать несколько параллельных обновлений.
+     *
+     * @param mixed $object
+     * @return bool|mixed
+     * @throws \Exception
+     */
+    public function update($object)
     {
-        $this->getClientFormResponseRepository()->prepareForCreateOrUpdate($object, $this->getCurrentForm());
+        return $this->getEntityManager()->transactional(function (EntityManager $em) use ($object) {
+            $this->getClientFormResponseRepository()->lockForUpdate($object);
+            $this->getClientFormResponseRepository()->prepareForCreateOrUpdate($object, $this->getCurrentForm());
+            return parent::update($object);
+        });
+    }
+
+    /**
+     * @return EntityManager
+     */
+    private function getEntityManager()
+    {
+        return $this->getConfigurationPool()->getContainer()->get('doctrine.orm.entity_manager');
     }
 
     /**
@@ -228,8 +259,7 @@ class ClientFormResponseAdmin extends BaseAdmin
      */
     private function getClientFormResponseRepository()
     {
-        return $this->getConfigurationPool()->getContainer()->get('doctrine.orm.entity_manager')
-            ->getRepository(ClientFormResponse::class);
+        return $this->getEntityManager()->getRepository(ClientFormResponse::class);
     }
 
     /**

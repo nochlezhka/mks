@@ -354,3 +354,7 @@ services:
       - '@doctrine.orm.entity_manager'
       - '@app.client_form_response.repository'
       - '@app.client_form.repository'
+
+  app.meta_service:
+    class: AppBundle\Service\MetaService
+    arguments: ['@doctrine.orm.entity_manager']

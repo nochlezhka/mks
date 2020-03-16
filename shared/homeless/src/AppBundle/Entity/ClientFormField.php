@@ -12,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class ClientFormField extends BaseEntity
 {
-    // ID фиксированного поля формы анкеты проживавшего
+    // ID фиксированного поля формы анкеты проживающего
     const RESIDENT_QUESTIONNAIRE_TYPE_FIELD_ID = 1;
 
     const TYPE_TEXT = 1;

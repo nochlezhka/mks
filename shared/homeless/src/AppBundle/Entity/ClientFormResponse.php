@@ -36,8 +36,8 @@ class ClientFormResponse extends BaseEntity
      *
      * @var ArrayCollection
      * @ORM\OneToMany(targetEntity="ClientFormResponseValue", mappedBy="clientFormResponse",
-     *     cascade={"persist", "remove"},
-     *     orphanRemoval=true
+     *     cascade={"persist", "remove", "detach"},
+     *     orphanRemoval=true,
      * )
      */
     private $values;

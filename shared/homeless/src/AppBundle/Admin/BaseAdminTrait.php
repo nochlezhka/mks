@@ -4,6 +4,7 @@ namespace AppBundle\Admin;
 
 use AppBundle\Entity\ContractStatus;
 use AppBundle\Entity\MenuItem;
+use AppBundle\Service\MetaService;
 
 trait BaseAdminTrait
 {
@@ -30,9 +31,13 @@ trait BaseAdminTrait
             $filter['contractStatus'] = ['value' => [(string)$inProcessStatus->getId()]];
         }
 
+        /**
+         * @var $metaService MetaService
+         */
+        $metaService = $this->getConfigurationPool()->getContainer()->get('app.meta_service');
         $arNoticesId = $em
             ->getRepository('AppBundle:Notice')
-            ->getMyClientsNoticeHeaderCount($filter, $user);
+            ->getMyClientsNoticeHeaderCount($filter, $user, $metaService->isClientFormsEnabled());
 
         return $arNoticesId;
     }
@@ -73,12 +78,16 @@ trait BaseAdminTrait
             $filter['contractStatus'] = ['value' => [(string)$inProcessStatus->getId()]];
         }
 
+        /**
+         * @var $metaService MetaService
+         */
+        $metaService = $this->getConfigurationPool()->getContainer()->get('app.meta_service');
         $arNoticesId = $this
             ->getConfigurationPool()
             ->getContainer()
             ->get('doctrine.orm.entity_manager')
             ->getRepository('AppBundle:Notice')
-            ->getMyClientsNoticeHeader($filter, $user);
+            ->getMyClientsNoticeHeader($filter, $user, $metaService->isClientFormsEnabled());
 
         return $arNoticesId;
     }
