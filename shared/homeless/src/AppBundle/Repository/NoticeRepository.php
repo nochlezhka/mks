@@ -201,6 +201,7 @@ class NoticeRepository extends EntityRepository
                     $result[] = [
                         'text' => 'Необходимо заполнить анкету проживающего',
                         'client' => $client,
+                        'clientFormsEnabled' => $clientFormsEnabled,
                     ];
                 }
             }
