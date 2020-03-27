@@ -148,6 +148,8 @@ class NoticeRepository extends EntityRepository
             $qnrType3Mon = ClientFormResponseValue::RESIDENT_QUESTIONNAIRE_TYPE_3_MONTHS;
             $qnrType6Mon = ClientFormResponseValue::RESIDENT_QUESTIONNAIRE_TYPE_6_MONTHS;
             $qnrType1Year = ClientFormResponseValue::RESIDENT_QUESTIONNAIRE_TYPE_1_YEAR;
+            $qnrType2Years = ClientFormResponseValue::RESIDENT_QUESTIONNAIRE_TYPE_2_YEARS;
+            $maxResFormTTL = 9999;
             if (!$clientFormsEnabled) {
                 $sql = "SELECT cl.*
                 FROM client cl
@@ -163,22 +165,34 @@ class NoticeRepository extends EntityRepository
                         (rq12.id IS NULL AND DATE_ADD(sh.date_to, INTERVAL 12 MONTH) < NOW())
                     ) AND sh.date_to >= '2019-01-01';";
             } else {
+                $residentFormsSubquery = "
+                    SELECT frv.client_id,
+                        MAX(CASE frv.value
+                            -- для каждого типа анкеты указано, когда нужно напомнить о заполнении следующей
+                            WHEN '$qnrType3Mon' THEN 6
+                            WHEN '$qnrType6Mon' THEN 12
+                            WHEN '$qnrType1Year' THEN 24
+                            -- если возвращается $maxResFormTTL, то больше не будет напоминаний
+                            WHEN '$qnrType2Years' THEN $maxResFormTTL
+                            ELSE 0
+                            END
+                        ) max_ttl_months
+                    FROM client_form_response_value frv
+                    WHERE frv.client_form_field_id = $qnrTypeFieldId
+                    GROUP BY frv.client_id
+                ";
                 $sql = "SELECT cl.*
-                FROM client cl
-                JOIN (SELECT MAX(id) id, client_id FROM contract GROUP BY client_id) ct ON ct.client_id= cl.id
-                JOIN contract c on c.id = ct.id
-                JOIN (SELECT MAX(id) id, client_id, MAX(date_to) date_to, MAX(date_from) date_from FROM shelter_history WHERE date_to IS NOT NULL GROUP BY client_id) sh ON sh.client_id= c.client_id
-                LEFT JOIN client_form_response_value rq3
-                    ON rq3.client_id = c.client_id AND rq3.client_form_field_id = $qnrTypeFieldId AND rq3.value = '$qnrType3Mon'
-                LEFT JOIN client_form_response_value rq6
-                    ON rq6.client_id = c.client_id AND rq6.client_form_field_id = $qnrTypeFieldId AND rq6.value = '$qnrType6Mon'
-                LEFT JOIN client_form_response_value rq12
-                    ON rq12.client_id = c.client_id AND rq12.client_form_field_id = $qnrTypeFieldId AND rq12.value = '$qnrType1Year'
-                WHERE c.created_by_id = ? AND (
-                        (rq3.id IS NULL AND rq6.id IS NULL AND rq12.id IS NULL AND DATE_ADD(sh.date_to, INTERVAL 3 MONTH) < NOW()) OR
-                        (rq6.id IS NULL AND rq12.id IS NULL AND DATE_ADD(sh.date_to, INTERVAL 6 MONTH) < NOW()) OR
-                        (rq12.id IS NULL AND DATE_ADD(sh.date_to, INTERVAL 12 MONTH) < NOW())
-                    ) AND sh.date_to >= '2019-01-01';";
+                    FROM client cl
+                    JOIN (SELECT MAX(id) id, client_id FROM contract GROUP BY client_id) ct ON ct.client_id= cl.id
+                    JOIN contract c on c.id = ct.id
+                    JOIN (SELECT MAX(id) id, client_id, MAX(date_to) date_to, MAX(date_from) date_from FROM shelter_history WHERE date_to IS NOT NULL GROUP BY client_id) sh ON sh.client_id= c.client_id
+                    LEFT JOIN ($residentFormsSubquery) res_forms ON res_forms.client_id = c.client_id
+                    WHERE c.created_by_id = ?
+                        -- у клиента нет ни одной заполненной анкеты, или есть, но не с максимально возможным типом
+                        AND (res_forms.max_ttl_months IS NULL OR res_forms.max_ttl_months != $maxResFormTTL)
+                        -- по максимальному сроку анкеты понятно, что уже пора заполнять за следующий период
+                        AND DATE_ADD(sh.date_to, INTERVAL IFNULL(res_forms.max_ttl_months, 3) MONTH) < NOW()
+                        AND sh.date_to >= '2019-01-01';";
             }
 
             $rsm = new ResultSetMappingBuilder($this->getEntityManager());
