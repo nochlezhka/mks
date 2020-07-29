@@ -5,7 +5,7 @@
 
     <script>
         $(document).ready(function () {
-            var fieldDependencies = {{ admin.getFieldDependencies()|json_encode|raw }};
+            var fieldDependencies = {{ admin.getDependantFields()|json_encode|raw }};
             var formId = '{{ admin.uniqid|e('js') }}';
             $('.changeSelectinsData, .changeSelectinsData .iCheck-helper').on('click', function (event) {
                 on_is_homeless_changed(
