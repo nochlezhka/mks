@@ -5,36 +5,43 @@
 
     <script>
         $(document).ready(function () {
-            if ($('.changeSelectinsData').parents('.form-group').find('[type="checkbox"]').prop('checked')) {
-                $('.select2-result-label,.select2-chosen').each(function(key, item) {
-                    if ($(item).text() === 'Не отвечает') {
-                        $(item).text('Нет ответа')
-                    }
-                });
-                $('select option').each(function(key, item) {
-                    if ($(item).text() === 'Не отвечает') {
-                        $(item).text('Нет ответа')
-                    }
-                });
-                $('.enabled-for-homeless').parent().parent().hide();
-            } else {
-                $('.select2-result-label,.select2-chosen').each(function(key, item) {
-                    if ($(item).text() === 'Нет ответа') {
-                        $(item).text('Не отвечает')
-                    }
-                });
-                $('select option').each(function(key, item) {
-                    if ($(item).text() === 'Нет ответа') {
-                        $(item).text('Не отвечает')
-                    }
-                });
-                $('.mandatory-for-homeless').parent().parent().children('label').each(function (key, item) {
-                    $(item).addClass('required');
-                });
-                $('.enabled-for-homeless').parent().parent().show();
-            }
+            var fieldDependencies = {{ admin.getFieldDependencies()|json_encode|raw }};
+            var formId = '{{ admin.uniqid|e('js') }}';
             $('.changeSelectinsData, .changeSelectinsData .iCheck-helper').on('click', function (event) {
-                if ($(event.currentTarget).parents('.form-group').find('[type="checkbox"]').prop('checked')) {
+                on_is_homeless_changed(
+                    !$(event.currentTarget).parents('.form-group').find('[type="checkbox"]').prop('checked')
+                );
+            })
+            // если чекбокс "не бездомный" выключен, показываем поля, включенные только для бездомных,
+            // иначе скрываем
+            function on_is_homeless_changed(isHomeless) {
+                if (isHomeless) {
+                    $('.select2-result-label,.select2-chosen').each(function(key, item) {
+                        if ($(item).text() === 'Нет ответа') {
+                            $(item).text('Не отвечает')
+                        }
+                    });
+                    $('select option').each(function(key, item) {
+                        if ($(item).text() === 'Нет ответа') {
+                            $(item).text('Не отвечает')
+                        }
+                    });
+                    $('.mandatory-for-homeless').parent().parent().children('label').each(function (key, item) {
+                        $(item).addClass('required');
+                    });
+                    $('.enabled-for-homeless').parent().parent().each(function(key, item) {
+                        var fieldName = extract_field_name(item.id);
+                        if (fieldName === null) {
+                            console.log('failed to extract field name from ' + item.id);
+                            $(item).show();
+                        } else if (field_can_be_shown(fieldName)) {
+                            // отображение некоторых полей зависит от значения других.
+                            // например поле "Вид жилого помещения (другое)" можно показывать только если
+                            // у поля "Вид жилого помещения" значние "Другое"
+                            $(item).show();
+                        }
+                    });
+                } else {
                     $('.select2-result-label,.select2-chosen').each(function(key, item) {
                         if ($(item).text() === 'Не отвечает') {
                             $(item).text('Нет ответа')
@@ -49,23 +56,41 @@
                         $(item).removeClass('required');
                     });
                     $('.enabled-for-homeless').parent().parent().hide();
-                } else {
-                    $('.select2-result-label,.select2-chosen').each(function(key, item) {
-                        if ($(item).text() === 'Нет ответа') {
-                            $(item).text('Не отвечает')
-                        }
-                    });
-                    $('select option').each(function(key, item) {
-                        if ($(item).text() === 'Нет ответа') {
-                            $(item).text('Не отвечает')
-                        }
-                    });
-                    $('.mandatory-for-homeless').parent().parent().children('label').each(function (key, item) {
-                        $(item).addClass('required');
-                    });
-                    $('.enabled-for-homeless').parent().parent().show();
                 }
-            })
+            }
+            on_is_homeless_changed(
+                !$('.changeSelectinsData').parents('.form-group').find('[type="checkbox"]').prop('checked')
+            );
+
+            function extract_field_name(ctrlGroupId) {
+                var matches = ctrlGroupId.match(formId + '[-_](.*)');
+                if (matches !== null) {
+                    return matches[1];
+                }
+                return null;
+            }
+            // возвращает true, если поле `fieldName` можно показывать
+            function field_can_be_shown(fieldName) {
+                if (typeof fieldDependencies[fieldName] === 'undefined') {
+                    return true;
+                }
+                var canBeShown = false;
+                $.each(fieldDependencies[fieldName], function (choiceField, map) {
+                    var val = $('#' + formId + '_' + choiceField).val();
+                    if (Array.isArray(val)) {
+                        jQuery.each(val, function (i, valOne) {
+                            if (map[valOne]) {
+                                canBeShown = true;
+                            }
+                        });
+                    } else if (map[val]) {
+                        canBeShown = true;
+                    } else if (typeof map['*'] !== "undefined" && val) {
+                        canBeShown = true;
+                    }
+                });
+                return canBeShown;
+            }
         });
     </script>
 {% endblock %}

@@ -51,6 +51,8 @@ class ClientAdmin extends BaseAdmin
      */
     private $metaService;
 
+    private $fieldDependencies = [];
+
     public function configure()
     {
         $this->metaService = $this->getConfigurationPool()->getContainer()->get('app.meta_service');
@@ -1120,6 +1122,31 @@ class ClientAdmin extends BaseAdmin
                     ->add('additionalField' . $field->getCode(), $field->getFormFieldType(), $options);
                 break;
         }
+
+        if (isset($options['map'])) {
+            foreach ($options['map'] as $value => $depFields) {
+                foreach ($depFields as $depField) {
+                    $choiceField = 'additionalField' . $field->getCode();
+                    $this->fieldDependencies[$depField][$choiceField][$value] = true;
+                }
+            }
+        }
+    }
+
+    /**
+     * Массив полей, которые отображаются в зависимости от значения другого поля (ChoiceFieldMaskType):
+     * ["название зависимого поля" =>
+     *      ["название choice поля" =>
+     *          ["значение, при котом зависимое поле показывается" => true],
+     *      ],
+     *  ...
+     * ]
+     *
+     * @return array
+     */
+    public function getFieldDependencies()
+    {
+        return $this->fieldDependencies;
     }
 
     /**
