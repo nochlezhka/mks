@@ -19,6 +19,8 @@ file that was distributed with this source code.
         jQuery(document).ready(function() {
             var allFields = {{ all_fields|json_encode|raw }};
             var map = {{ map|json_encode|raw }};
+            // мапа с именами скрываемых полей, у которых изначально был выставлен артибут `required`
+            var requiredHidden = [];
 
             var showMaskChoiceEl = jQuery('#{{ main_form_name }}_{{ name }}');
 
@@ -26,6 +28,9 @@ file that was distributed with this source code.
                 choice_field_mask_show(jQuery(this).val());
             });
 
+            var elIdByName = function(fieldName) {
+                return '#{{ main_form_name }}_' + fieldName;
+            }
             function choice_field_mask_show(val) {
                 var controlGroupIdFunc = function (field) {
                     // Most of fields are named with an underscore
@@ -41,26 +46,40 @@ file that was distributed with this source code.
 
                 jQuery.each(allFields, function (i, field) {
                     jQuery(controlGroupIdFunc(field)).hide();
+                    jQuery(elIdByName(field)).prop('required', false);
                 });
 
+                var showFields = [];
                 if (Array.isArray(val)) {
                     jQuery.each(val, function (i, valOne) {
                         if (map[valOne]) {
-                            jQuery.each(map[valOne], function (i, field) {
-                                jQuery(controlGroupIdFunc(field)).show();
-                            });
+                            showFields = map[valOne];
                         }
                     });
                 } else if (map[val]) {
-                    jQuery.each(map[val], function (i, field) {
-                        jQuery(controlGroupIdFunc(field)).show();
-                    });
+                    showFields = map[val];
                 } else if (typeof map['*'] !== "undefined" && val) {
-                    jQuery.each(map['*'], function (i, field) {
+                    showFields = map['*'];
+                }
+                if (showFields.length > 0) {
+                    jQuery.each(showFields, function (i, field) {
+                        if (requiredHidden[field]) {
+                            var fieldEl = jQuery(elIdByName(field));
+                            // не возвращаем `required` на поля с Select2. С ним сообщения HTML5 валидации не видны.
+                            // полагаемся на серверную валидацию
+                            if (!fieldEl.data('select2')) {
+                                fieldEl.prop('required', true);
+                            }
+                        }
                         jQuery(controlGroupIdFunc(field)).show();
                     });
                 }
             }
+            jQuery.each(allFields, function (i, field) {
+                if (jQuery(elIdByName(field)).prop('required')) {
+                    requiredHidden[field] = true;
+                }
+            });
             choice_field_mask_show(showMaskChoiceEl.val());
 
             function selectFieldShow(selects) {

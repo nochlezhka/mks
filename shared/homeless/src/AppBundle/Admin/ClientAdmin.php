@@ -2,24 +2,17 @@
 
 namespace AppBundle\Admin;
 
-use AppBundle\Entity\CertificateType;
 use AppBundle\Entity\Client;
 use AppBundle\Entity\ClientField;
 use AppBundle\Entity\ClientFieldOption;
 use AppBundle\Entity\ClientFieldValue;
-use AppBundle\Entity\Contract;
-use AppBundle\Entity\Document;
-use AppBundle\Entity\DocumentFile;
-use AppBundle\Entity\GeneratedDocument;
 use AppBundle\Entity\MenuItem;
-use AppBundle\Entity\Note;
-use AppBundle\Entity\Service;
-use AppBundle\Entity\ShelterHistory;
 use AppBundle\Entity\Notice;
 use AppBundle\Form\DataTransformer\ImageStringToFileTransformer;
 use AppBundle\Form\Type\AppHomelessFromDateType;
 use AppBundle\Service\MetaService;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
@@ -34,6 +27,7 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
 
 class ClientAdmin extends BaseAdmin
 {
@@ -51,7 +45,42 @@ class ClientAdmin extends BaseAdmin
      */
     private $metaService;
 
-    private $fieldDependencies = [];
+    /**
+     * Мапа с описанием дополнительных полей, отображение которых зависит от значения других полей.
+     * (`ChoiceFieldMaskType`).
+     * Названия зависимых и определяющих полей начинается с `additionalField`
+     *
+     * Формат такой:
+     * ```
+     * ["название зависимого поля" =>
+     *      ["название choice поля" =>
+     *          ["значение, при котором зависимое поле показывается" => true],
+     *      ],
+     *  ...
+     * ]
+     * ```
+     *
+     * @var array
+     */
+    private $dependantFields = [];
+
+    /**
+     * Мапа с описанием полей, от которых зависит отображение других полей (`ChoiceFieldMaskType`).
+     * Названия зависимых и определяющих полей начинается с `additionalField`
+     *
+     * Формат такой:
+     * ```
+     * ["название choice поля" =>
+     *      ["значение, при котором показываются зависимые поля" =>
+     *          ["название зависимого поля", ...],
+     *      ],
+     *  ...
+     * ]
+     * ```
+     *
+     * @var array
+     */
+    private $choiceTypeMaps = [];
 
     public function configure()
     {
@@ -196,7 +225,7 @@ class ClientAdmin extends BaseAdmin
                     if ($field->getCode() == 'homelessFrom') {
                         $options['pattern'] = 'MMM y';
                     }
-                    $showMapperAdditionalInfo[count($showMapperAdditionalInfo) - 1]['add'] = ['additionalField' . $field->getCode(), $field->getShowFieldType(), $options];
+                    $showMapperAdditionalInfo[count($showMapperAdditionalInfo) - 1]['add'] = [self::getAdditionalFieldName($field->getCode()), $field->getShowFieldType(), $options];
                 }
             }
 
@@ -233,19 +262,26 @@ class ClientAdmin extends BaseAdmin
                 return;
             }
 
-            if ($this->isMenuItemEnabled(MenuItem::CODE_STATUS_HOMELESS)) {
-                if ($client->getisHomeless()) {
-                    /** @var $em EntityManagerInterface */
-                    $clientsFields = $em->getRepository(ClientField::class)->findAll();
-                    foreach ($clientsFields as $clientsField) {
-                        /** @var $clientsField ClientField */
-                        if ($clientsField->getMandatoryForHomeless()) {
-                            $fieldForm = $event->getForm()->get('additionalField' . $clientsField->getCode());
-                            if (!$fieldForm->getData() || ($fieldForm->getData() instanceof ArrayCollection && $fieldForm->getData()->count() === 0)) {
-                                $event->getForm()->get('additionalField' . $clientsField->getCode())->addError(new FormError('Поле обязательное для заполнения'));
-                            }
-                        }
-                    }
+            // проверяем заполненность обязательных доп. полей
+            /** @var $em EntityManagerInterface */
+            $clientsFields = $em->getRepository(ClientField::class)->findAll();
+            $statusHomelessEnabled = $this->isMenuItemEnabled(MenuItem::CODE_STATUS_HOMELESS);
+            foreach ($clientsFields as $clientsField) {
+                /** @var $clientsField ClientField */
+                $addFieldName = self::getAdditionalFieldName($clientsField->getCode());
+                $isRequired = $clientsField->getRequired()
+                    || $statusHomelessEnabled && $clientsField->getMandatoryForHomeless() && $client->getisHomeless();
+                if (!$isRequired) {
+                    continue;
+                }
+                $newVal = $event->getForm()->get($addFieldName)->getData();
+                if (self::isAdditionalFieldValueEmpty($newVal)
+                    // не требуем заполненности скрытых полей
+                    && $this->fieldCanBeShown($clientsField, $event->getForm())
+                    // если редактируется старый клиент, и значение в БД уже пустое - прощаем
+                    && !$this->canAdditionalFieldRemainEmpty($clientsField)
+                ) {
+                    $event->getForm()->get($addFieldName)->addError(new FormError('Поле обязательное для заполнения'));
                 }
             }
 
@@ -276,7 +312,7 @@ class ClientAdmin extends BaseAdmin
                     }
 
                     if ($value->getNotSingle() && 1 == count($options[$field->getCode()])) {
-                        $event->getForm()->get('additionalField' . $field->getCode())->addError(new FormError("'{$value->getName()}' не может быть единственным ответом"));
+                        $event->getForm()->get(self::getAdditionalFieldName($field->getCode()))->addError(new FormError("'{$value->getName()}' не может быть единственным ответом"));
                     }
                 }
 
@@ -344,12 +380,18 @@ class ClientAdmin extends BaseAdmin
             ->getRepository(ClientField::class)
             ->findByEnabledAll();
 
+        $this->initFieldDependencies($fields);
         foreach ($fields as $field) {
             $options = [
                 'label' => $field->getName(),
                 'required' => $field->getRequired(),
                 'attr' => ["class" => ($field->getMandatoryForHomeless() ? 'mandatory-for-homeless' : '') . ' ' . (!$field->getEnabled() && $field->getEnabledForHomeless() ? 'enabled-for-homeless' : '')],
             ];
+            // если скрываемое поле раньше не было обязательным, разрешаем ему оставаться пустым
+            // (это также поддержано в валидации в обработчике `FormEvents::SUBMIT`)
+            if ($this->canAdditionalFieldRemainEmpty($field)) {
+                $options['required'] = false;
+            }
 
             switch ($field->getType()) {
                 case ClientField::TYPE_OPTION:
@@ -364,6 +406,12 @@ class ClientAdmin extends BaseAdmin
 
                     if ($field->getMultiple()) {
                         $options['multiple'] = true;
+                    }
+                    // когда у селекта выставлен `required`, по-умолчанию выбирается первый элемент из списка
+                    // Это может быть нежелательно для скрываемых полей - мы делаем их необязательными, если они скрыты
+                    // Чтобы избежать незаметной отправки непустого значения, указываем `placeholder`
+                    if ($this->isAdditionalFieldDependant($field) && $options['required']) {
+                        $options['placeholder'] = '';
                     }
                     break;
 
@@ -386,6 +434,31 @@ class ClientAdmin extends BaseAdmin
             ->end();
 
         $formMapper->getFormBuilder()->get('photo')->addModelTransformer(new ImageStringToFileTransformer());
+    }
+
+    /**
+     * Можно ли не заполнять доп. поле.
+     * Разрешаем не заполнять обязательные поля, если редактируется старый клиент, и в БД значение уже пустое.
+     *
+     * @param ClientField $field
+     * @return bool
+     */
+    private function canAdditionalFieldRemainEmpty(ClientField $field)
+    {
+        if ($this->isAdditionalFieldDependant($field) && $this->getSubject()->getId()) {
+            $curVal = $this->getSubject()->getAdditionalFieldValue($field->getCode());
+            return self::isAdditionalFieldValueEmpty($curVal);
+        }
+        return false;
+    }
+
+    /**
+     * @param $val
+     * @return bool
+     */
+    private static function isAdditionalFieldValueEmpty($val)
+    {
+        return $val instanceof Collection ? $val->count() == 0 : !$val;
     }
 
     /**
@@ -1020,8 +1093,8 @@ class ClientAdmin extends BaseAdmin
             ->getContainer()
             ->get('app.additional_field_to_array.transformer');
 
-        $formMapper->add('additionalField' . $field->getCode(), ChoiceFieldMaskType::class, $options);
-        $formMapper->getFormBuilder()->get('additionalField' . $field->getCode())->addModelTransformer($transformer);
+        $formMapper->add(self::getAdditionalFieldName($field->getCode()), ChoiceFieldMaskType::class, $options);
+        $formMapper->getFormBuilder()->get(self::getAdditionalFieldName($field->getCode()))->addModelTransformer($transformer);
     }
 
     /**
@@ -1033,120 +1106,150 @@ class ClientAdmin extends BaseAdmin
      */
     private function addClientField(FormMapper $formMapper, ClientField $field, array $options)
     {
+        $addFieldName = self::getAdditionalFieldName($field->getCode());
+        if (isset($this->choiceTypeMaps[$addFieldName])) {
+            $options['map'] = $this->choiceTypeMaps[$addFieldName];
+            $this->addChoiceFieldMaskTypeField($formMapper, $field, $options);
+            return;
+        }
+
         switch ($field->getCode()) {
-            case 'citizenship':
-                $options['map'] = [
-                    $this->getFieldOptionValueId('Другое', $field) => ['additionalFieldcitizenshipOther'],
-                ];
-                $this->addChoiceFieldMaskTypeField($formMapper, $field, $options);
-                break;
-
-            case 'pensioner':
-                $options['map'] = [
-                    $this->getFieldOptionValueId('Да', $field) => ['additionalFieldpensionReason'],
-                ];
-                $this->addChoiceFieldMaskTypeField($formMapper, $field, $options);
-                break;
-
-            case 'pensionReason':
-                $options['map'] = [
-                    $this->getFieldOptionValueId('По инвалидности', $field) => ['additionalFielddisabilityGroup'],
-                ];
-                $this->addChoiceFieldMaskTypeField($formMapper, $field, $options);
-                break;
-
-            case 'student':
-                $options['map'] = [
-                    $this->getFieldOptionValueId('Да', $field) => ['additionalFieldprofession'],
-                ];
-                $this->addChoiceFieldMaskTypeField($formMapper, $field, $options);
-                break;
-
-            case 'liveInHousing':
-                $options['map'] = [
-                    $this->getFieldOptionValueId('Да', $field) => ['additionalFieldhousing'],
-                ];
-                $this->addChoiceFieldMaskTypeField($formMapper, $field, $options);
-                break;
-
-            case 'housing':
-                $options['map'] = [
-                    $this->getFieldOptionValueId('Другое', $field) => ['additionalFieldhousingOther'],
-                ];
-                $this->addChoiceFieldMaskTypeField($formMapper, $field, $options);
-                break;
-
-            case 'registration':
-                $options['map'] = [
-                    $this->getFieldOptionValueId('Да', $field) => ['additionalFieldregistrationPlace'],
-                ];
-                $this->addChoiceFieldMaskTypeField($formMapper, $field, $options);
-                break;
-
-            case 'homelessReason':
-                $options['map'] = [
-                    $this->getFieldOptionValueId('Другие', $field) => ['additionalFieldhomelessReasonOther'],
-                ];
-                $this->addChoiceFieldMaskTypeField($formMapper, $field, $options);
-                break;
-
-            case 'breadwinner':
-                $options['map'] = [
-                    $this->getFieldOptionValueId('Другие', $field) => ['additionalFieldbreadwinnerOther'],
-                ];
-                $this->addChoiceFieldMaskTypeField($formMapper, $field, $options);
-                break;
-
-            case 'breadwinnerMain':
-                $options['map'] = [
-                    $this->getFieldOptionValueId('Другие', $field) => ['additionalFieldbreadwinnerOther'],
-                ];
-                $this->addChoiceFieldMaskTypeField($formMapper, $field, $options);
-                break;
-
-            case 'disease':
-                $options['map'] = [
-                    $this->getFieldOptionValueId('Другие', $field) => ['additionalFielddiseaseOther'],
-                ];
-                $this->addChoiceFieldMaskTypeField($formMapper, $field, $options);
-                break;
-
             case 'homelessFrom':
                 $options['years'] = range(date('Y'), date('Y') - 100);
                 $formMapper
-                    ->add('additionalField' . $field->getCode(), AppHomelessFromDateType::class, $options);
+                    ->add(self::getAdditionalFieldName($field->getCode()), AppHomelessFromDateType::class, $options);
                 break;
 
             default:
                 $formMapper
-                    ->add('additionalField' . $field->getCode(), $field->getFormFieldType(), $options);
+                    ->add(self::getAdditionalFieldName($field->getCode()), $field->getFormFieldType(), $options);
                 break;
         }
+    }
 
-        if (isset($options['map'])) {
-            foreach ($options['map'] as $value => $depFields) {
-                foreach ($depFields as $depField) {
-                    $choiceField = 'additionalField' . $field->getCode();
-                    $this->fieldDependencies[$depField][$choiceField][$value] = true;
+    /**
+     * Заполняем мапы с зависимостями отображаемых полей.
+     *
+     * @param ClientField[] $enabledFields
+     * @see dependantFields
+     * @see choiceTypeMaps
+     */
+    private function initFieldDependencies($enabledFields)
+    {
+        $deps = [
+            'citizenship' => [
+                'Другое' => ['citizenshipOther'],
+            ],
+            'pensioner' => [
+                'Да' => ['pensionReason'],
+            ],
+            'pensionReason' => [
+                'По инвалидности' => ['disabilityGroup'],
+            ],
+            'student' => [
+                'Да' => ['profession'],
+            ],
+            'liveInHousing' => [
+                'Да' => ['housing'],
+            ],
+            'housing' => [
+                'Другое' => ['housingOther'],
+            ],
+            'registration' => [
+                'Да' => ['registrationPlace'],
+            ],
+            'homelessReason' => [
+                'Другие' => ['homelessReasonOther'],
+            ],
+            'breadwinner' => [
+                'Другие' => ['breadwinnerOther'],
+            ],
+            'breadwinnerMain' => [
+                'Другие' => ['breadwinnerOther'],
+            ],
+            'disease' => [
+                'Другие' => ['diseaseOther'],
+            ],
+        ];
+
+        foreach ($enabledFields as $field) {
+            if (isset($deps[$field->getCode()])) {
+                $choiceField = self::getAdditionalFieldName($field->getCode());
+                foreach ($deps[$field->getCode()] as $valName => $depFields) {
+                    $value = $this->getFieldOptionValueId($valName, $field);
+                    $addDepFields = [];
+                    foreach ($depFields as $depFieldCode) {
+                        $depField = self::getAdditionalFieldName($depFieldCode);
+                        $addDepFields[] = $depField;
+                        $this->dependantFields[$depField][$choiceField][$value] = true;
+                    }
+                    if (!isset($this->choiceTypeMaps[$choiceField])) {
+                        $this->choiceTypeMaps[$choiceField] = [];
+                    }
+                    $this->choiceTypeMaps[$choiceField][$value] = $addDepFields;
                 }
             }
         }
     }
 
     /**
-     * Массив полей, которые отображаются в зависимости от значения другого поля (ChoiceFieldMaskType):
-     * ["название зависимого поля" =>
-     *      ["название choice поля" =>
-     *          ["значение, при котом зависимое поле показывается" => true],
-     *      ],
-     *  ...
-     * ]
-     *
      * @return array
+     * @see dependantFields
      */
-    public function getFieldDependencies()
+    public function getDependantFields()
     {
-        return $this->fieldDependencies;
+        return $this->dependantFields;
+    }
+
+    /**
+     * Зависит ли отображение указанного доп. поля от других полей.
+     *
+     * @param ClientField $field
+     * @return bool
+     */
+    private function isAdditionalFieldDependant(ClientField $field)
+    {
+        return isset($this->dependantFields[self::getAdditionalFieldName($field->getCode())]);
+    }
+
+    /**
+     * @param $fieldCode
+     * @return string
+     */
+    private static function getAdditionalFieldName($fieldCode)
+    {
+        return 'additionalField' . $fieldCode;
+    }
+
+    /**
+     * Возвращает `true` если поле не было скрыто на форме: если его видимость зависила от значения друогого поля,
+     * и это условие выполнилось
+     *
+     * @param ClientField $field
+     * @param FormInterface $form
+     * @return bool
+     */
+    private function fieldCanBeShown(ClientField $field, FormInterface $form)
+    {
+        $fieldName = self::getAdditionalFieldName($field->getCode());
+        if (!isset($this->dependantFields[$fieldName])) {
+            return true;
+        }
+        foreach ($this->dependantFields[$fieldName] as $choiceField => $map) {
+            $val = $form->get($choiceField)->getData();
+            if ($val instanceof ClientFieldOption) {
+                return isset($map[$val->getId()]);
+            } elseif ($val instanceof ArrayCollection) {
+                foreach ($val as $val1) {
+                    if ($val1 instanceof ClientFieldOption) {
+                        if (isset($map[$val1->getId()])) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     /**
