@@ -12,19 +12,6 @@ services:
         tags:
               - { name: doctrine.event_listener, event: postPersist}
 
-  app.shelter_history.listener:
-        class: AppBundle\EventListener\ShelterRoomListener
-        tags:
-              - { name: doctrine.event_listener, event: postPersist }
-  app.shelter_history_delete.listener:
-        class: AppBundle\EventListener\ShelterRoomListener
-        tags:
-              - { name: doctrine.event_listener, event: postRemove }
-#   app.shelter_history_update.listener:
-#         class: AppBundle\EventListener\ShelterRoomListener
-#         tags:
-#               - { name: doctrine.event_listener, event: preUpdate }
-
   app.notice.listener:
         class: AppBundle\EventListener\NoticeListener
         arguments:
@@ -45,8 +32,6 @@ services:
       calls:
           - [addChild, ['@app.note.admin']]
           - [addChild, ['@app.service.admin']]
-          - [addChild, ['@app.delivery_item.admin']]
-          - [addChild, ['@app.delivery.admin']]
           - [addChild, ['@app.document.admin']]
           - [addChild, ['@app.document_file.admin']]
           - [addChild, ['@app.contract.admin']]
@@ -60,14 +45,6 @@ services:
           - [addChild, ['@app.resident_form_response.admin']]
           - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
           - [ setTemplate, ['layout', 'admin/client_show.html.twig']]
-
-#   app.shelter_room.admin:
-#     class: AppBundle\Admin\ShelterRoomAdmin
-#     tags:
-#       - { name: sonata.admin, manager_type: orm, label: 'Комнаты' }
-#     arguments: [ ~, AppBundle\Entity\ShelterRoom, AppBundle:CRUD ]
-#     calls:
-#       - [ setTemplate, ['layout', 'admin/shelter_room.html.twig'] ]
 
   app.note.admin:
       class: AppBundle\Admin\NoteAdmin
@@ -208,22 +185,6 @@ services:
       calls:
           - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
 
-  app.delivery_item.admin:
-      class: AppBundle\Admin\DeliveryItemAdmin
-      tags:
-          - { name: sonata.admin, manager_type: orm, label: 'Предметы выдачи' }
-      arguments: [null, AppBundle\Entity\DeliveryItem, SonataAdminBundle:CRUD]
-      calls:
-          - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
-
-  app.delivery.admin:
-      class: AppBundle\Admin\DeliveryAdmin
-      tags:
-          - { name: sonata.admin, manager_type: orm, label: 'Выдачи' }
-      arguments: [null, AppBundle\Entity\Delivery, SonataAdminBundle:CRUD]
-      calls:
-          - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
-
   app.contract_item_type.admin:
       class: AppBundle\Admin\ContractItemTypeAdmin
       tags:
@@ -279,14 +240,6 @@ services:
       arguments: [null, AppBundle\Entity\Position, SonataAdminBundle:CRUD]
       calls:
           - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
-  app.branch.admin:
-      class: AppBundle\Admin\BranchAdmin
-      tags:
-        - { name: sonata.admin, manager_type: orm, label: 'Отделения' }
-      arguments: [null, AppBundle\Entity\Branch, SonataAdminBundle:CRUD, '@app.branch_service']
-      calls:
-        - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
-
 
   app.client_form.admin:
       class: AppBundle\Admin\ClientFormAdmin
@@ -296,14 +249,6 @@ services:
       calls:
           - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
           - [addChild, ['@app.client_form_field.admin', 'form']]
-
-  app.shelter_room.admin:
-      class: AppBundle\Admin\ShelterRoomAdmin
-      tags:
-          - { name: sonata.admin, manager_type: orm, label: 'Список комнат' }
-      arguments: [ ~, AppBundle\Entity\ShelterRoom, AppBundle:CRUD ]
-      calls:
-          - [ setTemplate, ['layout', 'admin/shelter_room.html.twig'] ]
 
   app.client_form_field.admin:
     class: AppBundle\Admin\ClientFormFieldAdmin
@@ -340,7 +285,7 @@ services:
 
   app.render_service:
     class: AppBundle\Service\RenderService
-    arguments: ['@templating', '@kernel', '@twig', '@app.branch_service']
+    arguments: ['@templating', '@kernel', '@twig']
 
   app.certificate_recreator_service:
     class: AppBundle\Service\CertificateRecreator
@@ -368,16 +313,6 @@ services:
     class: AppBundle\Repository\PositionRepository
     factory: ['@doctrine.orm.default_entity_manager', getRepository]
     arguments: ['AppBundle\Entity\Position']
-
-
-  app.branch_to_choice_field_mask_type.transformer:
-    class: AppBundle\Form\DataTransformer\BranchToChoiceFieldMaskTypeTransformer
-    arguments: ['@app.branch_option.repository']
-
-  app.branch_option.repository:
-      class: AppBundle\Repository\BranchRepository
-      factory: ['@doctrine.orm.default_entity_manager', getRepository]
-      arguments: ['AppBundle\Entity\Branch']
 
   app.client_field_option.repository:
     class: AppBundle\Repository\ClientFieldOptionRepository
@@ -423,10 +358,3 @@ services:
   app.meta_service:
     class: AppBundle\Service\MetaService
     arguments: ['@doctrine.orm.entity_manager']
-
-  app.branch_service:
-    class: AppBundle\Service\BranchService
-    arguments: ['@service_container']
-
-  app.security.api_authenticator:
-    class: AppBundle\Security\ApiAuthenticator
