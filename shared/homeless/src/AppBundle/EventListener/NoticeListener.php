@@ -24,7 +24,6 @@ class NoticeListener
     public function postLoad(LifecycleEventArgs $args)
     {
         $entity = $args->getEntity();
-
         $user = $this->getUser();
 
         if ($entity instanceof Notice && $user instanceof User) {

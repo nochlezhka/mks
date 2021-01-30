@@ -194,22 +194,6 @@ sonata_admin:
                         label: 'Мои бывшие клиенты'
                         roles:
                           [ROLE_APP_CLIENT_ADMIN_LIST, ROLE_ADMIN]
-
-            #  app.shelter_room:
-            #      label: Управление комнатами
-            #      icon: '<i class="fa fa-home" aria-hidden="true"></i>'
-            #      items:
-            #          - route: shelter_room
-            #            label: 'Все комнаты'
-            #            roles:
-            #             [ ROLE_ADMIN ]
-
-            #          - route: shelter_room_add
-            #            label: 'Добавить комнату'
-            #            roles:
-            #             [ ROLE_ADMIN ]
-
-
              app.profile:
                  label: Личный кабинет
                  icon: '<i class="fa fa-user"></i>'
@@ -229,7 +213,6 @@ sonata_admin:
                       - app.client_field.admin
                       - app.region.admin
                       - app.service_type.admin
-                      - app.delivery_item.admin
                       - app.contract_item_type.admin
                       - app.generated_document_type.admin
                       - app.generated_document_start_text.admin
@@ -237,11 +220,9 @@ sonata_admin:
                       - app.certificate_type.admin
                       - app.menu_item.admin
                       - app.position.admin
-                      - app.branch.admin
                       - sonata.user.admin.user
                       - sonata.user.admin.group
                       - app.client_form.admin
-                      - app.shelter_room.admin
                  roles:
                       [ROLE_ADMIN]
 sonata_user:
@@ -264,6 +245,7 @@ sonata_user:
         route: sonata_admin_dashboard
 
 ivory_ck_editor:
+    configs:
     default_config: default
     configs:
         news:
