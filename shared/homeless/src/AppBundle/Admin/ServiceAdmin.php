@@ -45,14 +45,17 @@ class ServiceAdmin extends BaseAdmin
 
         foreach ($availableCertTypes as $availableCertType) {
             $typeOptions['choices'][$availableCertType->getId()] = $availableCertType->getName();
+            $map = [];
+            if ($availableCertType->getComment()) {
+                $map[] = 'comment';
+            }
+            if ($availableCertType->getAmount()) {
+                $map[] = 'amount';
+            }
+            if (!empty($map)) {
+                $typeOptions['map'][$availableCertType->getId()] = $map;
+            }
         }
-        $typeOptions['map'] = [
-            ServiceType::PAYMENT_TRAVEL => ['amount'],
-            ServiceType::DUTY_PAYMENT => ['amount'],
-            ServiceType::MEANS_HYGIENE => ['comment'],
-            ServiceType::SET_OF_CLOTHES => ['comment'],
-            ServiceType::CORRESPONDENCE_RECEIVED => ['comment'],
-        ];
         $typeOptions['multiple'] = false;
         $typeOptions['label'] = 'Тип';
         $typeOptions['attr'] = [
@@ -105,6 +108,9 @@ class ServiceAdmin extends BaseAdmin
             ->add('comment', null, [
                 'label' => 'Комментарий',
             ])
+            ->add('amount', null, [
+                'label' => 'Сумма',
+            ])
             ->add('createdAt', 'date', [
                 'label' => 'Когда добавлена',
                 'pattern' => 'dd.MM.YYYY',
@@ -150,7 +156,11 @@ class ServiceAdmin extends BaseAdmin
                     'class' => 'AppBundle\Entity\ServiceType',
                 ]
             ])
-            ->add('createdAt', 'doctrine_orm_date_range', ['label' => 'Когда добавлена', 'advanced_filter' => false,], 'sonata_type_date_range_picker',
+            ->add(
+                'createdAt',
+                'doctrine_orm_date_range',
+                ['label' => 'Когда добавлена', 'advanced_filter' => false,],
+                'sonata_type_date_range_picker',
                 [
                     'field_options_start' => [
                         'label' => 'От',

@@ -140,9 +140,15 @@ class ReportService
         $this->doc->getActiveSheet()->fromArray([[
             'название услуги',
             'сколько раз она была предоставлена',
-            'скольким людям она была предоставлена'
+            'скольким людям она была предоставлена',
+            'сумма'
         ]], null, 'A1');
-        $query = $this->em->createQuery('SELECT st.name, COUNT(DISTINCT s.id) all_count, COUNT(DISTINCT s.client) client_count
+        $query = $this->em->createQuery('
+            SELECT
+                st.name
+                , COUNT(DISTINCT s.id) all_count
+                , COUNT(DISTINCT s.client) client_count
+                , SUM(s.amount) as sum_amount
             FROM AppBundle\Entity\Service s
             JOIN s.type st
             WHERE s.createdAt >= :dateFrom AND s.createdAt <= :dateTo ' . ($userId ? 'AND s.createdBy = :userId' : '') . '
@@ -172,9 +178,15 @@ class ReportService
         $this->doc->getActiveSheet()->fromArray([[
             'ФИО сотрудникa',
             'название услуги',
-            'сколько раз она была предоставлена'
+            'сколько раз она была предоставлена',
+            'сумма'
         ]], null, 'A1');
-        $stmt = $this->em->getConnection()->prepare('SELECT concat(u.lastname, \' \', u.firstname, \' \', u.middlename), st.name, COUNT(DISTINCT s.id) count
+        $stmt = $this->em->getConnection()->prepare('
+            SELECT
+            concat(u.lastname, \' \', u.firstname, \' \', u.middlename)
+            , st.name
+            , COUNT(DISTINCT s.id) count
+            , SUM(s.amount) as sum_amount
             FROM service s
             JOIN service_type st ON s.type_id = st.id
             LEFT JOIN fos_user_user u ON s.created_by_id = u.id

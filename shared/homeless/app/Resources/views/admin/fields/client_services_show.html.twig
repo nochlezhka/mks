@@ -1,7 +1,7 @@
 <td>
     {% block field %}
         {% for service in value|slice(0, 5) %}
-            <p>{{ service.createdAt|date('d.m.Y') }} {{ service.type }} ({{ service.createdBy.lastname }}) {% if service.comment %}. {{ service.comment }}{% endif %}</p>
+            <p>{{ service.createdAt|date('d.m.Y') }} {{ service.type }} ({{ service.createdBy.lastname }}) {% if service.comment %}. {{ service.comment }}{% endif %} {% if service.amount %}. {{ service.amount }}{% endif %}</p>
         {% endfor %}
     {% endblock %}
     <p style="    float: left;

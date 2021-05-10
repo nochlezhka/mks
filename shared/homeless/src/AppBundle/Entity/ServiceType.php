@@ -60,6 +60,18 @@ class ServiceType extends BaseEntity
      */
     private $document;
 
+    /**
+     * Сумма
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $amount;
+
+    /**
+     * Комметарий
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $comment;
+
     public function __toString()
     {
         return (string)$this->getName();
@@ -135,5 +147,53 @@ class ServiceType extends BaseEntity
     public function getDocument()
     {
         return $this->document;
+    }
+
+    /**
+     * Get amount
+     *
+     * @return boolean
+     */
+    public function getAmount()
+    {
+        return $this->amount;
+    }
+
+    /**
+     * Set amount
+     *
+     * @param boolean $amount
+     *
+     * @return ServiceType
+     */
+    public function setAmount($amount)
+    {
+        $this->amount = $amount;
+
+        return $this;
+    }
+
+    /**
+     * Get comment
+     *
+     * @return boolean
+     */
+    public function getComment()
+    {
+        return $this->comment;
+    }
+
+    /**
+     * Set comment
+     *
+     * @param boolean $comment
+     *
+     * @return ServiceType
+     */
+    public function setComment($comment)
+    {
+        $this->comment = $comment;
+
+        return $this;
     }
 }
