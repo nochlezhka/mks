@@ -55,7 +55,7 @@ class CRUDController extends Controller
                 }
                 $client = $object->getClient();
                 $this->getDoctrine()->getManager()->initializeObject($client);
-                $html = $this->get('app.render_service')->renderCertificate($object, $client);
+                $html = $this->get('app.render_service')->renderCertificate($object, $client, $this->getUser());
                 $historyDownload = new HistoryDownload();
                 $historyDownload->setUser($this->getUser());
                 $historyDownload->setClient($client);
@@ -66,7 +66,7 @@ class CRUDController extends Controller
                 break;
 
             case GeneratedDocument::class:
-                $html = $this->get('app.render_service')->renderGeneratedDocument($object);
+                $html = $this->get('app.render_service')->renderGeneratedDocument($object, $this->getUser());
                 break;
 
             case Contract::class;

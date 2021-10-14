@@ -11,6 +11,7 @@ use AppBundle\Entity\Notice;
 use AppBundle\Form\DataTransformer\ImageStringToFileTransformer;
 use AppBundle\Form\Type\AppHomelessFromDateType;
 use AppBundle\Service\MetaService;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
@@ -149,6 +150,15 @@ class ClientAdmin extends BaseAdmin
                 ->end();
         }
 
+        if ($securityContext->isGranted('ROLE_SUPER_ADMIN') || $securityContext->isGranted('ROLE_APP_SERVICE_ADMIN_LIST') || $securityContext->isGranted('ROLE_APP_SERVICE_ADMIN_ALL')) {
+            $showMapper
+                ->with('Последние выдачи', ['class' => 'col-md-4'])
+                ->add('deliveries', 'array', [
+                    'label' => ' ',
+                    'template' => '/admin/fields/client_humaid_deliveries_show.html.twig',
+                ])
+                ->end();
+        }
 
         if ($securityContext->isGranted('ROLE_SUPER_ADMIN') || $securityContext->isGranted('ROLE_APP_NOTE_ADMIN_LIST') || $securityContext->isGranted('ROLE_APP_NOTE_ADMIN_ALL')) {
             $showMapper
@@ -156,6 +166,14 @@ class ClientAdmin extends BaseAdmin
                 ->add('notes', 'array', [
                     'label' => ' ',
                     'template' => '/admin/fields/client_notes_show.html.twig',
+                ])
+                ->end();
+        } else if ($securityContext->isGranted('ROLE_SUPER_ADMIN') || $securityContext->isGranted('ROLE_APP_SERVICE_ADMIN_LIST') || $securityContext->isGranted('ROLE_APP_SERVICE_ADMIN_ALL')) {
+            $showMapper
+                ->with('Важные примечания')
+                ->add('notes', 'array', [
+                    'label' => ' ',
+                    'template' => '/admin/fields/client_notes_show_volunteer.html.twig',
                 ])
                 ->end();
         }
@@ -567,8 +585,16 @@ class ClientAdmin extends BaseAdmin
             ])
             ->add('birthDate', 'date', [
                 'label' => 'Дата рождения',
-            ])
-            ->add('contracts.dateFrom', null, [
+            ]);
+
+            if(!empty($this->getConfigurationPool()->getContainer()->get('app.branch_option.repository')->findAll())) {
+                $listMapper->add('createdBy.branch.name', null, [
+                    'label' => 'Отделение',
+                ]);
+            }
+
+
+            $listMapper->add('contracts.dateFrom', null, [
                 'template' => '/admin/fields/client_contract_list.html.twig',
                 'label' => 'Договор',
             ])
@@ -684,8 +710,47 @@ class ClientAdmin extends BaseAdmin
                     'advanced_filter' => false,
                 ]
             );
+
+
+        $branch = [];
+
+        foreach ($this->getConfigurationPool()->getContainer()->get('app.branch_option.repository')->findAll() as $item) {
+            $branch[$item->getId()] = $item->getName();
+        }
+
+
+        if(!empty($branch)) {
+            $datagridMapper->add('branch', 'doctrine_orm_callback', [
+                    'label' => 'Отделения',
+                    'callback' => [$this, 'getBranchFilter'],
+                    'field_type' => 'entity',
+                    'field_options' => [
+                        'class' => 'AppBundle\Entity\Branch',
+                        'property' => 'name',
+                        'multiple' => true,
+                        'query_builder' => function (EntityRepository $er) {
+                            return $er->createQueryBuilder('b')
+                                ->orderBy('b.name', 'ASC');
+                        },
+                    ],
+                    'advanced_filter' => false,
+                ]
+            );
+        }
+
     }
 
+    public function getBranchFilter( \Sonata\DoctrineORMAdminBundle\Datagrid\ProxyQuery $queryBuilder, $alias, $field, $value)
+    {
+        if ($value['value']->isEmpty()) {
+            return;
+        }
+        $queryBuilder->leftJoin($alias . '.createdBy', 'u3');
+        $queryBuilder->andWhere('u3.branch = :branch');
+        $queryBuilder->setParameter('branch', $value['value']);
+
+        return true;
+    }
     /**
      * @param $queryBuilder
      * @param $alias
@@ -971,6 +1036,11 @@ class ClientAdmin extends BaseAdmin
                     $name,
                     ['uri' => $admin->generateUrl('app.resident_form_response.admin.list', ['id' => $id])]
                 );
+
+                if (!$this->isClientLivingInShelter($id)) {
+                    $menu[$name]->setLinkAttribute('class', 'background-red');
+                }
+
             }
         }
 
@@ -1041,6 +1111,22 @@ class ClientAdmin extends BaseAdmin
     {
         return !!$this->getConfigurationPool()->getContainer()->get('doctrine.orm.entity_manager')
             ->getRepository('AppBundle:ShelterHistory')->findOneBy(['client' => $client]);
+    }
+
+    /**
+     * @param Client
+     *
+     * @return Boolean
+     */
+
+    public function isClientLivingInShelter($client)
+    {
+        $lived_to = $this->getConfigurationPool()->getContainer()->get('doctrine.orm.entity_manager')
+            ->getRepository('AppBundle:ShelterHistory')->findOneBy(['client' => $client])->getDateTo();
+
+        $date_now = new DateTime();
+
+        return !empty($lived_to) ? boolval($lived_to > $date_now) : true;
     }
 
     /**

@@ -16,6 +16,14 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
 
+        api:
+            pattern: ^/api
+            context: user
+            stateless: false
+            anonymous: true
+            guard:
+                authenticators: [app.security.api_authenticator]
+
         main:
             pattern:            .*
             context:            user
@@ -47,3 +55,6 @@ security:
         SONATA:
             - ROLE_SONATA_PAGE_ADMIN_PAGE_EDIT # if you are not using acl then this line must be uncommented
             - ROLE_SONATA_PAGE_ADMIN_BLOCK_EDIT
+            - ROLE_APP_SHELTER_ROOM_ADMIN_LIST
+            - ROLE_APP_SHELTER_ROOM_ADMIN_CREATE
+            - ROLE_APP_SHELTER_ROOM_ADMIN_DELETE

@@ -41,6 +41,12 @@ class ShelterHistory extends BaseEntity
     private $typhusVaccinationDate;
 
     /**
+     * Контакт клиента записан
+     * @ORM\Column(type="smallint")
+     */
+    private $contact_saved;
+
+    /**
      * Дата заселения
      * @ORM\Column(type="date", nullable=true)
      */
@@ -205,6 +211,28 @@ class ShelterHistory extends BaseEntity
     public function getTyphusVaccinationDate()
     {
         return $this->typhusVaccinationDate;
+    }
+
+    /**
+     * Set contact_saved
+     *
+     * @return ShelterHistory
+     */
+    public function setContactSaved($contact_saved)
+    {
+        $this->contact_saved = $contact_saved;
+
+        return $this;
+    }
+
+    /**
+     * Get contact_saved flag
+     *
+     * @return Boolean
+     */
+    public function getContactSaved()
+    {
+        return boolval($this->contact_saved);
     }
 
     /**

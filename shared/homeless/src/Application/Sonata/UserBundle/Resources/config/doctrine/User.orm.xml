@@ -25,6 +25,7 @@
         </one-to-many>
 
         <many-to-one target-entity="AppBundle\Entity\Position" field="position" inversed-by="users"/>
+        <many-to-one target-entity="AppBundle\Entity\Branch" field="branch" inversed-by="users"/>
         <many-to-one target-entity="Application\Sonata\UserBundle\Entity\User" field="createdBy"/>
         <many-to-one target-entity="Application\Sonata\UserBundle\Entity\User" field="updatedBy"/>
 

@@ -13,6 +13,7 @@ class History extends BaseEntity
     /**
      * Клиент
      * @ORM\ManyToOne(targetEntity="Client")
+     * @ORM\JoinColumn(name="client_id", referencedColumnName="id", onDelete="CASCADE")
      */
     private $client;
 

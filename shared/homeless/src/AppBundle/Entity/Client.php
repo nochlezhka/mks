@@ -9,7 +9,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
  * Клиент
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\ClientRepository")
  * @Vich\Uploadable
  */
 class Client extends BaseEntity
@@ -88,58 +88,72 @@ class Client extends BaseEntity
 
     /**
      * Значения дополнительных полей
-     * @ORM\OneToMany(targetEntity="ClientFieldValue", mappedBy="client")
+     * @ORM\OneToMany(targetEntity="ClientFieldValue", mappedBy="client", cascade={"remove"})
+    //  * @ORM\OneToMany(targetEntity="ClientFieldValue", mappedBy="client")
      */
     private $fieldValues;
 
     /**
      * Примечания
-     * @ORM\OneToMany(targetEntity="Note", mappedBy="client")
+     * @ORM\OneToMany(targetEntity="Note", mappedBy="client", cascade={"remove"})
      * @ORM\OrderBy({"createdAt" = "DESC", "id" = "DESC"})
      */
     private $notes;
 
     /**
      * Договоры
-     * @ORM\OneToMany(targetEntity="Contract", mappedBy="client")
+     * @ORM\OneToMany(targetEntity="Contract", mappedBy="client", cascade={"remove"})
+    //  * @ORM\OneToMany(targetEntity="Contract", mappedBy="client")
      * @ORM\OrderBy({"dateFrom" = "DESC"})
      */
     private $contracts;
 
     /**
      * Документы
-     * @ORM\OneToMany(targetEntity="Document", mappedBy="client")
+     * @ORM\OneToMany(targetEntity="Document", mappedBy="client", cascade={"remove"})
+    //  * @ORM\OneToMany(targetEntity="Document", mappedBy="client")
      */
     private $documents;
 
     /**
      * Данные о проживаниях в приюте (договоры о заселении)
-     * @ORM\OneToMany(targetEntity="ShelterHistory", mappedBy="client")
+     * @ORM\OneToMany(targetEntity="ShelterHistory", mappedBy="client", cascade={"remove"})
+    //  * @ORM\OneToMany(targetEntity="ShelterHistory", mappedBy="client")
      */
     private $shelterHistories;
 
     /**
      * Загруженные файлы документов
-     * @ORM\OneToMany(targetEntity="DocumentFile", mappedBy="client")
+     * @ORM\OneToMany(targetEntity="DocumentFile", mappedBy="client", cascade={"remove"})
+    //  * @ORM\OneToMany(targetEntity="DocumentFile", mappedBy="client")
      */
     private $documentFiles;
 
     /**
      * Полученные услуги
-     * @ORM\OneToMany(targetEntity="Service", mappedBy="client")
+     * @ORM\OneToMany(targetEntity="Service", mappedBy="client", cascade={"remove"})
      * @ORM\OrderBy({"createdAt" = "DESC", "id" = "DESC"})
      */
     private $services;
 
     /**
+     * Выданные вещи (одежда, предметы гигиены, ...)
+     * @ORM\OneToMany(targetEntity="Delivery", mappedBy="client")
+     * @ORM\OrderBy({"createdAt" = "DESC", "id" = "DESC"})
+     */
+    private $deliveries;
+
+    /**
      * Справки
-     * @ORM\OneToMany(targetEntity="Certificate", mappedBy="client")
+     * @ORM\OneToMany(targetEntity="Certificate", mappedBy="client", cascade={"remove"})
+    //  * @ORM\OneToMany(targetEntity="Certificate", mappedBy="client")
      */
     private $certificates;
 
     /**
      * Построенные документы
-     * @ORM\OneToMany(targetEntity="GeneratedDocument", mappedBy="client")
+     * @ORM\OneToMany(targetEntity="GeneratedDocument", mappedBy="client", cascade={"remove"})
+    //  * @ORM\OneToMany(targetEntity="GeneratedDocument", mappedBy="client")
      */
     private $generatedDocuments;
 
@@ -856,6 +870,24 @@ class Client extends BaseEntity
     public function getServices()
     {
         return $this->services;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDeliveries()
+    {
+        return $this->deliveries;
+    }
+
+    /**
+     * @param mixed $deliveries
+     * @return Client
+     */
+    public function setDeliveries($deliveries)
+    {
+        $this->deliveries = $deliveries;
+        return $this;
     }
 
     /**

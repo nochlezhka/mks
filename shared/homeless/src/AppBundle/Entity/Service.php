@@ -31,6 +31,7 @@ class Service extends BaseEntity
     /**
      * Тип
      * @ORM\ManyToOne(targetEntity="ServiceType")
+     * @ORM\JoinColumn(name="type_id", referencedColumnName="id", onDelete="SET NULL")
      */
     private $type;
 

@@ -4,6 +4,7 @@ namespace Application\Sonata\UserBundle\Entity;
 
 use AppBundle\Entity\BaseEntityInterface;
 use AppBundle\Entity\Position;
+use AppBundle\Entity\Branch;
 use Doctrine\Common\Collections\ArrayCollection;
 use Sonata\UserBundle\Entity\BaseUser as BaseUser;
 
@@ -56,6 +57,11 @@ class User extends BaseUser implements BaseEntityInterface
      * Должность текстом
      */
     private $positionText;
+
+    /**
+     * Отделение
+     */
+    private $branch;
 
     private $syncId;
     private $sort;
@@ -437,5 +443,29 @@ class User extends BaseUser implements BaseEntityInterface
         $this->positionText = $positionText;
 
         return $this;
+    }
+
+    /**
+     * Set branch
+     *
+     * @param Branch $branch
+     *
+     * @return User
+     */
+    public function setBranch(Branch $branch = null)
+    {
+        $this->branch = $branch;
+
+        return $this;
+    }
+
+    /**
+     * Get branch
+     *
+     * @return \AppBundle\Entity\Branch
+     */
+    public function getBranch()
+    {
+        return $this->branch;
     }
 }

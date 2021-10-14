@@ -30,6 +30,7 @@ class ClientFormResponseValue extends BaseEntity
     const RESIDENT_QUESTIONNAIRE_TYPE_6_MONTHS = "6 месяцев";
     const RESIDENT_QUESTIONNAIRE_TYPE_1_YEAR = "1 год";
     const RESIDENT_QUESTIONNAIRE_TYPE_2_YEARS = "2 года";
+    const RESIDENT_QUESTIONNAIRE_TYPE_WHEN_LEAVING = "на момент выезда";
 
     /**
      * Анкета

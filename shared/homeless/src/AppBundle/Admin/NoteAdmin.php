@@ -10,6 +10,8 @@ class NoteAdmin extends BaseAdmin
     protected $datagridValues = array(
         '_sort_order' => 'ASC',
         '_sort_by' => 'createdAt',
+        '_sort_by' => 'important',
+        '_sort_by' => 'ASC'
     );
 
     protected $translationDomain = 'AppBundle';

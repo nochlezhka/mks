@@ -63,6 +63,8 @@ breadcrumb:
       link_certificate_type_create: Создать
       link_certificate_type_delete: Удалить
       link_menu_item_list: Отображение разделов
+      link_branch_list: Отделения
+      link_position_list: Должности
       link_menu_item_create: Создать
       link_menu_item_delete: Удалить
       link_client_form_list: Редактирование форм
