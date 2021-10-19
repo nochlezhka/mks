@@ -1,0 +1,33 @@
+<td>
+  {% block field %}
+    {% for delivery in value|slice(0, 5) %}
+      <p>{{ delivery.createdAt|date('d.m.Y') }} {{ delivery.deliveryItem.name }} ({{ delivery.createdBy.lastname }})</p>
+    {% endfor %}
+  {% endblock %}
+  <p style="    float: left;
+            display: inline-block;">
+    {% set id = object.id ~ '_delivery_list' %}
+    <a href="{{ path('admin_app_client_delivery_list', {id: object.id}) }}?type=custom_modal" data-toggle="modal" data-target="#field_dialog_{{ id }}" role="button" aria-pressed="true">
+      Все выдачи
+    </a>
+    <style>
+     #field_dialog_{{ id }} .modal-content {
+         border-radius: 6px;
+         padding: 15px 10px 1px 10px;
+     }
+    </style>
+    {% include 'SonataDoctrineORMAdminBundle:CRUD:edit_modal.html.twig' %}
+
+    |
+
+    {% set id = object.id ~ '_delivery' %}
+
+    <style>
+     #field_dialog_{{ id }} .modal-content {
+         border-radius: 6px;
+         padding: 15px 10px 1px 10px;
+     }
+    </style>
+    {% include 'SonataDoctrineORMAdminBundle:CRUD:edit_modal.html.twig' %}
+  </p>
+</td>

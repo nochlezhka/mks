@@ -21,7 +21,7 @@ services:
       default:
         aliases:
           - $NGINX_ALIAS
-    restart: always
+    restart: always 
   php:
     container_name: mks-app
     build:

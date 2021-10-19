@@ -39,12 +39,12 @@ class ServiceAdmin extends BaseAdmin
             ->get('doctrine')
             ->getManager();
 
-        $availableCertTypes = $em
-            ->getRepository('AppBundle:ServiceType')
-            ->getAvailableForService($this->getSubject());
+        $availableServiceTypes = $em
+                               ->getRepository('AppBundle:ServiceType')
+                               ->getAvailable();
 
-        foreach ($availableCertTypes as $availableCertType) {
-            $typeOptions['choices'][$availableCertType->getId()] = $availableCertType->getName();
+        foreach ($availableServiceTypes as $availableServiceType) {
+            $typeOptions['choices'][$availableServiceType->getId()] = $availableServiceType->getName();
         }
         $typeOptions['map'] = [
             ServiceType::PAYMENT_TRAVEL => ['amount'],

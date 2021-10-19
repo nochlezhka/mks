@@ -57,3 +57,4 @@ web/sitemap.xml
 
 node_modules/
 .cache/*
+.config/

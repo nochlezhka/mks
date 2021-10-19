@@ -38,6 +38,13 @@
                 <form action="{{ path("sonata_user_admin_security_check") }}" method="post" role="form">
                     <input type="hidden" name="_csrf_token" value="{{ csrf_token }}"/>
 
+                    {% if app.request.query.has('_target_path') %}
+                        <input type="hidden" name="_target_path"
+                               value="{{ app.request.query.get('_target_path') }}"/>
+                        <input type="hidden" name="_failure_path"
+                               value="/login?_target_path={{ app.request.query.get('_target_path') }}"/>
+                    {% endif %}
+
                     <div class="form-group has-feedback">
                         <input type="text" class="form-control" id="username" name="_username"
                                value="{{ last_username }}" required="required"
