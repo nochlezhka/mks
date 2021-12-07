@@ -132,7 +132,7 @@ sudo chmod +x /usr/local/bin/docker-compose
 
     > ./app/console assets:install
     
-    > ./app/console assetic:dump --symlink
+    > ./app/console assetic:dump
 
 12. Настройте хост для проекта, перейдите по адресу хоста, 
 если пароль не был изменен на шаге 10 - залогиньтесь с доступом `admin/password`.
