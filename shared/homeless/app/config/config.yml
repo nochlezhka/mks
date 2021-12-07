@@ -220,6 +220,7 @@ sonata_admin:
                       - app.certificate_type.admin
                       - app.menu_item.admin
                       - app.position.admin
+                      - app.branch.admin
                       - sonata.user.admin.user
                       - sonata.user.admin.group
                       - app.client_form.admin
@@ -245,7 +246,6 @@ sonata_user:
         route: sonata_admin_dashboard
 
 ivory_ck_editor:
-    configs:
     default_config: default
     configs:
         news:

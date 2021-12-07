@@ -27,7 +27,7 @@ class HistoryDownload
      *
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Client")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="client_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="client_id", onDelete="CASCADE", referencedColumnName="id")
      * })
      */
     private $client;

@@ -241,6 +241,14 @@ services:
       calls:
           - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
 
+  app.branch.admin:
+      class: AppBundle\Admin\BranchAdmin
+      tags:
+        - { name: sonata.admin, manager_type: orm, label: 'Отделения' }
+      arguments: [null, AppBundle\Entity\Branch, SonataAdminBundle:CRUD, '@app.branch_service']
+      calls:
+        - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
+
   app.client_form.admin:
       class: AppBundle\Admin\ClientFormAdmin
       tags:
@@ -285,7 +293,7 @@ services:
 
   app.render_service:
     class: AppBundle\Service\RenderService
-    arguments: ['@templating', '@kernel', '@twig']
+    arguments: ['@templating', '@kernel', '@twig', '@app.branch_service']
 
   app.certificate_recreator_service:
     class: AppBundle\Service\CertificateRecreator
@@ -313,6 +321,15 @@ services:
     class: AppBundle\Repository\PositionRepository
     factory: ['@doctrine.orm.default_entity_manager', getRepository]
     arguments: ['AppBundle\Entity\Position']
+
+  app.branch_to_choice_field_mask_type.transformer:
+    class: AppBundle\Form\DataTransformer\BranchToChoiceFieldMaskTypeTransformer
+    arguments: ['@app.branch_option.repository']
+
+  app.branch_option.repository:
+      class: AppBundle\Repository\BranchRepository
+      factory: ['@doctrine.orm.default_entity_manager', getRepository]
+      arguments: ['AppBundle\Entity\Branch']
 
   app.client_field_option.repository:
     class: AppBundle\Repository\ClientFieldOptionRepository
@@ -358,3 +375,7 @@ services:
   app.meta_service:
     class: AppBundle\Service\MetaService
     arguments: ['@doctrine.orm.entity_manager']
+
+  app.branch_service:
+    class: AppBundle\Service\BranchService
+    arguments: ['@service_container']

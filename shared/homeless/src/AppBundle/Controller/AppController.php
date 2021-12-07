@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Branch;
 use AppBundle\Entity\ClientField;
 use AppBundle\Entity\ContractStatus;
 use Application\Sonata\UserBundle\Entity\User;
@@ -181,6 +182,11 @@ class AppController extends Controller
         $fieldHomelessBreadwinner = $this->getDoctrine()->getRepository(ClientField::class)->findOneBy(['code' => 'breadwinner']);
         $optionsBreadwinner = $fieldHomelessBreadwinner ? $fieldHomelessBreadwinner->getOptionsArray() : [];
 
+        $branch = [];
+        foreach ($this->getDoctrine()->getRepository(Branch::class)->findAll() as $item) {
+            $branch[] = ['id' => $item->getId(), 'name' => $item->getName()];
+        }
+
         return $this->render('@App/Admin/report.html.twig', [
             'users' => $this->getDoctrine()->getEntityManager()->getRepository('ApplicationSonataUserBundle:User')->findBy([
                 'locked' => false,
@@ -189,6 +195,7 @@ class AppController extends Controller
             'optionsHomelessReason' => $optionsHomelessReason,
             'optionsDisease' => $optionsDisease,
             'optionsBreadwinner' => $optionsBreadwinner,
+            'branches' => $branch,
         ]);
     }
 
@@ -213,7 +220,8 @@ class AppController extends Controller
 
             $request->get('homelessReason', null),
             $request->get('disease', null),
-            $request->get('breadwinner', null)
+            $request->get('breadwinner', null),
+            $request->get('branchId', null)
         );
     }
 }

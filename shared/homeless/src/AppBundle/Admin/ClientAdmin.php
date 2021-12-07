@@ -44,8 +44,7 @@ class ClientAdmin extends BaseAdmin
      * @var MetaService
      */
     private $metaService;
-
-    /**
+        /**
      * Мапа с описанием дополнительных полей, отображение которых зависит от значения других полей.
      * (`ChoiceFieldMaskType`).
      * Названия зависимых и определяющих полей начинается с `additionalField`
@@ -262,7 +261,7 @@ class ClientAdmin extends BaseAdmin
                 return;
             }
 
-            // проверяем заполненность обязательных доп. полей
+             // проверяем заполненность обязательных доп. полей
             /** @var $em EntityManagerInterface */
             $clientsFields = $em->getRepository(ClientField::class)->findAll();
             $statusHomelessEnabled = $this->isMenuItemEnabled(MenuItem::CODE_STATUS_HOMELESS);
@@ -387,7 +386,7 @@ class ClientAdmin extends BaseAdmin
                 'required' => $field->getRequired(),
                 'attr' => ["class" => ($field->getMandatoryForHomeless() ? 'mandatory-for-homeless' : '') . ' ' . (!$field->getEnabled() && $field->getEnabledForHomeless() ? 'enabled-for-homeless' : '')],
             ];
-            // если скрываемое поле раньше не было обязательным, разрешаем ему оставаться пустым
+             // если скрываемое поле раньше не было обязательным, разрешаем ему оставаться пустым
             // (это также поддержано в валидации в обработчике `FormEvents::SUBMIT`)
             if ($this->canAdditionalFieldRemainEmpty($field)) {
                 $options['required'] = false;
@@ -407,7 +406,7 @@ class ClientAdmin extends BaseAdmin
                     if ($field->getMultiple()) {
                         $options['multiple'] = true;
                     }
-                    // когда у селекта выставлен `required`, по-умолчанию выбирается первый элемент из списка
+                                        // когда у селекта выставлен `required`, по-умолчанию выбирается первый элемент из списка
                     // Это может быть нежелательно для скрываемых полей - мы делаем их необязательными, если они скрыты
                     // Чтобы избежать незаметной отправки непустого значения, указываем `placeholder`
                     if ($this->isAdditionalFieldDependant($field) && $options['required']) {
@@ -435,7 +434,6 @@ class ClientAdmin extends BaseAdmin
 
         $formMapper->getFormBuilder()->get('photo')->addModelTransformer(new ImageStringToFileTransformer());
     }
-
     /**
      * Можно ли не заполнять доп. поле.
      * Разрешаем не заполнять обязательные поля, если редактируется старый клиент, и в БД значение уже пустое.
@@ -567,8 +565,16 @@ class ClientAdmin extends BaseAdmin
             ])
             ->add('birthDate', 'date', [
                 'label' => 'Дата рождения',
-            ])
-            ->add('contracts.dateFrom', null, [
+            ]);
+
+            if(!empty($this->getConfigurationPool()->getContainer()->get('app.branch_option.repository')->findAll())) {
+                $listMapper->add('createdBy.branch.name', null, [
+                    'label' => 'Отделение',
+                ]);
+            }
+
+
+            $listMapper->add('contracts.dateFrom', null, [
                 'template' => '/admin/fields/client_contract_list.html.twig',
                 'label' => 'Договор',
             ])
@@ -684,8 +690,47 @@ class ClientAdmin extends BaseAdmin
                     'advanced_filter' => false,
                 ]
             );
+
+
+        $branch = [];
+
+        foreach ($this->getConfigurationPool()->getContainer()->get('app.branch_option.repository')->findAll() as $item) {
+            $branch[$item->getId()] = $item->getName();
+        }
+
+
+        if(!empty($branch)) {
+            $datagridMapper->add('branch', 'doctrine_orm_callback', [
+                    'label' => 'Отделения',
+                    'callback' => [$this, 'getBranchFilter'],
+                    'field_type' => 'entity',
+                    'field_options' => [
+                        'class' => 'AppBundle\Entity\Branch',
+                        'property' => 'name',
+                        'multiple' => true,
+                        'query_builder' => function (EntityRepository $er) {
+                            return $er->createQueryBuilder('b')
+                                ->orderBy('b.name', 'ASC');
+                        },
+                    ],
+                    'advanced_filter' => false,
+                ]
+            );
+        }
+
     }
 
+    public function getBranchFilter( \Sonata\DoctrineORMAdminBundle\Datagrid\ProxyQuery $queryBuilder, $alias, $field, $value)
+    {
+        if ($value['value']->isEmpty()) {
+            return;
+        }
+        $queryBuilder->leftJoin($alias . '.createdBy', 'u3');
+        $queryBuilder->andWhere('u3.branch = :branch');
+        $queryBuilder->setParameter('branch', $value['value']);
+
+        return true;
+    }
     /**
      * @param $queryBuilder
      * @param $alias
@@ -1112,6 +1157,7 @@ class ClientAdmin extends BaseAdmin
             $this->addChoiceFieldMaskTypeField($formMapper, $field, $options);
             return;
         }
+
 
         switch ($field->getCode()) {
             case 'homelessFrom':

@@ -591,6 +591,31 @@
 
                                             </div>
                                         </div>
+
+
+                                        {% if branches %}
+                                                    <div id="sonata-ba-collapsed-fields">
+                                                        <div class="form-group" id="sonata-ba-field-container-s5a37cdd74da55_branch">
+                                                            <label class="control-label" for="">
+                                                                Отделение
+                                                            </label>
+                                                            <div class="sonata-ba-field sonata-ba-field-standard-natural">
+                                                                <select id="" name="branchId"
+                                                                        class=" form-control">
+                                                                    <option value="0">Все</option>
+                                                                    {% for branch in branches %}
+                                                                        <option value="{{ branch.id }}">{{ branch.name }}</option>
+                                                                    {% endfor %}
+                                                                </select>
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                        {% endif %}
+
+
+
                                         <div id="type-default">
                                             <div class="form-group" id="sonata-ba-field-container-s5a37cdd74da55_type">
                                                 <label class="control-label" for="s5a37cdd74da55_type">

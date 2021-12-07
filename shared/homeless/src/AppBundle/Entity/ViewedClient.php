@@ -12,7 +12,8 @@ class ViewedClient extends BaseEntity
 {
     /**
      * Клиент
-     * @ORM\ManyToOne(targetEntity="Client", inversedBy="contracts")
+     * @ORM\JoinColumn(name="client_id", referencedColumnName="id", onDelete="CASCADE")
+    //  * @ORM\ManyToOne(targetEntity="Client", inversedBy="contracts")
      */
     private $client;
 
