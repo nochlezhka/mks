@@ -12,6 +12,7 @@ use AppBundle\Form\DataTransformer\ImageStringToFileTransformer;
 use AppBundle\Form\Type\AppHomelessFromDateType;
 use AppBundle\Service\MetaService;
 use Doctrine\Common\Collections\ArrayCollection;
+use DateTime;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
@@ -155,6 +156,14 @@ class ClientAdmin extends BaseAdmin
                 ->add('notes', 'array', [
                     'label' => ' ',
                     'template' => '/admin/fields/client_notes_show.html.twig',
+                ])
+                ->end();
+        } else if ($securityContext->isGranted('ROLE_SUPER_ADMIN') || $securityContext->isGranted('ROLE_APP_SERVICE_ADMIN_LIST') || $securityContext->isGranted('ROLE_APP_SERVICE_ADMIN_ALL')) {
+            $showMapper
+                ->with('Важные примечания')
+                ->add('notes', 'array', [
+                    'label' => ' ',
+                    'template' => '/admin/fields/client_notes_show_volunteer.html.twig',
                 ])
                 ->end();
         }
@@ -1016,6 +1025,10 @@ class ClientAdmin extends BaseAdmin
                     $name,
                     ['uri' => $admin->generateUrl('app.resident_form_response.admin.list', ['id' => $id])]
                 );
+
+                if (!$this->isClientLivingInShelter($id)) {
+                    $menu[$name]->setLinkAttribute('class', 'background-red');
+                }
             }
         }
 
@@ -1103,6 +1116,22 @@ class ClientAdmin extends BaseAdmin
         }
 
         return $result;
+    }
+
+    /**
+     * @param Client
+     *
+     * @return Boolean
+     */
+
+    public function isClientLivingInShelter($client)
+    {
+        $lived_to = $this->getConfigurationPool()->getContainer()->get('doctrine.orm.entity_manager')
+            ->getRepository('AppBundle:ShelterHistory')->findOneBy(['client' => $client])->getDateTo();
+
+        $date_now = new DateTime();
+
+        return !empty($lived_to) ? boolval($lived_to > $date_now) : true;
     }
 
     /**

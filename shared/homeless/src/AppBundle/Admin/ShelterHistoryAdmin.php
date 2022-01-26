@@ -5,6 +5,7 @@ namespace AppBundle\Admin;
 use Doctrine\ORM\EntityRepository;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 
 class ShelterHistoryAdmin extends BaseAdmin
 {
@@ -94,6 +95,10 @@ class ShelterHistoryAdmin extends BaseAdmin
                 'format' => 'dd.MM.yyyy',
                 'label' => 'Дата прививки от тифа',
                 'required' => false,
+            ])
+            ->add('contact_saved', CheckboxType::class, [
+                'label' => 'Контакт клиента записан',
+                'required' => true,
             ]);
     }
 

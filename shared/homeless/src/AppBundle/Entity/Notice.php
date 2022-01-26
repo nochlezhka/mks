@@ -25,6 +25,12 @@ class Notice extends BaseEntity
     private $date;
 
     /**
+     * Тип оповещения (ручное - 1; авто - 0)
+     * @ORM\Column(type="smallint", nullable=false)
+     */
+    private $manual;
+
+    /**
      * Клиент
      * @ORM\ManyToOne(targetEntity="Client")
      */
@@ -89,6 +95,30 @@ class Notice extends BaseEntity
     public function getText()
     {
         return $this->text;
+    }
+
+    /**
+     * Set manual
+     *
+     * @param int $manual
+     *
+     * @return Notice
+     */
+    public function setManual($manual)
+    {
+        $this->manual = $manual;
+
+        return $this;
+    }
+
+    /**
+     * Get manual
+     *
+     * @return int
+     */
+    public function getManual()
+    {
+        return $this->manual;
     }
 
     /**

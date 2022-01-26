@@ -149,13 +149,14 @@ class NoticeRepository extends EntityRepository
             $qnrType6Mon = ClientFormResponseValue::RESIDENT_QUESTIONNAIRE_TYPE_6_MONTHS;
             $qnrType1Year = ClientFormResponseValue::RESIDENT_QUESTIONNAIRE_TYPE_1_YEAR;
             $qnrType2Years = ClientFormResponseValue::RESIDENT_QUESTIONNAIRE_TYPE_2_YEARS;
+            $qnrTypeLeaving = ClientFormResponseValue::RESIDENT_QUESTIONNAIRE_TYPE_WHEN_LEAVING;
             $maxResFormTTL = 9999;
             if (!$clientFormsEnabled) {
                 $sql = "SELECT cl.*
                 FROM client cl
                 JOIN (SELECT MAX(id) id, client_id FROM contract GROUP BY client_id) ct ON ct.client_id= cl.id
                 JOIN contract c on c.id = ct.id
-                JOIN (SELECT MAX(id) id, client_id, MAX(date_to) date_to, MAX(date_from) date_from FROM shelter_history WHERE date_to IS NOT NULL GROUP BY client_id) sh ON sh.client_id= c.client_id
+                JOIN (SELECT MAX(id) id, created_by_id AS shelter_created_by, updated_by_id AS shelter_updated_by, client_id, MAX(date_to) date_to, MAX(date_from) date_from FROM shelter_history WHERE date_to IS NOT NULL GROUP BY client_id) sh ON sh.client_id= c.client_id
                 LEFT JOIN resident_questionnaire rq3 ON rq3.client_id = c.client_id AND rq3.type_id = 1
                 LEFT JOIN resident_questionnaire rq6 ON rq6.client_id = c.client_id AND rq6.type_id = 2
                 LEFT JOIN resident_questionnaire rq12 ON rq12.client_id = c.client_id AND rq12.type_id = 3
@@ -169,6 +170,7 @@ class NoticeRepository extends EntityRepository
                     SELECT frv.client_id,
                         MAX(CASE frv.value
                             -- для каждого типа анкеты указано, когда нужно напомнить о заполнении следующей
+                            WHEN '$qnrTypeLeaving' THEN 3
                             WHEN '$qnrType3Mon' THEN 6
                             WHEN '$qnrType6Mon' THEN 12
                             WHEN '$qnrType1Year' THEN 24
@@ -176,7 +178,8 @@ class NoticeRepository extends EntityRepository
                             WHEN '$qnrType2Years' THEN $maxResFormTTL
                             ELSE 0
                             END
-                        ) max_ttl_months
+                        ) max_ttl_months,
+                        frv.created_by_id
                     FROM client_form_response_value frv
                     WHERE frv.client_form_field_id = $qnrTypeFieldId
                     GROUP BY frv.client_id
@@ -185,13 +188,13 @@ class NoticeRepository extends EntityRepository
                     FROM client cl
                     JOIN (SELECT MAX(id) id, client_id FROM contract GROUP BY client_id) ct ON ct.client_id= cl.id
                     JOIN contract c on c.id = ct.id
-                    JOIN (SELECT MAX(id) id, client_id, MAX(date_to) date_to, MAX(date_from) date_from FROM shelter_history WHERE date_to IS NOT NULL GROUP BY client_id) sh ON sh.client_id= c.client_id
+                    JOIN (SELECT MAX(id) id, created_by_id AS shelter_created_by, updated_by_id AS shelter_updated_by, client_id, MAX(date_to) date_to, MAX(date_from) date_from FROM shelter_history WHERE date_to IS NOT NULL GROUP BY client_id) sh ON sh.client_id= c.client_id
                     LEFT JOIN ($residentFormsSubquery) res_forms ON res_forms.client_id = c.client_id
-                    WHERE c.created_by_id = ?
+                    WHERE (sh.shelter_created_by = ? OR sh.shelter_updated_by = ?)
                         -- у клиента нет ни одной заполненной анкеты, или есть, но не с максимально возможным типом
                         AND (res_forms.max_ttl_months IS NULL OR res_forms.max_ttl_months != $maxResFormTTL)
                         -- по максимальному сроку анкеты понятно, что уже пора заполнять за следующий период
-                        AND DATE_ADD(sh.date_to, INTERVAL IFNULL(res_forms.max_ttl_months, 3) MONTH) < NOW()
+                        AND DATE_ADD(sh.date_to, INTERVAL IFNULL(res_forms.max_ttl_months, 0) MONTH) < NOW()
                         AND sh.date_to >= '2019-01-01';";
             }
 
@@ -199,7 +202,11 @@ class NoticeRepository extends EntityRepository
             $rsm->addRootEntityFromClassMetadata(Client::class, 'c');
 
             $query = $this->getEntityManager()->createNativeQuery($sql, $rsm);
-            $query->setParameter(1, $user->getId());
+            if ($clientFormsEnabled) {
+                $query->setParameter(2, $user->getId());
+            } else {
+                $query->setParameter(1, $user->getId());
+            }
 
             /** @var Client[] $clients */
             $clients = $query->getResult();

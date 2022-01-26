@@ -7,9 +7,9 @@ use Doctrine\ORM\EntityManager;
 class ReportService
 {
     const ONE_OFF_SERVICES = 'one_off_services';
-    const ONE_OFF_SERVICES_USERS = 'one_off_services_users';
+    // const ONE_OFF_SERVICES_USERS = 'one_off_services_users';
     const COMPLETED_ITEMS = 'completed_items';
-    const COMPLETED_ITEMS_USERS = 'completed_items_users';
+    // const COMPLETED_ITEMS_USERS = 'completed_items_users';
     const OUTGOING = 'outgoing';
     const RESULTS_OF_SUPPORT = 'results_of_support';
     const ACCOMPANYING = 'accompanying';
@@ -34,9 +34,9 @@ class ReportService
     {
         return [
             static::ONE_OFF_SERVICES => 'Отчет о предоставленных разовых услугах',
-            static::ONE_OFF_SERVICES_USERS => 'Отчет о предоставленных разовых услугах по сотрудникам',
+            // static::ONE_OFF_SERVICES_USERS => 'Отчет о предоставленных разовых услугах по сотрудникам',
             static::COMPLETED_ITEMS => 'Отчет о выполненных пунктах сервисного плана',
-            static::COMPLETED_ITEMS_USERS => 'Отчет о выполненных пунктах сервисного плана по сотрудникам',
+            // static::COMPLETED_ITEMS_USERS => 'Отчет о выполненных пунктах сервисного плана по сотрудникам',
             static::OUTGOING => 'Отчет о выбывших из приюта',
             static::RESULTS_OF_SUPPORT => 'Отчет по результатам сопровождения ',
             static::ACCOMPANYING => 'Отчет по сопровождению',
@@ -63,9 +63,20 @@ class ReportService
      * @throws \PHPExcel_Reader_Exception
      * @throws \PHPExcel_Writer_Exception
      */
-    public function generate($type, $dateFrom = null, $dateTo = null, $userId = null, $createClientdateFrom = null, $createClientFromTo = null,
-                             $createServicedateFrom = null, $createServiceFromTo = null, $homelessReason = null, $disease = null, $breadwinner = null, $branchId = null)
-    {
+    public function generate(
+        $type,
+        $dateFrom = null,
+        $dateTo = null,
+        $userId = null,
+        $createClientdateFrom = null,
+        $createClientFromTo = null,
+        $createServicedateFrom = null,
+        $createServiceFromTo = null,
+        $homelessReason = null,
+        $disease = null,
+        $breadwinner = null,
+        $branchId = null
+    ) {
         if ($dateFrom) {
             $date = new \DateTime();
             $date->setTimestamp(strtotime($dateFrom));
@@ -85,17 +96,17 @@ class ReportService
                 $result = $this->oneOffServices($dateFrom, $dateTo, $userId, $branchId);
                 break;
 
-            case static::ONE_OFF_SERVICES_USERS:
-                $result = $this->oneOffServicesUsers($dateFrom, $dateTo, $userId, $branchId);
-                break;
+                // case static::ONE_OFF_SERVICES_USERS:
+                //     $result = $this->oneOffServicesUsers($dateFrom, $dateTo, $userId, $branchId);
+                //     break;
 
             case static::COMPLETED_ITEMS:
                 $result = $this->completedItems($dateFrom, $dateTo, $userId, $branchId);
                 break;
 
-            case static::COMPLETED_ITEMS_USERS:
-                $result = $this->completedItemsUsers($dateFrom, $dateTo, $userId, $branchId);
-                break;
+                // case static::COMPLETED_ITEMS_USERS:
+                //     $result = $this->completedItemsUsers($dateFrom, $dateTo, $userId, $branchId);
+                //     break;
 
             case static::OUTGOING:
                 $result = $this->outgoing($dateFrom, $dateTo, $userId, $branchId);
@@ -154,16 +165,15 @@ class ReportService
             JOIN s.type st
             JOIN s.createdBy cb
             JOIN cb.branch cbb
-            WHERE s.createdAt >= :dateFrom AND s.createdAt <= :dateTo ' . ($userId ? 'AND s.createdBy = :userId' : '') . '  ' . ($branchId ? 'AND cb.branch = :branchId' : '') . '
+            WHERE s.createdAt >= :dateFrom AND s.createdAt <= :dateTo ' . ($userId ? 'AND s.createdBy IN (' . implode(',', $userId) . ')' : '') . '  ' . ($branchId ? 'AND cb.branch = :branchId' : '') . '
             GROUP BY s.type
             ORDER BY st.sort');
         $parameters = [
             'dateFrom' => $dateFrom ? $dateFrom : '1960-01-01',
             'dateTo' => $dateTo ? $dateTo : date('Y-m-d'),
         ];
-        if ($userId) {
-            $parameters['userId'] = $userId;
-        }
+
+
         if ($branchId) {
             $parameters['branchId'] = $branchId;
         }
@@ -179,42 +189,42 @@ class ReportService
      * @throws \Doctrine\DBAL\DBALException
      * @throws \PHPExcel_Exception
      */
-    private function oneOffServicesUsers($dateFrom = null, $dateTo = null, $userId = null, $branchId = null)
-    {
+    // private function oneOffServicesUsers($dateFrom = null, $dateTo = null, $userId = null, $branchId = null)
+    // {
 
-        $fields = [
-            'ФИО сотрудникa',
-            'название услуги',
-            'сколько раз она была предоставлена'
-        ];
-
-
-        $this->doc->getActiveSheet()->fromArray([$fields], null, 'A1');
+    //     $fields = [
+    //         'ФИО сотрудникa',
+    //         'название услуги',
+    //         'сколько раз она была предоставлена'
+    //     ];
 
 
-        $stmt = $this->em->getConnection()->prepare('SELECT concat(u.lastname, \' \', u.firstname, \' \', u.middlename), st.name, COUNT(DISTINCT s.id) count
-            FROM service s
-            JOIN service_type st ON s.type_id = st.id
-            LEFT JOIN fos_user_user u ON s.created_by_id = u.id
-            LEFT JOIN branches AS b ON b.id = u.branch_id
-            WHERE s.created_at >= :dateFrom AND s.created_at <= :dateTo ' . ($userId ? 'AND s.created_by_id = :userId' : '') . ' ' .  ($branchId ? 'AND u.branch_id = :branchId' : '') . '
-            GROUP BY u.id, s.type_id
-            ORDER BY st.sort');
-        $parameters = [
-            'dateFrom' => $dateFrom ? $dateFrom : '1960-01-01',
-            'dateTo' => $dateTo ? $dateTo : date('Y-m-d'),
-        ];
-        if ($userId) {
-            $parameters['userId'] = $userId;
-        }
+    //     $this->doc->getActiveSheet()->fromArray([$fields], null, 'A1');
 
-        if ($branchId) {
-            $parameters['branchId'] = $branchId;
-        }
 
-        $stmt->execute($parameters);
-        return $stmt->fetchAll();
-    }
+    //     $stmt = $this->em->getConnection()->prepare('SELECT concat(u.lastname, \' \', u.firstname, \' \', u.middlename), st.name, COUNT(DISTINCT s.id) count
+    //         FROM service s
+    //         JOIN service_type st ON s.type_id = st.id
+    //         LEFT JOIN fos_user_user u ON s.created_by_id = u.id
+    //         LEFT JOIN branches AS b ON b.id = u.branch_id
+    //         WHERE s.created_at >= :dateFrom AND s.created_at <= :dateTo ' . ($userId ? 'AND s.created_by_id = :userId' : '') . ' ' .  ($branchId ? 'AND u.branch_id = :branchId' : '') . '
+    //         GROUP BY u.id, s.type_id
+    //         ORDER BY st.sort');
+    //     $parameters = [
+    //         'dateFrom' => $dateFrom ? $dateFrom : '1960-01-01',
+    //         'dateTo' => $dateTo ? $dateTo : date('Y-m-d'),
+    //     ];
+    //     if ($userId) {
+    //         $parameters['userId'] = $userId;
+    //     }
+
+    //     if ($branchId) {
+    //         $parameters['branchId'] = $branchId;
+    //     }
+
+    //     $stmt->execute($parameters);
+    //     return $stmt->fetchAll();
+    // }
 
     /**
      * @param null $dateFrom
@@ -243,7 +253,7 @@ class ReportService
             JOIN contract_item_type cit ON i.type_id = cit.id
             LEFT JOIN fos_user_user u ON c.created_by_id = u.id
             LEFT JOIN branches AS b ON b.id = u.branch_id
-            WHERE i.date >= :dateFrom AND i.date <= :dateTo ' . ($userId ? 'AND ((i.created_by_id IS NOT NULL AND i.created_by_id = :userId) OR (i.created_by_id IS NULL AND c.created_by_id = :userId))' : '') . '
+            WHERE i.date >= :dateFrom AND i.date <= :dateTo ' . ($userId ? 'AND ((i.created_by_id IS NOT NULL AND i.created_by_id IN (' . implode(',', array_map('intval', $userId)) . ')) OR (i.created_by_id IS NULL AND c.created_by_id IN (' . implode(',', array_map('intval', $userId)) . ')))' : '') . '
             ' . ($branchId ? 'AND u.branch_id = :branchId' : '') . '
             GROUP BY i.type_id
             ORDER BY cit.sort');
@@ -251,9 +261,9 @@ class ReportService
             ':dateFrom' => $dateFrom ? $dateFrom : '1960-01-01',
             ':dateTo' => $dateTo ? $dateTo : date('Y-m-d'),
         ];
-        if ($userId) {
-            $parameters[':userId'] = $userId;
-        }
+        // if ($userId) {
+        //     $parameters[':userId'] = $userId;
+        // }
 
         if ($branchId) {
             $parameters['branchId'] = $branchId;
@@ -272,43 +282,43 @@ class ReportService
      * @throws \Doctrine\DBAL\DBALException
      * @throws \PHPExcel_Exception
      */
-    private function completedItemsUsers($dateFrom = null, $dateTo = null, $userId = null, $branchId = null)
-    {
-        $fields = [
-            'ФИО сотрудника',
-            'название пункта',
-            'сколько раз он был выполнен'
-        ];
+    // private function completedItemsUsers($dateFrom = null, $dateTo = null, $userId = null, $branchId = null)
+    // {
+    //     $fields = [
+    //         'ФИО сотрудника',
+    //         'название пункта',
+    //         'сколько раз он был выполнен'
+    //     ];
 
 
 
-        $this->doc->getActiveSheet()->fromArray([$fields], null, 'A1');
+    //     $this->doc->getActiveSheet()->fromArray([$fields], null, 'A1');
 
 
-        $stmt = $this->em->getConnection()->prepare('SELECT concat(u.lastname, \' \', u.firstname, \' \', u.middlename) full_name, cit.name, COUNT(*) count
-            FROM contract_item i
-              JOIN contract c ON i.contract_id = c.id
-              JOIN contract_item_type cit ON i.type_id = cit.id
-              LEFT JOIN fos_user_user u ON (i.created_by_id IS NOT NULL AND i.created_by_id = u.id) OR (i.created_by_id IS NULL AND c.created_by_id = u.id)
-              LEFT JOIN branches AS b ON b.id = u.branch_id
-            WHERE i.date >= :dateFrom AND i.date <= :dateTo ' . ($userId ? 'AND u.id = :userId' : '') . ' ' .  ($branchId ? 'AND u.branch_id = :branchId' : '')  . '
-            GROUP BY i.type_id, u.id
-            ORDER BY i.id, cit.sort');
-        $parameters = [
-            ':dateFrom' => $dateFrom ? $dateFrom : '1960-01-01',
-            ':dateTo' => $dateTo ? $dateTo : date('Y-m-d'),
-        ];
-        if ($userId) {
-            $parameters[':userId'] = $userId;
-        }
+    //     $stmt = $this->em->getConnection()->prepare('SELECT concat(u.lastname, \' \', u.firstname, \' \', u.middlename) full_name, cit.name, COUNT(*) count
+    //         FROM contract_item i
+    //           JOIN contract c ON i.contract_id = c.id
+    //           JOIN contract_item_type cit ON i.type_id = cit.id
+    //           LEFT JOIN fos_user_user u ON (i.created_by_id IS NOT NULL AND i.created_by_id = u.id) OR (i.created_by_id IS NULL AND c.created_by_id = u.id)
+    //           LEFT JOIN branches AS b ON b.id = u.branch_id
+    //         WHERE i.date >= :dateFrom AND i.date <= :dateTo ' . ($userId ? 'AND u.id = :userId' : '') . ' ' .  ($branchId ? 'AND u.branch_id = :branchId' : '')  . '
+    //         GROUP BY i.type_id, u.id
+    //         ORDER BY i.id, cit.sort');
+    //     $parameters = [
+    //         ':dateFrom' => $dateFrom ? $dateFrom : '1960-01-01',
+    //         ':dateTo' => $dateTo ? $dateTo : date('Y-m-d'),
+    //     ];
+    //     if ($userId) {
+    //         $parameters[':userId'] = $userId;
+    //     }
 
-        if ($branchId) {
-            $parameters['branchId'] = $branchId;
-        }
+    //     if ($branchId) {
+    //         $parameters['branchId'] = $branchId;
+    //     }
 
-        $stmt->execute($parameters);
-        return $stmt->fetchAll();
-    }
+    //     $stmt->execute($parameters);
+    //     return $stmt->fetchAll();
+    // }
 
     /**
      * @param null $dateFrom
@@ -347,16 +357,16 @@ class ReportService
             LEFT JOIN contract_item_type cit2 ON ci2.type_id = cit2.id
             JOIN contract_status cs ON con.status_id = cs.id
             LEFT JOIN branches AS b ON b.id = u.branch_id
-            WHERE h.date_to >= :dateFrom AND h.date_to <= :dateTo ' . ($userId ? 'AND u.id = :userId' : '') . ' ' . ($branchId ? 'AND u.branch_id = :branchId' : '')  . '
+            WHERE h.date_to >= :dateFrom AND h.date_to <= :dateTo ' . ($userId ? 'AND u.id IN (' . implode(',', array_map('intval', $userId)) . ')' : '') . ' ' . ($branchId ? 'AND u.branch_id = :branchId' : '')  . '
             GROUP BY con.id
             ORDER BY h.date_to DESC');
         $parameters = [
             ':dateFrom' => $dateFrom ? $dateFrom : '1960-01-01',
             ':dateTo' => $dateTo ? $dateTo : date('Y-m-d'),
         ];
-        if ($userId) {
-            $parameters[':userId'] = $userId;
-        }
+        // if ($userId) {
+        //     $parameters[':userId'] = $userId;
+        // }
 
         if ($branchId) {
             $parameters['branchId'] = $branchId;
@@ -399,17 +409,17 @@ class ReportService
             LEFT JOIN contract_item_type cit2 ON ci2.type_id = cit2.id
             JOIN contract_status cs ON con.status_id = cs.id
             LEFT JOIN branches AS b ON b.id = u.branch_id
-            WHERE con.date_to >= :dateFrom AND con.date_to <= :dateTo ' . ($userId ? 'AND u.id = :userId' : '') . '
-                AND con.status_id = 2 ' . ($branchId ? 'AND u.branch_id = :branchId' : '') . '
+            WHERE con.date_to >= :dateFrom AND con.date_to <= :dateTo ' . ($userId ? 'AND u.id IN (' . implode(',', array_map('intval', $userId)) . ')' : '') . '
+                AND con.status_id <> 1 ' . ($branchId ? 'AND u.branch_id = :branchId' : '') . '
             GROUP BY con.id
             ORDER BY con.date_to DESC');
         $parameters = [
             ':dateFrom' => $dateFrom ? $dateFrom : '1960-01-01',
             ':dateTo' => $dateTo ? $dateTo : date('Y-m-d'),
         ];
-        if ($userId) {
-            $parameters[':userId'] = $userId;
-        }
+        // if ($userId) {
+        //     $parameters[':userId'] = $userId;
+        // }
 
         if ($branchId) {
             $parameters['branchId'] = $branchId;
@@ -457,15 +467,15 @@ class ReportService
             LEFT JOIN contract_item_type cit1 ON ci1.type_id = cit1.id
             JOIN contract_status cs ON con.status_id = cs.id
             LEFT JOIN branches AS b ON b.id = u.branch_id
-            WHERE ' . ($userId ? ' u.id = :userId AND ' : '') . '
+            WHERE ' . ($userId ? ' u.id IN (' . implode(',', array_map('intval', $userId)) . ') AND ' : '') . '
                 status_id = 1 ' .  ($branchId ? 'AND u.branch_id = :branchId' : '') . '
             GROUP BY con.id
             ORDER BY con.date_to DESC');
         $parameters = [];
 
-        if ($userId) {
-            $parameters[':userId'] = $userId;
-        }
+        // if ($userId) {
+        //     $parameters[':userId'] = $userId;
+        // }
 
         if ($branchId) {
             $parameters['branchId'] = $branchId;
@@ -502,7 +512,7 @@ class ReportService
             JOIN contract_item_type cit ON i.type_id = cit.id
             JOIN fos_user_user u ON c.created_by_id = u.id
             LEFT JOIN branches AS b ON b.id = u.branch_id
-            WHERE i.date >= :dateFrom AND i.date <= :dateTo ' . ($userId ? 'AND ((i.created_by_id IS NOT NULL AND i.created_by_id = :userId) OR (i.created_by_id IS NULL AND c.created_by_id = :userId))' : '') . '
+            WHERE i.date >= :dateFrom AND i.date <= :dateTo ' . ($userId ? 'AND ((i.created_by_id IS NOT NULL AND i.created_by_id IN (' . implode(',', array_map('intval', $userId)) . ')) OR (i.created_by_id IS NULL AND c.created_by_id IN (' . implode(',', array_map('intval', $userId)) . ')))' : '') . '
             ' .   ($branchId ? 'AND u.branch_id = :branchId' : '') . '
             GROUP BY cit.name
             ORDER BY cit.name');
@@ -510,9 +520,9 @@ class ReportService
             ':dateFrom' => $dateFrom ? $dateFrom : '2000-01-01',
             ':dateTo' => $dateTo ? $dateTo : date('Y-m-d'),
         ];
-        if ($userId) {
-            $parameters[':userId'] = $userId;
-        }
+        // if ($userId) {
+        //     $parameters[':userId'] = $userId;
+        // }
         if ($branchId) {
             $parameters['branchId'] = $branchId;
         }
@@ -539,42 +549,55 @@ class ReportService
             'Количество',
         ];
 
-//        if(!is_null($branchId)) {
-//            $fields[] = 'отделение';
-//        }
+        $branchName = 'Все';
+        if (!is_null($branchId)) {
+            $branchName = $branchId == '1' ? 'Санкт-Петербург' : ($branchId == '0' ? 'Все' : 'Москва');
+            $fields[] = 'отделение';
+        }
 
         $this->doc->getActiveSheet()->fromArray([$fields], null, 'A1');
 
         $clientsIds = null;
         if ($createServicedateFrom || $createServiceFromTo) {
-            $stmt = $this->em->getConnection()->prepare('SELECT c.id
-            FROM client c
-            JOIN service s ON s.client_id = c.id
-            JOIN fos_user_user u ON c.created_by_id = u.id
-            LEFT JOIN branches AS b ON b.id = u.branch_id
-            WHERE s.created_at >= :createServicedateFrom AND s.created_at <= :createServiceFromTo AND
-                  c.created_at >= :createClientdateFrom AND c.created_at <= :createClientFromTo ' .  ($branchId ? 'AND u.branch_id = :branchId' : '')
-            );
+            // $stmt = $this->em->getConnection()->prepare('SELECT DISTINCT c.id
+            // FROM client c
+            // JOIN service s ON s.client_id = c.id
+            // JOIN fos_user_user u ON c.created_by_id = u.id
+            // LEFT JOIN branches AS b ON b.id = u.branch_id
+            // WHERE s.created_at >= :createServicedateFrom AND s.created_at <= :createServiceFromTo AND
+            //       c.created_at >= :createClientdateFrom AND c.created_at <= :createClientFromTo ' .  ($branchId ? 'AND u.branch_id = :branchId' : '')
+            // );
+
+
+            $stmt = $this->em->getConnection()->prepare('SELECT DISTINCT s.`client_id` as `id`
+            FROM `service` AS s
+            JOIN `service_type` AS st ON st.`id` = s.`type_id`
+            JOIN `client` AS c ON c.`id` = s.`client_id`
+            JOIN `fos_user_user` AS u ON u.`id` = s.`created_by_id`
+            JOIN `branches` AS b ON b.`id` = u.`branch_id`
+            WHERE s.`created_at` >= :createServicedateFrom AND s.`created_at` <= :createServiceFromTo AND c.created_at >= :createClientdateFrom AND c.created_at <= :createClientFromTo ' . ($branchId ? 'AND u.`branch_id` = :branchId' : '') . '
+            ORDER BY st.`sort`');
+
             $parameters = [
                 ':createServicedateFrom' => $createServicedateFrom ? date('Y-m-d', strtotime($createServicedateFrom)) : '1960-01-01',
                 ':createServiceFromTo' => $createServiceFromTo ? date('Y-m-d', strtotime($createServiceFromTo)) : date('Y-m-d'),
                 ':createClientdateFrom' => $createClientdateFrom ? date('Y-m-d', strtotime($createClientdateFrom)) : '1960-01-01',
                 ':createClientFromTo' => $createClientFromTo ? date('Y-m-d', strtotime($createClientFromTo)) : date('Y-m-d'),
             ];
-
         } else {
-            $stmt = $this->em->getConnection()->prepare('SELECT c.id
-            FROM client c
-            JOIN fos_user_user u ON c.created_by_id = u.id
-            LEFT JOIN branches AS b ON b.id = u.branch_id
-            WHERE c.created_at >= :createClientdateFrom AND c.created_at <= :createClientFromTo ' .   ($branchId ? 'AND u.branch_id = :branchId' : '')
-            );
+            $stmt = $this->em->getConnection()->prepare('SELECT DISTINCT s.`client_id` AS `id`
+            FROM `service` AS s
+            JOIN `service_type` AS st ON st.`id` = s.`type_id`
+            JOIN `client` AS c ON c.`id` = s.`client_id`
+            JOIN `fos_user_user` AS u ON u.`id` = s.`created_by_id`
+            JOIN `branches` AS b ON b.`id` = u.`branch_id`
+            WHERE c.`created_at` >= :createClientdateFrom AND c.`created_at` <= :createClientFromTo ' . ($branchId ? 'AND u.`branch_id` = :branchId' : '') . '
+            ORDER BY st.`sort`');
+
             $parameters = [
                 ':createClientdateFrom' => $createClientdateFrom ? date('Y-m-d', strtotime($createClientdateFrom)) : '1960-01-01',
                 ':createClientFromTo' => $createClientFromTo ? date('Y-m-d', strtotime($createClientFromTo)) : date('Y-m-d'),
             ];
-
-
         }
 
         if ($branchId) {
@@ -588,90 +611,83 @@ class ReportService
         foreach ($stmt->fetchAll() as $item) {
             $clientsIds[] = $item['id'];
         }
+
         $clientsIds = array_unique($clientsIds);
         if (!$clientsIds) {
             return [];
         }
         $stmt = $this->em->getConnection()->prepare('(
-  SELECT \'Количество\', \'Общее\', COUNT(*)
-  FROM client c
-  WHERE c.id IN (' . implode(',', $clientsIds) . ')
-)
-union
-(
-  SELECT \'Количество\', \'Мужчин\', COUNT(*)
-  FROM client c
-  WHERE c.id IN (' . implode(',', $clientsIds) . ') AND c.gender = 1
-)
-union
-(
-  SELECT \'Количество\', \'Женщин\', COUNT(*)
-  FROM client c
-  WHERE c.id IN (' . implode(',', $clientsIds) . ') AND c.gender = 2
-)
-union
-(
-  SELECT \'Средний\', \'Возраст\', CAST(AVG(TIMESTAMPDIFF(YEAR,c.birth_date,curdate())) AS UNSIGNED)
-  FROM client c
-  WHERE c.id IN (' . implode(',', $clientsIds) . ')
-)
-union
-(
-  SELECT \'Средний\', \'Стаж бездомности\', CAST(AVG(TIMESTAMPDIFF(YEAR,cfv.datetime,curdate())) AS UNSIGNED)
-  FROM client c
-  JOIN client_field cf ON cf.code = \'homelessFrom\'
-  JOIN client_field_value cfv ON c.id = cfv.client_id AND cfv.field_id = cf.id
-  WHERE c.id IN (' . implode(',', $clientsIds) . ')
-)
-union
-(
-  SELECT cf.name, \'Есть\', COUNT(*)
-  FROM client c
-  JOIN client_field_value cfv ON c.id = cfv.client_id AND cfv.option_id IS NULL AND cfv.datetime IS NULL AND cfv.text IS NULL
-  JOIN client_field cf ON cfv.field_id = cf.id
-  JOIN client_field_value_client_field_option cfvcfo on cfv.id = cfvcfo.client_field_value_id
-  JOIN client_field_option cfo on cfvcfo.client_field_option_id = cfo.id
-  WHERE c.id IN (' . implode(',', $clientsIds) . ') and cf.code = \'profession\'
-)
-union
-(
-  SELECT \'Профессия\', \'Нет\', ((
-  SELECT COUNT(*)
-  FROM client c
-  WHERE c.id IN (' . implode(',', $clientsIds) . ')
-) - (
-  SELECT COUNT(*)
-  FROM client c
-  JOIN client_field_value cfv ON c.id = cfv.client_id AND cfv.option_id IS NULL AND cfv.datetime IS NULL AND cfv.text IS NULL
-  JOIN client_field cf ON cfv.field_id = cf.id
-  JOIN client_field_value_client_field_option cfvcfo on cfv.id = cfvcfo.client_field_value_id
-  JOIN client_field_option cfo on cfvcfo.client_field_option_id = cfo.id
-  WHERE c.id IN (' . implode(',', $clientsIds) . ') and cf.code = \'profession\'
-))
-)
-union
-(
-  SELECT cf.name, cfo.name, COUNT(*)
-  FROM client c
-  JOIN client_field_value cfv ON c.id = cfv.client_id AND cfv.option_id IS NULL AND cfv.datetime IS NULL AND cfv.text IS NULL
-  JOIN client_field cf ON cfv.field_id = cf.id
-  JOIN client_field_value_client_field_option cfvcfo on cfv.id = cfvcfo.client_field_value_id
-  JOIN client_field_option cfo on cfvcfo.client_field_option_id = cfo.id
-  WHERE c.id IN (' . implode(',', $clientsIds) . ') and cf.code != \'profession\'
-  GROUP BY cf.name
-      , cfo.name
-)
-union
-(
-  SELECT cf.name, cfo.name, COUNT(*)
-  FROM client c
-  JOIN client_field_value cfv ON c.id = cfv.client_id AND cfv.option_id IS NOT NULL
-  JOIN client_field cf ON cfv.field_id = cf.id
-  JOIN client_field_option cfo on cfv.option_id = cfo.id
-  WHERE c.id IN (' . implode(',', $clientsIds) . ') and cf.code != \'profession\'
-  GROUP BY cf.name
-      , cfo.name
-)');
+            SELECT \'Количество\', \'Общее\', COUNT(*), \'' . $branchName . '\'
+            FROM client c
+            WHERE c.id IN (' . implode(',', $clientsIds) . ')
+            )
+            union
+            (
+            SELECT \'Количество\', \'Мужчин\', COUNT(*), \'' . $branchName . '\'
+            FROM client c
+            WHERE c.id IN (' . implode(',', $clientsIds) . ') AND c.gender = 1
+            )
+            union
+            (
+            SELECT \'Количество\', \'Женщин\', COUNT(*), \'' . $branchName . '\'
+            FROM client c
+            WHERE c.id IN (' . implode(',', $clientsIds) . ') AND c.gender = 2
+            )
+            union
+            (
+            SELECT \'Средний\', \'Возраст\', CAST(AVG(TIMESTAMPDIFF(YEAR,c.birth_date,curdate())) AS UNSIGNED), \'' . $branchName . '\'
+            FROM client c
+            WHERE c.id IN (' . implode(',', $clientsIds) . ')
+            )
+            union
+            (
+            SELECT cf.name, \'Есть\', COUNT(*), \'' . $branchName . '\'
+            FROM client c
+            JOIN client_field_value cfv ON c.id = cfv.client_id AND cfv.option_id IS NULL AND cfv.datetime IS NULL AND cfv.text IS NULL
+            JOIN client_field cf ON cfv.field_id = cf.id
+            JOIN client_field_value_client_field_option cfvcfo on cfv.id = cfvcfo.client_field_value_id
+            JOIN client_field_option cfo on cfvcfo.client_field_option_id = cfo.id
+            WHERE c.id IN (' . implode(',', $clientsIds) . ') and cf.code = \'profession\'
+            )
+            union
+            (
+            SELECT \'Профессия\', \'Нет\', ((
+            SELECT COUNT(*)
+            FROM client c
+            WHERE c.id IN (' . implode(',', $clientsIds) . ')
+            ) - (
+            SELECT COUNT(*)
+            FROM client c
+            JOIN client_field_value cfv ON c.id = cfv.client_id AND cfv.option_id IS NULL AND cfv.datetime IS NULL AND cfv.text IS NULL
+            JOIN client_field cf ON cfv.field_id = cf.id
+            JOIN client_field_value_client_field_option cfvcfo on cfv.id = cfvcfo.client_field_value_id
+            JOIN client_field_option cfo on cfvcfo.client_field_option_id = cfo.id
+            WHERE c.id IN (' . implode(',', $clientsIds) . ') and cf.code = \'profession\'
+            )), \'' . $branchName . '\'
+            )
+            union
+            (
+            SELECT cf.name, cfo.name, COUNT(*), \'' . $branchName . '\'
+            FROM client c
+            JOIN client_field_value cfv ON c.id = cfv.client_id AND cfv.option_id IS NULL AND cfv.datetime IS NULL AND cfv.text IS NULL
+            JOIN client_field cf ON cfv.field_id = cf.id
+            JOIN client_field_value_client_field_option cfvcfo on cfv.id = cfvcfo.client_field_value_id
+            JOIN client_field_option cfo on cfvcfo.client_field_option_id = cfo.id
+            WHERE c.id IN (' . implode(',', $clientsIds) . ') and cf.code != \'profession\'
+            GROUP BY cf.name
+                , cfo.name
+            )
+            union
+            (
+            SELECT cf.name, cfo.name, COUNT(*), \'' . $branchName . '\'
+            FROM client c
+            JOIN client_field_value cfv ON c.id = cfv.client_id AND cfv.option_id IS NOT NULL
+            JOIN client_field cf ON cfv.field_id = cf.id
+            JOIN client_field_option cfo on cfv.option_id = cfo.id
+            WHERE c.id IN (' . implode(',', $clientsIds) . ') and cf.code != \'profession\'
+            GROUP BY cf.name
+                , cfo.name
+            )');
         $stmt->execute();
         return $stmt->fetchAll();
     }
@@ -694,17 +710,17 @@ union
             'Количество',
         ];
 
-//        if(!is_null($branchId)) {
-//            $fields[] = 'отделение';
-//        }
+        if(!is_null($branchId)) {
+            $branchName = $branchId == '1' ? 'Санкт-Петербург' : ($branchId == '0' ? 'Все' : 'Москва');
+            $fields[] = 'отделение';
+        }
 
         $this->doc->getActiveSheet()->fromArray([$fields], null, 'A1');
 
 
-
-
         if ($createServicedateFrom || $createServiceFromTo) {
-            $stmt = $this->em->getConnection()->prepare('SELECT c.id
+            $stmt = $this->em->getConnection()->prepare(
+                'SELECT c.id
             FROM client c
             JOIN service s ON s.client_id = c.id
             JOIN fos_user_user u ON c.created_by_id = u.id
@@ -719,7 +735,8 @@ union
                 ':createClientFromTo' => $createClientFromTo ? date('Y-m-d', strtotime($createClientFromTo)) : date('Y-m-d'),
             ];
         } else {
-            $stmt = $this->em->getConnection()->prepare('SELECT c.id
+            $stmt = $this->em->getConnection()->prepare(
+                'SELECT c.id
             FROM client c
             JOIN fos_user_user u ON c.created_by_id = u.id
             LEFT JOIN branches AS b ON b.id = u.branch_id
@@ -741,17 +758,20 @@ union
         foreach ($stmt->fetchAll() as $item) {
             $clientsIds[$item['id']] = 0;
         }
+
         if (!$clientsIds) {
             return [];
         }
+
         if ($homelessReason || $disease || $breadwinner) {
             if ($disease) {
                 $stmt = $this->em->getConnection()->prepare('SELECT c.id
-FROM client c
-LEFT JOIN client_field_value cfv ON c.id = cfv.client_id
-LEFT JOIN client_field_value_client_field_option cfvcfo on cfv.id = cfvcfo.client_field_value_id
-LEFT JOIN client_field cf ON cfv.field_id = cf.id
-WHERE cf.code = \'disease\' AND cfvcfo.client_field_option_id IN (' . implode(',', $disease) . ')');
+                    FROM client c
+                    LEFT JOIN client_field_value cfv ON c.id = cfv.client_id
+                    LEFT JOIN client_field_value_client_field_option cfvcfo on cfv.id = cfvcfo.client_field_value_id
+                    LEFT JOIN client_field cf ON cfv.field_id = cf.id
+                    WHERE cf.code = \'disease\' AND cfvcfo.client_field_option_id IN (' . implode(',', $disease) . ')');
+
                 $stmt->execute();
                 foreach ($stmt->fetchAll() as $item) {
                     if (!isset($clientsIds[$item['id']])) {
@@ -762,11 +782,11 @@ WHERE cf.code = \'disease\' AND cfvcfo.client_field_option_id IN (' . implode(',
             }
             if ($homelessReason) {
                 $stmt = $this->em->getConnection()->prepare('SELECT c.id
-FROM client c
-LEFT JOIN client_field_value cfv ON c.id = cfv.client_id
-LEFT JOIN client_field_value_client_field_option cfvcfo on cfv.id = cfvcfo.client_field_value_id
-LEFT JOIN client_field cf ON cfv.field_id = cf.id
-WHERE cf.code = \'homelessReason\' AND cfvcfo.client_field_option_id IN (' . implode(',', $homelessReason) . ')');
+                    FROM client c
+                    LEFT JOIN client_field_value cfv ON c.id = cfv.client_id
+                    LEFT JOIN client_field_value_client_field_option cfvcfo on cfv.id = cfvcfo.client_field_value_id
+                    LEFT JOIN client_field cf ON cfv.field_id = cf.id
+                    WHERE cf.code = \'homelessReason\' AND cfvcfo.client_field_option_id IN (' . implode(',', $homelessReason) . ')');
                 $stmt->execute();
                 foreach ($stmt->fetchAll() as $item) {
                     if (!isset($clientsIds[$item['id']])) {
@@ -777,11 +797,11 @@ WHERE cf.code = \'homelessReason\' AND cfvcfo.client_field_option_id IN (' . imp
             }
             if ($breadwinner) {
                 $stmt = $this->em->getConnection()->prepare('SELECT c.id
-FROM client c
-LEFT JOIN client_field_value cfv ON c.id = cfv.client_id
-LEFT JOIN client_field_value_client_field_option cfvcfo on cfv.id = cfvcfo.client_field_value_id
-LEFT JOIN client_field cf ON cfv.field_id = cf.id
-WHERE cf.code = \'breadwinner\' AND cfvcfo.client_field_option_id IN (' . implode(',', $breadwinner) . ')');
+                    FROM client c
+                    LEFT JOIN client_field_value cfv ON c.id = cfv.client_id
+                    LEFT JOIN client_field_value_client_field_option cfvcfo on cfv.id = cfvcfo.client_field_value_id
+                    LEFT JOIN client_field cf ON cfv.field_id = cf.id
+                    WHERE cf.code = \'breadwinner\' AND cfvcfo.client_field_option_id IN (' . implode(',', $breadwinner) . ')');
                 $stmt->execute();
                 foreach ($stmt->fetchAll() as $item) {
                     if (!isset($clientsIds[$item['id']])) {
@@ -790,21 +810,26 @@ WHERE cf.code = \'breadwinner\' AND cfvcfo.client_field_option_id IN (' . implod
                     $clientsIds[$item['id']]++;
                 }
             }
+
             $max = max($clientsIds);
+
             foreach ($clientsIds as $clientsId => $value) {
                 if ($value !== $max) {
                     unset($clientsIds[$clientsId]);
                 }
             }
-            $clientsIds = array_keys($clientsIds);
+
+            $clientsIds = array_unique(array_keys($clientsIds));
         }
+
         if ($clientsIds === []) {
             return [];
         }
         $stmt = $this->em->getConnection()->prepare('
-  SELECT COUNT(*)
-  FROM client c
-  WHERE c.id IN (' . implode(',', $clientsIds) . ')');
+            SELECT COUNT(*), \''.$branchName.'\'
+            FROM client c
+            WHERE c.id IN (' . implode(',', $clientsIds) . ')');
+
         $stmt->execute();
         return $stmt->fetchAll();
     }

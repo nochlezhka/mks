@@ -54,6 +54,16 @@ class ShelterRoom extends BaseEntity
     }
 
     /**
+     * Get id
+     *
+     * @return integer
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
      * Get number
      *
      * @return string

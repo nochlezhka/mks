@@ -87,8 +87,8 @@ class Client extends BaseEntity
     private $lastRegistrationDistrict;
 
     /**
-     * Значения дополнительных полей
-     * @ORM\OneToMany(targetEntity="ClientFieldValue", mappedBy="client", cascade={"remove"})
+    * Значения дополнительных полей
+    * @ORM\OneToMany(targetEntity="ClientFieldValue", mappedBy="client", cascade={"remove"})
      */
     private $fieldValues;
 

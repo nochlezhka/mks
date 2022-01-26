@@ -12,6 +12,19 @@ services:
         tags:
               - { name: doctrine.event_listener, event: postPersist}
 
+  app.shelter_history.listener:
+        class: AppBundle\EventListener\ShelterRoomListener
+        tags:
+              - { name: doctrine.event_listener, event: postPersist }
+  app.shelter_history_delete.listener:
+        class: AppBundle\EventListener\ShelterRoomListener
+        tags:
+              - { name: doctrine.event_listener, event: postRemove }
+#   app.shelter_history_update.listener:
+#         class: AppBundle\EventListener\ShelterRoomListener
+#         tags:
+#               - { name: doctrine.event_listener, event: preUpdate }
+
   app.notice.listener:
         class: AppBundle\EventListener\NoticeListener
         arguments:
@@ -257,6 +270,14 @@ services:
       calls:
           - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
           - [addChild, ['@app.client_form_field.admin', 'form']]
+
+  app.shelter_room.admin:
+      class: AppBundle\Admin\ShelterRoomAdmin
+      tags:
+          - { name: sonata.admin, manager_type: orm, label: 'Список комнат' }
+      arguments: [ ~, AppBundle\Entity\ShelterRoom, AppBundle:CRUD ]
+      calls:
+          - [ setTemplate, ['layout', 'admin/shelter_room.html.twig'] ]
 
   app.client_form_field.admin:
     class: AppBundle\Admin\ClientFormFieldAdmin

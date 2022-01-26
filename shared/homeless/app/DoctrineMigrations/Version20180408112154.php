@@ -232,41 +232,66 @@ class Version20180408112154 extends AbstractMigration
 
         $this->addSql('ALTER TABLE fos_user_user DROP FOREIGN KEY FK_C560D761B03A8386');
         $this->addSql('ALTER TABLE fos_user_user DROP FOREIGN KEY FK_C560D761896DBBDE');
+        $this->addSql('ALTER TABLE fos_user_user DROP FOREIGN KEY FK_C560D761DD842E46');
+
         $this->addSql('ALTER TABLE notice_user DROP FOREIGN KEY FK_DFD1E3B8A76ED395');
+        $this->addSql('ALTER TABLE notice_user DROP FOREIGN KEY FK_DFD1E3B87D540AB');
+
         $this->addSql('ALTER TABLE fos_user_user_group DROP FOREIGN KEY FK_B3C77447A76ED395');
+        $this->addSql('ALTER TABLE fos_user_user_group DROP FOREIGN KEY FK_B3C77447FE54D947');
+
         $this->addSql('ALTER TABLE fos_user_group DROP FOREIGN KEY FK_583D1F3EB03A8386');
         $this->addSql('ALTER TABLE fos_user_group DROP FOREIGN KEY FK_583D1F3E896DBBDE');
+
         $this->addSql('ALTER TABLE viewed_client DROP FOREIGN KEY FK_74C641DBB03A8386');
         $this->addSql('ALTER TABLE viewed_client DROP FOREIGN KEY FK_74C641DB896DBBDE');
+        $this->addSql('ALTER TABLE viewed_client DROP FOREIGN KEY FK_74C641DB19EB6921');
+
         $this->addSql('ALTER TABLE position DROP FOREIGN KEY FK_462CE4F5B03A8386');
         $this->addSql('ALTER TABLE position DROP FOREIGN KEY FK_462CE4F5896DBBDE');
+
         $this->addSql('ALTER TABLE notice DROP FOREIGN KEY FK_480D45C2B03A8386');
         $this->addSql('ALTER TABLE notice DROP FOREIGN KEY FK_480D45C2896DBBDE');
+        $this->addSql('ALTER TABLE notice DROP FOREIGN KEY FK_480D45C219EB6921');
+
         $this->addSql('ALTER TABLE client_field_option DROP FOREIGN KEY FK_C1C82EB3B03A8386');
         $this->addSql('ALTER TABLE client_field_option DROP FOREIGN KEY FK_C1C82EB3896DBBDE');
+        $this->addSql('ALTER TABLE client_field_option DROP FOREIGN KEY FK_C1C82EB3443707B0');
+
         $this->addSql('ALTER TABLE shelter_history DROP FOREIGN KEY FK_D04221A0B03A8386');
         $this->addSql('ALTER TABLE shelter_history DROP FOREIGN KEY FK_D04221A0896DBBDE');
+        $this->addSql('ALTER TABLE shelter_history DROP FOREIGN KEY FK_D04221A06BF700BD');
+        $this->addSql('ALTER TABLE shelter_history DROP FOREIGN KEY FK_D04221A019EB6921');
+        $this->addSql('ALTER TABLE shelter_history DROP FOREIGN KEY FK_D04221A02576E0FD');
+        $this->addSql('ALTER TABLE shelter_history DROP FOREIGN KEY FK_D04221A054177093');
+
         $this->addSql('ALTER TABLE shelter_status DROP FOREIGN KEY FK_E106D388B03A8386');
         $this->addSql('ALTER TABLE shelter_status DROP FOREIGN KEY FK_E106D388896DBBDE');
+
         $this->addSql('ALTER TABLE generated_document_start_text DROP FOREIGN KEY FK_D15AEC56B03A8386');
         $this->addSql('ALTER TABLE generated_document_start_text DROP FOREIGN KEY FK_D15AEC56896DBBDE');
+
+        $this->addSql('ALTER TABLE client_field DROP FOREIGN KEY FK_F898D9EFB03A8386');
+        $this->addSql('ALTER TABLE client_field DROP FOREIGN KEY FK_F898D9EF896DBBDE');
+        $this->addSql('ALTER TABLE contract_item DROP FOREIGN KEY FK_776E6B76B03A8386');
+        $this->addSql('ALTER TABLE contract_item DROP FOREIGN KEY FK_776E6B76896DBBDE');
+
+        $this->addSql('ALTER TABLE client_field_value DROP FOREIGN KEY FK_379BEBF4B03A8386');
+        $this->addSql('ALTER TABLE client_field_value DROP FOREIGN KEY FK_379BEBF4896DBBDE');
+
         $this->addSql('ALTER TABLE client DROP FOREIGN KEY FK_C7440455B03A8386');
         $this->addSql('ALTER TABLE client DROP FOREIGN KEY FK_C7440455896DBBDE');
         $this->addSql('ALTER TABLE certificate_type DROP FOREIGN KEY FK_F2C76A50B03A8386');
         $this->addSql('ALTER TABLE certificate_type DROP FOREIGN KEY FK_F2C76A50896DBBDE');
         $this->addSql('ALTER TABLE document DROP FOREIGN KEY FK_D8698A76B03A8386');
         $this->addSql('ALTER TABLE document DROP FOREIGN KEY FK_D8698A76896DBBDE');
-        $this->addSql('ALTER TABLE client_field DROP FOREIGN KEY FK_F898D9EFB03A8386');
-        $this->addSql('ALTER TABLE client_field DROP FOREIGN KEY FK_F898D9EF896DBBDE');
-        $this->addSql('ALTER TABLE contract_item DROP FOREIGN KEY FK_776E6B76B03A8386');
-        $this->addSql('ALTER TABLE contract_item DROP FOREIGN KEY FK_776E6B76896DBBDE');
+
         $this->addSql('ALTER TABLE certificate DROP FOREIGN KEY FK_219CDA4AB03A8386');
         $this->addSql('ALTER TABLE certificate DROP FOREIGN KEY FK_219CDA4A896DBBDE');
         $this->addSql('ALTER TABLE history_download DROP FOREIGN KEY FK_38E1EE3AA76ED395');
         $this->addSql('ALTER TABLE note DROP FOREIGN KEY FK_CFBDFA14B03A8386');
         $this->addSql('ALTER TABLE note DROP FOREIGN KEY FK_CFBDFA14896DBBDE');
-        $this->addSql('ALTER TABLE client_field_value DROP FOREIGN KEY FK_379BEBF4B03A8386');
-        $this->addSql('ALTER TABLE client_field_value DROP FOREIGN KEY FK_379BEBF4896DBBDE');
+
         $this->addSql('ALTER TABLE contract DROP FOREIGN KEY FK_E98F2859B03A8386');
         $this->addSql('ALTER TABLE contract DROP FOREIGN KEY FK_E98F2859896DBBDE');
         $this->addSql('ALTER TABLE service DROP FOREIGN KEY FK_E19D9AD2B03A8386');
@@ -297,16 +322,11 @@ class Version20180408112154 extends AbstractMigration
         $this->addSql('ALTER TABLE generated_document DROP FOREIGN KEY FK_98C8BDCF896DBBDE');
         $this->addSql('ALTER TABLE contract_item_type DROP FOREIGN KEY FK_69794B44B03A8386');
         $this->addSql('ALTER TABLE contract_item_type DROP FOREIGN KEY FK_69794B44896DBBDE');
-        $this->addSql('ALTER TABLE fos_user_user_group DROP FOREIGN KEY FK_B3C77447FE54D947');
-        $this->addSql('ALTER TABLE fos_user_user DROP FOREIGN KEY FK_C560D761DD842E46');
-        $this->addSql('ALTER TABLE notice_user DROP FOREIGN KEY FK_DFD1E3B87D540AB');
+
         $this->addSql('ALTER TABLE client_field_value DROP FOREIGN KEY FK_379BEBF4A7C41D6F');
         $this->addSql('ALTER TABLE client_field_value_client_field_option DROP FOREIGN KEY FK_687F30753FE1C616');
-        $this->addSql('ALTER TABLE shelter_history DROP FOREIGN KEY FK_D04221A06BF700BD');
         $this->addSql('ALTER TABLE generated_document DROP FOREIGN KEY FK_98C8BDCF9948699B');
-        $this->addSql('ALTER TABLE viewed_client DROP FOREIGN KEY FK_74C641DB19EB6921');
-        $this->addSql('ALTER TABLE notice DROP FOREIGN KEY FK_480D45C219EB6921');
-        $this->addSql('ALTER TABLE shelter_history DROP FOREIGN KEY FK_D04221A019EB6921');
+
         $this->addSql('ALTER TABLE document DROP FOREIGN KEY FK_D8698A7619EB6921');
         $this->addSql('ALTER TABLE certificate DROP FOREIGN KEY FK_219CDA4A19EB6921');
         $this->addSql('ALTER TABLE history_download DROP FOREIGN KEY FK_38E1EE3A19EB6921');
@@ -321,10 +341,10 @@ class Version20180408112154 extends AbstractMigration
         $this->addSql('ALTER TABLE history_download DROP FOREIGN KEY FK_38E1EE3A90EF3F4C');
         $this->addSql('ALTER TABLE certificate DROP FOREIGN KEY FK_219CDA4AC33F7837');
         $this->addSql('ALTER TABLE contract DROP FOREIGN KEY FK_E98F2859C33F7837');
-        $this->addSql('ALTER TABLE client_field_option DROP FOREIGN KEY FK_C1C82EB3443707B0');
+
         $this->addSql('ALTER TABLE client_field_value DROP FOREIGN KEY FK_379BEBF4443707B0');
         $this->addSql('ALTER TABLE client_field_value_client_field_option DROP FOREIGN KEY FK_687F3075EDB7EE0');
-        $this->addSql('ALTER TABLE shelter_history DROP FOREIGN KEY FK_D04221A02576E0FD');
+
         $this->addSql('ALTER TABLE contract_item DROP FOREIGN KEY FK_776E6B762576E0FD');
         $this->addSql('ALTER TABLE document DROP FOREIGN KEY FK_D8698A76C54C8C93');
         $this->addSql('ALTER TABLE document_file DROP FOREIGN KEY FK_2B2BBA83C54C8C93');
@@ -335,8 +355,8 @@ class Version20180408112154 extends AbstractMigration
         $this->addSql('ALTER TABLE client DROP FOREIGN KEY FK_C7440455E563C280');
         $this->addSql('ALTER TABLE client DROP FOREIGN KEY FK_C744045560012056');
         $this->addSql('ALTER TABLE contract DROP FOREIGN KEY FK_E98F28596BF700BD');
-        $this->addSql('ALTER TABLE shelter_history DROP FOREIGN KEY FK_D04221A054177093');
         $this->addSql('ALTER TABLE contract_item DROP FOREIGN KEY FK_776E6B76C54C8C93');
+
         $this->addSql('DROP TABLE fos_user_user');
         $this->addSql('DROP TABLE notice_user');
         $this->addSql('DROP TABLE fos_user_user_group');
@@ -348,7 +368,7 @@ class Version20180408112154 extends AbstractMigration
         $this->addSql('DROP TABLE shelter_history');
         $this->addSql('DROP TABLE shelter_status');
         $this->addSql('DROP TABLE generated_document_start_text');
-        $this->addSql('DROP TABLE client');
+
         $this->addSql('DROP TABLE certificate_type');
         $this->addSql('DROP TABLE document');
         $this->addSql('DROP TABLE client_field');
@@ -373,5 +393,6 @@ class Version20180408112154 extends AbstractMigration
         $this->addSql('DROP TABLE shelter_room');
         $this->addSql('DROP TABLE generated_document');
         $this->addSql('DROP TABLE contract_item_type');
+        $this->addSql('DROP TABLE client');
     }
 }

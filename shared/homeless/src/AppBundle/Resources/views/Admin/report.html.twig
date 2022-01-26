@@ -622,8 +622,8 @@
                                                     Сотрудник
                                                 </label>
                                                 <div class="sonata-ba-field sonata-ba-field-standard-natural">
-                                                    <select id="s5a37cdd74da55_type" name="userId"
-                                                            class=" form-control">
+                                                    <select id="s5a37cdd74da55_type" name="userId[]"
+                                                            class=" form-control" multiple="multiple">
                                                         <option value=""></option>
                                                         {% for user in users %}
                                                             <option value="{{ user.id }}">{{ user.fullname }}</option>

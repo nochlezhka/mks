@@ -224,6 +224,7 @@ sonata_admin:
                       - sonata.user.admin.user
                       - sonata.user.admin.group
                       - app.client_form.admin
+                      - app.shelter_room.admin
                  roles:
                       [ROLE_ADMIN]
 sonata_user:
