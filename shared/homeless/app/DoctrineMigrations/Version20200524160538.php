@@ -20,6 +20,9 @@ class Version20200524160538 extends AbstractMigration
             ALTER TABLE service_type ADD amount tinyint(1) NULL AFTER sync_id;
         ";
         $this->addSql($sql);
+
+        $this->addSql("UPDATE `service_type` set amount=1 where id in (14,16);");
+        $this->addSql("UPDATE `service_type` set comment=1 where id in (3,4,17);");
     }
 
     /**
