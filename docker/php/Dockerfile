@@ -1,16 +1,13 @@
-FROM codepilotscom/mks-php:5.6-fpm
+FROM php:5.6.36-fpm-alpine
 
-ARG UID
-ARG GUID
+USER root
 
-RUN usermod -u $UID www-data
-RUN groupmod -g $GUID www-data
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer
+
+RUN apk --no-cache add icu-dev
+RUN docker-php-ext-install pdo_mysql bcmath intl
 
 ADD symfony.ini /usr/local/etc/php/conf.d
 
-RUN usermod -u $UID www-data -d /var/www/symfony
-
 WORKDIR /var/www/symfony
-
-EXPOSE 9000
 
