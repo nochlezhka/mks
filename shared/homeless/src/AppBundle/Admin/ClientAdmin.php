@@ -348,7 +348,7 @@ class ClientAdmin extends BaseAdmin
                     Client::GENDER_FEMALE => 'Женский',
                 ],
             ])
-            ->add('birthDate', 'sonata_type_date_picker', [
+            ->add('birthDate', 'Sonata\Form\Type\DatePickerType', [
                 'dp_default_date' => (new \DateTime('-50 year'))->format('Y-m-d'),
                 'format' => 'dd.MM.yyyy',
                 'label' => 'Дата рождения',
@@ -639,7 +639,9 @@ class ClientAdmin extends BaseAdmin
                     'advanced_filter' => false,
                 ]
             )
-            ->add('birthDate', 'doctrine_orm_date_range', ['label' => 'Дата рождения', 'advanced_filter' => false,], 'sonata_type_date_range_picker',
+            ->add('birthDate', 'doctrine_orm_date_range',
+                ['label' => 'Дата рождения', 'advanced_filter' => false,],
+                'Sonata\Form\Type\DateRangePickerType',
                 [
                     'field_options_start' => [
                         'label' => 'От',

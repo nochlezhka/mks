@@ -28,14 +28,6 @@ class ContractAdmin extends BaseAdmin
     /**
      * {@inheritdoc}
      */
-    public function configure()
-    {
-        $this->parentAssociationMapping = 'client';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
@@ -61,14 +53,14 @@ class ContractAdmin extends BaseAdmin
                         ->orderBy('s.name', 'ASC');
                 },
             ])
-            ->add('dateFrom', 'sonata_type_date_picker', [
+            ->add('dateFrom', 'Sonata\Form\Type\DatePickerType', [
                 'dp_default_date' => (new \DateTime())->format('Y-m-d'),
                 'format' => 'dd.MM.yyyy',
                 'view_timezone' => $this->getParameter('admin_view_timezone'),
                 'label' => 'Дата начала',
                 'required' => true,
             ])
-            ->add('dateTo', 'sonata_type_date_picker', [
+            ->add('dateTo', 'Sonata\Form\Type\DatePickerType', [
                 'dp_default_date' => (new \DateTime())->format('Y-m-d'),
                 'format' => 'dd.MM.yyyy',
                 'label' => 'Дата окончания',

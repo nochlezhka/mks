@@ -26,8 +26,6 @@ class ClientFormFieldAdmin extends BaseAdmin
         '_sort_by' => 'sort',
     );
 
-    protected $parentAssociationMapping = 'form';
-
     protected $translationDomain = 'AppBundle';
 
     /**

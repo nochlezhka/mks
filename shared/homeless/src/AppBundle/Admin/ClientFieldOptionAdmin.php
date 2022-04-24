@@ -14,11 +14,6 @@ class ClientFieldOptionAdmin extends BaseAdmin
 
     protected $translationDomain = 'AppBundle';
 
-    public function configure()
-    {
-        $this->parentAssociationMapping = 'field';
-    }
-
     /**
      * @param FormMapper $formMapper
      */

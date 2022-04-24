@@ -30,19 +30,19 @@ services:
           - { name: sonata.admin, manager_type: orm, label: 'Клиенты' }
       arguments: [null, AppBundle\Entity\Client, AppBundle:CRUD, show_in_dashboard: true]
       calls:
-          - [addChild, ['@app.note.admin']]
-          - [addChild, ['@app.service.admin']]
-          - [addChild, ['@app.document.admin']]
-          - [addChild, ['@app.document_file.admin']]
-          - [addChild, ['@app.contract.admin']]
-          - [addChild, ['@app.shelter_history.admin']]
-          - [addChild, ['@app.resident_questionnaire.admin']]
-          - [addChild, ['@app.certificate.admin']]
-          - [addChild, ['@app.contract.admin']]
-          - [addChild, ['@app.generated_document.admin']]
-          - [addChild, ['@app.notice.admin']]
-          - [addChild, ['@app.history_download.admin']]
-          - [addChild, ['@app.resident_form_response.admin']]
+          - [addChild, ['@app.note.admin', 'client']]
+          - [addChild, ['@app.service.admin', 'client']]
+          - [addChild, ['@app.document.admin', 'client']]
+          - [addChild, ['@app.document_file.admin', 'client']]
+          - [addChild, ['@app.contract.admin', 'client']]
+          - [addChild, ['@app.shelter_history.admin', 'client']]
+          - [addChild, ['@app.resident_questionnaire.admin', 'client']]
+          - [addChild, ['@app.certificate.admin', 'client']]
+          - [addChild, ['@app.contract.admin', 'client']]
+          - [addChild, ['@app.generated_document.admin', 'client']]
+          - [addChild, ['@app.notice.admin', 'client']]
+          - [addChild, ['@app.history_download.admin', 'client']]
+          - [addChild, ['@app.resident_form_response.admin', 'client']]
           - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
           - [ setTemplate, ['layout', 'admin/client_show.html.twig']]
 
@@ -76,7 +76,7 @@ services:
           - { name: sonata.admin, manager_type: orm, label: 'Доп. поля клиентов' }
       arguments: [null, AppBundle\Entity\ClientField, SonataAdminBundle:CRUD]
       calls:
-          - [addChild, ['@app.client_field_option.admin']]
+          - [addChild, ['@app.client_field_option.admin', 'field']]
           - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
 
   app.client_field_option.admin:
@@ -93,7 +93,7 @@ services:
           - { name: sonata.admin, manager_type: orm, label: 'Регионы' }
       arguments: [null, AppBundle\Entity\Region, SonataAdminBundle:CRUD]
       calls:
-          - [addChild, ['@app.district.admin']]
+          - [addChild, ['@app.district.admin', 'region']]
           - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
 
   app.district.admin:

@@ -30,11 +30,6 @@ class CertificateAdmin extends BaseAdmin
             ->add('download', $this->getRouterIdParameter() . '/download');
     }
 
-    public function configure()
-    {
-        $this->parentAssociationMapping = 'client';
-    }
-
     /**
      * @param FormMapper $formMapper
      */

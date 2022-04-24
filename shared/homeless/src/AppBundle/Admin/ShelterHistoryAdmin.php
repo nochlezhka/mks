@@ -15,11 +15,6 @@ class ShelterHistoryAdmin extends BaseAdmin
 
     protected $translationDomain = 'AppBundle';
 
-    public function configure()
-    {
-        $this->parentAssociationMapping = 'client';
-    }
-
     /**
      * @param FormMapper $formMapper
      */
@@ -55,13 +50,13 @@ class ShelterHistoryAdmin extends BaseAdmin
                         ->orderBy('r.number', 'ASC');
                 },
             ])
-            ->add('dateFrom', 'sonata_type_date_picker', [
+            ->add('dateFrom', 'Sonata\Form\Type\DatePickerType', [
                 'dp_default_date' => (new \DateTime())->format('Y-m-d'),
                 'format' => 'dd.MM.yyyy',
                 'label' => 'Дата заселения',
                 'required' => false,
             ])
-            ->add('dateTo', 'sonata_type_date_picker', [
+            ->add('dateTo', 'Sonata\Form\Type\DatePickerType', [
                 'dp_default_date' => (new \DateTime())->format('Y-m-d'),
                 'format' => 'dd.MM.yyyy',
                 'label' => 'Дата выселения',
@@ -71,25 +66,25 @@ class ShelterHistoryAdmin extends BaseAdmin
                 'label' => 'Комментарий',
                 'required' => false,
             ])
-            ->add('fluorographyDate', 'sonata_type_date_picker', [
+            ->add('fluorographyDate', 'Sonata\Form\Type\DatePickerType', [
                 'dp_default_date' => (new \DateTime())->format('Y-m-d'),
                 'format' => 'dd.MM.yyyy',
                 'label' => 'Дата флюорографии',
                 'required' => false,
             ])
-            ->add('diphtheriaVaccinationDate', 'sonata_type_date_picker', [
+            ->add('diphtheriaVaccinationDate', 'Sonata\Form\Type\DatePickerType', [
                 'dp_default_date' => (new \DateTime())->format('Y-m-d'),
                 'format' => 'dd.MM.yyyy',
                 'label' => 'Дата прививки от дифтерии',
                 'required' => false,
             ])
-            ->add('hepatitisVaccinationDate', 'sonata_type_date_picker', [
+            ->add('hepatitisVaccinationDate', 'Sonata\Form\Type\DatePickerType', [
                 'dp_default_date' => (new \DateTime())->format('Y-m-d'),
                 'format' => 'dd.MM.yyyy',
                 'label' => 'Дата прививки от гепатита',
                 'required' => false,
             ])
-            ->add('typhusVaccinationDate', 'sonata_type_date_picker', [
+            ->add('typhusVaccinationDate', 'Sonata\Form\Type\DatePickerType', [
                 'dp_default_date' => (new \DateTime())->format('Y-m-d'),
                 'format' => 'dd.MM.yyyy',
                 'label' => 'Дата прививки от тифа',

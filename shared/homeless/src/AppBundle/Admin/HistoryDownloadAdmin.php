@@ -13,11 +13,6 @@ class HistoryDownloadAdmin extends BaseAdmin
 
     protected $translationDomain = 'AppBundle';
 
-    public function configure()
-    {
-        $this->parentAssociationMapping = 'client';
-    }
-
     /**
      * @param ListMapper $listMapper
      */

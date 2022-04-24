@@ -14,11 +14,6 @@ class NoteAdmin extends BaseAdmin
 
     protected $translationDomain = 'AppBundle';
 
-    public function configure()
-    {
-        $this->parentAssociationMapping = 'client';
-    }
-
     /**
      * @param FormMapper $formMapper
      */

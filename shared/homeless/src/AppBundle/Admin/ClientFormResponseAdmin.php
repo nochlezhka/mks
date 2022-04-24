@@ -30,8 +30,6 @@ class ClientFormResponseAdmin extends BaseAdmin
         '_sort_by' => 'sort',
     );
 
-    protected $parentAssociationMapping = 'client';
-
     protected $translationDomain = 'AppBundle';
 
     /**

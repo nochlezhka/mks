@@ -8,6 +8,7 @@ use Application\Sonata\UserBundle\Entity\User;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @Route("/app")
@@ -19,7 +20,7 @@ class AppController extends Controller
      * Мои клиенты
      * @Route("/my-clients", name="my_clients")
      * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
     public function myClientsAction(Request $request)
     {
@@ -48,7 +49,7 @@ class AppController extends Controller
      * Мои бывшие клиенты
      * @Route("/my-ex-clients", name="my_ex_clients")
      * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
     public function myExClientsAction(Request $request)
     {
@@ -83,7 +84,7 @@ class AppController extends Controller
      * Добавить клиента
      * @Route("/add-client", name="add_client")
      * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
     public function addClientAction(Request $request)
     {
@@ -100,7 +101,7 @@ class AppController extends Controller
      * Оказанные мной услуги
      * @Route("/my-services", name="my_services")
      * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
     public function myServicesAction(Request $request)
     {
@@ -119,7 +120,7 @@ class AppController extends Controller
      * Профиль
      * @Route("/profile", name="profile")
      * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
     public function profileAction(Request $request)
     {
@@ -135,7 +136,7 @@ class AppController extends Controller
     /**
      * @Route("/client/list",name="client_search")
      * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
     public function clientsSearchAction(Request $request)
     {
@@ -165,7 +166,7 @@ class AppController extends Controller
     /**
      * @Route("/report",name="report")
      * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
     public function reportAction(Request $request)
     {
@@ -195,7 +196,7 @@ class AppController extends Controller
     /**
      * @Route("/report-download",name="reportDownload")
      * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
     public function reportDownloadAction(Request $request)
     {

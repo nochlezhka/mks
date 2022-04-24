@@ -17,11 +17,6 @@ class NoticeAdmin extends BaseAdmin
 
     protected $translationDomain = 'AppBundle';
 
-    public function configure()
-    {
-        $this->parentAssociationMapping = 'client';
-    }
-
     /**
      * @param FormMapper $formMapper
      */
@@ -32,7 +27,7 @@ class NoticeAdmin extends BaseAdmin
                 'label' => 'Текст',
                 'required' => true,
             ])
-            ->add('date', 'sonata_type_date_picker', [
+            ->add('date', 'Sonata\Form\Type\DatePickerType', [
                 'view_timezone' => $this->getParameter('admin_view_timezone'),
                 'label' => 'Дата',
                 'format' => 'dd.MM.yyyy',
@@ -81,7 +76,8 @@ class NoticeAdmin extends BaseAdmin
     protected function configureDatagridFilters(DatagridMapper $datagridMapper)
     {
         $datagridMapper
-            ->add('date', 'doctrine_orm_date_range', ['label' => 'Дата', 'advanced_filter' => false,], 'sonata_type_date_range_picker',
+            ->add('date', 'doctrine_orm_date_range', ['label' => 'Дата', 'advanced_filter' => false,],
+                'Sonata\Form\Type\DateRangePickerType',
                 [
                     'field_options_start' => [
                         'label' => 'От',

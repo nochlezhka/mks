@@ -19,11 +19,6 @@ class ServiceAdmin extends BaseAdmin
 
     protected $translationDomain = 'AppBundle';
 
-    public function configure()
-    {
-        $this->parentAssociationMapping = 'client';
-    }
-
     /**
      * @param FormMapper $formMapper
      */
@@ -95,7 +90,7 @@ class ServiceAdmin extends BaseAdmin
         $formMapper->getFormBuilder()->get('type')->addModelTransformer($transformer);
 
         $formMapper
-            ->add('createdAt', 'sonata_type_date_picker', [
+            ->add('createdAt', 'Sonata\Form\Type\DatePickerType', [
                 'dp_default_date' => (new \DateTime())->format('Y-m-d'),
                 'format' => 'dd.MM.yyyy',
                 'label' => 'Когда добавлена',
@@ -176,7 +171,7 @@ class ServiceAdmin extends BaseAdmin
                 'createdAt',
                 'doctrine_orm_date_range',
                 ['label' => 'Когда добавлена', 'advanced_filter' => false,],
-                'sonata_type_date_range_picker',
+                'Sonata\Form\Type\DateRangePickerType',
                 [
                     'field_options_start' => [
                         'label' => 'От',
