@@ -39,12 +39,10 @@ twig:
     form_themes:
         - 'VichUploaderBundle:Form:fields.html.twig'
         - 'form/fields.html.twig'
-    form:
-        resources:
-            - 'SonataFormatterBundle:Form:formatter.html.twig'
+        - 'SonataFormatterBundle:Form:formatter.html.twig'
 #            - 'SonataMediaBundle:Form:media_widgets.html.twig'
-            - 'SonataCoreBundle:Form:datepicker.html.twig'
-            - 'VichUploaderBundle:Form:fields.html.twig'
+        - 'SonataCoreBundle:Form:datepicker.html.twig'
+        - 'VichUploaderBundle:Form:fields.html.twig'
     exception_controller: 'FOS\RestBundle\Controller\ExceptionController::showAction'
     globals:
         org_name_short: "%org_name_short%"
@@ -137,6 +135,9 @@ fos_user:
     db_driver:      orm # can be orm or odm
     firewall_name:  main
     user_class:     Application\Sonata\UserBundle\Entity\User
+    from_email:
+        address:       webmaster@example.com
+        sender_name:   webmaster
 
     group:
         group_class:   Application\Sonata\UserBundle\Entity\Group
@@ -228,10 +229,13 @@ sonata_admin:
 sonata_user:
     security_acl: false
     manager_type: orm # can be orm or mongodb
-    profile:
-        menu:
-            - { route: 'sonata_user_profile_edit', label: 'link_edit_profile', domain: 'SonataUserBundle'}
-            - { route: 'sonata_user_profile_edit_authentication', label: 'link_edit_authentication', domain: 'SonataUserBundle'}
+    class:
+        user: Application\Sonata\UserBundle\Entity\User
+        group: Application\Sonata\UserBundle\Entity\Group
+#    profile:
+#        menu:
+#            - { route: 'sonata_user_profile_edit', label: 'link_edit_profile', domain: 'SonataUserBundle'}
+#            - { route: 'sonata_user_profile_edit_authentication', label: 'link_edit_authentication', domain: 'SonataUserBundle'}
     admin:                  # Admin Classes
         user:
             class:          Application\Sonata\UserBundle\Admin\UserAdmin

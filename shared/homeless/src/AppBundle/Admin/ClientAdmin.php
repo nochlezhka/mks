@@ -138,8 +138,8 @@ class ClientAdmin extends BaseAdmin
         }
         $showMapper->end();
 
-        $securityContext = $this->getConfigurationPool()->getContainer()->get('security.context');
-        if ($securityContext->isGranted('ROLE_SUPER_ADMIN') || $securityContext->isGranted('ROLE_APP_SERVICE_ADMIN_LIST') || $securityContext->isGranted('ROLE_APP_SERVICE_ADMIN_ALL')) {
+        $authorizationChecker = $this->getConfigurationPool()->getContainer()->get('security.authorization_checker');
+        if ($authorizationChecker->isGranted('ROLE_SUPER_ADMIN') || $authorizationChecker->isGranted('ROLE_APP_SERVICE_ADMIN_LIST') || $authorizationChecker->isGranted('ROLE_APP_SERVICE_ADMIN_ALL')) {
             $showMapper
                 ->with('Последние услуги', ['class' => 'col-md-4'])
                 ->add('services', 'array', [
@@ -150,7 +150,7 @@ class ClientAdmin extends BaseAdmin
         }
 
 
-        if ($securityContext->isGranted('ROLE_SUPER_ADMIN') || $securityContext->isGranted('ROLE_APP_NOTE_ADMIN_LIST') || $securityContext->isGranted('ROLE_APP_NOTE_ADMIN_ALL')) {
+        if ($authorizationChecker->isGranted('ROLE_SUPER_ADMIN') || $authorizationChecker->isGranted('ROLE_APP_NOTE_ADMIN_LIST') || $authorizationChecker->isGranted('ROLE_APP_NOTE_ADMIN_ALL')) {
             $showMapper
                 ->with('Последние примечания')
                 ->add('notes', 'array', [
@@ -160,7 +160,7 @@ class ClientAdmin extends BaseAdmin
                 ->end();
         }
 
-        if ($securityContext->isGranted('ROLE_SUPER_ADMIN') || $securityContext->isGranted('ROLE_APP_CLIENT_ADMIN_EDIT') || $securityContext->isGranted('ROLE_APP_CLIENT_ADMIN_ALL')) {
+        if ($authorizationChecker->isGranted('ROLE_SUPER_ADMIN') || $authorizationChecker->isGranted('ROLE_APP_CLIENT_ADMIN_EDIT') || $authorizationChecker->isGranted('ROLE_APP_CLIENT_ADMIN_ALL')) {
             $showMapper
                 ->with('Дополнительная информация', [
                     'class' => 'col-md-12',
@@ -321,7 +321,7 @@ class ClientAdmin extends BaseAdmin
 
         $formMapper
             ->with('Основная информация')
-            ->add('photo', 'app_photo', [
+            ->add('photo', 'AppBundle\Form\Type\AppPhotoType', [
                 'label' => 'Фото',
                 'required' => false,
                 'allow_delete' => false,
@@ -659,7 +659,7 @@ class ClientAdmin extends BaseAdmin
                     'field_type' => 'entity',
                     'field_options' => [
                         'class' => 'Application\Sonata\UserBundle\Entity\User',
-                        'property' => 'fullname',
+                        'choice_label' => 'fullname',
                         'multiple' => false,
                         'query_builder' => function (EntityRepository $er) {
                             return $er->createQueryBuilder('u')
@@ -676,7 +676,7 @@ class ClientAdmin extends BaseAdmin
                     'field_type' => 'entity',
                     'field_options' => [
                         'class' => 'AppBundle\Entity\ContractStatus',
-                        'property' => 'name',
+                        'choice_label' => 'name',
                         'multiple' => true,
                         'query_builder' => function (EntityRepository $er) {
                             return $er->createQueryBuilder('s')
@@ -925,29 +925,29 @@ class ClientAdmin extends BaseAdmin
 
         $id = $admin->getRequest()->get('id');
 
-        $securityContext = $this->getConfigurationPool()->getContainer()->get('security.context');
+        $authorizationChecker = $this->getConfigurationPool()->getContainer()->get('security.authorization_checker');
 
-        if ($securityContext->isGranted('ROLE_SUPER_ADMIN') || $securityContext->isGranted('ROLE_APP_DOCUMENT_ADMIN_LIST') || $securityContext->isGranted('ROLE_APP_DOCUMENT_ADMIN_ALL')) {
+        if ($authorizationChecker->isGranted('ROLE_SUPER_ADMIN') || $authorizationChecker->isGranted('ROLE_APP_DOCUMENT_ADMIN_LIST') || $authorizationChecker->isGranted('ROLE_APP_DOCUMENT_ADMIN_ALL')) {
             $menu->addChild(
                 'Документы',
                 ['uri' => $admin->generateUrl('app.document.admin.list', ['id' => $id])]
             );
         }
 
-        if ($securityContext->isGranted('ROLE_SUPER_ADMIN') || $securityContext->isGranted('ROLE_APP_DOCUMENT_FILE_ADMIN_LIST') || $securityContext->isGranted('ROLE_APP_DOCUMENT_FILE_ADMIN_ALL')) {
+        if ($authorizationChecker->isGranted('ROLE_SUPER_ADMIN') || $authorizationChecker->isGranted('ROLE_APP_DOCUMENT_FILE_ADMIN_LIST') || $authorizationChecker->isGranted('ROLE_APP_DOCUMENT_FILE_ADMIN_ALL')) {
             $menu->addChild(
                 'Файлы',
                 ['uri' => $admin->generateUrl('app.document_file.admin.list', ['id' => $id])]
             );
         }
 
-        if ($securityContext->isGranted('ROLE_SUPER_ADMIN') || $securityContext->isGranted('ROLE_APP_CONTRACT_ADMIN_LIST') || $securityContext->isGranted('ROLE_APP_CONTRACT_ADMIN_ALL')) {
+        if ($authorizationChecker->isGranted('ROLE_SUPER_ADMIN') || $authorizationChecker->isGranted('ROLE_APP_CONTRACT_ADMIN_LIST') || $authorizationChecker->isGranted('ROLE_APP_CONTRACT_ADMIN_ALL')) {
             $menu->addChild(
                 'Сервисные планы',
                 ['uri' => $admin->generateUrl('app.contract.admin.list', ['id' => $id])]
             );
         }
-        if ($this->isMenuItemEnabled(MenuItem::CODE_SHELTER_HISTORY) && $securityContext->isGranted('ROLE_SUPER_ADMIN') || $securityContext->isGranted('ROLE_APP_SHELTER_HISTORY_ADMIN_LIST') || $securityContext->isGranted('ROLE_APP_SHELTER_HISTORY_ADMIN_ALL')) {
+        if ($this->isMenuItemEnabled(MenuItem::CODE_SHELTER_HISTORY) && $authorizationChecker->isGranted('ROLE_SUPER_ADMIN') || $authorizationChecker->isGranted('ROLE_APP_SHELTER_HISTORY_ADMIN_LIST') || $authorizationChecker->isGranted('ROLE_APP_SHELTER_HISTORY_ADMIN_ALL')) {
             if ($this->isMenuItemEnabled(MenuItem::CODE_SHELTER_HISTORY) && $this->isMenuItemEnabledShelterHistory($id)) {
                 $menu->addChild(
                     'Проживание в приюте',
@@ -957,7 +957,7 @@ class ClientAdmin extends BaseAdmin
         }
 
         $clientFormsEnabled = $this->metaService->isClientFormsEnabled();
-        if ($securityContext->isGranted('ROLE_SUPER_ADMIN') || $securityContext->isGranted('ROLE_APP_RESIDENT_QUESTIONNAIRE_ADMIN_LIST') || $securityContext->isGranted('ROLE_APP_RESIDENT_QUESTIONNAIRE_ADMIN_ALL')) {
+        if ($authorizationChecker->isGranted('ROLE_SUPER_ADMIN') || $authorizationChecker->isGranted('ROLE_APP_RESIDENT_QUESTIONNAIRE_ADMIN_LIST') || $authorizationChecker->isGranted('ROLE_APP_RESIDENT_QUESTIONNAIRE_ADMIN_ALL')) {
             if ($this->isMenuItemEnabled(MenuItem::CODE_QUESTIONNAIRE_LIVING) && $this->isMenuItemEnabledShelterHistory($id)) {
                 $name = $clientFormsEnabled ? 'Старая анкета' : 'Анкета';
                 $menu->addChild(
@@ -966,7 +966,7 @@ class ClientAdmin extends BaseAdmin
                 );
             }
         }
-        if ($securityContext->isGranted('ROLE_SUPER_ADMIN') || $securityContext->isGranted('ROLE_APP_RESIDENT_FORM_RESPONSE_ADMIN_LIST') || $securityContext->isGranted('ROLE_APP_RESIDENT_FORM_RESPONSE_ADMIN_ALL')) {
+        if ($authorizationChecker->isGranted('ROLE_SUPER_ADMIN') || $authorizationChecker->isGranted('ROLE_APP_RESIDENT_FORM_RESPONSE_ADMIN_LIST') || $authorizationChecker->isGranted('ROLE_APP_RESIDENT_FORM_RESPONSE_ADMIN_ALL')) {
             if ($this->isMenuItemEnabled(MenuItem::CODE_QUESTIONNAIRE_LIVING) && $this->isMenuItemEnabledShelterHistory($id)) {
                 $name = $clientFormsEnabled ? 'Анкета' : 'Новая анкета';
                 $menu->addChild(
@@ -976,7 +976,7 @@ class ClientAdmin extends BaseAdmin
             }
         }
 
-        if ($securityContext->isGranted('ROLE_SUPER_ADMIN') || $securityContext->isGranted('ROLE_APP_CERTIFICATE_ADMIN_LIST') || $securityContext->isGranted('ROLE_APP_CERTIFICATE_ADMIN_ALL')) {
+        if ($authorizationChecker->isGranted('ROLE_SUPER_ADMIN') || $authorizationChecker->isGranted('ROLE_APP_CERTIFICATE_ADMIN_LIST') || $authorizationChecker->isGranted('ROLE_APP_CERTIFICATE_ADMIN_ALL')) {
             if ($this->isMenuItemEnabled(MenuItem::CODE_CERTIFICATE)) {
                 $menu->addChild(
                     'Выдать справку',
@@ -985,7 +985,7 @@ class ClientAdmin extends BaseAdmin
             }
         }
 
-        if ($securityContext->isGranted('ROLE_SUPER_ADMIN') || $securityContext->isGranted('ROLE_APP_GENERATED_DOCUMENT_ADMIN_LIST') || $securityContext->isGranted('ROLE_APP_GENERATED_DOCUMENT_ADMIN_ALL')) {
+        if ($authorizationChecker->isGranted('ROLE_SUPER_ADMIN') || $authorizationChecker->isGranted('ROLE_APP_GENERATED_DOCUMENT_ADMIN_LIST') || $authorizationChecker->isGranted('ROLE_APP_GENERATED_DOCUMENT_ADMIN_ALL')) {
             if ($this->isMenuItemEnabled(MenuItem::CODE_GENERATED_DOCUMENT)) {
                 $menu->addChild(
                     'Построить документ',
@@ -994,7 +994,7 @@ class ClientAdmin extends BaseAdmin
             }
         }
 
-        if ($securityContext->isGranted('ROLE_SUPER_ADMIN') || $securityContext->isGranted('ROLE_APP_NOTICE_ADMIN_LIST') || $securityContext->isGranted('ROLE_APP_NOTICE_ADMIN_ALL')) {
+        if ($authorizationChecker->isGranted('ROLE_SUPER_ADMIN') || $authorizationChecker->isGranted('ROLE_APP_NOTICE_ADMIN_LIST') || $authorizationChecker->isGranted('ROLE_APP_NOTICE_ADMIN_ALL')) {
             $user = $this
                 ->getConfigurationPool()
                 ->getContainer()

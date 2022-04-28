@@ -190,14 +190,14 @@ class NoticeAdmin extends BaseAdmin
         $this
             ->getConfigurationPool()
             ->getContainer()
-            ->get('security.context')
+            ->get('security.token_storage')
             ->getToken()
             ->getUser();
 
         $user = $this
             ->getConfigurationPool()
             ->getContainer()
-            ->get('security.context')
+            ->get('security.token_storage')
             ->getToken()
             ->getUser();
 
