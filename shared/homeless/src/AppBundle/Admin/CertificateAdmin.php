@@ -68,7 +68,7 @@ class CertificateAdmin extends BaseAdmin
 
         $availableCertTypes = $certificateTypeRepository->getAvailableForCertificate($this->getSubject());
         foreach ($availableCertTypes as $availableCertType) {
-            $typeOptions['choices'][$availableCertType->getId()] = $availableCertType->getName();
+            $typeOptions['choices'][$availableCertType->getName()] = $availableCertType->getId();
         }
 
         /** @var CertificateType $travelType */

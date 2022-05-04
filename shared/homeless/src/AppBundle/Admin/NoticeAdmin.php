@@ -96,8 +96,8 @@ class NoticeAdmin extends BaseAdmin
                     'field_options' => [
                         'label' => ' ',
                         'choices' => [
-                            1 => 'Да',
-                            2 => 'Нет',
+                            'Да' => 1,
+                            'Нет' => 2,
                         ],
                     ],
                     'advanced_filter' => false,

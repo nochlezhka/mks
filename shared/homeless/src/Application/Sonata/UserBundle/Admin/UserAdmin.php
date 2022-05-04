@@ -58,7 +58,7 @@ class UserAdmin extends BaseUserAdmin
                 ->tab('User');
         }
         $positions = [
-            '' => 'Другая должность'
+            'Другая должность' => ''
         ];
         foreach ($this->getConfigurationPool()->getContainer()->get('app.position_option.repository')->findAll() as $item) {
             $positions[$item->getId()] = $item->getName();

@@ -42,44 +42,44 @@ class ResidentQuestionnaire
     const REASON_FOR_PETITION_RE_SETTLEMENT = 5;
 
     public static $types = [
-        self::TYPE_3 => '3 месяца',
-        self::TYPE_6 => '6 месяцев',
-        self::TYPE_12 => '1 год',
+        '3 месяца' => self::TYPE_3,
+        '6 месяцев' => self::TYPE_6,
+        '1 год' => self::TYPE_12,
     ];
 
     public static $roomTypes = [
-        self::ROOM_TYPE_RENTS_A_ROOM => 'Снимает комнату',
-        self::ROOM_TYPE_REMOVES_THE_BED => 'Снимает койку',
-        self::ROOM_TYPE_RENTS_AN_APARTMENT => 'Снимает квартиру',
-        self::ROOM_TYPE_WITH_FRIENDS => 'У знакомых',
-        self::ROOM_TYPE_RIGHT_AT_WORK => 'Прямо на работе',
-        self::ROOM_TYPE_CHILD_CARE_CENTER => 'Ребцентр',
-        self::ROOM_TYPE_DNP_STATE_INSTITUTIONS => 'днп, гос. учреждения',
-        self::ROOM_TYPE_YOUR_HOME => 'Своё жилье',
-        self::ROOM_TYPE_HOSTEL_FROM_WORK => 'Общежитие от работы',
-        self::ROOM_TYPE_OTHER => 'Другое (б-ца, гора, сестра)',
+        'Снимает комнату' => self::ROOM_TYPE_RENTS_A_ROOM,
+        'Снимает койку' => self::ROOM_TYPE_REMOVES_THE_BED,
+        'Снимает квартиру' => self::ROOM_TYPE_RENTS_AN_APARTMENT,
+        'У знакомых' => self::ROOM_TYPE_WITH_FRIENDS,
+        'Прямо на работе' => self::ROOM_TYPE_RIGHT_AT_WORK,
+        'Ребцентр' => self::ROOM_TYPE_CHILD_CARE_CENTER,
+        'днп, гос. учреждения' => self::ROOM_TYPE_DNP_STATE_INSTITUTIONS,
+        'Своё жилье' => self::ROOM_TYPE_YOUR_HOME,
+        'Общежитие от работы' => self::ROOM_TYPE_HOSTEL_FROM_WORK,
+        'Другое (б-ца, гора, сестра)' => self::ROOM_TYPE_OTHER,
     ];
 
     public static $changedJobsCounts = [
-        self::CHANGED_JOBS_COUNT_0 => 'Не менял',
-        self::CHANGED_JOBS_COUNT_1 => '1',
-        self::CHANGED_JOBS_COUNT_2 => '2',
-        self::CHANGED_JOBS_COUNT_3 => '3 и более',
+        'Не менял' => self::CHANGED_JOBS_COUNT_0,
+        '1' => self::CHANGED_JOBS_COUNT_1,
+        '2' => self::CHANGED_JOBS_COUNT_2,
+        '3 и более' => self::CHANGED_JOBS_COUNT_3,
     ];
 
     public static $reasonForTransitions = [
-        self::REASON_FOR_TRANSITION_BEST_WORKING_CONDITIONS => 'Лучшие условия труда (зарплата, соцпакет, месторасположение и пр.)',
-        self::REASON_FOR_TRANSITION_MORE_INTERESTING_ACTIVITY => 'Более интересная деятельность',
-        self::REASON_FOR_TRANSITION_CONFLICTS => 'Конфликты',
-        self::REASON_FOR_TRANSITION_REDUCTION_OF_WORKPLACE => 'Сокращение рабочего места',
+        'Лучшие условия труда (зарплата, соцпакет, месторасположение и пр.)' => self::REASON_FOR_TRANSITION_BEST_WORKING_CONDITIONS,
+        'Более интересная деятельность' => self::REASON_FOR_TRANSITION_MORE_INTERESTING_ACTIVITY,
+        'Конфликты' => self::REASON_FOR_TRANSITION_CONFLICTS,
+        'Сокращение рабочего места' => self::REASON_FOR_TRANSITION_REDUCTION_OF_WORKPLACE,
     ];
 
     public static $reasonForPetition = [
-        self::REASON_FOR_PETITION_HELP_ONLY => 'Только справка',
-        self::REASON_FOR_PETITION_HUMANITARIAN_AID => 'Гуманитарная помощь',
-        self::REASON_FOR_PETITION_ONE_TIME_CONSULTATION => 'Разовая консультация',
-        self::REASON_FOR_PETITION_ESCORT => 'Сопровождение',
-        self::REASON_FOR_PETITION_RE_SETTLEMENT => 'Повторное заселение',
+        'Только справка' => self::REASON_FOR_PETITION_HELP_ONLY,
+        'Гуманитарная помощь' => self::REASON_FOR_PETITION_HUMANITARIAN_AID,
+        'Разовая консультация' => self::REASON_FOR_PETITION_ONE_TIME_CONSULTATION,
+        'Сопровождение' => self::REASON_FOR_PETITION_ESCORT,
+        'Повторное заселение' => self::REASON_FOR_PETITION_RE_SETTLEMENT,
     ];
 
     /**

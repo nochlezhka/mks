@@ -111,8 +111,8 @@ class ClientAdmin extends BaseAdmin
             ->add('gender', 'choice', [
                 'label' => 'Пол',
                 'choices' => [
-                    Client::GENDER_MALE => 'Мужской',
-                    Client::GENDER_FEMALE => 'Женский',
+                    'Мужской' => Client::GENDER_MALE,
+                    'Женский' => Client::GENDER_FEMALE,
                 ],
             ])
             ->add('birthDate', 'date', [
@@ -344,8 +344,8 @@ class ClientAdmin extends BaseAdmin
                 'label' => 'Пол',
                 'required' => true,
                 'choices' => [
-                    Client::GENDER_MALE => 'Мужской',
-                    Client::GENDER_FEMALE => 'Женский',
+                    'Мужской' => Client::GENDER_MALE,
+                    'Женский' => Client::GENDER_FEMALE,
                 ],
             ])
             ->add('birthDate', 'Sonata\Form\Type\DatePickerType', [

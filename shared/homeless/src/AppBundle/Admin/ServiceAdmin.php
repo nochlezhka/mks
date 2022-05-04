@@ -42,7 +42,7 @@ class ServiceAdmin extends BaseAdmin
         $hasTypeWithComment = false;
         $hasTypeWithAmount = false;
         foreach ($availableCertTypes as $availableCertType) {
-            $typeOptions['choices'][$availableCertType->getId()] = $availableCertType->getName();
+            $typeOptions['choices'][$availableCertType->getName()] = $availableCertType->getId();
             $map = [];
             if ($availableCertType->getComment()) {
                 $map[] = 'comment';
