@@ -129,6 +129,8 @@ sudo chmod +x /usr/local/bin/docker-compose
 11. Сгенерируйте необходимые assets:
 
     > ./app/console fos:js-routing:dump
+    
+    > ./app/console ckeditor:install
 
     > ./app/console assets:install --symlink
     

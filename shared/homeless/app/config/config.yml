@@ -62,6 +62,7 @@ twig:
         sanitation_time: "%sanitation_time%"
 
 sonata_formatter:
+    default_formatter: richhtml
     formatters:
 #        markdown:
 #            service: sonata.formatter.text.markdown
@@ -173,6 +174,7 @@ sonata_admin:
             - bundles/sonataadmin/vendor/waypoints/lib/shortcuts/sticky.min.js
             - bundles/sonataadmin/Admin.js
             - bundles/sonataadmin/treeview.js
+            - bundles/fosckeditor/ckeditor.js
     templates:
         layout: admin/layout.html.twig
         tab_menu_template: admin/tab_menu_template.html.twig
@@ -248,8 +250,7 @@ sonata_user:
     impersonating:
         route: sonata_admin_dashboard
 
-ivory_ck_editor:
-    configs:
+fos_ck_editor:
     default_config: default
     configs:
         news:

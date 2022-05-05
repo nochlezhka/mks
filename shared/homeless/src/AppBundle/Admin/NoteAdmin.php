@@ -4,6 +4,7 @@ namespace AppBundle\Admin;
 
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
+use Sonata\FormatterBundle\Form\Type\SimpleFormatterType;
 
 class NoteAdmin extends BaseAdmin
 {
@@ -20,7 +21,7 @@ class NoteAdmin extends BaseAdmin
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
-            ->add('text', 'sonata_simple_formatter_type', [
+            ->add('text', SimpleFormatterType::class, [
                 'label' => 'Текст',
                 'required' => true,
                 'format' => 'richhtml',

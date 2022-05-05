@@ -44,7 +44,7 @@ class AppKernel extends Kernel
             new Vich\UploaderBundle\VichUploaderBundle(),
             new Liip\ImagineBundle\LiipImagineBundle(),
             new Mopa\Bundle\BootstrapBundle\MopaBootstrapBundle(),
-            new Ivory\CKEditorBundle\IvoryCKEditorBundle(),
+            new FOS\CKEditorBundle\FOSCKEditorBundle(),
 
             new Application\Sonata\UserBundle\ApplicationSonataUserBundle(),
 

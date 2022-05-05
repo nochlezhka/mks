@@ -37,7 +37,7 @@
         "sonata-project/doctrine-extensions": "^1.0",
         "sonata-project/notification-bundle": "^3.0",
         "sonata-project/intl-bundle": "^2.2",
-        "sonata-project/formatter-bundle": "^3.2",
+        "sonata-project/formatter-bundle": "^4.0",
         "sonata-project/translation-bundle": "^2.1",
         "friendsofsymfony/rest-bundle": "^1.7",
         "friendsofsymfony/jsrouting-bundle": "^1.6",
