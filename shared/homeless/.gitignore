@@ -52,7 +52,7 @@
 
 web/js
 web/css
-web/assetic
+web/_assets
 web/sitemap.xml
 
 node_modules/

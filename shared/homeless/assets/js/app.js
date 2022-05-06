@@ -1,3 +1,11 @@
+import '../css/lightbox.css'
+import '../css/style.css'
+import 'script-loader!./lib/jquery.slimscroll'
+import 'script-loader!./lib/swfobject.min'
+import 'script-loader!./lib/canvas-to-blob.min'
+import 'script-loader!./lib/jpeg_camera.min'
+import 'script-loader!./lib/lightbox'
+
 // Initialized at the end
 var camera;
 

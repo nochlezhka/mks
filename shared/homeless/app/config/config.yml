@@ -150,7 +150,7 @@ fos_user:
 
 sonata_admin:
     title:      ' '
-    title_logo: /assetic/logo.png
+    title_logo: /render/logo.png
     security:
         handler: sonata.admin.security.handler.role
     breadcrumbs:
@@ -278,21 +278,8 @@ fos_ck_editor:
         default:
             toolbar: [ [ "Source", "-", "Save" ], "/", [ "Anchor" ], "/", [ "Maximize" ] ]
 
-assetic:
-    debug:          "%kernel.debug%"
-    use_controller: false
-    bundles:        [ ]
-    filters:
-        cssrewrite: ~
-    assets:
-        jpeg_camera:
-            inputs:
-                - '%kernel.root_dir%/Resources/js/swfobject.min.js'
-                - '%kernel.root_dir%/Resources/js/canvas-to-blob.min.js'
-                - '%kernel.root_dir%/Resources/js/jpeg_camera.min.js'
-        logo:
-            inputs:
-                - '%kernel.root_dir%/Resources/img/logo.png'
+webpack_encore:
+    output_path: "%kernel.project_dir%/web/_assets/js"
 
 fos_rest:
     param_fetcher_listener: true

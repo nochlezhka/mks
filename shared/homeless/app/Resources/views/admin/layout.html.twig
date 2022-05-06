@@ -3,15 +3,10 @@
 {% block stylesheets %}
     {{  parent() }}
 
-    {% stylesheets '@SonataTranslationBundle/Resources/public/css/sonata-translation.css'
-        'bundles/sonataadmin/vendor/jqueryui/themes/flick/jquery-ui.min.css'
-    %}
-    <link rel="stylesheet" href="{{ asset_url }}" />
-    {% endstylesheets %}
+    <link rel="stylesheet" href="{{ asset('bundles/sonataadmin/vendor/jqueryui/themes/flick/jquery-ui.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('bundles/sonatatranslation/css/sonata-translation.css') }}" />
 
-    {% stylesheets 'bundles/app/css/*' filter='cssrewrite' %}
-    <link rel="stylesheet" href="{{ asset_url }}" />
-    {% endstylesheets %}
+    {{ encore_entry_link_tags('app') }}
 {% endblock %}
 
 {% block javascripts %}
@@ -26,13 +21,7 @@
 
     <script src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
 
-    {% javascripts '@jpeg_camera' %}
-    <script src="{{ asset_url }}"></script>
-    {% endjavascripts %}
-
-    {% javascripts 'bundles/app/js/*' %}
-    <script src="{{ asset_url }}"></script>
-    {% endjavascripts %}
+    {{ encore_entry_script_tags('app') }}
 
     {% if app.request.attributes.get('_route') == 'admin_app_client_certificate_list' %}
     <script>
@@ -90,9 +79,7 @@
 {% block logo %}
     {% spaceless %}
         <a class="logo" href="{{ path('my_clients') }}">
-            {% image '@logo' %}
-            <img src="{{ asset_url }}" style="max-width: 100%;"/>
-            {% endimage %}
+            <img src="/render/logo.png" style="max-width: 100%;"/>
         </a>
     {% endspaceless %}
 {% endblock %}

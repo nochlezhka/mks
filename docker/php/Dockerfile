@@ -8,6 +8,8 @@ RUN composer self-update 2.2.9
 RUN apk --no-cache add icu-dev libzip-dev
 RUN docker-php-ext-install pdo_mysql bcmath intl zip
 
+RUN apk add --no-cache nodejs yarn
+
 ADD symfony.ini /usr/local/etc/php/conf.d
 
 WORKDIR /var/www/symfony

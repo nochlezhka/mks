@@ -1,29 +1,6 @@
 {
-  "name": "homeless",
-  "version": "1.0.0",
-  "description": "",
-  "main": "gulpfile.js",
-  "scripts": {
-    "gulp": "gulp"
-  },
   "devDependencies": {
-    "browser-sync": "^2.13.0",
-    "gulp": "^3.9.1",
-    "gulp-autoprefixer": "^3.1.0",
-    "gulp-clean-css": "2.3.2",
-    "gulp-csscomb": "^3.0.7",
-    "gulp-imagemin": "^3.0.1",
-    "gulp-less": "^3.1.0",
-    "gulp-rigger": "^0.5.8",
-    "gulp-sourcemaps": "^1.6.0",
-    "gulp-svg-symbols": "^1.0.0",
-    "gulp-typograf": "^1.2.0",
-    "gulp-uglify": "^1.5.3",
-    "gulp-watch": "^4.3.6",
-    "imagemin-pngquant": "^5.0.0",
-    "rimraf": "^2.5.2",
-    "save-dev": "^2.0.0"
-  },
-  "author": "yahoo",
-  "license": "ISC"
+    "@symfony/webpack-encore": "^2.0.0",
+    "script-loader": "^0.7.2"
+  }
 }
