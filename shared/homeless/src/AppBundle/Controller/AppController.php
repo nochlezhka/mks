@@ -184,7 +184,7 @@ class AppController extends Controller
 
         return $this->render('@App/Admin/report.html.twig', [
             'users' => $this->getDoctrine()->getEntityManager()->getRepository('ApplicationSonataUserBundle:User')->findBy([
-                'locked' => false,
+                'enabled' => true,
             ]),
             'types' => $report->getTypes(),
             'optionsHomelessReason' => $optionsHomelessReason,
