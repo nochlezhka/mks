@@ -5,8 +5,8 @@ namespace Application\Migrations;
 use AppBundle\Entity\ClientFormField;
 use AppBundle\Entity\ClientFormResponseValue;
 use AppBundle\Util\ClientFormUtil;
-use Doctrine\DBAL\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\Migrations\AbstractMigration;
 
 /**
  * Добавление нового типа "2 года" в анкету проживающего.
@@ -18,7 +18,7 @@ class Version20200325234710 extends AbstractMigration
     /**
      * @param Schema $schema
      */
-    public function up(Schema $schema)
+    public function up(Schema $schema): void
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql',
             'Migration can only be executed safely on \'mysql\'.');
@@ -41,7 +41,7 @@ class Version20200325234710 extends AbstractMigration
     /**
      * @param Schema $schema
      */
-    public function down(Schema $schema)
+    public function down(Schema $schema): void
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql',
             'Migration can only be executed safely on \'mysql\'.');
