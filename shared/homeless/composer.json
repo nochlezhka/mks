@@ -39,7 +39,7 @@
         "sonata-project/formatter-bundle": "^4.0",
         "sonata-project/translation-bundle": "^2.1",
         "friendsofsymfony/rest-bundle": "^2.0",
-        "friendsofsymfony/jsrouting-bundle": "^1.6",
+        "friendsofsymfony/jsrouting-bundle": "^2.0",
         "vich/uploader-bundle": "^1.4",
         "liip/imagine-bundle": "^1.7",
         "mopa/bootstrap-bundle": "^3.1",
