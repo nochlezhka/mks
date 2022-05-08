@@ -46,6 +46,7 @@ class AppKernel extends Kernel
             new Mopa\Bundle\BootstrapBundle\MopaBootstrapBundle(),
             new FOS\CKEditorBundle\FOSCKEditorBundle(),
 
+
             new Application\Sonata\UserBundle\ApplicationSonataUserBundle(),
 
             new AppBundle\AppBundle(),
