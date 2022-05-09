@@ -41,7 +41,7 @@
         "friendsofsymfony/rest-bundle": "^2.0",
         "friendsofsymfony/jsrouting-bundle": "^2.0",
         "vich/uploader-bundle": "^1.4",
-        "liip/imagine-bundle": "^1.7",
+        "liip/imagine-bundle": "^2.0",
         "mopa/bootstrap-bundle": "^3.1",
         "twbs/bootstrap-sass": "^3.3",
         "willdurand/faker-bundle": "^1.3",
