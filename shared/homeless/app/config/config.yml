@@ -100,6 +100,7 @@ doctrine:
         dbname:   "%database_name%"
         user:     "%database_user%"
         password: "%database_password%"
+        server_version: "%server_version%"
         charset:  UTF8
         types:
             json: Sonata\Doctrine\Types\JsonType

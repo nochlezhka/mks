@@ -37,7 +37,7 @@ services:
     restart: always
   db:
     container_name: mks-db
-    image: mariadb:10.3
+    image: mariadb:10.3.35
     expose:
         - "3306"
     ports:
