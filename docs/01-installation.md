@@ -83,10 +83,6 @@ sudo chmod +x /usr/local/bin/docker-compose
     
     > MYSQL_PASSWORD = 
     > MYSQL_ROOT_PASSWORD =
-    
-    в файле shared/homeless/app/config/parameters.yml нужно указать тот же пароль, что и в MYSQL_PASSWORD:
-    
-    > database_password: 
 
 4. Запустите сборку контейнеров:
 

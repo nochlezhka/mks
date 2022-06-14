@@ -95,11 +95,12 @@ sonata_formatter:
 # Doctrine Configuration
 doctrine:
     dbal:
-        host:     "%database_host%"
-        port:     "%database_port%"
-        dbname:   "%database_name%"
-        user:     "%database_user%"
-        password: "%database_password%"
+        host:     "%env(DB_HOST)%"
+        port:     "%env(DB_PORT)%"
+        dbname:   "%env(DB_NAME)%"
+        user:     "%env(DB_USER)%"
+        password: "%env(DB_PASSWORD)%"
+        server_version: "%server_version%"
         charset:  UTF8
         types:
             json: Sonata\Doctrine\Types\JsonType

@@ -32,6 +32,11 @@ services:
         GUID: $GUID
     links:
       - db
+    environment:
+      DB_NAME: $MYSQL_DATABASE
+      DB_PORT: $MYSQL_PORT
+      DB_USER: $MYSQL_USER
+      DB_PASSWORD: $MYSQL_PASSWORD
     volumes:
       - "./shared/homeless:/var/www/symfony"
     restart: always
