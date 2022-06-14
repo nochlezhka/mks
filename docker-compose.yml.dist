@@ -23,9 +23,12 @@ services:
           - $NGINX_ALIAS
     restart: always
   php:
-    container_name: ghcr.io/nochlezhka/mks:latest
+    container_name: mks-app
+    image: ghcr.io/nochlezhka/mks:latest
     links:
       - db
+    volumes:
+      - "./shared/homeless:/var/www/symfony"
     restart: always
   db:
     container_name: mks-db
