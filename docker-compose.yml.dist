@@ -27,8 +27,10 @@ services:
     image: ghcr.io/nochlezhka/mks:latest
     links:
       - db
-    volumes:
-      - "./shared/homeless:/var/www/symfony"
+    environment:
+        DB_NAME: $MYSQL_DATABASE
+        DB_USER: $MYSQL_USER
+        DB_PASSWORD: $MYSQL_PASSWORD
     restart: always
   db:
     container_name: mks-db
