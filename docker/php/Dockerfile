@@ -5,7 +5,7 @@ USER root
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer
 RUN composer self-update 2.2.9
 
-RUN apk --no-cache add icu-dev libzip-dev
+RUN apk --no-cache add icu-dev libzip-dev libreoffice
 RUN docker-php-ext-install pdo_mysql bcmath intl zip
 
 RUN apk add --no-cache nodejs yarn

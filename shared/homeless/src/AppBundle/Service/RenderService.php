@@ -60,7 +60,7 @@ class RenderService
             'certificate' => $certificate,
             'rootDir' => $this->kernel->getRootDir(),
             'webDir' => $this->kernel->getRootDir() . '/../web',
-            'logo' => 'data:image/png;base64,' . base64_encode(file_get_contents($this->kernel->getRootDir() . "/Resources/img/logo_big.png")),
+            'logo' => 'data:image/png;base64,' . base64_encode(file_get_contents(dirname($this->kernel->getRootDir()) . "/web/render/logo_big.png")),
             'image' => $image,
             'height' => $height,
             'width' => $width,
