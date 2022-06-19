@@ -10,6 +10,7 @@ use AppBundle\Entity\GeneratedDocument;
 use AppBundle\Entity\HistoryDownload;
 use AppBundle\Entity\ViewedClient;
 use AppBundle\Service\DownloadableInterface;
+use AppBundle\Service\RenderService;
 use Application\Sonata\UserBundle\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
 use Mnvx\Lowrapper\Converter;
@@ -55,7 +56,7 @@ class CRUDController extends Controller
                 }
                 $client = $object->getClient();
                 $this->getDoctrine()->getManager()->initializeObject($client);
-                $html = $this->get('app.render_service')->renderCertificate($object, $client);
+                $html = $this->getRenderService()->renderCertificate($object, $client);
                 $historyDownload = new HistoryDownload();
                 $historyDownload->setUser($this->getUser());
                 $historyDownload->setClient($client);
@@ -66,13 +67,13 @@ class CRUDController extends Controller
                 break;
 
             case GeneratedDocument::class:
-                $html = $this->get('app.render_service')->renderGeneratedDocument($object);
+                $html = $this->getRenderService()->renderGeneratedDocument($object);
                 break;
 
             case Contract::class;
                 $client = $object->getClient();
                 $this->getDoctrine()->getManager()->initializeObject($client);
-                $html = $this->get('app.render_service')->renderContract($object,$client, $this->getUser());
+                $html = $this->getRenderService()->renderContract($object,$client, $this->getUser());
                 break;
         }
 
@@ -144,6 +145,14 @@ class CRUDController extends Controller
         }
 
         return parent::showAction($id);
+    }
+
+    /**
+     * @return RenderService
+     */
+    public function getRenderService(): RenderService
+    {
+        return $this->get('app.render_service');
     }
 
     /**
