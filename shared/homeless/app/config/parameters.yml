@@ -1,0 +1,17 @@
+# This file is auto-generated during the composer install
+parameters:
+    database_driver: mysql
+    database_host: db
+    mailer_transport: smtp
+    mailer_host: mailhog
+    mailer_user: null
+    mailer_password: null
+    mailer_port: 1025
+    secret: ThisTokenIsNotSoSecretChangeIt
+    locale: ru
+    router.request_context.host: homeless.dev
+    router.request_context.scheme: http
+    admin_format_date: d.m.Y
+    admin_format_datetime: 'd.m.Y H:i:s'
+    admin_model_timezone: Europe/Moscow
+    admin_view_timezone: Europe/Moscow

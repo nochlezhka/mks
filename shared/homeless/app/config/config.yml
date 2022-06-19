@@ -45,21 +45,21 @@ twig:
         - 'VichUploaderBundle:Form:fields.html.twig'
     exception_controller: 'fos_rest.exception.controller:showAction'
     globals:
-        org_name_short: "%org_name_short%"
-        org_name: "%org_name%"
-        org_description: "%org_description%"
-        org_description_short: "%org_description_short%"
-        org_contacts_full: "%org_contacts_full%"
-        org_city: "%org_city%"
-        dispensary_name: "%dispensary_name%"
-        dispensary_address: "%dispensary_address%"
-        dispensary_phone: "%dispensary_phone%"
-        employment_name: "%employment_name%"
-        employment_address: "%employment_address%"
-        employment_inspection: "%employment_inspection%"
-        sanitation_name: "%sanitation_name%"
-        sanitation_address: "%sanitation_address%"
-        sanitation_time: "%sanitation_time%"
+        org_name_short: "%env(ORG_NAME_SHORT)%"
+        org_name: "%env(ORG_NAME)%"
+        org_description: "%env(ORG_DESCRIPTION)%"
+        org_description_short: "%env(ORG_DESCRIPTION_SHORT)%"
+        org_contacts_full: "%env(ORG_CONTACTS_FULL)%"
+        org_city: "%env(ORG_CITY)%"
+        dispensary_name: "%env(DISPENSARY_NAME)%"
+        dispensary_address: "%env(DISPENSARY_ADDRESS)%"
+        dispensary_phone: "%env(DISPENSARY_PHONE)%"
+        employment_name: "%env(EMPLOYMENT_NAME)%"
+        employment_address: "%env(EMPLOYMENT_ADDRESS)%"
+        employment_inspection: "%env(EMPLOYMENT_INSPECTION)%"
+        sanitation_name: "%env(SANITATION_NAME)%"
+        sanitation_address: "%env(SANITATION_ADDRESS)%"
+        sanitation_time: "%env(SANITATION_TIME)%"
 
 sonata_formatter:
     default_formatter: richhtml
@@ -107,7 +107,7 @@ doctrine:
         # if using pdo_sqlite as your database driver:
         #   1. add the path in parameters.yml
         #     e.g. database_path: "%kernel.root_dir%/data/data.db3"
-        #   2. Uncomment database_path in parameters.yml.dist
+        #   2. Uncomment database_path in parameters.yml
         #   3. Uncomment next line:
         #     path:     "%database_path%"
 

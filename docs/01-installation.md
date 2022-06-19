@@ -71,13 +71,9 @@ sudo chmod +x /usr/local/bin/docker-compose
 
     > cd mks
 
-3. Создайте локальные копии файлов `docker-compose.yml.dist` и `.env.dist`:
-    
-    > cp docker-compose.yml.dist docker-compose.yml
+3. Создайте локальную копию файла `.env.dist`, здесь хранятся настраиваемые параметры приложения:
     
     > cp .env.dist .env
-    
-    > cp shared/homeless/app/config/parameters.yml.dist shared/homeless/app/config/parameters.yml
 
     Обязательно нужно поменять параметры подключения к БД в .env:
     
