@@ -95,12 +95,13 @@ sonata_formatter:
 # Doctrine Configuration
 doctrine:
     dbal:
+        driver:   "pdo_mysql"
         host:     "%env(DB_HOST)%"
         port:     "%env(DB_PORT)%"
         dbname:   "%env(DB_NAME)%"
         user:     "%env(DB_USER)%"
         password: "%env(DB_PASSWORD)%"
-        server_version: "%server_version%"
+        server_version: "8.0.29"
         charset:  UTF8
         types:
             json: Sonata\Doctrine\Types\JsonType

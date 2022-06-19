@@ -33,8 +33,9 @@ services:
     links:
       - db
     environment:
+      DB_HOST: db
+      DB_PORT: 3306
       DB_NAME: $MYSQL_DATABASE
-      DB_PORT: $MYSQL_PORT
       DB_USER: $MYSQL_USER
       DB_PASSWORD: $MYSQL_PASSWORD
       ORG_NAME_SHORT: $ORG_NAME_SHORT

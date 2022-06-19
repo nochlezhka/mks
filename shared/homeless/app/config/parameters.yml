@@ -1,7 +1,7 @@
 # This file is auto-generated during the composer install
 parameters:
     database_driver: mysql
-    database_host: db
+    env(DB_HOST): db
     mailer_transport: smtp
     mailer_host: mailhog
     mailer_user: null
