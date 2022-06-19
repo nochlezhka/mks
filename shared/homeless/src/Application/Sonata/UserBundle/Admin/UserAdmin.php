@@ -3,13 +3,12 @@
 namespace Application\Sonata\UserBundle\Admin;
 
 use AppBundle\Admin\BaseAdminTrait;
-use AppBundle\Entity\Position;
 use Application\Sonata\UserBundle\Entity\User;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Form\Type\ChoiceFieldMaskType;
 use Sonata\AdminBundle\Form\Type\ModelType;
-use Sonata\CoreBundle\Form\Type\DatePickerType;
+use Sonata\Form\Type\DatePickerType;
 use Sonata\UserBundle\Admin\Entity\UserAdmin as BaseUserAdmin;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -61,7 +60,7 @@ class UserAdmin extends BaseUserAdmin
             'Другая должность' => ''
         ];
         foreach ($this->getConfigurationPool()->getContainer()->get('app.position_option.repository')->findAll() as $item) {
-            $positions[$item->getId()] = $item->getName();
+            $positions[$item->getName()] = $item->getId();
         }
 
         $formMapper
@@ -131,7 +130,6 @@ class UserAdmin extends BaseUserAdmin
         $filterMapper
             ->add('id', null, ['advanced_filter' => false])
             ->add('username', null, ['advanced_filter' => false])
-            ->add('locked', null, ['advanced_filter' => false])
             ->add('email', null, ['advanced_filter' => false])
             ->add('groups', null, ['advanced_filter' => false]);
     }
