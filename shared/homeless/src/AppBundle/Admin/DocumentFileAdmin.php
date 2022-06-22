@@ -20,7 +20,7 @@ class DocumentFileAdmin extends BaseAdmin
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
-            ->add('file', 'vich_file', [
+            ->add('file', 'Vich\UploaderBundle\Form\Type\VichFileType', [
                 'label' => 'Файл',
                 'required' => true,
                 'allow_delete' => false,

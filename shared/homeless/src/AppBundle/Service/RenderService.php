@@ -10,23 +10,26 @@ use Application\Sonata\UserBundle\Entity\User;
 use AppBundle\Entity\GeneratedDocument;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Templating\EngineInterface;
+use Twig\Environment;
+use Twig\Error\LoaderError;
+use Twig\Error\SyntaxError;
 
 class RenderService
 {
-    protected $templating;
-    protected $kernel;
-    protected $twig;
+    protected EngineInterface $templating;
+    protected KernelInterface $kernel;
+    protected Environment $twig;
 
     /**
      * RenderService constructor.
      * @param EngineInterface $templating
      * @param KernelInterface $kernel
-     * @param \Twig_Environment $twig
+     * @param Environment $twig
      */
     public function __construct(
         EngineInterface $templating,
         KernelInterface $kernel,
-        \Twig_Environment $twig
+        Environment $twig
     ) {
         $this->templating = $templating;
         $this->kernel = $kernel;
@@ -38,8 +41,10 @@ class RenderService
      * @param Certificate $certificate
      * @param Client $client
      * @return null|string
+     * @throws LoaderError
+     * @throws SyntaxError
      */
-    public function renderCertificate(Certificate $certificate, Client $client)
+    public function renderCertificate(Certificate $certificate, Client $client): ?string
     {
         $type = $certificate->getType();
 
@@ -60,7 +65,7 @@ class RenderService
             'certificate' => $certificate,
             'rootDir' => $this->kernel->getRootDir(),
             'webDir' => $this->kernel->getRootDir() . '/../web',
-            'logo' => 'data:image/png;base64,' . base64_encode(file_get_contents($this->kernel->getRootDir() . "/Resources/img/logo_big.png")),
+            'logo' => 'data:image/png;base64,' . base64_encode(file_get_contents(dirname($this->kernel->getRootDir()) . "/web/render/logo_big.png")),
             'image' => $image,
             'height' => $height,
             'width' => $width,
@@ -74,13 +79,13 @@ class RenderService
      * @return string
      *
      */
-    public function renderGeneratedDocument(GeneratedDocument $document)
+    public function renderGeneratedDocument(GeneratedDocument $document): string
     {
         return $this->templating->render('/pdf/generated_document.html.twig', [
             'document' => $document,
             'rootDir' => $this->kernel->getRootDir(),
             'webDir' => $this->kernel->getRootDir() . '/../web',
-            'logo' => 'data:image/png;base64,' . base64_encode(file_get_contents($this->kernel->getRootDir() . "/Resources/img/logo_big.png")),
+            'logo' => 'data:image/png;base64,' . base64_encode(file_get_contents(dirname($this->kernel->getRootDir()) . "/web/render/logo_big.png")),
         ]);
     }
 
@@ -92,7 +97,7 @@ class RenderService
      * @param User $user
      * @return string
      */
-    public function renderContract(Contract $contract, Client $client, User $user)
+    public function renderContract(Contract $contract, Client $client, User $user): string
     {
         $image = '';
         if (file_exists($client->getPhotoPath())) {
@@ -103,16 +108,11 @@ class RenderService
             'contract' => $contract,
             'client' => $client,
             'user' => $user,
-            'specialty' => ($user->getPositionText() ? $user->getPositionText() : ($user->getPosition() ? $user->getPosition()->getName() : 'Специалист по социальной работе')),
+            'specialty' => ($user->getPositionText() ?: ($user->getPosition() ? $user->getPosition()->getName() : 'Специалист по социальной работе')),
             'webDir' => $this->kernel->getRootDir() . '/../web',
             'image' => $image,
             'height' => $height,
             'width' => $width,
         ]);
-    }
-
-    private function getHostName()
-    {
-        return str_replace("https", "http", implode('/', array_slice(explode('/', $_SERVER['HTTP_REFERER']), 0, 3))) . '/';
     }
 }
