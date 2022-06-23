@@ -90,6 +90,7 @@ class UserAdmin extends BaseUserAdmin
             ])
             ->add('proxyDate', DatePickerType::class, array(
                 'required' => false,
+                'format' => 'dd.MM.yyyy',
                 'label' => 'Дата доверенности',
             ))
             ->add('proxyNum', null, array('required' => false, 'label' => 'Номер доверенности'))
