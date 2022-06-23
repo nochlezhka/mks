@@ -48,8 +48,6 @@ services:
       SANITATION_NAME: $SANITATION_NAME
       SANITATION_ADDRESS: $SANITATION_ADDRESS
       SANITATION_TIME: $SANITATION_TIME
-    volumes:
-      - "./shared/homeless:/var/www/symfony"
     restart: always
   db:
     container_name: mks-db

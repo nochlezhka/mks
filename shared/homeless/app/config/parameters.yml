@@ -2,6 +2,9 @@
 parameters:
     database_driver: mysql
     env(DB_HOST): db
+    env(DB_PORT): 39410
+    env(DB_USER): homeless
+    env(DB_PASSWORD): XXXXXXXXX
     mailer_transport: smtp
     mailer_host: mailhog
     mailer_user: null
