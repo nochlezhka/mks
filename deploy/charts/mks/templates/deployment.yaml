@@ -1,0 +1,84 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "name" . }}
+  labels:
+{{ include "labels" . | indent 4 }}
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+{{ include "matchLabels" . | indent 6 }}
+  template:
+    metadata:
+      labels:
+{{ include "labels" . | indent 8 }}
+    spec:
+      imagePullSecrets:
+{{ toYaml .Values.registry.secrets | indent 10 }}
+      terminationGracePeriodSeconds: 10
+      serviceAccountName: {{ template "name" . }}
+      securityContext:
+        runAsNonRoot: true
+      containers:
+      - name: nginx
+        image: {{ template "nginxImage" . }}
+        imagePullPolicy: {{ .Values.operator.image.pullPolicy }}
+        ports:
+          - name: metrics
+            containerPort: {{ .Values.operator.ports.metrics }}
+          - name: health-probe
+            containerPort: {{ .Values.operator.ports.healthProbe }}
+      - name: app
+        image: {{ template "appImage" . }}
+        imagePullPolicy: {{ .Values.operator.image.pullPolicy }}
+        ports:
+          - name: metrics
+            containerPort: {{ .Values.operator.ports.metrics }}
+          - name: health-probe
+            containerPort: {{ .Values.operator.ports.healthProbe }}
+#        env:
+
+{{- if .Values.readinessProbe.enabled }}
+        readinessProbe:
+          httpGet:
+            path: {{ .Values.readinessProbe.path }}
+            scheme: "HTTP"
+            port: {{ .Values.operator.ports.healthProbe }}
+          initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
+          failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
+          timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
+{{- end }}
+{{- if .Values.livenessProbe.enabled }}
+        livenessProbe:
+          httpGet:
+            path: {{ .Values.livenessProbe.path }}
+            scheme: "HTTP"
+            port: {{ .Values.operator.ports.healthProbe }}
+          initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
+          failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
+          timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
+{{- end }}
+        resources:
+{{ toYaml .Values.operator.resources | indent 12 }}
+{{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+{{- end }}
+{{- with .Values.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+{{- end }}
+{{- with .Values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+{{- end }}
+{{- with .Values.topologySpreadConstraints }}
+      topologySpreadConstraints:
+{{ toYaml . | indent 8 }}
+{{- end }}

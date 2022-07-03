@@ -1,0 +1,4 @@
+apiVersion: v2
+name: mks
+version: 1.0.0
+description: Chart for MKS (multifunctional social worker's office)

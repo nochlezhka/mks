@@ -1,0 +1,76 @@
+#
+# Common
+#
+name:
+  override: ""
+  useReleaseName: true
+
+#
+# Docker image
+#
+registry:
+  url: <TODO>
+  secrets: []
+
+#
+# application configuration
+#
+app:
+  ports:
+    metrics: 8080
+    healthProbe: 8081
+  image:
+    path: "<TODO>"
+    version: "<CHANGE_IT>"
+    pullPolicy: "Always"
+  resources:
+    limits:
+      cpu: 500m
+      memory: 1024Mi
+    requests:
+      cpu: 100m
+      memory: 100Mi
+
+#
+# nginx configuration
+#
+nginx:
+  ports:
+    metrics: 8080
+    healthProbe: 8081
+  image:
+    path: "<TODO>"
+    version: "<CHANGE_IT>"
+    pullPolicy: "Always"
+  resources:
+    limits:
+      cpu: 500m
+      memory: 1024Mi
+    requests:
+      cpu: 100m
+      memory: 100Mi
+
+#
+# Probes
+#
+livenessProbe:
+  enabled: true
+  initialDelaySeconds: 15
+  periodSeconds: 20
+  failureThreshold: 5
+  successThreshold: 2
+  timeoutSeconds: 5
+  path: /healthz
+readinessProbe:
+  enabled: true
+  initialDelaySeconds: 5
+  periodSeconds: 10
+  failureThreshold: 5
+  successThreshold: 2
+  timeoutSeconds: 5
+  path: /readyz
+
+nodeSelector: { }
+topologySpreadConstraints: [ ]
+tolerations: []
+affinity: { }
