@@ -101,12 +101,12 @@ class ClientField extends BaseEntity
      * Массив вариантов значений
      * @return array
      */
-    public function getOptionsArray()
+    public function getOptionsArray(): array
     {
         $options = [];
 
         foreach ($this->options as $option) {
-            $options[$option->getId()] = $option->getName();
+            $options[$option->getName()] = $option->getId();
         }
 
         return $options;

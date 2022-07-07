@@ -1056,7 +1056,7 @@ class ClientAdmin extends BaseAdmin
         $result = [];
 
         foreach ($field->getOptions() as $clientFieldOption) {
-            $result[$clientFieldOption->getId()] = $clientFieldOption->getName();
+            $result[$clientFieldOption->getName()] = $clientFieldOption->getId();
         }
 
         return $result;
