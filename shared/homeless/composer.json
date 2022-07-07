@@ -49,9 +49,9 @@
         "knplabs/knp-paginator-bundle": "^2.4",
         "h4cc/wkhtmltopdf-amd64": "^0.12.3",
         "bongrun/lowrapper": "1.0.5",
-        "phpoffice/phpexcel": "^1.8",
         "laminas/laminas-zendframework-bridge": "^1.5",
-        "symfony/webpack-encore-bundle": "^1.8"
+        "symfony/webpack-encore-bundle": "^1.8",
+        "phpoffice/phpspreadsheet": "^1.23"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.1",

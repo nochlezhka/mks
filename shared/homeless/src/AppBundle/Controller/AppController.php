@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\ClientField;
 use AppBundle\Entity\ContractStatus;
+use AppBundle\Service\ReportService;
 use Application\Sonata\UserBundle\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -198,23 +199,34 @@ class AppController extends Controller
      * @param Request $request
      * @return Response
      */
-    public function reportDownloadAction(Request $request)
+    public function reportDownloadAction(Request $request): Response
     {
-        $report = $this->get('app.report_service');
-        $report->generate(
-            $request->get('type'),
-            $request->get('dateFrom', null),
-            $request->get('dateTo', null),
-            $request->get('userId', null),
+        $type = $request->get('type');
+        $response = new Response();
+        $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        $response->headers->set('Content-Disposition', 'attachment;filename="' . $type . '.xls"');
+        $response->headers->set('Cache-Control', 'max-age=0');
+        $response->sendHeaders();
+        $this->reportService()->generate(
+            $type,
+            $request->get('dateFrom'),
+            $request->get('dateTo'),
+            $request->get('userId'),
 
-            $request->get('createClientdateFrom', null),
-            $request->get('createClientFromTo', null),
-            $request->get('createServicedateFrom', null),
-            $request->get('createServiceFromTo', null),
+            $request->get('createClientdateFrom'),
+            $request->get('createClientFromTo'),
+            $request->get('createServicedateFrom'),
+            $request->get('createServiceFromTo'),
 
-            $request->get('homelessReason', null),
-            $request->get('disease', null),
-            $request->get('breadwinner', null)
+            $request->get('homelessReason'),
+            $request->get('disease'),
+            $request->get('breadwinner')
         );
+        return $response;
+    }
+
+    private function reportService(): ReportService
+    {
+        return $this->get('app.report_service');
     }
 }
