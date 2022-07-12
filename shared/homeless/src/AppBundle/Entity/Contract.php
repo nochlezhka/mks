@@ -6,7 +6,7 @@ use AppBundle\Service\DownloadableInterface;
 use Application\Sonata\UserBundle\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\ExecutionContextInterface;
+use Symfony\Component\Validator\Context\ExecutionContext;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -330,15 +330,10 @@ class Contract extends BaseEntity implements DownloadableInterface
     /**
      * @Assert\Callback
      */
-    public function validate(ExecutionContextInterface $context)
+    public function validate(ExecutionContext $context)
     {
         if (!$this->getItems()->count()) {
-            $context->addViolationAt(
-                'items',
-                'Не указан пункт',
-                [],
-                null
-            );
+            $context->addViolation('Не указан пункт', ['items']);
         }
     }
 }
