@@ -34,6 +34,12 @@ class ShelterRoom extends BaseEntity
      */
     private $comment;
 
+    /**
+     * Клиент
+     * @ORM\OneToMany(targetEntity="ShelterHistory", mappedBy="room")
+     */
+    private $shelterHistories;
+
     public function __toString()
     {
         return (string)$this->number;
@@ -133,5 +139,21 @@ class ShelterRoom extends BaseEntity
     public function getComment()
     {
         return $this->comment;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getShelterHistories()
+    {
+        return $this->shelterHistories;
+    }
+
+    /**
+     * @param mixed $shelterHistories
+     */
+    public function setShelterHistories($shelterHistories)
+    {
+        $this->shelterHistories = $shelterHistories;
     }
 }

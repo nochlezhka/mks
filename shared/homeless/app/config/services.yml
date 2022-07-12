@@ -144,6 +144,14 @@ services:
       calls:
           - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
 
+  app.shelter_room.admin:
+    class: AppBundle\Admin\ShelterRoomAdmin
+    tags:
+      - { name: sonata.admin, manager_type: orm, label: 'Комнаты в приюте' }
+    arguments: [null, AppBundle\Entity\ShelterRoom, SonataAdminBundle:CRUD]
+    calls:
+      - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
+
   app.shelter_history.admin:
       class: AppBundle\Admin\ShelterHistoryAdmin
       tags:
