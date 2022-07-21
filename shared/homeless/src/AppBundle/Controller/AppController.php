@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\ClientField;
 use AppBundle\Entity\ContractStatus;
+use AppBundle\Entity\ShelterRoom;
 use Application\Sonata\UserBundle\Entity\User;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -215,5 +216,251 @@ class AppController extends Controller
             $request->get('disease', null),
             $request->get('breadwinner', null)
         );
+    }
+
+    /**
+     * @Route("/shelterroom/list",name="shelter_room")
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function shelterRoomAction(Request $request)
+    {
+        $user = $this->getUser();
+
+        if (!$user instanceof User || !$this->isGranted('ROLE_ADMIN')) {
+            throw $this->createAccessDeniedException();
+        }
+
+//        $filter = ['contractCreatedBy' => ['value' => $user->getId()]];
+
+        $roomData = [];
+        foreach ($this->getDoctrine()->getRepository('AppBundle:ShelterRoom')->findAll() as $item) {
+
+            $roomData[] = [
+                'id' => $item->getId(),
+                'number' => $item->getNumber(),
+                'maxOccupants' => $item->getMaxOccupants(),
+                'currentOccupants' => $item->getcurrentOccupants(),
+                'comment' => $item->getComment(),
+            ];
+        }
+
+
+        // if ($inProcessStatus instanceof ContractStatus) {
+        //     $filter['contractStatus'] = ['value' => [(string)$inProcessStatus->getId()]];
+        // }
+
+        return $this->render('@App/Admin/shelter_room.html.twig', [
+            'rooms' => $roomData
+        ]);
+    }
+
+
+    /**
+     * Добавить комнату
+     * @Route("/shelterroom/create", name="shelter_room_add")
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function addRoomAction(Request $request)
+    {
+        $user = $this->getUser();
+
+        if (!$user instanceof User || !$this->isGranted('ROLE_ADMIN')) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $room = new ShelterRoom();
+
+        $form = $this->createFormBuilder()
+            ->setAction('/app/shelterroom/save')
+            ->setMethod('GET')
+            ->add('number', null, [
+                'label' => 'Номер комнаты'
+            ])
+            ->add('maxOccupants', null, [
+                'label' => 'Максимальное кол-во жильцов',
+                'required' => false
+            ])
+            ->add('currentOccupants', null, [
+                'label' => 'Текущее кол-во жильцов',
+                'required' => false
+            ])
+            ->add('comment', null, [
+                'label' => 'Комментарий',
+                'required' => false
+            ])
+            ->getForm();
+
+        $form->handleRequest($request);
+
+
+        return $this->render('@App/Admin/shelter_room_form.html.twig', [
+            'room' => [],
+            'form' => $form->createView(),
+            'form_title' => 'Добавление комнаты',
+            'form_id' => 'saveRoom',
+            'form_action' => 'save'
+        ]);
+    }
+
+    /**
+     * Сохранить комнату в БД
+     * @Route("/shelterroom/save/", name="shelter_room_save")
+     * @param Request $request
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function saveRoomAction(Request $request)
+    {
+        $user = $this->getUser();
+
+        $formData = $request->get('form');
+        $action = $request->get('action');
+        $roomId = $request->get('room_id');
+
+        if (!$user instanceof User || !$this->isGranted('ROLE_ADMIN')) {
+            throw $this->createAccessDeniedException();
+        }
+
+        if (!empty($formData['_token'])) {
+            $em = $this->getDoctrine()->getManager();
+
+
+            if ($action == 'edit') {
+                if (!empty($roomId)) {
+                    $room = $em->getRepository('AppBundle:ShelterRoom')->find($roomId);
+                } else {
+                    throw $this->createNotFoundException(
+                        'No product found for id '.$roomId
+                    );
+                }
+            } else {
+                $room = new ShelterRoom();
+            }
+
+            $room->setNumber($formData['number']);
+            $room->setMaxOccupants(empty($formData['maxOccupants']) ? null : $formData['maxOccupants']);
+            $room->setCurrentOccupants(empty($formData['currentOccupants']) ? 0 : $formData['currentOccupants']);
+            $room->setComment($formData['comment']);
+
+            $em->persist($room);
+            $em->flush();
+
+            return $this->redirect('/app/shelterroom/list');
+        } else {
+            return $this->redirect('/app/shelterroom/create');
+        }
+
+    }
+
+
+    /**
+     * Редактировать комнату
+     * @Route("/shelterroom/{id}/edit/", name="shelter_room_edit")
+     * @param Request id
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function editRoomAction(Request $request)
+    {
+        $user = $this->getUser();
+        $roomId = $request->attributes->get('id');
+
+        if (!$user instanceof User || !$this->isGranted('ROLE_ADMIN')) {
+            throw $this->createAccessDeniedException();
+        }
+        $em = $this->getDoctrine()->getManager();
+        $room = $em->getRepository('AppBundle:ShelterRoom')->find($roomId);
+
+        $form = $this->createFormBuilder()
+            ->setAction('/app/shelterroom/save')
+            ->setMethod('GET')
+            ->add('number', null, [
+                'label' => 'Номер комнаты'
+            ])
+            ->add('maxOccupants', null, [
+                'label' => 'Максимальное кол-во жильцов',
+                'required' => false
+            ])
+            ->add('currentOccupants', null, [
+                'label' => 'Текущее кол-во жильцов',
+                'required' => false
+            ])
+            ->add('comment', null, [
+                'label' => 'Комментарий',
+                'required' => false
+            ])
+            ->getForm();
+
+
+        $formData = [
+            'id' => $room->getId(),
+            'number' => $room->getNumber(),
+            'maxOccupants' => $room->getMaxOccupants(),
+            'currentOccupants' => $room->getCurrentOccupants(),
+            'comment' => $room->getComment()
+        ];
+
+
+
+        $form->setData($formData);
+
+
+        return $this->render('@App/Admin/shelter_room_form.html.twig', [
+            'room' => ['id' => $formData['id']],
+            'form' => $form->createView(),
+            'form_title' => 'Редактирование комнаты',
+            'form_id' => 'saveRoom',
+            'form_action' => 'edit',
+        ]);
+
+    }
+
+    /**
+     * Удалить комнату
+     * @Route("/shelterroom/{id}/delete/", name="shelter_room_remove")
+     * @param Request id
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function removeRoomAction(Request $request)
+    {
+        $user = $this->getUser();
+
+        $roomId = $request->attributes->get('id');
+
+        if (!$user instanceof User || !$this->isGranted('ROLE_ADMIN')) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $em = $this->getDoctrine()->getManager();
+
+        $query = $em->createQuery(
+            'DELETE FROM AppBundle:ShelterHistory AS e WHERE e.room = :room_id'
+        )->setParameter('room_id', $roomId)->execute();
+
+
+        $room = $em->getReference('AppBundle:ShelterRoom', $roomId);
+
+        // dump($room); exit;
+
+        $em->remove($room);
+        $em->flush();
+
+
+        $roomData = [];
+        foreach ($this->getDoctrine()->getRepository('AppBundle:ShelterRoom')->findAll() as $item) {
+
+            $roomData[] = [
+                'id' => $item->getId(),
+                'number' => $item->getNumber(),
+                'maxOccupants' => $item->getMaxOccupants(),
+                'currentOccupants' => $item->getcurrentOccupants(),
+                'comment' => $item->getComment(),
+            ];
+        }
+
+        return $this->render('@App/Admin/shelter_room.html.twig', [
+            'rooms' => $roomData
+        ]);
     }
 }
