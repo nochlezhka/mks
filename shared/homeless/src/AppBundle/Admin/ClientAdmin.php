@@ -15,6 +15,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Knp\Menu\ItemInterface as MenuItemInterface;
 use Sonata\AdminBundle\Admin\AdminInterface;
@@ -23,6 +24,8 @@ use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Form\Type\ChoiceFieldMaskType;
 use Sonata\AdminBundle\Show\ShowMapper;
+use Sonata\DoctrineORMAdminBundle\Datagrid\OrderByToSelectWalker;
+use Sonata\DoctrineORMAdminBundle\Datagrid\ProxyQuery;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
@@ -736,14 +739,13 @@ class ClientAdmin extends BaseAdmin
     }
 
     /**
-     * @param QueryBuilder $queryBuilder
      * @param $alias
      * @param $field
      * @param $value
      *
      * @return bool|void
      */
-    public function getClientSearchFilter($queryBuilder, $alias, $field, $value)
+    public function getClientSearchFilter(ProxyQuery $queryBuilder, $alias, $field, $value)
     {
         if (null === $value['value']) {
             return;
@@ -757,15 +759,7 @@ class ClientAdmin extends BaseAdmin
             $word = trim($word);
             if (!empty($word)) {
                 $queryBuilder->andWhere("($alias.lastname LIKE :word$key OR $alias.firstname LIKE :word$key OR $alias.middlename LIKE :word$key OR $alias.id LIKE :word$key OR $alias.birthDate LIKE :word$key OR n.text LIKE :word$key)");
-                $queryBuilder->orderBy("CUSTOM_PART(
-                    CASE
-                        WHEN $alias.lastname like :word$key THEN 0
-                        WHEN $alias.firstname like :word$key THEN 1
-                        WHEN $alias.middlename like :word$key THEN 2
-                        WHEN $alias.id like :word$key THEN 3
-                        WHEN $alias.birthDate like :word$key THEN 4
-                        WHEN n.text like :word$key THEN 5
-                        ELSE 6 END)", "ASC");
+                $queryBuilder->orderBy("$alias.lastname, $alias.firstname, $alias.middlename", "ASC");
                 $queryBuilder->setParameter("word$key", "%$word%");
             }
         }
