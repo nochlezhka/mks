@@ -2,6 +2,7 @@
 
 namespace AppBundle\Admin;
 
+use AppBundle\Form\Type\AppContractDurationType;
 use Doctrine\ORM\EntityRepository;
 use Sonata\AdminBundle\Route\RouteCollection;
 use Sonata\AdminBundle\Datagrid\ListMapper;
@@ -35,11 +36,13 @@ class ContractAdmin extends BaseAdmin
 
         if ($this->getSubject()->getId() > 0) {
             $formMapper
-                ->add('duration', 'app_contract_duration', ['label' => 'Долгосрочность', 'required' => false,])
+                ->add('duration', AppContractDurationType::class, ['label' => 'Долгосрочность', 'required' => false,])
                 ->add('number', null, [
                     'label' => 'Номер',
-                    'read_only' => true,
                     'disabled' => true,
+                    'attr' => array(
+                        'readonly' => true,
+                    )
                 ]);
         }
 
