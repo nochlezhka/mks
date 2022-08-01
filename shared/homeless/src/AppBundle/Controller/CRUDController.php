@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Admin\ClientAdmin;
 use AppBundle\Entity\Certificate;
 use AppBundle\Entity\Client;
 use AppBundle\Entity\Contract;
@@ -11,6 +12,7 @@ use AppBundle\Entity\HistoryDownload;
 use AppBundle\Entity\ViewedClient;
 use AppBundle\Service\DownloadableInterface;
 use AppBundle\Service\RenderService;
+use AppBundle\Util\UploadedDataStringFile;
 use Application\Sonata\UserBundle\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
 use Mnvx\Lowrapper\Converter;
@@ -18,7 +20,9 @@ use Mnvx\Lowrapper\DocumentType;
 use Mnvx\Lowrapper\Format;
 use Mnvx\Lowrapper\LowrapperParameters;
 use Sonata\AdminBundle\Controller\CRUDController as Controller;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -98,6 +102,21 @@ class CRUDController extends Controller
                 'Content-Disposition' => 'attachment; filename="' . $filename . '"'
             ]
         );
+    }
+
+    public function preEdit(Request $request, $object)
+    {
+        if(!($object instanceof Client)) {
+            return;
+        }
+        $base64Photo = $request->request->get('photo');
+        if($base64Photo === null || substr($base64Photo, 0, strlen("data:image")) !== "data:image") {
+            return;
+        }
+
+        $file = new UploadedDataStringFile($base64Photo, "client.png");
+        $object->setPhoto($file);
+        $this->admin->update($object);
     }
 
     /**

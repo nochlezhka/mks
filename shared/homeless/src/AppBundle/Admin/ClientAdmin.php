@@ -329,7 +329,7 @@ class ClientAdmin extends BaseAdmin
                 'required' => false,
                 'allow_delete' => false,
                 'download_link' => false,
-                'attr' => ['class' => 'client_photo_input'],
+                'attr' => ['class' => 'client_photo_file'],
             ])
             ->add('lastname', null, [
                 'label' => 'Фамилия',
@@ -435,8 +435,6 @@ class ClientAdmin extends BaseAdmin
 
         $formMapper
             ->end();
-
-        $formMapper->getFormBuilder()->get('photo')->addModelTransformer(new ImageStringToFileTransformer());
     }
 
     /**

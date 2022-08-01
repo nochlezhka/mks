@@ -213,7 +213,7 @@ class Client extends BaseEntity
         return file_exists($this->getPhotoPath()) && @is_array(getimagesize($this->getPhotoPath()));
     }
 
-    public function setPhoto($photo = null)
+    public function setPhoto($photo = null): Client
     {
         $this->photo = $photo;
 

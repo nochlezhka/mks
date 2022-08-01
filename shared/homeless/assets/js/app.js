@@ -202,14 +202,14 @@ var jpegCameraInit = function () {
 
 $(function () {
     $("#do-file-photo").click(function (e) {
-        $('.client_photo_input').val('').prop('type', 'file').css('visibility', 'visible').val('');
+        $('.client_photo_file').val('').css('visibility', 'visible');
         $('#user-webcam-photo').hide();
         $('#user-file-photo').show();
         return false;
     });
 
     $("#do-webcam-photo").click(function (e) {
-        $('.client_photo_input').val('').prop('type', 'text').css('visibility', 'hidden').val('');
+        $('.client_photo_file').val('').css('visibility', 'hidden');
         $('#user-file-photo').hide();
         $('#user-webcam-photo').show(function () {
             jpegCameraInit();
