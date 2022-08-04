@@ -32,7 +32,12 @@ name: {{ template "name" . }}
 instance: {{ .Release.Name }}
 {{- end -}}
 
-{{/* Operator image */}}
+{{/* app image */}}
 {{- define "appImage" -}}
+{{- printf "%s/%s:%s" .Values.registry.url .Values.app.image.path .Values.app.image.version -}}
+{{- end -}}
+
+{{/* nginx image */}}
+{{- define "nginxImage" -}}
 {{- printf "%s/%s:%s" .Values.registry.url .Values.app.image.path .Values.app.image.version -}}
 {{- end -}}

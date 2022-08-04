@@ -26,28 +26,16 @@ spec:
       containers:
       - name: nginx
         image: {{ template "nginxImage" . }}
-        imagePullPolicy: {{ .Values.operator.image.pullPolicy }}
+        imagePullPolicy: {{ .Values.app.image.pullPolicy }}
         ports:
-          - name: metrics
-            containerPort: {{ .Values.operator.ports.metrics }}
-          - name: health-probe
-            containerPort: {{ .Values.operator.ports.healthProbe }}
-      - name: app
-        image: {{ template "appImage" . }}
-        imagePullPolicy: {{ .Values.operator.image.pullPolicy }}
-        ports:
-          - name: metrics
-            containerPort: {{ .Values.operator.ports.metrics }}
-          - name: health-probe
-            containerPort: {{ .Values.operator.ports.healthProbe }}
-#        env:
-
+          - name: http
+            containerPort: {{ .Values.app.ports.http }}
 {{- if .Values.readinessProbe.enabled }}
         readinessProbe:
           httpGet:
             path: {{ .Values.readinessProbe.path }}
             scheme: "HTTP"
-            port: {{ .Values.operator.ports.healthProbe }}
+            port: {{ .Values.app.ports.http }}
           initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
           periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
           failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
@@ -58,14 +46,23 @@ spec:
           httpGet:
             path: {{ .Values.livenessProbe.path }}
             scheme: "HTTP"
-            port: {{ .Values.operator.ports.healthProbe }}
+            port: {{ .Values.app.ports.http }}
           initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
           periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
           failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
           timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
 {{- end }}
         resources:
-{{ toYaml .Values.operator.resources | indent 12 }}
+{{ toYaml .Values.app.resources | indent 10 }}
+      - name: app
+        image: {{ template "appImage" . }}
+        imagePullPolicy: {{ .Values.app.image.pullPolicy }}
+        envFrom:
+          - configMapRef:
+              name: {{ template "name" . }}
+        resources:
+{{ toYaml .Values.nginx.resources | indent 10 }}
+
 {{- with .Values.nodeSelector }}
       nodeSelector:
 {{ toYaml . | indent 8 }}

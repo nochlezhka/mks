@@ -16,17 +16,16 @@ registry:
 # application configuration
 #
 app:
-  ports:
-    metrics: 8080
-    healthProbe: 8081
   image:
     path: "<TODO>"
     version: "<CHANGE_IT>"
     pullPolicy: "Always"
+  ports:
+    http: 80
   resources:
     limits:
       cpu: 500m
-      memory: 1024Mi
+      memory: 512Mi
     requests:
       cpu: 100m
       memory: 100Mi
@@ -35,9 +34,6 @@ app:
 # nginx configuration
 #
 nginx:
-  ports:
-    metrics: 8080
-    healthProbe: 8081
   image:
     path: "<TODO>"
     version: "<CHANGE_IT>"
@@ -45,7 +41,7 @@ nginx:
   resources:
     limits:
       cpu: 500m
-      memory: 1024Mi
+      memory: 512Mi
     requests:
       cpu: 100m
       memory: 100Mi
@@ -60,7 +56,7 @@ livenessProbe:
   failureThreshold: 5
   successThreshold: 2
   timeoutSeconds: 5
-  path: /healthz
+  path: /
 readinessProbe:
   enabled: true
   initialDelaySeconds: 5
@@ -68,7 +64,7 @@ readinessProbe:
   failureThreshold: 5
   successThreshold: 2
   timeoutSeconds: 5
-  path: /readyz
+  path: /
 
 nodeSelector: { }
 topologySpreadConstraints: [ ]
