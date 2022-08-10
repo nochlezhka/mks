@@ -1,0 +1,7 @@
+---
+- hosts: localhost
+  collections:
+    - nochlezhka.lib
+  become: false
+  roles:
+    - role: nochlezhka.lib.docker
