@@ -43,6 +43,9 @@ jobs:
         with:
           primary_branch: master
       -
+        name: Print image version
+        run: echo ${{ env.registry_name }}/${{ env.nginx_image_name }}:${{ steps.set_version.outputs.safe_version }}
+      -
         name: Build nginx docker image and push it
         uses: docker/build-push-action@v3
         with:
