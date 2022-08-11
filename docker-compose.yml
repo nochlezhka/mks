@@ -21,6 +21,8 @@ services:
   db:
     container_name: mks-db
     image: mariadb:10.3
+    profiles:
+      - local
     cap_add:
       - SYS_NICE
     expose:
