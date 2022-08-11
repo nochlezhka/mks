@@ -9,8 +9,7 @@ on:
 
 env:
   registry_name: nochlezhka
-  nginx_image_name: mks-nginx
-  php_image_name: mks-php
+  app_image_name: mks-app
 
 jobs:
   build:
@@ -45,26 +44,16 @@ jobs:
       -
         name: Prepare files for docker build
         run: |
-          cp -r shared/homeless docker/nginx/files
-          cp -r shared/homeless docker/php/files
+          cp -r shared/homeless docker/app/files
       -
-        name: Build nginx docker image and push it
+        name: Build app docker image and push it
         uses: docker/build-push-action@v3
         with:
           context: docker/nginx
           push: true
           tags: |
-            ${{ env.registry_name }}/${{ env.nginx_image_name }}:latest
-            ${{ env.registry_name }}/${{ env.nginx_image_name }}:${{ steps.set_version.outputs.safe_version }}
-      -
-        name: Build php docker image and push it
-        uses: docker/build-push-action@v3
-        with:
-          context: docker/php
-          push: true
-          tags: |
-            ${{ env.registry_name }}/${{ env.php_image_name }}:latest
-            ${{ env.registry_name }}/${{ env.php_image_name }}:${{ steps.set_version.outputs.safe_version }}
+            ${{ env.registry_name }}/${{ env.app_image_name }}:latest
+            ${{ env.registry_name }}/${{ env.app_image_name }}:${{ steps.set_version.outputs.safe_version }}
       -
         name: Print image version
         run: echo ${{ steps.set_version.outputs.safe_version }}

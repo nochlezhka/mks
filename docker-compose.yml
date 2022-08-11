@@ -19,7 +19,6 @@ services:
   php:
     container_name: mks-php
     image: nochlezhka/mks-app:${MKS_VERSION}
-    entrypoint: ["php-fpm7", "-F"]
     build:
       context: ./docker/php
       dockerfile: Dockerfile
@@ -28,27 +27,6 @@ services:
     restart: always
     env_file:
       - .env
-    # environment:
-    #   DB_HOST: db
-    #   DB_PORT: 3306
-    #   DB_NAME: $MYSQL_DATABASE
-    #   DB_USER: $MYSQL_USER
-    #   DB_PASSWORD: $MYSQL_PASSWORD
-    #   ORG_NAME_SHORT: $ORG_NAME_SHORT
-    #   ORG_NAME: $ORG_NAME
-    #   ORG_DESCRIPTION: $ORG_DESCRIPTION
-    #   ORG_DESCRIPTION_SHORT: $ORG_DESCRIPTION_SHORT
-    #   ORG_CITY: $ORG_CITY
-    #   ORG_CONTACTS_FULL: $ORG_CONTACTS_FULL
-    #   DISPENSARY_NAME: $DISPENSARY_NAME
-    #   DISPENSARY_ADDRESS: $DISPENSARY_ADDRESS
-    #   DISPENSARY_PHONE: $DISPENSARY_PHONE
-    #   EMPLOYMENT_NAME: $EMPLOYMENT_NAME
-    #   EMPLOYMENT_ADDRESS: $EMPLOYMENT_ADDRESS
-    #   EMPLOYMENT_INSPECTION: $EMPLOYMENT_INSPECTION
-    #   SANITATION_NAME: $SANITATION_NAME
-    #   SANITATION_ADDRESS: $SANITATION_ADDRESS
-    #   SANITATION_TIME: $SANITATION_TIME
   db:
     container_name: mks-db
     image: mysql:8.0.30
@@ -65,9 +43,3 @@ services:
     #     - ${HOME}/mysql_data:/var/lib/mysql
     env_file:
       - .env
-    # environment:
-    #     MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-    #     MYSQL_DATABASE: ${MYSQL_DATABASE}
-    #     MYSQL_USER: ${MYSQL_USER}
-    #     MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-    #     TZ: Etc/GMT-3
