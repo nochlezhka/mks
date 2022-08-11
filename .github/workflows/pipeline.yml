@@ -41,10 +41,7 @@ jobs:
         id: set_version
         uses: kvendingoldo/semver-action@v1.10
         with:
-          primary_branch: master
-      -
-        name: Print image version
-        run: echo ${{ env.registry_name }}/${{ env.nginx_image_name }}:${{ steps.set_version.outputs.safe_version }}
+          primary_branch: feat/add-github-actions
       -
         name: Build nginx docker image and push it
         uses: docker/build-push-action@v3
