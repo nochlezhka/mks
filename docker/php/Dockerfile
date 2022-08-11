@@ -40,4 +40,6 @@ RUN composer install --no-scripts \
  && ./app/console assets:install --symlink \
  && yarn encore prod
 
+RUN php vendor/sensio/distribution-bundle/Resources/bin/build_bootstrap.php
+
 EXPOSE 9000

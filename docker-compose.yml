@@ -9,8 +9,8 @@ services:
     links:
       - php
     ports:
-      - ${PORT}:80
-      - ${HTTPS_PORT}:443
+      - 8080:80
+      - 8443:443
     restart: always
     # TODO: temporary disabled, will be enabled by different MR
     # volumes:
@@ -24,6 +24,8 @@ services:
     links:
       - db
     restart: always
+    env_file:
+      - .env
     environment:
       DB_HOST: db
       DB_PORT: 3306

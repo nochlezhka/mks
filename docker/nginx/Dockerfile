@@ -1,3 +1,5 @@
+FROM nochlezhka/mks-php:rc-0.1.0 as php
+
 FROM nginx:1.22-alpine
 
 #
@@ -16,7 +18,8 @@ RUN addgroup -S --gid 1000 nochlezhka \
  && echo nochlezhka:100000:65536 | tee /etc/subuid | tee /etc/subgid
 
 RUN touch /run/nginx.pid \
- && chown -R 1000:1000 /var/cache/nginx /etc/nginx /var/log/nginx /run/nginx.pid
+ && chown -R 1000:1000 /var/cache/nginx /etc/nginx /var/log/nginx /run/nginx.pid \
+ && rm /etc/nginx/conf.d/default.conf
 
 USER 1000:1000
 ENV HOME=/home/nochlezhka \
@@ -24,7 +27,7 @@ ENV HOME=/home/nochlezhka \
     XDG_RUNTIME_DIR=/run/user/1000
 
 COPY --chown=nochlezhka files/nginx /etc/nginx/
-COPY --chown=nochlezhka files/homeless /var/www/symfony
+COPY --from=php --chown=nochlezhka /var/www/symfony /var/www/symfony
 
 ENTRYPOINT ["nginx"]
 
