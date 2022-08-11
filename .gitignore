@@ -8,3 +8,5 @@ shared/homeless/.bash_history
 shared/homeless/.composer/
 
 /shared/homeless/nbproject
+
+docker/*/files/homeless

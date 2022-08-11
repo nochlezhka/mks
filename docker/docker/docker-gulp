@@ -1,2 +1,0 @@
-#!/bin/sh
-docker-compose run --rm -w /var/www/symfony node gulp build

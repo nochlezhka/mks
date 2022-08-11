@@ -1,37 +1,29 @@
-version: '2'
+version: '3.9'
 services:
   nginx:
     container_name: mks-nginx
+    image: nochlezhka/mks-nginx:${MKS_VERSION}
     build:
       context: ./docker/nginx
       dockerfile: Dockerfile
-      args:
-        UID: $UID
-        GUID: $GUID
     links:
       - php
     ports:
-      - $PORT:80
-      - $HTTPS_PORT:443
-    volumes_from:
-      - php
-    volumes:
-      - "./shared/logs/nginx:/var/log/nginx"
-    networks:
-      default:
-        aliases:
-          - $NGINX_ALIAS
+      - ${PORT}:80
+      - ${HTTPS_PORT}:443
     restart: always
+    # TODO: temporary disabled, will be enabled by different MR
+    # volumes:
+    #   - "./shared/logs/nginx:/var/log/nginx"
   php:
-    container_name: mks-app
+    container_name: mks-php
+    image: nochlezhka/mks-php:${MKS_VERSION}
     build:
       context: ./docker/php
       dockerfile: Dockerfile
-      args:
-        UID: $UID
-        GUID: $GUID
     links:
       - db
+    restart: always
     environment:
       DB_HOST: db
       DB_PORT: 3306
@@ -53,21 +45,23 @@ services:
       SANITATION_NAME: $SANITATION_NAME
       SANITATION_ADDRESS: $SANITATION_ADDRESS
       SANITATION_TIME: $SANITATION_TIME
-    volumes:
-      - "./shared/homeless:/var/www/symfony"
-    restart: always
   db:
     container_name: mks-db
-    image: mysql:8.0.29
-    expose:
-        - "3306"
+    image: mysql:8.0.30
+    profiles:
+      - local
+    cap_add:
+      - SYS_NICE
     ports:
-        - 127.0.0.1:$MYSQL_PORT:3306
-    volumes:
-        - "./shared/mysql/data/db:/var/lib/mysql"
-    environment:
-        MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
-        MYSQL_DATABASE: $MYSQL_DATABASE
-        MYSQL_USER: $MYSQL_USER
-        MYSQL_PASSWORD: $MYSQL_PASSWORD
+        - 3306:3306
     restart: always
+    # TODO: temporary disabled, will be enabled by different MR
+    # volumes:
+    #     - ${HOME}/sql:/docker-entrypoint-initdb.d/:rw
+    #     - ${HOME}/mysql_data:/var/lib/mysql
+    environment:
+        MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+        MYSQL_DATABASE: ${MYSQL_DATABASE}
+        MYSQL_USER: ${MYSQL_USER}
+        MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+        TZ: Etc/GMT-3
