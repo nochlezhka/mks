@@ -15,6 +15,13 @@ RUN addgroup -S --gid 1000 nochlezhka \
  && chown -R nochlezhka /run/user/1000 /home/nochlezhka \
  && echo nochlezhka:100000:65536 | tee /etc/subuid | tee /etc/subgid
 
+RUN apk update \
+  && apk add curl \
+  && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer \
+  && mkdir -p /var/www/symfony/vendor \
+  && chown -R nochlezhka /var/www \
+  && chmod 777 /var/www
+
 USER 1000:1000
 ENV HOME=/home/nochlezhka \
     USER=nochlezhka \
@@ -24,5 +31,6 @@ COPY files/homeless /var/www/symfony
 COPY files/symfony.ini /usr/local/etc/php/conf.d/
 
 WORKDIR /var/www/symfony
+RUN composer install --no-scripts
 
 EXPOSE 9000
