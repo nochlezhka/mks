@@ -2,7 +2,8 @@ version: '3.9'
 services:
   nginx:
     container_name: mks-nginx
-    image: nochlezhka/mks-nginx:${MKS_VERSION}
+    image: nochlezhka/mks-app:${MKS_VERSION}
+    entrypoint: ["nginx"]
     build:
       context: ./docker/nginx
       dockerfile: Dockerfile
@@ -17,7 +18,8 @@ services:
     #   - "./shared/logs/nginx:/var/log/nginx"
   php:
     container_name: mks-php
-    image: nochlezhka/mks-php:${MKS_VERSION}
+    image: nochlezhka/mks-app:${MKS_VERSION}
+    entrypoint: ["php-fpm"]
     build:
       context: ./docker/php
       dockerfile: Dockerfile
