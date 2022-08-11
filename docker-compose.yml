@@ -19,7 +19,7 @@ services:
   php:
     container_name: mks-php
     image: nochlezhka/mks-app:${MKS_VERSION}
-    entrypoint: ["php-fpm"]
+    entrypoint: ["php-fpm7", "-F"]
     build:
       context: ./docker/php
       dockerfile: Dockerfile

@@ -72,3 +72,8 @@ RUN chmod -R 755 ./app \
  && ./app/console assets:install --symlink \
  && yarn encore prod \
  && php vendor/sensio/distribution-bundle/Resources/bin/build_bootstrap.php
+
+USER root
+RUN mkdir -p /var/lib/nginx/ /var/log/php7/ \
+ && chown -R 1000:1000 /var/lib/nginx/ /var/log/php7/
+USER 1000:1000
