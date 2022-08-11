@@ -23,8 +23,8 @@ ENV HOME=/home/nochlezhka \
     USER=nochlezhka \
     XDG_RUNTIME_DIR=/run/user/1000
 
-COPY files/nginx /etc/nginx/
-COPY files/homeless /var/www/symfony
+COPY --chown=nochlezhka files/nginx /etc/nginx/
+COPY --chown=nochlezhka files/homeless /var/www/symfony
 
 ENTRYPOINT ["nginx"]
 
