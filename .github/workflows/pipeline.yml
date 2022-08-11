@@ -43,6 +43,9 @@ jobs:
         with:
           primary_branch: feat/add-github-actions
       -
+        name: Prepare files for docker build
+        run: bash docker/prepare.sh
+      -
         name: Build nginx docker image and push it
         uses: docker/build-push-action@v3
         with:

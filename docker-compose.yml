@@ -1,0 +1,38 @@
+version: '3.9'
+services:
+  nginx:
+    container_name: mks-nginx
+    image: nochlezhka/mks-nginx:${MKS_VERSION}
+    links:
+      - php
+    ports:
+      - ${PORT}:80
+      - ${HTTPS_PORT}:443
+    restart: always
+    # TODO: temporary disabled, will be enabled by different MR
+    # volumes:
+    #   - "./shared/logs/nginx:/var/log/nginx"
+  php:
+    container_name: mks-php
+    image: nochlezhka/mks-php:${MKS_VERSION}
+    links:
+      - db
+    restart: always
+  db:
+    container_name: mks-db
+    image: mariadb:10.3
+    cap_add:
+      - SYS_NICE
+    expose:
+        - "3306"
+    ports:
+        - ${MYSQL_PORT}:3306
+    restart: always
+    # TODO: temporary disabled, will be enabled by different MR
+    # volumes:
+    #     - "./shared/mysql/data/db:/var/lib/mysql"
+    environment:
+        MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+        MYSQL_DATABASE: ${MYSQL_DATABASE}
+        MYSQL_USER: ${MYSQL_USER}
+        MYSQL_PASSWORD: ${MYSQL_PASSWORD}
