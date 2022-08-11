@@ -51,7 +51,7 @@ RUN apk add --no-cache \
 RUN touch /run/nginx.pid \
  && mkdir -p /var/cache/nginx /etc/nginx /var/log/nginx /var/www/symfony/vendor \
  && chown -R 1000:1000 /var/www /var/cache/nginx /etc/nginx /var/log/nginx /run/nginx.pid \
- && chmod -R 777 /var/www \
+ && chmod -R 755 /var/www \
  && rm -f /etc/nginx/conf.d/default.conf
 
 USER 1000:1000
@@ -66,7 +66,8 @@ COPY --chown=nochlezhka files/nginx /etc/nginx/
 WORKDIR /var/www/symfony
 RUN composer install --no-scripts \
  && yarn install
-RUN ./app/console fos:js-routing:dump \
+RUN chmod -R 755 ./app \
+ && ./app/console fos:js-routing:dump \
  && ./app/console ckeditor:install \
  && ./app/console assets:install --symlink \
  && yarn encore prod \
