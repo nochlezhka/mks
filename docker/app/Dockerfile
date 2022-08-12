@@ -16,16 +16,27 @@ RUN addgroup -S --gid 1000 nochlezhka \
  && echo nochlezhka:100000:65536 | tee /etc/subuid | tee /etc/subgid
 
 #
-# setup software
+# Setup & configure php & nginx
+# NOTE: it's intentional decision that all versions are pinned,
+#       they can be upgraded later,
+#       but it's a good practice to know which versions we have
 #
 RUN apk update \
  && apk upgrade \
- && apk add --no-cache nodejs yarn curl icu-dev libzip-dev libreoffice libpng-dev nginx \
+ && apk add --no-cache \
+      nodejs=16.16.0-r0 \
+      yarn=1.22.19-r0 \
+      curl=7.83.1-r2 \
+      icu-dev=71.1-r2	 \
+      libzip-dev=1.8.0-r1 \
+      libreoffice=7.2.7.2-r1 \
+      libpng-dev=1.6.37-r1 \
+      nginx=1.22.0-r1 \
  && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer \
  && composer self-update 2.2.9 \
- && docker-php-ext-install gd zip bcmath mysqli pdo pdo_mysql
-
-RUN touch /run/nginx.pid \
+ && docker-php-ext-install gd zip bcmath mysqli pdo pdo_mysql \
+ \
+ && touch /run/nginx.pid \
  && mkdir -p /var/cache/nginx /etc/nginx /var/log/nginx /var/www/symfony/vendor /var/lib/nginx /var/log/php7 \
  && chown -R 1000:1000 /var/www /var/cache/nginx /etc/nginx /var/log/nginx /run/nginx.pid /var/lib/nginx /var/log/php7 \
  && chmod -R 755 /var/www \
@@ -42,10 +53,13 @@ COPY --chown=nochlezhka files/nginx /etc/nginx/
 
 WORKDIR /var/www/symfony
 
+#
+# Install PHP dependencies
+#
 RUN composer install --no-scripts \
- && yarn install
-RUN chmod -R 755 ./app \
- && ./app/console fos:js-routing:dump \
+ && yarn install \
+ && yarn cache clean
+RUN ./app/console fos:js-routing:dump \
  && ./app/console ckeditor:install \
  && ./app/console assets:install --symlink \
  && yarn encore prod \

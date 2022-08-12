@@ -61,7 +61,8 @@ sudo chmod +x /usr/local/bin/docker-compose
 ```
 
 Перед установкой прочитайте [рекомендации](06-dumps.md) по защите данных.
-См. также [видео](https://youtu.be/-kkOCI2BgLs) на youtube с демонстрацией всех шагов установки МКС. 
+
+## Установка приложения
 
 1. Склонируйте репозиторий проекта:
 
@@ -72,65 +73,33 @@ sudo chmod +x /usr/local/bin/docker-compose
     > cd mks
 
 3. Создайте локальную копию файла `.env.dist`, здесь хранятся настраиваемые параметры приложения:
-    
+
     > cp .env.dist .env
 
     Обязательно нужно поменять параметры подключения к БД в .env:
-    
-    > MYSQL_PASSWORD = 
+
+    > MYSQL_PASSWORD =
     > MYSQL_ROOT_PASSWORD =
+    > DB_PASSWORD =
 
-4. Запустите сборку контейнеров:
+4. Запустите сборку контейнеров (опциональный шаг)
 
-    Если докер не установлен, то сначала
-    
-    ``` 
-    curl -fsSL get.docker.com -o get-docker.sh
-    sh get-docker.sh
-    ```
-    
-    после собираем контейнеры
+    > cp -r shared/homeless docker/app/files
+    > cd docker/app
+    > docker build -t nochlezhka/mks-app .
 
-    > docker-compose build
-    
+5. Запустите МКС (в случае использования предсобранной версии измените `MKS_VERSION` с `latest` на предоставленную версию)
 
-5. После успешного окончания сборки, запустите ее:
+    > export MKS_VERSION=latest
+    > docker-compose --profile=local up -d --no-build
 
-    > docker-compose up -d
-
-6. Для успешного запуска приложения необходимо установить права на директорию:
-
-    > docker-compose exec php chown -R www-data:www-data /var/www/symfony/
-
-7. Подсоединитесь к symfony-приложению, запустив:
-    
-    > ./docker/docker/docker-symfony
-
-8. С помощью `composer` установите необходимые библиотеки, затем укажите параметры подключения к БД:
-
-    > composer install
-
-9. Запустите миграцию для создания первоначальной структуры базы данных и заполнения данными: 
+6. Запустите миграцию для создания первоначальной структуры базы данных и заполнения данными:
 
     > ./app/console doctrine:migrations:migrate
 
-10. При желании можете поменять пароль для входа в систему
+7. При желании можете поменять пароль для входа в систему
 
     > ./app/console fos:user:change-password admin
 
-11. С помощью yarn установите необходимые библиотеки для js 
-
-    > yarn install 
-
-13. Сгенерируйте необходимые assets:
-
-    > ./app/console fos:js-routing:dump
-    
-    > ./app/console ckeditor:install
-
-    > ./app/console assets:install --symlink
-    
-    > yarn encore prod
-
-14. Настройте хост для проекта, перейдите по адресу хоста, 
-если пароль не был изменен на шаге 10 - залогиньтесь с доступом `admin/password`.
+8. Настройте хост для проекта, перейдите по адресу хоста,
+если пароль не был изменен на шаге 7 - залогиньтесь с доступом `admin/password`.

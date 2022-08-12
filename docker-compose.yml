@@ -4,9 +4,6 @@ services:
     container_name: mks-nginx
     image: nochlezhka/mks-app:${MKS_VERSION}
     entrypoint: ["nginx"]
-    build:
-      context: ./docker/nginx
-      dockerfile: Dockerfile
     links:
       - php
     ports:
@@ -19,9 +16,6 @@ services:
   php:
     container_name: mks-php
     image: nochlezhka/mks-app:${MKS_VERSION}
-    build:
-      context: ./docker/php
-      dockerfile: Dockerfile
     links:
       - db
     restart: always

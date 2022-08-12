@@ -5,7 +5,7 @@ shared/homeless/web/images/
 backup/
 shared/homeless/.bash_history
 shared/homeless/.composer/
-
+.env
 /shared/homeless/nbproject
 
 docker/*/files/homeless
