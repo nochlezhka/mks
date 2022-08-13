@@ -77,29 +77,29 @@ sudo chmod +x /usr/local/bin/docker-compose
     > `cp .env.dist .env`
 
     Обязательно нужно поменять параметры подключения к БД в .env:
-```
-    > MYSQL_PASSWORD =
-    > MYSQL_ROOT_PASSWORD =
-    > DB_PASSWORD =
-```
+
+    > `MYSQL_PASSWORD =`
+    > `MYSQL_ROOT_PASSWORD =`
+    > `DB_PASSWORD =`
+
 4. Запустите сборку контейнеров (опциональный шаг)
-```
-    > cp -r shared/homeless docker/app/files
-    > cd docker/app
-    > docker build -t nochlezhka/mks-app .
-```
+
+    > `cp -r shared/homeless docker/app/files`
+    > `cd docker/app`
+    > `docker build -t nochlezhka/mks-app .`
+
 5. Запустите МКС (в случае использования готовой версии измените `MKS_VERSION` с `latest` на предоставленную версию)
-```
-    > export MKS_VERSION=latest
-    > docker-compose --profile=local up -d --no-build
-```
+
+    > `export MKS_VERSION=latest`
+    > `docker-compose --profile=local up -d --no-build`
+
 6. Запустите миграцию для создания первоначальной структуры базы данных и заполнения данными:
 
-    > `./app/console doctrine:migrations:migrate`
+    > `docker-compose exec php ./app/console doctrine:migrations:migrate`
 
 7. При желании можете поменять пароль для входа в систему
 
-    > `./app/console fos:user:change-password admin`
+    > `docker-compose exec php ./app/console fos:user:change-password admin`
 
 8. Настройте хост для проекта, перейдите по адресу хоста,
 если пароль не был изменен на шаге 7 - залогиньтесь с доступом `admin/password`.
