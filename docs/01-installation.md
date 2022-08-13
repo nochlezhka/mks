@@ -79,18 +79,23 @@ sudo chmod +x /usr/local/bin/docker-compose
     Обязательно нужно поменять параметры подключения к БД в .env:
 
     > `MYSQL_PASSWORD =`
+    >
     > `MYSQL_ROOT_PASSWORD =`
+    >
     > `DB_PASSWORD =`
 
 4. Запустите сборку контейнеров (опциональный шаг)
 
     > `cp -r shared/homeless docker/app/files`
+    >
     > `cd docker/app`
+    >
     > `docker build -t nochlezhka/mks-app .`
 
 5. Запустите МКС (в случае использования готовой версии измените `MKS_VERSION` с `latest` на предоставленную версию)
 
     > `export MKS_VERSION=latest`
+    >
     > `docker-compose --profile=local up -d --no-build`
 
 6. Запустите миграцию для создания первоначальной структуры базы данных и заполнения данными:
