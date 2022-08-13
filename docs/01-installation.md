@@ -60,46 +60,46 @@ sudo chmod +x /usr/local/bin/docker-compose
 
 ```
 
-Перед установкой прочитайте [рекомендации](06-dumps.md) по защите данных.
-
 ## Установка приложения
+
+Перед установкой прочитайте [рекомендации](06-dumps.md) по защите данных.
 
 1. Склонируйте репозиторий проекта:
 
-    > git clone https://github.com/nochlezhka/mks.git
+    > `git clone https://github.com/nochlezhka/mks.git`
 
 2. После клонирования перейдите в каталог проекта:
 
-    > cd mks
+    > `cd mks`
 
 3. Создайте локальную копию файла `.env.dist`, здесь хранятся настраиваемые параметры приложения:
 
-    > cp .env.dist .env
+    > `cp .env.dist .env`
 
     Обязательно нужно поменять параметры подключения к БД в .env:
-
+```
     > MYSQL_PASSWORD =
     > MYSQL_ROOT_PASSWORD =
     > DB_PASSWORD =
-
+```
 4. Запустите сборку контейнеров (опциональный шаг)
-
+```
     > cp -r shared/homeless docker/app/files
     > cd docker/app
     > docker build -t nochlezhka/mks-app .
-
-5. Запустите МКС (в случае использования предсобранной версии измените `MKS_VERSION` с `latest` на предоставленную версию)
-
+```
+5. Запустите МКС (в случае использования готовой версии измените `MKS_VERSION` с `latest` на предоставленную версию)
+```
     > export MKS_VERSION=latest
     > docker-compose --profile=local up -d --no-build
-
+```
 6. Запустите миграцию для создания первоначальной структуры базы данных и заполнения данными:
 
-    > ./app/console doctrine:migrations:migrate
+    > `./app/console doctrine:migrations:migrate`
 
 7. При желании можете поменять пароль для входа в систему
 
-    > ./app/console fos:user:change-password admin
+    > `./app/console fos:user:change-password admin`
 
 8. Настройте хост для проекта, перейдите по адресу хоста,
 если пароль не был изменен на шаге 7 - залогиньтесь с доступом `admin/password`.
