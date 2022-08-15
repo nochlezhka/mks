@@ -39,7 +39,7 @@ jobs:
         id: set_version
         uses: kvendingoldo/semver-action@v1.10
         with:
-          primary_branch: ref/docker-github
+          primary_branch: update-versions
       -
         name: Prepare files for docker build
         run: |
@@ -48,7 +48,8 @@ jobs:
         name: Build app docker image and push it
         uses: docker/build-push-action@v3
         with:
-          context: docker/nginx
+          context: ./docker/app
+          file: ./docker/app/Dockerfile
           push: true
           tags: |
             ${{ env.registry_name }}/${{ env.app_image_name }}:latest
