@@ -1,0 +1,58 @@
+name: pipeline
+
+on:
+  push:
+    branches:
+      - 'master'
+      - 'release/**'
+
+env:
+  registry_name: nochlezhka
+  app_image_name: mks-app
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    outputs:
+      version: ${{ steps.set_version.outputs.safe_version }}
+    steps:
+      -
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      -
+        name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+        with:
+          platforms: all
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      -
+        name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      -
+        name: Set application version
+        id: set_version
+        uses: kvendingoldo/semver-action@v1.10
+        with:
+          primary_branch: ref/docker-github
+      -
+        name: Prepare files for docker build
+        run: |
+          cp -r shared/homeless docker/app/files
+      -
+        name: Build app docker image and push it
+        uses: docker/build-push-action@v3
+        with:
+          context: docker/nginx
+          push: true
+          tags: |
+            ${{ env.registry_name }}/${{ env.app_image_name }}:latest
+            ${{ env.registry_name }}/${{ env.app_image_name }}:${{ steps.set_version.outputs.safe_version }}
+      -
+        name: Print image version
+        run: echo ${{ steps.set_version.outputs.safe_version }}

@@ -2,9 +2,10 @@
 shared/logs/
 shared/mysql
 shared/homeless/web/images/
-.env
 backup/
 shared/homeless/.bash_history
 shared/homeless/.composer/
-
+.env
 /shared/homeless/nbproject
+
+docker/*/files/homeless

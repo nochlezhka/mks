@@ -1,73 +1,39 @@
-version: '2'
+version: '3.9'
 services:
   nginx:
     container_name: mks-nginx
-    build:
-      context: ./docker/nginx
-      dockerfile: Dockerfile
-      args:
-        UID: $UID
-        GUID: $GUID
+    image: nochlezhka/mks-app:${MKS_VERSION}
+    entrypoint: ["nginx"]
     links:
       - php
     ports:
-      - $PORT:80
-      - $HTTPS_PORT:443
-    volumes_from:
-      - php
-    volumes:
-      - "./shared/logs/nginx:/var/log/nginx"
-    networks:
-      default:
-        aliases:
-          - $NGINX_ALIAS
+      - 8080:80
+      - 8443:443
     restart: always
+    # TODO: temporary disabled, will be enabled by different MR
+    # volumes:
+    #   - "./shared/logs/nginx:/var/log/nginx"
   php:
-    container_name: mks-app
-    build:
-      context: ./docker/php
-      dockerfile: Dockerfile
-      args:
-        UID: $UID
-        GUID: $GUID
+    container_name: mks-php
+    image: nochlezhka/mks-app:${MKS_VERSION}
     links:
       - db
-    environment:
-      DB_HOST: db
-      DB_PORT: 3306
-      DB_NAME: $MYSQL_DATABASE
-      DB_USER: $MYSQL_USER
-      DB_PASSWORD: $MYSQL_PASSWORD
-      ORG_NAME_SHORT: $ORG_NAME_SHORT
-      ORG_NAME: $ORG_NAME
-      ORG_DESCRIPTION: $ORG_DESCRIPTION
-      ORG_DESCRIPTION_SHORT: $ORG_DESCRIPTION_SHORT
-      ORG_CITY: $ORG_CITY
-      ORG_CONTACTS_FULL: $ORG_CONTACTS_FULL
-      DISPENSARY_NAME: $DISPENSARY_NAME
-      DISPENSARY_ADDRESS: $DISPENSARY_ADDRESS
-      DISPENSARY_PHONE: $DISPENSARY_PHONE
-      EMPLOYMENT_NAME: $EMPLOYMENT_NAME
-      EMPLOYMENT_ADDRESS: $EMPLOYMENT_ADDRESS
-      EMPLOYMENT_INSPECTION: $EMPLOYMENT_INSPECTION
-      SANITATION_NAME: $SANITATION_NAME
-      SANITATION_ADDRESS: $SANITATION_ADDRESS
-      SANITATION_TIME: $SANITATION_TIME
-    volumes:
-      - "./shared/homeless:/var/www/symfony"
     restart: always
+    env_file:
+      - .env
   db:
     container_name: mks-db
-    image: mysql:8.0.29
-    expose:
-        - "3306"
+    image: mysql:8.0.30
+    profiles:
+      - local
+    cap_add:
+      - SYS_NICE
     ports:
-        - 127.0.0.1:$MYSQL_PORT:3306
-    volumes:
-        - "./shared/mysql/data/db:/var/lib/mysql"
-    environment:
-        MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
-        MYSQL_DATABASE: $MYSQL_DATABASE
-        MYSQL_USER: $MYSQL_USER
-        MYSQL_PASSWORD: $MYSQL_PASSWORD
+        - 3306:3306
     restart: always
+    # TODO: temporary disabled, will be enabled by different MR
+    # volumes:
+    #     - ${HOME}/sql:/docker-entrypoint-initdb.d/:rw
+    #     - ${HOME}/mysql_data:/var/lib/mysql
+    env_file:
+      - .env

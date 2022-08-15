@@ -60,77 +60,51 @@ sudo chmod +x /usr/local/bin/docker-compose
 
 ```
 
+## Установка приложения
+
 Перед установкой прочитайте [рекомендации](06-dumps.md) по защите данных.
-См. также [видео](https://youtu.be/-kkOCI2BgLs) на youtube с демонстрацией всех шагов установки МКС. 
 
 1. Склонируйте репозиторий проекта:
 
-    > git clone https://github.com/nochlezhka/mks.git
+    > `git clone https://github.com/nochlezhka/mks.git`
 
 2. После клонирования перейдите в каталог проекта:
 
-    > cd mks
+    > `cd mks`
 
 3. Создайте локальную копию файла `.env.dist`, здесь хранятся настраиваемые параметры приложения:
-    
-    > cp .env.dist .env
+
+    > `cp .env.dist .env`
 
     Обязательно нужно поменять параметры подключения к БД в .env:
-    
-    > MYSQL_PASSWORD = 
-    > MYSQL_ROOT_PASSWORD =
 
-4. Запустите сборку контейнеров:
+    > `MYSQL_PASSWORD =`
+    >
+    > `MYSQL_ROOT_PASSWORD =`
+    >
+    > `DB_PASSWORD =`
 
-    Если докер не установлен, то сначала
-    
-    ``` 
-    curl -fsSL get.docker.com -o get-docker.sh
-    sh get-docker.sh
-    ```
-    
-    после собираем контейнеры
+4. Запустите сборку контейнеров (опциональный шаг)
 
-    > docker-compose build
-    
+    > `cp -r shared/homeless docker/app/files`
+    >
+    > `cd docker/app`
+    >
+    > `docker build -t nochlezhka/mks-app .`
 
-5. После успешного окончания сборки, запустите ее:
+5. Запустите МКС (в случае использования готовой версии измените `MKS_VERSION` с `latest` на предоставленную версию)
 
-    > docker-compose up -d
+    > `export MKS_VERSION=latest`
+    >
+    > `docker-compose --profile=local up -d --no-build`
 
-6. Для успешного запуска приложения необходимо установить права на директорию:
+6. Запустите миграцию для создания первоначальной структуры базы данных и заполнения данными:
 
-    > docker-compose exec php chown -R www-data:www-data /var/www/symfony/
+    > `docker-compose exec php ./app/console doctrine:migrations:migrate`
 
-7. Подсоединитесь к symfony-приложению, запустив:
-    
-    > ./docker/docker/docker-symfony
+7. При желании можете поменять пароль для входа в систему
 
-8. С помощью `composer` установите необходимые библиотеки, затем укажите параметры подключения к БД:
+    > `docker-compose exec php ./app/console fos:user:change-password admin`
 
-    > composer install
-
-9. Запустите миграцию для создания первоначальной структуры базы данных и заполнения данными: 
-
-    > ./app/console doctrine:migrations:migrate
-
-10. При желании можете поменять пароль для входа в систему
-
-    > ./app/console fos:user:change-password admin
-
-11. С помощью yarn установите необходимые библиотеки для js 
-
-    > yarn install 
-
-13. Сгенерируйте необходимые assets:
-
-    > ./app/console fos:js-routing:dump
-    
-    > ./app/console ckeditor:install
-
-    > ./app/console assets:install --symlink
-    
-    > yarn encore prod
-
-14. Настройте хост для проекта, перейдите по адресу хоста, 
-если пароль не был изменен на шаге 10 - залогиньтесь с доступом `admin/password`.
+8. Настройте хост для проекта, перейдите по адресу хоста,
+если пароль не был изменен на шаге 7 - залогиньтесь с доступом `admin/password`.
