@@ -53,7 +53,7 @@ sudo apt-get install docker-ce
 
 # кроме того необходимо установаить docker-compose для запуска проектов
 # скачиваем его
-sudo curl -L https://github.com/docker/compose/releases/download/1.21.2/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
+sudo curl -L https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
 
 # делаем docker-compose исполняемым
 sudo chmod +x /usr/local/bin/docker-compose
