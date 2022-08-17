@@ -34,7 +34,7 @@ RUN apk update \
       nginx=1.22.0-r1 \
  && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer \
  && composer self-update 2.2.9 \
- && docker-php-ext-install gd zip bcmath mysqli pdo pdo_mysql \
+ && docker-php-ext-install gd zip bcmath intl pdo_mysql \
  \
  && touch /run/nginx.pid \
  && mkdir -p /var/cache/nginx /etc/nginx /var/log/nginx /var/www/symfony/vendor /var/lib/nginx /var/log/php7 \
