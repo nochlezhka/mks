@@ -26,7 +26,6 @@
 
 # Assets and user uploads
 /web/bundles/
-/web/uploads/
 /web/fonts/
 /web/img/
 /web/adminer.php
