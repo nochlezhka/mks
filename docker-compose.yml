@@ -10,6 +10,8 @@ services:
       - 8080:80
       - 8443:443
     restart: always
+    volumes:
+      - "./storage/uploads:/var/www/symfony/web/uploads"
     # TODO: temporary disabled, will be enabled by different MR
     # volumes:
     #   - "./shared/logs/nginx:/var/log/nginx"
@@ -19,6 +21,8 @@ services:
     links:
       - db
     restart: always
+    volumes:
+      - "./storage/uploads:/var/www/symfony/web/uploads"
     env_file:
       - .env
   db:
