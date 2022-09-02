@@ -1,12 +1,7 @@
 ---
 - hosts: all
-  #  collections:
-  #    - nochlezhka.lib
   become: true
   vars:
-    mks_version: rc/0.3.0
-
-
     docker_install_compose_plugin: true
     docker_edition: 'ce'
     docker_packages_state: present
@@ -17,6 +12,10 @@
       - "docker-{{ docker_edition }}"
       - "docker-{{ docker_edition }}-cli"
       - "docker-{{ docker_edition }}-rootless-extras"
+    docker_service_manage: true
+    docker_service_state: started
+    docker_service_enabled: true
+    docker_restart_handler_state: restarted
   pre_tasks:
     - name: Update apt-get repo and cache
       apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
@@ -47,6 +46,14 @@
         state: directory
         mode: '0755'
 
+    - name: Create MKS storage folder (it has to be external VM drive)
+      ansible.builtin.file:
+        path: /home/ubuntu/mks/deploy/storage
+        state: directory
+        mode: '0755'
+
+    # TODO: we have to add external drive via terraform and mount it to mks/deploy/storage
+
     - name: Clone a github repository
       git:
         repo: https://github.com/nochlezhka/mks.git
@@ -72,14 +79,13 @@
     - name: Deploy a new version of MKS
       ansible.builtin.shell: |
         cd /home/ubuntu/mks/deploy
-        # TODO: move this version to vars
         export MKS_VERSION={{ mks_version | replace("/", "-") }}
         docker-compose --profile=local up -d --no-build
 
     - name: Execute migrations
       ansible.builtin.shell: |
         cd /home/ubuntu/mks/deploy
-        docker-compose exec php ./app/console doctrine:migrations:migrate
+        docker-compose exec php ./app/console doctrine:migrations:migrate --no-interaction
 
     - name: Change admin password
       ansible.builtin.shell: |

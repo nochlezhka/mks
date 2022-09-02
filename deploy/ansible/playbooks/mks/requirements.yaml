@@ -1,5 +1,0 @@
-#collections:
-#  - name: nochlezhka.lib
-#    version: feat/add-deployment
-#    source: https://github.com/nochlezhka/mks/#/deploy/ansible/lib
-#    type: git

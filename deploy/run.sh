@@ -1,9 +1,7 @@
 #!/bin/bash
 
-# Run middleware pipeline
-#ansible-galaxy install -r requirements.yaml
-#ansible-playbook playbook.yaml -e"@infra.yaml" -e"@values.yaml"
-
-
+#
+# TODO: This should be a part of GitHub actions and separate repo
+#
 ansible-galaxy install  geerlingguy.docker
-ansible-playbook playbook.yaml
+ansible-playbook -i hosts playbook.yaml
