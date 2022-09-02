@@ -1,0 +1,28 @@
+---
+- hosts: localhost
+  collections:
+    - nochlezhka.lib
+  become: false
+
+  vars:
+    docker_install_compose_plugin: true
+
+
+  roles:
+    # TODO: let's fork this to mks org later
+    - role: geerlingguy.docker
+  tasks:
+    # create dir
+
+
+    - name: Clone a github repository
+      git:
+        repo: https://github.com/nochlezhka/mks.git
+        dest: /home/debian/repos/
+        clone: yes
+        update: yes
+    - name:
+
+#    > cp docker-compose.yml.dist docker-compose.yml
+#    > cp .env.dist .env
+#    > cp shared/homeless/app/config/parameters.yml.dist shared/homeless/app/config/parameters.yml
