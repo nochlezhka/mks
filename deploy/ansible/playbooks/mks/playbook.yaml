@@ -12,17 +12,63 @@
     # TODO: let's fork this to mks org later
     - role: geerlingguy.docker
   tasks:
-    # create dir
+    - name: Create MKS directory if it does not exist
+      ansible.builtin.file:
+        path: /home/ubuntu/mks
+        state: directory
+        mode: '0755'
 
+    - name: Recursively remove MKS sources directory
+      ansible.builtin.file:
+        path: /home/ubuntu/mks/sources
+        state: absent
+
+    - name: Create MKS sources directory if it does not exist
+      ansible.builtin.file:
+        path: /home/ubuntu/mks/sources
+        state: directory
+        mode: '0755'
+
+    - name: Create MKS deploy directory if it does not exist
+      ansible.builtin.file:
+        path: /home/ubuntu/mks/deploy
+        state: directory
+        mode: '0755'
 
     - name: Clone a github repository
       git:
         repo: https://github.com/nochlezhka/mks.git
-        dest: /home/debian/repos/
+        dest: /home/ubuntu/mks/sources
         clone: yes
         update: yes
-    - name:
+        version: update-versions
 
-#    > cp docker-compose.yml.dist docker-compose.yml
-#    > cp .env.dist .env
-#    > cp shared/homeless/app/config/parameters.yml.dist shared/homeless/app/config/parameters.yml
+    - name: Copy .env.dist => .env
+      ansible.builtin.copy:
+        src: /home/ubuntu/mks/sources/docker-compose.yml
+        dest: /home/ubuntu/mks/deploy/docker-compose.yml
+
+    - name: Copy .env.dist => .env
+      ansible.builtin.copy:
+        src: /home/ubuntu/mks/sources/.env.dist
+        dest: /home/ubuntu/mks/deploy/.env
+
+    # TODO: change these vars MYSQL_PASSWORD, MYSQL_ROOT_PASSWORD, DB_PASSWORD
+
+    - name: Deploy a new version of MKS
+      ansible.builtin.shell: |
+        cd /home/ubuntu/mks/deploy
+        # TODO: move this version to vars
+        export MKS_VERSION=latest
+        docker-compose --profile=local up -d --no-build
+
+    - name: Execute migrations
+      ansible.builtin.shell: |
+        cd /home/ubuntu/mks/deploy
+        docker-compose exec php ./app/console doctrine:migrations:migrate
+
+    - name: Change admin password
+      ansible.builtin.shell: |
+        cd /home/ubuntu/mks/deploy
+        # TODO
+        # docker-compose exec php ./app/console fos:user:change-password admin
