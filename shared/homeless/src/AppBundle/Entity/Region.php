@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -15,23 +16,23 @@ class Region extends BaseEntity
      * Название
      * @ORM\Column(type="string", nullable=true)
      */
-    private $name;
+    private ?string $name;
 
     /**
      * Сокращенное название
      * @ORM\Column(type="string", nullable=true)
      */
-    private $shortName;
+    private ?string $shortName;
 
     /**
      * Районы
      * @ORM\OneToMany(targetEntity="District", mappedBy="region")
      */
-    private $districts;
+    private ArrayCollection $districts;
 
     public function __toString()
     {
-        return (string)$this->name;
+        return $this->name;
     }
 
     /**
@@ -45,11 +46,11 @@ class Region extends BaseEntity
     /**
      * Set name
      *
-     * @param string $name
+     * @param string|null $name
      *
      * @return Region
      */
-    public function setName($name)
+    public function setName(?string $name): Region
     {
         $this->name = $name;
 
@@ -61,7 +62,7 @@ class Region extends BaseEntity
      *
      * @return string
      */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
@@ -69,11 +70,11 @@ class Region extends BaseEntity
     /**
      * Set shortName
      *
-     * @param string $shortName
+     * @param string|null $shortName
      *
      * @return Region
      */
-    public function setShortName($shortName)
+    public function setShortName(?string $shortName): Region
     {
         $this->shortName = $shortName;
 
@@ -85,7 +86,7 @@ class Region extends BaseEntity
      *
      * @return string
      */
-    public function getShortName()
+    public function getShortName(): ?string
     {
         return $this->shortName;
     }
@@ -93,11 +94,11 @@ class Region extends BaseEntity
     /**
      * Add district
      *
-     * @param \AppBundle\Entity\District $district
+     * @param District $district
      *
      * @return Region
      */
-    public function addDistrict(District $district)
+    public function addDistrict(District $district): Region
     {
         $this->districts[] = $district;
 
@@ -107,7 +108,7 @@ class Region extends BaseEntity
     /**
      * Remove district
      *
-     * @param \AppBundle\Entity\District $district
+     * @param District $district
      */
     public function removeDistrict(District $district)
     {
@@ -117,7 +118,7 @@ class Region extends BaseEntity
     /**
      * Get districts
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getDistricts()
     {

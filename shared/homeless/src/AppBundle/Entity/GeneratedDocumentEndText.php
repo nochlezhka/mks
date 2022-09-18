@@ -14,33 +14,33 @@ class GeneratedDocumentEndText extends BaseEntity
      * Название
      * @ORM\Column(type="string", nullable=true)
      */
-    private $name;
+    private ?string $name;
 
     /**
      * Код
      * @ORM\Column(type="string", nullable=true)
      */
-    private $code;
+    private ?string $code;
 
     /**
      * Текст
      * @ORM\Column(type="text", nullable=true)
      */
-    private $text;
+    private ?string $text;
 
     public function __toString()
     {
-        return (string)$this->name;
+        return $this->name;
     }
 
     /**
      * Set name
      *
-     * @param string $name
+     * @param string|null $name
      *
      * @return GeneratedDocumentEndText
      */
-    public function setName($name)
+    public function setName(?string $name): GeneratedDocumentEndText
     {
         $this->name = $name;
 
@@ -52,7 +52,7 @@ class GeneratedDocumentEndText extends BaseEntity
      *
      * @return string
      */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
@@ -60,11 +60,11 @@ class GeneratedDocumentEndText extends BaseEntity
     /**
      * Set code
      *
-     * @param string $code
+     * @param string|null $code
      *
      * @return GeneratedDocumentEndText
      */
-    public function setCode($code)
+    public function setCode(?string $code): GeneratedDocumentEndText
     {
         $this->code = $code;
 
@@ -76,7 +76,7 @@ class GeneratedDocumentEndText extends BaseEntity
      *
      * @return string
      */
-    public function getCode()
+    public function getCode(): ?string
     {
         return $this->code;
     }
@@ -84,11 +84,11 @@ class GeneratedDocumentEndText extends BaseEntity
     /**
      * Set text
      *
-     * @param string $text
+     * @param string|null $text
      *
      * @return GeneratedDocumentEndText
      */
-    public function setText($text)
+    public function setText(?string $text): GeneratedDocumentEndText
     {
         $this->text = $text;
 
@@ -100,7 +100,7 @@ class GeneratedDocumentEndText extends BaseEntity
      *
      * @return string
      */
-    public function getText()
+    public function getText(): ?string
     {
         return $this->text;
     }

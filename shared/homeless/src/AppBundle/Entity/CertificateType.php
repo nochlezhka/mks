@@ -34,63 +34,63 @@ class CertificateType extends BaseEntity
      * Название
      * @ORM\Column(type="string", nullable=true)
      */
-    private $name;
+    private ?string $name;
 
     /**
      * Доступен для скачивания
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $downloadable = false;
+    private ?bool $downloadable = false;
 
     /**
      * Отображать фото клиента
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $showPhoto = false;
+    private ?bool $showPhoto = false;
 
     /**
      * Отображать дату ниже ФИО сотрудника
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $showDate = false;
+    private ?bool $showDate = false;
 
     /**
      * Содержимое верхнего левого блока
      * @ORM\Column(type="text", nullable=true)
      */
-    private $contentHeaderLeft;
+    private ?string $contentHeaderLeft;
 
     /**
      * Содержимое верхнего правого блока
      * @ORM\Column(type="text", nullable=true)
      */
-    private $contentHeaderRight;
+    private ?string $contentHeaderRight;
 
     /**
      * Содержимое среднего блока
      * @ORM\Column(type="text", nullable=true)
      */
-    private $contentBodyRight;
+    private ?string $contentBodyRight;
 
     /**
      * Содержимое нижнего блока
      * @ORM\Column(type="text", nullable=true)
      */
-    private $contentFooter;
+    private ?string $contentFooter;
 
     public function __toString()
     {
-        return (string)$this->name;
+        return $this->name;
     }
 
     /**
      * Set name
      *
-     * @param string $name
+     * @param string|null $name
      *
      * @return CertificateType
      */
-    public function setName($name)
+    public function setName(?string $name): CertificateType
     {
         $this->name = $name;
 
@@ -102,7 +102,7 @@ class CertificateType extends BaseEntity
      *
      * @return string
      */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
@@ -114,7 +114,7 @@ class CertificateType extends BaseEntity
      *
      * @return CertificateType
      */
-    public function setDownloadable($downloadable)
+    public function setDownloadable(?bool $downloadable): CertificateType
     {
         $this->downloadable = $downloadable;
 
@@ -126,7 +126,7 @@ class CertificateType extends BaseEntity
      *
      * @return boolean
      */
-    public function getDownloadable()
+    public function getDownloadable(): ?bool
     {
         return $this->downloadable;
     }
@@ -138,7 +138,7 @@ class CertificateType extends BaseEntity
      *
      * @return CertificateType
      */
-    public function setShowPhoto($showPhoto)
+    public function setShowPhoto(?bool $showPhoto): CertificateType
     {
         $this->showPhoto = $showPhoto;
 
@@ -150,7 +150,7 @@ class CertificateType extends BaseEntity
      *
      * @return boolean
      */
-    public function getShowPhoto()
+    public function getShowPhoto(): ?bool
     {
         return $this->showPhoto;
     }
@@ -162,7 +162,7 @@ class CertificateType extends BaseEntity
      *
      * @return CertificateType
      */
-    public function setShowDate($showDate)
+    public function setShowDate(?bool $showDate): CertificateType
     {
         $this->showDate = $showDate;
 
@@ -174,7 +174,7 @@ class CertificateType extends BaseEntity
      *
      * @return boolean
      */
-    public function getShowDate()
+    public function getShowDate(): ?bool
     {
         return $this->showDate;
     }
@@ -182,11 +182,11 @@ class CertificateType extends BaseEntity
     /**
      * Set contentHeaderLeft
      *
-     * @param string $contentHeaderLeft
+     * @param string|null $contentHeaderLeft
      *
      * @return CertificateType
      */
-    public function setContentHeaderLeft($contentHeaderLeft)
+    public function setContentHeaderLeft(?string $contentHeaderLeft): CertificateType
     {
         $this->contentHeaderLeft = $contentHeaderLeft;
 
@@ -198,7 +198,7 @@ class CertificateType extends BaseEntity
      *
      * @return string
      */
-    public function getContentHeaderLeft()
+    public function getContentHeaderLeft(): ?string
     {
         return $this->contentHeaderLeft;
     }
@@ -206,11 +206,11 @@ class CertificateType extends BaseEntity
     /**
      * Set contentHeaderRight
      *
-     * @param string $contentHeaderRight
+     * @param string|null $contentHeaderRight
      *
      * @return CertificateType
      */
-    public function setContentHeaderRight($contentHeaderRight)
+    public function setContentHeaderRight(?string $contentHeaderRight): CertificateType
     {
         $this->contentHeaderRight = $contentHeaderRight;
 
@@ -222,7 +222,7 @@ class CertificateType extends BaseEntity
      *
      * @return string
      */
-    public function getContentHeaderRight()
+    public function getContentHeaderRight(): ?string
     {
         return $this->contentHeaderRight;
     }
@@ -230,11 +230,11 @@ class CertificateType extends BaseEntity
     /**
      * Set contentBodyRight
      *
-     * @param string $contentBodyRight
+     * @param string|null $contentBodyRight
      *
      * @return CertificateType
      */
-    public function setContentBodyRight($contentBodyRight)
+    public function setContentBodyRight(?string $contentBodyRight): CertificateType
     {
         $this->contentBodyRight = $contentBodyRight;
 
@@ -246,7 +246,7 @@ class CertificateType extends BaseEntity
      *
      * @return string
      */
-    public function getContentBodyRight()
+    public function getContentBodyRight(): ?string
     {
         return $this->contentBodyRight;
     }
@@ -254,11 +254,11 @@ class CertificateType extends BaseEntity
     /**
      * Set contentFooter
      *
-     * @param string $contentFooter
+     * @param string|null $contentFooter
      *
      * @return CertificateType
      */
-    public function setContentFooter($contentFooter)
+    public function setContentFooter(?string $contentFooter): CertificateType
     {
         $this->contentFooter = $contentFooter;
 
@@ -270,7 +270,7 @@ class CertificateType extends BaseEntity
      *
      * @return string
      */
-    public function getContentFooter()
+    public function getContentFooter(): ?string
     {
         return $this->contentFooter;
     }

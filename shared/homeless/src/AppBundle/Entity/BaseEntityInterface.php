@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Application\Sonata\UserBundle\Entity\User;
+use DateTime;
 
 interface BaseEntityInterface
 {
@@ -11,96 +12,96 @@ interface BaseEntityInterface
     /**
      * Set syncId
      *
-     * @param integer $syncId
+     * @param int|null $syncId
      *
-     * @return BaseEntity
+     * @return BaseEntityInterface
      */
-    public function setSyncId($syncId);
+    public function setSyncId(?int $syncId): BaseEntityInterface;
 
     /**
      * Get syncId
      *
      * @return integer
      */
-    public function getSyncId();
+    public function getSyncId(): ?int;
 
     /**
      * Set sort
      *
-     * @param integer $sort
+     * @param int|null $sort
      *
-     * @return BaseEntity
+     * @return BaseEntityInterface
      */
-    public function setSort($sort);
+    public function setSort(?int $sort): BaseEntityInterface;
 
     /**
      * Get sort
      *
      * @return integer
      */
-    public function getSort();
+    public function getSort(): ?int;
 
     /**
      * Set createdAt
      *
-     * @param \DateTime $createdAt
+     * @param DateTime|null $createdAt
      *
-     * @return BaseEntity
+     * @return BaseEntityInterface
      */
-    public function setCreatedAt(\DateTime $createdAt = null);
+    public function setCreatedAt(DateTime $createdAt = null);
 
     /**
      * Get createdAt
      *
-     * @return \DateTime
+     * @return DateTime
      */
     public function getCreatedAt();
 
     /**
      * Set updatedAt
      *
-     * @param \DateTime $updatedAt
+     * @param DateTime|null $updatedAt
      *
      * @return BaseEntity
      */
-    public function setUpdatedAt(\DateTime $updatedAt = null);
+    public function setUpdatedAt(DateTime $updatedAt = null);
 
     /**
      * Get updatedAt
      *
-     * @return \DateTime
+     * @return DateTime
      */
     public function getUpdatedAt();
 
     /**
      * Set createdBy
      *
-     * @param User $createdBy
+     * @param User|null $createdBy
      *
      * @return BaseEntity
      */
-    public function setCreatedBy(User $createdBy = null);
+    public function setCreatedBy(User $createdBy = null): BaseEntityInterface;
 
     /**
      * Get createdBy
      *
      * @return User
      */
-    public function getCreatedBy();
+    public function getCreatedBy(): ?User;
 
     /**
      * Set updatedBy
      *
-     * @param User $updatedBy
+     * @param User|null $updatedBy
      *
      * @return BaseEntity
      */
-    public function setUpdatedBy(User $updatedBy = null);
+    public function setUpdatedBy(?User $updatedBy = null): BaseEntityInterface;
 
     /**
      * Get updatedBy
      *
      * @return User
      */
-    public function getUpdatedBy();
+    public function getUpdatedBy(): ?User;
 }

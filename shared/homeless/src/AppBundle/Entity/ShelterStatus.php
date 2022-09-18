@@ -19,21 +19,21 @@ class ShelterStatus extends BaseEntity
      * Название
      * @ORM\Column(type="string", nullable=true)
      */
-    private $name;
+    private ?string $name;
 
     public function __toString()
     {
-        return (string)$this->name;
+        return $this->name;
     }
 
     /**
      * Set name
      *
-     * @param string $name
+     * @param string|null $name
      *
      * @return ShelterStatus
      */
-    public function setName($name)
+    public function setName(?string $name): ShelterStatus
     {
         $this->name = $name;
 
@@ -45,7 +45,7 @@ class ShelterStatus extends BaseEntity
      *
      * @return string
      */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }

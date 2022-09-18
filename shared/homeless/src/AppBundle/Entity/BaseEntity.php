@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Application\Sonata\UserBundle\Entity\User;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 
 abstract class BaseEntity implements BaseEntityInterface
@@ -12,50 +13,50 @@ abstract class BaseEntity implements BaseEntityInterface
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    protected $id;
+    protected int $id;
 
     /**
      * Sync id
      * @ORM\Column(type="integer", nullable=true)
      */
-    protected $syncId;
+    protected ?int $syncId;
 
     /**
      * Сортировка
      * @ORM\Column(type="integer", nullable=true)
      */
-    protected $sort = 100;
+    protected ?int $sort = 100;
 
     /**
      * Когда создано
      * @ORM\Column(type="datetime", nullable=true)
      */
-    protected $createdAt;
+    protected ?DateTime $createdAt;
 
     /**
      * Кем создано
      * @ORM\ManyToOne(targetEntity="Application\Sonata\UserBundle\Entity\User")
      */
-    protected $createdBy;
+    protected User $createdBy;
 
     /**
      * Когда изменено
      * @ORM\Column(type="datetime", nullable=true)
      */
-    protected $updatedAt;
+    protected ?DateTime $updatedAt;
 
     /**
      * Кем изменено
      * @ORM\ManyToOne(targetEntity="Application\Sonata\UserBundle\Entity\User")
      */
-    protected $updatedBy;
+    protected User $updatedBy;
 
     /**
      * Get id
      *
      * @return integer
      */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
@@ -63,11 +64,11 @@ abstract class BaseEntity implements BaseEntityInterface
     /**
      * Set syncId
      *
-     * @param integer $syncId
+     * @param int|null $syncId
      *
      * @return BaseEntity
      */
-    public function setSyncId($syncId)
+    public function setSyncId(?int $syncId): BaseEntity
     {
         $this->syncId = $syncId;
 
@@ -79,7 +80,7 @@ abstract class BaseEntity implements BaseEntityInterface
      *
      * @return integer
      */
-    public function getSyncId()
+    public function getSyncId(): ?int
     {
         return $this->syncId;
     }
@@ -87,11 +88,11 @@ abstract class BaseEntity implements BaseEntityInterface
     /**
      * Set sort
      *
-     * @param integer $sort
+     * @param int|null $sort
      *
      * @return BaseEntity
      */
-    public function setSort($sort)
+    public function setSort(?int $sort): BaseEntity
     {
         $this->sort = $sort;
 
@@ -103,7 +104,7 @@ abstract class BaseEntity implements BaseEntityInterface
      *
      * @return integer
      */
-    public function getSort()
+    public function getSort(): ?int
     {
         return $this->sort;
     }
@@ -111,11 +112,11 @@ abstract class BaseEntity implements BaseEntityInterface
     /**
      * Set the creation date.
      *
-     * @param \DateTime|null $createdAt
+     * @param DateTime|null $createdAt
      *
      * @return BaseEntity
      */
-    public function setCreatedAt(\DateTime $createdAt = null)
+    public function setCreatedAt(DateTime $createdAt = null)
     {
         $this->createdAt = $createdAt;
 
@@ -125,7 +126,7 @@ abstract class BaseEntity implements BaseEntityInterface
     /**
      * Get the creation date.
      *
-     * @return \DateTime|null
+     * @return DateTime|null
      */
     public function getCreatedAt()
     {
@@ -135,11 +136,11 @@ abstract class BaseEntity implements BaseEntityInterface
     /**
      * Set the last update date.
      *
-     * @param \DateTime|null $updatedAt
+     * @param DateTime|null $updatedAt
      *
      * @return BaseEntity
      */
-    public function setUpdatedAt(\DateTime $updatedAt = null)
+    public function setUpdatedAt(DateTime $updatedAt = null)
     {
         $this->updatedAt = $updatedAt;
 
@@ -149,7 +150,7 @@ abstract class BaseEntity implements BaseEntityInterface
     /**
      * Get the last update date.
      *
-     * @return \DateTime|null
+     * @return DateTime|null
      */
     public function getUpdatedAt()
     {
@@ -159,11 +160,11 @@ abstract class BaseEntity implements BaseEntityInterface
     /**
      * Set createdBy
      *
-     * @param User $createdBy
+     * @param User|null $createdBy
      *
      * @return BaseEntity
      */
-    public function setCreatedBy(User $createdBy = null)
+    public function setCreatedBy(?User $createdBy = null): BaseEntity
     {
         $this->createdBy = $createdBy;
 
@@ -175,7 +176,7 @@ abstract class BaseEntity implements BaseEntityInterface
      *
      * @return User
      */
-    public function getCreatedBy()
+    public function getCreatedBy(): User
     {
         return $this->createdBy;
     }
@@ -183,11 +184,11 @@ abstract class BaseEntity implements BaseEntityInterface
     /**
      * Set updatedBy
      *
-     * @param User $updatedBy
+     * @param User|null $updatedBy
      *
      * @return BaseEntity
      */
-    public function setUpdatedBy(User $updatedBy = null)
+    public function setUpdatedBy(?User $updatedBy = null): BaseEntity
     {
         $this->updatedBy = $updatedBy;
 
@@ -199,7 +200,7 @@ abstract class BaseEntity implements BaseEntityInterface
      *
      * @return User
      */
-    public function getUpdatedBy()
+    public function getUpdatedBy(): User
     {
         return $this->updatedBy;
     }

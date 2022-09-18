@@ -4,7 +4,9 @@
 namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use LogicException;
 
 /**
  * Заполненная редактируемая форма
@@ -20,16 +22,16 @@ class ClientFormResponse extends BaseEntity
      * @ORM\ManyToOne(targetEntity="Client")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $client;
+    private Client $client;
 
     /**
      * Форма заполненной анкеты
      *
-     * @var ClientForm
+     * @var ClientForm|null
      * @ORM\ManyToOne(targetEntity="ClientForm")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $form;
+    private ?ClientForm $form;
 
     /**
      * Поля заполненной анкеты
@@ -40,7 +42,7 @@ class ClientFormResponse extends BaseEntity
      *     orphanRemoval=true,
      * )
      */
-    private $values;
+    private Collection $values;
 
     /**
      * Ссылка на ResidentQuestionnaire, из которого была скопирована заполненная анкета.
@@ -49,7 +51,7 @@ class ClientFormResponse extends BaseEntity
      * @var integer|null
      * @ORM\Column(type="integer", nullable=true, unique=true)
      */
-    private $residentQuestionnaireId;
+    private ?int $residentQuestionnaireId;
 
     /**
      * Набор значений полей формы из запроса на создание/обновление заполненной анкеты.
@@ -61,7 +63,7 @@ class ClientFormResponse extends BaseEntity
      *
      * @var array
      */
-    private $_submittedFields = [];
+    private array $_submittedFields = [];
 
     /**
      * ClientFormResponse constructor.
@@ -74,7 +76,7 @@ class ClientFormResponse extends BaseEntity
     /**
      * @return Client
      */
-    public function getClient()
+    public function getClient(): Client
     {
         return $this->client;
     }
@@ -82,7 +84,7 @@ class ClientFormResponse extends BaseEntity
     /**
      * @param Client $client
      */
-    public function setClient($client)
+    public function setClient(Client $client)
     {
         $this->client = $client;
     }
@@ -90,7 +92,7 @@ class ClientFormResponse extends BaseEntity
     /**
      * @return ClientForm
      */
-    public function getForm()
+    public function getForm(): ?ClientForm
     {
         return $this->form;
     }
@@ -98,7 +100,7 @@ class ClientFormResponse extends BaseEntity
     /**
      * @param ClientForm $form
      */
-    public function setForm($form)
+    public function setForm(ClientForm $form)
     {
         $this->form = $form;
     }
@@ -114,7 +116,7 @@ class ClientFormResponse extends BaseEntity
     /**
      * @param ArrayCollection $values
      */
-    public function setValues($values)
+    public function setValues(Collection $values)
     {
         $this->values = $values;
     }
@@ -132,10 +134,11 @@ class ClientFormResponse extends BaseEntity
         if (substr($name, 0, 6) === 'field_') {
             return $this->getFieldValue(substr($name, 6));
         }
-        throw new \LogicException("No field $name in ClientFormResponse");
+        throw new LogicException("No field $name in ClientFormResponse");
     }
 
-    private function getFieldValue($fieldId) {
+    private function getFieldValue($fieldId): ?string
+    {
         foreach ($this->getValues() as $value) {
             /**
              * @var $value ClientFormResponseValue
@@ -161,7 +164,7 @@ class ClientFormResponse extends BaseEntity
             $this->_submittedFields[substr($name, 6)] = $value;
             return;
         }
-        throw new \LogicException("No field $name in ClientFormResponse");
+        throw new LogicException("No field $name in ClientFormResponse");
     }
 
     /**
@@ -170,7 +173,8 @@ class ClientFormResponse extends BaseEntity
      * @see _submittedFields
      * @return array
      */
-    public function _getSubmittedFields() {
+    public function _getSubmittedFields(): array
+    {
         return $this->_submittedFields;
     }
 
@@ -181,14 +185,13 @@ class ClientFormResponse extends BaseEntity
      * @return string|null
      * @see ClientFormResponse::getCachedFirstField()
      */
-    public function getFirstFieldValue()
+    public function getFirstFieldValue(): ?string
     {
         $firstField = $this->getCachedFirstField();
         if ($firstField === null) {
             return null;
         }
-        $val = $this->getFieldValue($firstField->getId());
-        return $val;
+        return $this->getFieldValue($firstField->getId());
     }
 
     /**
@@ -208,7 +211,7 @@ class ClientFormResponse extends BaseEntity
      * @return bool
      * @see ClientFormResponse::getCachedFirstField()
      */
-    public function isFull()
+    public function isFull(): bool
     {
         $firstField = $this->getCachedFirstField();
         $firstFieldId = null;
@@ -234,7 +237,7 @@ class ClientFormResponse extends BaseEntity
      * @return int|null
      * @see ResidentQuestionnaire
      */
-    public function getResidentQuestionnaireId()
+    public function getResidentQuestionnaireId(): ?int
     {
         return $this->residentQuestionnaireId;
     }
@@ -242,7 +245,7 @@ class ClientFormResponse extends BaseEntity
     /**
      * @param int|null $residentQuestionnaireId
      */
-    public function setResidentQuestionnaireId($residentQuestionnaireId)
+    public function setResidentQuestionnaireId(?int $residentQuestionnaireId)
     {
         $this->residentQuestionnaireId = $residentQuestionnaireId;
     }
@@ -250,7 +253,7 @@ class ClientFormResponse extends BaseEntity
     /**
      * @var ClientFormField|null
      */
-    private $cachedFirstField = null;
+    private ?ClientFormField $cachedFirstField = null;
 
     /**
      * Возвращает закешированное первое поле текущей формы.
@@ -259,7 +262,7 @@ class ClientFormResponse extends BaseEntity
      *
      * @return ClientFormField|null
      */
-    private function getCachedFirstField()
+    private function getCachedFirstField(): ?ClientFormField
     {
         if ($this->cachedFirstField !== null) {
             return $this->cachedFirstField;

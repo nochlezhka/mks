@@ -23,33 +23,33 @@ class MenuItem extends BaseEntity
      * Название
      * @ORM\Column(type="string", nullable=true)
      */
-    private $name;
+    private ?string $name;
 
     /**
      * Код
      * @ORM\Column(type="string", nullable=true, unique=true)
      */
-    private $code;
+    private ?string $code;
 
     /**
      * Включено
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $enabled = true;
+    private ?bool $enabled = true;
 
     public function __toString()
     {
-        return (string)$this->name;
+        return $this->name;
     }
 
     /**
      * Set name
      *
-     * @param string $name
+     * @param string|null $name
      *
      * @return MenuItem
      */
-    public function setName($name)
+    public function setName(?string $name): MenuItem
     {
         $this->name = $name;
 
@@ -61,7 +61,7 @@ class MenuItem extends BaseEntity
      *
      * @return string
      */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
@@ -69,11 +69,11 @@ class MenuItem extends BaseEntity
     /**
      * Set code
      *
-     * @param string $code
+     * @param string|null $code
      *
      * @return MenuItem
      */
-    public function setCode($code)
+    public function setCode(?string $code): MenuItem
     {
         $this->code = $code;
 
@@ -85,7 +85,7 @@ class MenuItem extends BaseEntity
      *
      * @return string
      */
-    public function getCode()
+    public function getCode(): ?string
     {
         return $this->code;
     }
@@ -97,7 +97,7 @@ class MenuItem extends BaseEntity
      *
      * @return MenuItem
      */
-    public function setEnabled($enabled)
+    public function setEnabled(?bool $enabled): MenuItem
     {
         $this->enabled = $enabled;
 
@@ -109,7 +109,7 @@ class MenuItem extends BaseEntity
      *
      * @return boolean
      */
-    public function getEnabled()
+    public function getEnabled(): ?bool
     {
         return $this->enabled;
     }

@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -18,55 +19,55 @@ class Document extends BaseEntity
      * Адрес
      * @ORM\Column(type="string", nullable=true)
      */
-    private $address;
+    private ?string $address;
 
     /**
      * Город
      * @ORM\Column(type="string", nullable=true)
      */
-    private $city;
+    private ?string $city;
 
     /**
      * Дата
      * @ORM\Column(type="date", nullable=true)
      */
-    private $date;
+    private ?DateTime $date;
 
     /**
      * Номер
      * @ORM\Column(type="string", nullable=true)
      */
-    private $number;
+    private ?string $number;
 
     /**
      * Серия
      * @ORM\Column(type="string", nullable=true)
      */
-    private $numberPrefix;
+    private ?string $numberPrefix;
 
     /**
      * Регистрация
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $registration;
+    private ?int $registration;
 
     /**
      * Кем и когда выдан
      * @ORM\Column(type="string", nullable=true)
      */
-    private $issued;
+    private ?string $issued;
 
     /**
      * Клиент
      * @ORM\ManyToOne(targetEntity="Client", inversedBy="documents")
      */
-    private $client;
+    private Client $client;
 
     /**
      * Тип
      * @ORM\ManyToOne(targetEntity="DocumentType")
      */
-    private $type;
+    private DocumentType $type;
 
     public function __toString()
     {
@@ -74,9 +75,7 @@ class Document extends BaseEntity
 
         $type = $this->getType();
 
-        if ($type instanceof DocumentType) {
-            $string .= $type->getName();
-        }
+        $string .= $type->getName();
 
         if ($this->numberPrefix) {
             $string .= ' ' . $this->numberPrefix;
@@ -90,9 +89,7 @@ class Document extends BaseEntity
             $string .= ' выдан ' . $this->issued;
         }
 
-        if ($this->date instanceof \DateTime) {
-            $string .= ' ' . $this->date->format('d.m.Y');
-        }
+        $string .= ' ' . $this->date->format('d.m.Y');
 
         return $string;
     }
@@ -100,11 +97,11 @@ class Document extends BaseEntity
     /**
      * Set address
      *
-     * @param string $address
+     * @param string|null $address
      *
      * @return Document
      */
-    public function setAddress($address)
+    public function setAddress(?string $address): Document
     {
         $this->address = $address;
 
@@ -116,7 +113,7 @@ class Document extends BaseEntity
      *
      * @return string
      */
-    public function getAddress()
+    public function getAddress(): ?string
     {
         return $this->address;
     }
@@ -128,7 +125,7 @@ class Document extends BaseEntity
      *
      * @return Document
      */
-    public function setCity($city)
+    public function setCity(?string $city): Document
     {
         $this->city = $city;
 
@@ -140,7 +137,7 @@ class Document extends BaseEntity
      *
      * @return string
      */
-    public function getCity()
+    public function getCity(): ?string
     {
         return $this->city;
     }
@@ -148,11 +145,11 @@ class Document extends BaseEntity
     /**
      * Set date
      *
-     * @param \DateTime $date
+     * @param DateTime|null $date
      *
      * @return Document
      */
-    public function setDate($date)
+    public function setDate(?DateTime $date): Document
     {
         $this->date = $date;
 
@@ -162,9 +159,9 @@ class Document extends BaseEntity
     /**
      * Get date
      *
-     * @return \DateTime
+     * @return DateTime
      */
-    public function getDate()
+    public function getDate(): ?DateTime
     {
         return $this->date;
     }
@@ -172,11 +169,11 @@ class Document extends BaseEntity
     /**
      * Set number
      *
-     * @param string $number
+     * @param string|null $number
      *
      * @return Document
      */
-    public function setNumber($number)
+    public function setNumber(?string $number): Document
     {
         $this->number = $number;
 
@@ -188,7 +185,7 @@ class Document extends BaseEntity
      *
      * @return string
      */
-    public function getNumber()
+    public function getNumber(): ?string
     {
         return $this->number;
     }
@@ -200,7 +197,7 @@ class Document extends BaseEntity
      *
      * @return Document
      */
-    public function setNumberPrefix($numberPrefix)
+    public function setNumberPrefix(?string $numberPrefix): Document
     {
         $this->numberPrefix = $numberPrefix;
 
@@ -212,7 +209,7 @@ class Document extends BaseEntity
      *
      * @return string
      */
-    public function getNumberPrefix()
+    public function getNumberPrefix(): ?string
     {
         return $this->numberPrefix;
     }
@@ -220,11 +217,11 @@ class Document extends BaseEntity
     /**
      * Set registration
      *
-     * @param integer $registration
+     * @param int|null $registration
      *
      * @return Document
      */
-    public function setRegistration($registration)
+    public function setRegistration(?int $registration): Document
     {
         $this->registration = $registration;
 
@@ -236,7 +233,7 @@ class Document extends BaseEntity
      *
      * @return integer
      */
-    public function getRegistration()
+    public function getRegistration(): ?int
     {
         return $this->registration;
     }
@@ -244,11 +241,11 @@ class Document extends BaseEntity
     /**
      * Set issued
      *
-     * @param string $issued
+     * @param string|null $issued
      *
      * @return Document
      */
-    public function setIssued($issued)
+    public function setIssued(?string $issued): Document
     {
         $this->issued = $issued;
 
@@ -260,7 +257,7 @@ class Document extends BaseEntity
      *
      * @return string
      */
-    public function getIssued()
+    public function getIssued(): ?string
     {
         return $this->issued;
     }
@@ -268,11 +265,11 @@ class Document extends BaseEntity
     /**
      * Set client
      *
-     * @param \AppBundle\Entity\Client $client
+     * @param Client|null $client
      *
      * @return Document
      */
-    public function setClient(Client $client = null)
+    public function setClient(Client $client = null): Document
     {
         $this->client = $client;
 
@@ -282,9 +279,9 @@ class Document extends BaseEntity
     /**
      * Get client
      *
-     * @return \AppBundle\Entity\Client
+     * @return Client
      */
-    public function getClient()
+    public function getClient(): Client
     {
         return $this->client;
     }
@@ -292,11 +289,11 @@ class Document extends BaseEntity
     /**
      * Set type
      *
-     * @param \AppBundle\Entity\DocumentType $type
+     * @param DocumentType|null $type
      *
      * @return Document
      */
-    public function setType(DocumentType $type = null)
+    public function setType(DocumentType $type = null): Document
     {
         $this->type = $type;
 
@@ -306,9 +303,9 @@ class Document extends BaseEntity
     /**
      * Get type
      *
-     * @return \AppBundle\Entity\DocumentType
+     * @return DocumentType
      */
-    public function getType()
+    public function getType(): DocumentType
     {
         return $this->type;
     }

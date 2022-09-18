@@ -14,27 +14,27 @@ class District extends BaseEntity
      * Название
      * @ORM\Column(type="string", nullable=true)
      */
-    private $name;
+    private ?string $name;
 
     /**
      * Регион
      * @ORM\ManyToOne(targetEntity="Region", inversedBy="districts")
      */
-    private $region;
+    private Region $region;
 
     public function __toString()
     {
-        return (string)$this->name;
+        return $this->name;
     }
 
     /**
      * Set name
      *
-     * @param string $name
+     * @param string|null $name
      *
      * @return District
      */
-    public function setName($name)
+    public function setName(?string $name): District
     {
         $this->name = $name;
 
@@ -46,7 +46,7 @@ class District extends BaseEntity
      *
      * @return string
      */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
@@ -54,11 +54,11 @@ class District extends BaseEntity
     /**
      * Set region
      *
-     * @param \AppBundle\Entity\Region $region
+     * @param Region|null $region
      *
      * @return District
      */
-    public function setRegion(Region $region = null)
+    public function setRegion(Region $region = null): District
     {
         $this->region = $region;
 
@@ -68,9 +68,9 @@ class District extends BaseEntity
     /**
      * Get region
      *
-     * @return \AppBundle\Entity\Region
+     * @return Region
      */
-    public function getRegion()
+    public function getRegion(): Region
     {
         return $this->region;
     }

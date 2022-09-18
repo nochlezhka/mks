@@ -2,7 +2,9 @@
 
 namespace AppBundle\Entity;
 
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Form\Extension\Core\Type\BirthdayType;
 
@@ -36,65 +38,65 @@ class ClientField extends BaseEntity
      * Название
      * @ORM\Column(type="string", nullable=true)
      */
-    private $name;
+    private ?string $name;
 
     /**
      * Символьный код
      * @ORM\Column(type="string", nullable=true)
      */
-    private $code;
+    private ?string $code;
 
     /**
      * Включено
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $enabled = true;
+    private ?bool $enabled = true;
 
     /**
      * Включено для бездомных
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $enabledForHomeless = true;
+    private ?bool $enabledForHomeless = true;
 
     /**
      * Тип
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $type;
+    private ?int $type;
 
     /**
      * Обязательное
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $required = false;
+    private ?bool $required = false;
 
     /**
      * Обязательное для бездомных
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $mandatoryForHomeless = false;
+    private ?bool $mandatoryForHomeless = false;
 
     /**
      * Допускается выбор нескольких вариантов одновременно
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $multiple = false;
+    private ?bool $multiple = false;
 
     /**
      * Подсказка
      * @ORM\Column(type="string", nullable=true)
      */
-    private $description;
+    private ?string $description;
 
     /**
      * Поле
      * @ORM\OneToMany(targetEntity="ClientFieldOption", mappedBy="field")
      */
-    private $options;
+    private Collection $options;
 
     public function __toString()
     {
-        return (string)$this->name;
+        return $this->name;
     }
 
     /**
@@ -114,7 +116,7 @@ class ClientField extends BaseEntity
 
     /**
      * Тип поля для отображения в анкете
-     * @return ClientFieldOption|\DateTime|\Doctrine\Common\Collections\Collection|null|string
+     * @return ClientFieldOption|DateTime|Collection|null|string
      */
     public function getShowFieldType()
     {
@@ -143,7 +145,7 @@ class ClientField extends BaseEntity
 
     /**
      * Тип поля для формы
-     * @return ClientFieldOption|\DateTime|\Doctrine\Common\Collections\Collection|null|string
+     * @return ClientFieldOption|DateTime|Collection|null|string
      */
     public function getFormFieldType()
     {
@@ -170,11 +172,11 @@ class ClientField extends BaseEntity
     /**
      * Set name
      *
-     * @param string $name
+     * @param string|null $name
      *
      * @return ClientField
      */
-    public function setName($name)
+    public function setName(?string $name): ClientField
     {
         $this->name = $name;
 
@@ -186,7 +188,7 @@ class ClientField extends BaseEntity
      *
      * @return string
      */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
@@ -194,11 +196,11 @@ class ClientField extends BaseEntity
     /**
      * Set code
      *
-     * @param string $code
+     * @param string|null $code
      *
      * @return ClientField
      */
-    public function setCode($code)
+    public function setCode(?string $code): ClientField
     {
         $this->code = $code;
 
@@ -210,7 +212,7 @@ class ClientField extends BaseEntity
      *
      * @return string
      */
-    public function getCode()
+    public function getCode(): ?string
     {
         return $this->code;
     }
@@ -222,7 +224,7 @@ class ClientField extends BaseEntity
      *
      * @return ClientField
      */
-    public function setEnabled($enabled)
+    public function setEnabled(?bool $enabled): ClientField
     {
         $this->enabled = $enabled;
 
@@ -234,7 +236,7 @@ class ClientField extends BaseEntity
      *
      * @return boolean
      */
-    public function getEnabled()
+    public function getEnabled(): ?bool
     {
         return $this->enabled;
     }
@@ -242,11 +244,11 @@ class ClientField extends BaseEntity
     /**
      * Set type
      *
-     * @param integer $type
+     * @param int|null $type
      *
      * @return ClientField
      */
-    public function setType($type)
+    public function setType(?int $type): ClientField
     {
         $this->type = $type;
 
@@ -258,7 +260,7 @@ class ClientField extends BaseEntity
      *
      * @return integer
      */
-    public function getType()
+    public function getType(): ?int
     {
         return $this->type;
     }
@@ -270,7 +272,7 @@ class ClientField extends BaseEntity
      *
      * @return ClientField
      */
-    public function setRequired($required)
+    public function setRequired(?bool $required): ClientField
     {
         $this->required = $required;
 
@@ -282,7 +284,7 @@ class ClientField extends BaseEntity
      *
      * @return boolean
      */
-    public function getRequired()
+    public function getRequired(): ?bool
     {
         return $this->required;
     }
@@ -294,7 +296,7 @@ class ClientField extends BaseEntity
      *
      * @return ClientField
      */
-    public function setMultiple($multiple)
+    public function setMultiple(?bool $multiple): ClientField
     {
         $this->multiple = $multiple;
 
@@ -306,7 +308,7 @@ class ClientField extends BaseEntity
      *
      * @return boolean
      */
-    public function getMultiple()
+    public function getMultiple(): ?bool
     {
         return $this->multiple;
     }
@@ -322,11 +324,11 @@ class ClientField extends BaseEntity
     /**
      * Add option
      *
-     * @param \AppBundle\Entity\ClientFieldOption $option
+     * @param ClientFieldOption $option
      *
      * @return ClientField
      */
-    public function addOption(ClientFieldOption $option)
+    public function addOption(ClientFieldOption $option): ClientField
     {
         $this->options[] = $option;
 
@@ -336,7 +338,7 @@ class ClientField extends BaseEntity
     /**
      * Remove option
      *
-     * @param \AppBundle\Entity\ClientFieldOption $option
+     * @param ClientFieldOption $option
      */
     public function removeOption(ClientFieldOption $option)
     {
@@ -346,7 +348,7 @@ class ClientField extends BaseEntity
     /**
      * Get options
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getOptions()
     {
@@ -356,11 +358,11 @@ class ClientField extends BaseEntity
     /**
      * Set description
      *
-     * @param string $description
+     * @param string|null $description
      *
      * @return ClientField
      */
-    public function setDescription($description)
+    public function setDescription(?string $description): ClientField
     {
         $this->description = $description;
 
@@ -372,7 +374,7 @@ class ClientField extends BaseEntity
      *
      * @return string
      */
-    public function getDescription()
+    public function getDescription(): ?string
     {
         return $this->description;
     }
@@ -380,7 +382,7 @@ class ClientField extends BaseEntity
     /**
      * @return bool
      */
-    public function getMandatoryForHomeless()
+    public function getMandatoryForHomeless(): ?bool
     {
         return $this->mandatoryForHomeless || $this->required;
     }
@@ -389,7 +391,7 @@ class ClientField extends BaseEntity
      * @param bool $mandatoryForHomeless
      * @return ClientField
      */
-    public function setMandatoryForHomeless($mandatoryForHomeless)
+    public function setMandatoryForHomeless(?bool $mandatoryForHomeless): ClientField
     {
         $this->mandatoryForHomeless = $mandatoryForHomeless;
 
@@ -398,10 +400,8 @@ class ClientField extends BaseEntity
 
     /**
      * Get enabledForHomeless
-     *
-     * @return mixed
      */
-    public function getEnabledForHomeless()
+    public function getEnabledForHomeless(): ?bool
     {
         return $this->enabledForHomeless || $this->enabled;
     }
@@ -409,11 +409,10 @@ class ClientField extends BaseEntity
     /**
      * Set enabledForHomeless
      *
-     * @param mixed $enabledForHomeless
-     *
+     * @param bool|null $enabledForHomeless
      * @return ClientField
      */
-    public function setEnabledForHomeless($enabledForHomeless)
+    public function setEnabledForHomeless(?bool $enabledForHomeless): ClientField
     {
         $this->enabledForHomeless = $enabledForHomeless;
 

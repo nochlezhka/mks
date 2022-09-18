@@ -4,7 +4,9 @@ namespace AppBundle\Entity;
 
 use AppBundle\Service\DownloadableInterface;
 use Application\Sonata\UserBundle\Entity\User;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Context\ExecutionContext;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -19,73 +21,73 @@ class Contract extends BaseEntity implements DownloadableInterface
      * Комментарий
      * @ORM\Column(type="text", nullable=true)
      */
-    private $comment;
+    private ?string $comment;
 
     /**
      * Номер
      * @ORM\Column(type="string", nullable=true)
      */
-    private $number;
+    private ?string $number;
 
     /**
      * Дата начала
      * @ORM\Column(type="date", nullable=true)
      */
-    private $dateFrom;
+    private ?DateTime $dateFrom;
 
     /**
      * Дата завершения
      * @ORM\Column(type="date", nullable=true)
      */
-    private $dateTo;
+    private ?DateTime $dateTo;
 
     /**
      * Клиент
      * @ORM\ManyToOne(targetEntity="Client", inversedBy="contracts")
      */
-    private $client;
+    private Client $client;
 
     /**
      * Статус
      * @ORM\ManyToOne(targetEntity="ContractStatus")
      */
-    private $status;
+    private ContractStatus $status;
 
     /**
      * Документ
      * @ORM\ManyToOne(targetEntity="Document")
      */
-    private $document;
+    private Document $document;
 
     /**
      * Пункты
      * @ORM\OneToMany(targetEntity="ContractItem", mappedBy="contract", cascade={"all"}, orphanRemoval=true)
      * @ORM\OrderBy({"date" = "DESC", "id" = "DESC"})
      */
-    private $items;
+    private Collection $items;
 
     /**
      * {@inheritdoc}
      */
-    public function getNamePrefix()
+    public function getNamePrefix(): string
     {
         return 'contract';
     }
 
     public function __toString()
     {
-        return (string)$this->getLabel();
+        return $this->getLabel();
     }
 
-    public function getLabel()
+    public function getLabel(): string
     {
         $label = $this->getNumber();
 
-        if ($this->getDateFrom() instanceof \DateTime) {
+        if ($this->getDateFrom() instanceof DateTime) {
             $label .= ' от ' . $this->getDateFrom()->format('d.m.Y');
         }
 
-        if ($this->getDateTo() instanceof \DateTime) {
+        if ($this->getDateTo() instanceof DateTime) {
             $label .= ' до ' . $this->getDateTo()->format('d.m.Y');
         }
 
@@ -114,23 +116,21 @@ class Contract extends BaseEntity implements DownloadableInterface
      * Срок действия договора в месяцах
      * @return int
      */
-    public function getDuration()
+    public function getDuration(): ?int
     {
-        if ($this->dateFrom instanceof \DateTime && $this->dateTo instanceof \DateTime) {
-            return $this->dateFrom->diff($this->dateTo)->m;
-        }
-
-        return null;
+        $dateTo = $this->dateTo;
+        if($dateTo == null) return null;
+        return $this->dateFrom->diff($dateTo)->m;
     }
 
     /**
      * Set comment
      *
-     * @param string $comment
+     * @param string|null $comment
      *
      * @return Contract
      */
-    public function setComment($comment)
+    public function setComment(?string $comment): Contract
     {
         $this->comment = $comment;
 
@@ -142,7 +142,7 @@ class Contract extends BaseEntity implements DownloadableInterface
      *
      * @return string
      */
-    public function getComment()
+    public function getComment(): ?string
     {
         return $this->comment;
     }
@@ -150,11 +150,11 @@ class Contract extends BaseEntity implements DownloadableInterface
     /**
      * Set number
      *
-     * @param string $number
+     * @param string|null $number
      *
      * @return Contract
      */
-    public function setNumber($number)
+    public function setNumber(?string $number): Contract
     {
         $this->number = $number;
 
@@ -166,7 +166,7 @@ class Contract extends BaseEntity implements DownloadableInterface
      *
      * @return string
      */
-    public function getNumber()
+    public function getNumber(): ?string
     {
         return $this->number;
     }
@@ -174,11 +174,11 @@ class Contract extends BaseEntity implements DownloadableInterface
     /**
      * Set dateFrom
      *
-     * @param \DateTime $dateFrom
+     * @param DateTime|null $dateFrom
      *
      * @return Contract
      */
-    public function setDateFrom($dateFrom)
+    public function setDateFrom(?DateTime $dateFrom): Contract
     {
         $this->dateFrom = $dateFrom;
 
@@ -188,9 +188,9 @@ class Contract extends BaseEntity implements DownloadableInterface
     /**
      * Get dateFrom
      *
-     * @return \DateTime
+     * @return DateTime
      */
-    public function getDateFrom()
+    public function getDateFrom(): ?DateTime
     {
         return $this->dateFrom;
     }
@@ -198,11 +198,11 @@ class Contract extends BaseEntity implements DownloadableInterface
     /**
      * Set dateTo
      *
-     * @param \DateTime $dateTo
+     * @param DateTime|null $dateTo
      *
      * @return Contract
      */
-    public function setDateTo($dateTo)
+    public function setDateTo(?DateTime $dateTo): Contract
     {
         $this->dateTo = $dateTo;
 
@@ -212,9 +212,9 @@ class Contract extends BaseEntity implements DownloadableInterface
     /**
      * Get dateTo
      *
-     * @return \DateTime
+     * @return DateTime
      */
-    public function getDateTo()
+    public function getDateTo(): ?DateTime
     {
         return $this->dateTo;
     }
@@ -222,11 +222,11 @@ class Contract extends BaseEntity implements DownloadableInterface
     /**
      * Set client
      *
-     * @param \AppBundle\Entity\Client $client
+     * @param Client|null $client
      *
      * @return Contract
      */
-    public function setClient(Client $client = null)
+    public function setClient(Client $client = null): Contract
     {
         $this->client = $client;
 
@@ -236,9 +236,9 @@ class Contract extends BaseEntity implements DownloadableInterface
     /**
      * Get client
      *
-     * @return \AppBundle\Entity\Client
+     * @return Client
      */
-    public function getClient()
+    public function getClient(): Client
     {
         return $this->client;
     }
@@ -246,11 +246,11 @@ class Contract extends BaseEntity implements DownloadableInterface
     /**
      * Set status
      *
-     * @param \AppBundle\Entity\ContractStatus $status
+     * @param ContractStatus|null $status
      *
      * @return Contract
      */
-    public function setStatus(ContractStatus $status = null)
+    public function setStatus(ContractStatus $status = null): Contract
     {
         $this->status = $status;
 
@@ -260,9 +260,9 @@ class Contract extends BaseEntity implements DownloadableInterface
     /**
      * Get status
      *
-     * @return \AppBundle\Entity\ContractStatus
+     * @return ContractStatus
      */
-    public function getStatus()
+    public function getStatus(): ContractStatus
     {
         return $this->status;
     }
@@ -270,11 +270,11 @@ class Contract extends BaseEntity implements DownloadableInterface
     /**
      * Set document
      *
-     * @param \AppBundle\Entity\Document $document
+     * @param Document|null $document
      *
      * @return Contract
      */
-    public function setDocument(Document $document = null)
+    public function setDocument(Document $document = null): Contract
     {
         $this->document = $document;
 
@@ -284,9 +284,9 @@ class Contract extends BaseEntity implements DownloadableInterface
     /**
      * Get document
      *
-     * @return \AppBundle\Entity\Document
+     * @return Document
      */
-    public function getDocument()
+    public function getDocument(): Document
     {
         return $this->document;
     }
@@ -294,11 +294,11 @@ class Contract extends BaseEntity implements DownloadableInterface
     /**
      * Add item
      *
-     * @param \AppBundle\Entity\ContractItem $item
+     * @param ContractItem $item
      *
      * @return Contract
      */
-    public function addItem(ContractItem $item)
+    public function addItem(ContractItem $item): Contract
     {
         $item->setContract($this);
         $this->items[] = $item;
@@ -309,18 +309,18 @@ class Contract extends BaseEntity implements DownloadableInterface
     /**
      * Remove item
      *
-     * @param \AppBundle\Entity\ContractItem $item
+     * @param ContractItem $item
      */
     public function removeItem(ContractItem $item)
     {
-        $item->setContract(null);
+        $item->setContract();
         $this->items->removeElement($item);
     }
 
     /**
      * Get items
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getItems()
     {

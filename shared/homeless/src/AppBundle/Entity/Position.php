@@ -4,6 +4,7 @@ namespace AppBundle\Entity;
 
 use Application\Sonata\UserBundle\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -16,13 +17,13 @@ class Position extends BaseEntity
      * Название
      * @ORM\Column(type="string", nullable=true)
      */
-    private $name;
+    private ?string $name;
 
     /**
      * Пользователи с данной должностью
      * @ORM\OneToMany(targetEntity="Application\Sonata\UserBundle\Entity\User", mappedBy="position")
      */
-    private $users;
+    private Collection $users;
 
     public function __construct()
     {
@@ -32,11 +33,11 @@ class Position extends BaseEntity
     /**
      * Set name
      *
-     * @param string $name
+     * @param string|null $name
      *
      * @return Position
      */
-    public function setName($name)
+    public function setName(?string $name): Position
     {
         $this->name = $name;
 
@@ -48,7 +49,7 @@ class Position extends BaseEntity
      *
      * @return string
      */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
@@ -56,11 +57,11 @@ class Position extends BaseEntity
     /**
      * Add user
      *
-     * @param \Application\Sonata\UserBundle\Entity\User $user
+     * @param User $user
      *
      * @return Position
      */
-    public function addUser(User $user)
+    public function addUser(User $user): Position
     {
         $this->users[] = $user;
 
@@ -70,7 +71,7 @@ class Position extends BaseEntity
     /**
      * Remove user
      *
-     * @param \Application\Sonata\UserBundle\Entity\User $user
+     * @param User $user
      */
     public function removeUser(User $user)
     {
@@ -80,7 +81,7 @@ class Position extends BaseEntity
     /**
      * Get users
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getUsers()
     {

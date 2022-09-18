@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Application\Sonata\UserBundle\Entity\User;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -20,17 +21,17 @@ class HistoryDownload
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    private $id;
+    private int $id;
 
     /**
-     * @var \AppBundle\Entity\Client
+     * @var Client
      *
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Client")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="client_id", referencedColumnName="id")
      * })
      */
-    private $client;
+    private Client $client;
 
     /**
      * @var User
@@ -40,14 +41,14 @@ class HistoryDownload
      *   @ORM\JoinColumn(name="user_id", referencedColumnName="id")
      * })
      */
-    private $user;
+    private User $user;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      *
      * @ORM\Column(name="date", type="datetime")
      */
-    private $date;
+    private DateTime $date;
 
     /**
      * Тип сертификата
@@ -56,14 +57,14 @@ class HistoryDownload
      *   @ORM\JoinColumn(name="certificate_type_id", referencedColumnName="id")
      * })
      */
-    private $certificateType;
+    private CertificateType $certificateType;
 
     /**
      * Get id
      *
      * @return int
      */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
@@ -71,11 +72,11 @@ class HistoryDownload
     /**
      * Set client
      *
-     * @param \AppBundle\Entity\Client $client
+     * @param Client|null $client
      *
      * @return HistoryDownload
      */
-    public function setClient(Client $client = null)
+    public function setClient(Client $client = null): HistoryDownload
     {
         $this->client = $client;
 
@@ -85,9 +86,9 @@ class HistoryDownload
     /**
      * Get client
      *
-     * @return \AppBundle\Entity\Client
+     * @return Client
      */
-    public function getClient()
+    public function getClient(): Client
     {
         return $this->client;
     }
@@ -95,11 +96,11 @@ class HistoryDownload
     /**
      * Set user
      *
-     * @param User $user
+     * @param User|null $user
      *
      * @return HistoryDownload
      */
-    public function setUser(User $user = null)
+    public function setUser(User $user = null): HistoryDownload
     {
         $this->user = $user;
 
@@ -111,7 +112,7 @@ class HistoryDownload
      *
      * @return User
      */
-    public function getUser()
+    public function getUser(): User
     {
         return $this->user;
     }
@@ -119,11 +120,11 @@ class HistoryDownload
     /**
      * Set date
      *
-     * @param \DateTime $date
+     * @param DateTime $date
      *
      * @return HistoryDownload
      */
-    public function setDate($date)
+    public function setDate(DateTime $date): HistoryDownload
     {
         $this->date = $date;
 
@@ -133,9 +134,9 @@ class HistoryDownload
     /**
      * Get date
      *
-     * @return \DateTime
+     * @return DateTime
      */
-    public function getDate()
+    public function getDate(): DateTime
     {
         return $this->date;
     }
@@ -143,11 +144,11 @@ class HistoryDownload
     /**
      * Set certificate
      *
-     * @param \AppBundle\Entity\Certificate $certificateType
+     * @param CertificateType $certificateType
      *
      * @return HistoryDownload
      */
-    public function setCertificateType($certificateType)
+    public function setCertificateType(CertificateType $certificateType): HistoryDownload
     {
         $this->certificateType = $certificateType;
 
@@ -157,9 +158,9 @@ class HistoryDownload
     /**
      * Get certificate
      *
-     * @return \AppBundle\Entity\Certificate
+     * @return CertificateType
      */
-    public function getCertificateType()
+    public function getCertificateType(): CertificateType
     {
         return $this->certificateType;
     }

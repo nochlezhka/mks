@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -14,32 +15,30 @@ class Service extends BaseEntity
      * Комментарий
      * @ORM\Column(type="text", nullable=true)
      */
-    private $comment;
+    private ?string $comment;
 
     /**
      * Сумма денег
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $amount;
+    private ?int $amount;
 
     /**
      * Клиент
      * @ORM\ManyToOne(targetEntity="Client", inversedBy="services")
      */
-    private $client;
+    private Client $client;
 
     /**
      * Тип
      * @ORM\ManyToOne(targetEntity="ServiceType")
      */
-    private $type;
+    private ServiceType $type;
 
     public function __toString()
     {
-        $type = $this->getType();
-
-        if ($type instanceof ServiceType) {
-            return (string)$type->getName();
+        if ($this->getType() instanceof ServiceType) {
+            return $this->getType()->getName();
         }
 
         return '';
@@ -48,11 +47,11 @@ class Service extends BaseEntity
     /**
      * Set comment
      *
-     * @param string $comment
+     * @param string|null $comment
      *
      * @return Service
      */
-    public function setComment($comment)
+    public function setComment(?string $comment): Service
     {
         $this->comment = $comment;
 
@@ -64,7 +63,7 @@ class Service extends BaseEntity
      *
      * @return string
      */
-    public function getComment()
+    public function getComment(): ?string
     {
         return $this->comment;
     }
@@ -72,11 +71,11 @@ class Service extends BaseEntity
     /**
      * Set amount
      *
-     * @param integer $amount
+     * @param int|null $amount
      *
      * @return Service
      */
-    public function setAmount($amount)
+    public function setAmount(?int $amount): Service
     {
         $this->amount = $amount;
 
@@ -88,7 +87,7 @@ class Service extends BaseEntity
      *
      * @return integer
      */
-    public function getAmount()
+    public function getAmount(): ?int
     {
         return $this->amount;
     }
@@ -96,11 +95,11 @@ class Service extends BaseEntity
     /**
      * Set client
      *
-     * @param \AppBundle\Entity\Client $client
+     * @param Client|null $client
      *
      * @return Service
      */
-    public function setClient(Client $client = null)
+    public function setClient(Client $client = null): Service
     {
         $this->client = $client;
 
@@ -110,9 +109,9 @@ class Service extends BaseEntity
     /**
      * Get client
      *
-     * @return \AppBundle\Entity\Client
+     * @return Client
      */
-    public function getClient()
+    public function getClient(): Client
     {
         return $this->client;
     }
@@ -120,11 +119,11 @@ class Service extends BaseEntity
     /**
      * Set type
      *
-     * @param \AppBundle\Entity\ServiceType $type
+     * @param ServiceType|null $type
      *
      * @return Service
      */
-    public function setType(ServiceType $type = null)
+    public function setType(ServiceType $type = null): Service
     {
         $this->type = $type;
 
@@ -134,9 +133,9 @@ class Service extends BaseEntity
     /**
      * Get type
      *
-     * @return \AppBundle\Entity\ServiceType
+     * @return ServiceType
      */
-    public function getType()
+    public function getType(): ServiceType
     {
         return $this->type;
     }
@@ -144,10 +143,10 @@ class Service extends BaseEntity
     /**
      * Returns the creation date.
      *
-     * @return \DateTime|null
+     * @return DateTime
      */
     public function getCreatedAt()
     {
-        return $this->createdAt ? $this->createdAt : new \DateTime();
+        return $this->createdAt ?: new DateTime();
     }
 }

@@ -46,45 +46,45 @@ class ServiceType extends BaseEntity
      * Название
      * @ORM\Column(type="string", nullable=true)
      */
-    private $name;
+    private ?string $name;
 
     /**
      * Платная
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $pay;
+    private ?bool $pay;
 
     /**
      * Документ
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $document;
+    private ?bool $document;
 
     /**
      * Сумма
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $amount;
+    private ?bool $amount;
 
     /**
      * Комметарий
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $comment;
+    private ?bool $comment;
 
     public function __toString()
     {
-        return (string)$this->getName();
+        return $this->getName();
     }
 
     /**
      * Set name
      *
-     * @param string $name
+     * @param string|null $name
      *
      * @return ServiceType
      */
-    public function setName($name)
+    public function setName(?string $name): ServiceType
     {
         $this->name = $name;
 
@@ -96,7 +96,7 @@ class ServiceType extends BaseEntity
      *
      * @return string
      */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
@@ -108,7 +108,7 @@ class ServiceType extends BaseEntity
      *
      * @return ServiceType
      */
-    public function setPay($pay)
+    public function setPay(?bool $pay): ServiceType
     {
         $this->pay = $pay;
 
@@ -120,7 +120,7 @@ class ServiceType extends BaseEntity
      *
      * @return boolean
      */
-    public function getPay()
+    public function getPay(): ?bool
     {
         return $this->pay;
     }
@@ -132,7 +132,7 @@ class ServiceType extends BaseEntity
      *
      * @return ServiceType
      */
-    public function setDocument($document)
+    public function setDocument(?bool $document): ServiceType
     {
         $this->document = $document;
 
@@ -144,7 +144,7 @@ class ServiceType extends BaseEntity
      *
      * @return boolean
      */
-    public function getDocument()
+    public function getDocument(): ?bool
     {
         return $this->document;
     }
@@ -154,7 +154,7 @@ class ServiceType extends BaseEntity
      *
      * @return boolean
      */
-    public function getAmount()
+    public function getAmount(): ?bool
     {
         return $this->amount;
     }
@@ -166,7 +166,7 @@ class ServiceType extends BaseEntity
      *
      * @return ServiceType
      */
-    public function setAmount($amount)
+    public function setAmount(?bool $amount): ServiceType
     {
         $this->amount = $amount;
 
@@ -178,7 +178,7 @@ class ServiceType extends BaseEntity
      *
      * @return boolean
      */
-    public function getComment()
+    public function getComment(): ?bool
     {
         return $this->comment;
     }
@@ -190,7 +190,7 @@ class ServiceType extends BaseEntity
      *
      * @return ServiceType
      */
-    public function setComment($comment)
+    public function setComment(?bool $comment): ServiceType
     {
         $this->comment = $comment;
 

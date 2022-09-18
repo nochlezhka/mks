@@ -57,10 +57,10 @@ class User extends BaseUser implements BaseEntityInterface
      */
     private $positionText;
 
-    private $syncId;
-    private $sort;
-    private $createdBy;
-    private $updatedBy;
+    private ?int $syncId;
+    private ?int $sort;
+    private ?User $createdBy;
+    private ?User $updatedBy;
 
     public function __construct()
     {
@@ -152,11 +152,11 @@ class User extends BaseUser implements BaseEntityInterface
     /**
      * Set syncId
      *
-     * @param integer $syncId
+     * @param int|null $syncId
      *
      * @return User
      */
-    public function setSyncId($syncId)
+    public function setSyncId(?int $syncId): User
     {
         $this->syncId = $syncId;
 
@@ -168,7 +168,7 @@ class User extends BaseUser implements BaseEntityInterface
      *
      * @return integer
      */
-    public function getSyncId()
+    public function getSyncId(): ?int
     {
         return $this->syncId;
     }
@@ -176,11 +176,11 @@ class User extends BaseUser implements BaseEntityInterface
     /**
      * Set createdBy
      *
-     * @param User $createdBy
+     * @param User|null $createdBy
      *
      * @return User
      */
-    public function setCreatedBy(User $createdBy = null)
+    public function setCreatedBy(?User $createdBy = null): User
     {
         $this->createdBy = $createdBy;
 
@@ -192,7 +192,7 @@ class User extends BaseUser implements BaseEntityInterface
      *
      * @return User
      */
-    public function getCreatedBy()
+    public function getCreatedBy(): ?User
     {
         return $this->createdBy;
     }
@@ -200,11 +200,11 @@ class User extends BaseUser implements BaseEntityInterface
     /**
      * Set updatedBy
      *
-     * @param User $updatedBy
+     * @param User|null $updatedBy
      *
      * @return User
      */
-    public function setUpdatedBy(User $updatedBy = null)
+    public function setUpdatedBy(?User $updatedBy = null): User
     {
         $this->updatedBy = $updatedBy;
 
@@ -216,7 +216,7 @@ class User extends BaseUser implements BaseEntityInterface
      *
      * @return User
      */
-    public function getUpdatedBy()
+    public function getUpdatedBy(): ?User
     {
         return $this->updatedBy;
     }
@@ -320,11 +320,11 @@ class User extends BaseUser implements BaseEntityInterface
     /**
      * Set sort
      *
-     * @param integer $sort
+     * @param int|null $sort
      *
      * @return User
      */
-    public function setSort($sort)
+    public function setSort(?int $sort): User
     {
         $this->sort = $sort;
 
@@ -336,7 +336,7 @@ class User extends BaseUser implements BaseEntityInterface
      *
      * @return integer
      */
-    public function getSort()
+    public function getSort(): ?int
     {
         return $this->sort;
     }

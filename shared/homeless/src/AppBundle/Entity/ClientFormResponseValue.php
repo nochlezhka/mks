@@ -38,7 +38,7 @@ class ClientFormResponseValue extends BaseEntity
      * @ORM\ManyToOne(targetEntity="ClientFormResponse", inversedBy="values")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $clientFormResponse;
+    private ClientFormResponse $clientFormResponse;
 
     /**
      * Поле формы
@@ -47,7 +47,7 @@ class ClientFormResponseValue extends BaseEntity
      * @ORM\ManyToOne(targetEntity="ClientFormField")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $clientFormField;
+    private ClientFormField $clientFormField;
 
     /**
      * Клиент.
@@ -58,7 +58,7 @@ class ClientFormResponseValue extends BaseEntity
      * @ORM\ManyToOne(targetEntity="Client")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $client;
+    private Client $client;
 
     /**
      * Значение поля
@@ -66,12 +66,12 @@ class ClientFormResponseValue extends BaseEntity
      * @var string
      * @ORM\Column(type="text", nullable=false)
      */
-    private $value;
+    private string $value;
 
     /**
      * @return ClientFormResponse
      */
-    public function getClientFormResponse()
+    public function getClientFormResponse(): ClientFormResponse
     {
         return $this->clientFormResponse;
     }
@@ -79,7 +79,7 @@ class ClientFormResponseValue extends BaseEntity
     /**
      * @param ClientFormResponse $clientFormResponse
      */
-    public function setClientFormResponse($clientFormResponse)
+    public function setClientFormResponse(ClientFormResponse $clientFormResponse)
     {
         $this->clientFormResponse = $clientFormResponse;
     }
@@ -87,7 +87,7 @@ class ClientFormResponseValue extends BaseEntity
     /**
      * @return ClientFormField
      */
-    public function getClientFormField()
+    public function getClientFormField(): ClientFormField
     {
         return $this->clientFormField;
     }
@@ -95,7 +95,7 @@ class ClientFormResponseValue extends BaseEntity
     /**
      * @param ClientFormField $clientFormField
      */
-    public function setClientFormField($clientFormField)
+    public function setClientFormField(ClientFormField $clientFormField)
     {
         $this->clientFormField = $clientFormField;
     }
@@ -103,7 +103,7 @@ class ClientFormResponseValue extends BaseEntity
     /**
      * @return Client
      */
-    public function getClient()
+    public function getClient(): Client
     {
         return $this->client;
     }
@@ -111,7 +111,7 @@ class ClientFormResponseValue extends BaseEntity
     /**
      * @param Client $client
      */
-    public function setClient($client)
+    public function setClient(Client $client)
     {
         $this->client = $client;
     }
@@ -119,7 +119,7 @@ class ClientFormResponseValue extends BaseEntity
     /**
      * @return string
      */
-    public function getValue()
+    public function getValue(): string
     {
         return $this->value;
     }
@@ -127,7 +127,7 @@ class ClientFormResponseValue extends BaseEntity
     /**
      * @param string $value
      */
-    public function setValue($value)
+    public function setValue(string $value)
     {
         $this->value = $value;
     }

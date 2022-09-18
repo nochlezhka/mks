@@ -24,27 +24,27 @@ class DocumentType extends BaseEntity
      * Название
      * @ORM\Column(type="string", nullable=true)
      */
-    private $name;
+    private ?string $name;
 
     /**
      * Тип
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $type = self::TYPE_OTHER;
+    private ?int $type = self::TYPE_OTHER;
 
     public function __toString()
     {
-        return (string)$this->getName();
+        return $this->getName();
     }
 
     /**
      * Set name
      *
-     * @param string $name
+     * @param string|null $name
      *
      * @return DocumentType
      */
-    public function setName($name)
+    public function setName(?string $name): DocumentType
     {
         $this->name = $name;
 
@@ -56,7 +56,7 @@ class DocumentType extends BaseEntity
      *
      * @return string
      */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
@@ -64,11 +64,11 @@ class DocumentType extends BaseEntity
     /**
      * Set type
      *
-     * @param integer $type
+     * @param int|null $type
      *
      * @return DocumentType
      */
-    public function setType($type)
+    public function setType(?int $type): DocumentType
     {
         $this->type = $type;
 
@@ -80,7 +80,7 @@ class DocumentType extends BaseEntity
      *
      * @return integer
      */
-    public function getType()
+    public function getType(): ?int
     {
         return $this->type;
     }

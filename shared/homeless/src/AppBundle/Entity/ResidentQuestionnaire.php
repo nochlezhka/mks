@@ -41,13 +41,13 @@ class ResidentQuestionnaire
     const REASON_FOR_PETITION_ESCORT = 4;
     const REASON_FOR_PETITION_RE_SETTLEMENT = 5;
 
-    public static $types = [
+    public static array $types = [
         '3 месяца' => self::TYPE_3,
         '6 месяцев' => self::TYPE_6,
         '1 год' => self::TYPE_12,
     ];
 
-    public static $roomTypes = [
+    public static array $roomTypes = [
         'Снимает комнату' => self::ROOM_TYPE_RENTS_A_ROOM,
         'Снимает койку' => self::ROOM_TYPE_REMOVES_THE_BED,
         'Снимает квартиру' => self::ROOM_TYPE_RENTS_AN_APARTMENT,
@@ -60,21 +60,21 @@ class ResidentQuestionnaire
         'Другое (б-ца, гора, сестра)' => self::ROOM_TYPE_OTHER,
     ];
 
-    public static $changedJobsCounts = [
+    public static array $changedJobsCounts = [
         'Не менял' => self::CHANGED_JOBS_COUNT_0,
         '1' => self::CHANGED_JOBS_COUNT_1,
         '2' => self::CHANGED_JOBS_COUNT_2,
         '3 и более' => self::CHANGED_JOBS_COUNT_3,
     ];
 
-    public static $reasonForTransitions = [
+    public static array $reasonForTransitions = [
         'Лучшие условия труда (зарплата, соцпакет, месторасположение и пр.)' => self::REASON_FOR_TRANSITION_BEST_WORKING_CONDITIONS,
         'Более интересная деятельность' => self::REASON_FOR_TRANSITION_MORE_INTERESTING_ACTIVITY,
         'Конфликты' => self::REASON_FOR_TRANSITION_CONFLICTS,
         'Сокращение рабочего места' => self::REASON_FOR_TRANSITION_REDUCTION_OF_WORKPLACE,
     ];
 
-    public static $reasonForPetition = [
+    public static array $reasonForPetition = [
         'Только справка' => self::REASON_FOR_PETITION_HELP_ONLY,
         'Гуманитарная помощь' => self::REASON_FOR_PETITION_HUMANITARIAN_AID,
         'Разовая консультация' => self::REASON_FOR_PETITION_ONE_TIME_CONSULTATION,
@@ -93,61 +93,61 @@ class ResidentQuestionnaire
      * Тип анкеты проживающего
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $typeId = self::TYPE_3;
+    private ?int $typeId = self::TYPE_3;
 
     /**
      * Проживает в жилом помещении?
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $isDwelling;
+    private ?bool $isDwelling;
 
     /**
      * Тип жилья
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $roomTypeId;
+    private ?int $roomTypeId;
 
     /**
      * Работает?
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $isWork;
+    private ?bool $isWork;
 
     /**
      * Официальная работа?
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $isWorkOfficial;
+    private ?bool $isWorkOfficial;
 
     /**
      * Постоянная работа?
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $isWorkConstant;
+    private ?bool $isWorkConstant;
 
     /**
      * Сколько сменил работ
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $changedJobsCountId;
+    private ?int $changedJobsCountId;
 
     /**
      * Причина перехода на другую работу
      * @ORM\Column(type="text", nullable=true)
      */
-    private $reasonForTransitionIds;
+    private ?string $reasonForTransitionIds;
 
     /**
      * Причина обращения
      * @ORM\Column(type="text", nullable=true)
      */
-    private $reasonForPetitionIds;
+    private ?string $reasonForPetitionIds;
 
     /**
      * Клиент
      * @ORM\ManyToOne(targetEntity="Client", inversedBy="documents")
      */
-    private $client;
+    private Client $client;
 
     /**
      * @return mixed
@@ -160,11 +160,11 @@ class ResidentQuestionnaire
     /**
      * Set client
      *
-     * @param \AppBundle\Entity\Client $client
+     * @param Client|null $client
      *
      * @return self
      */
-    public function setClient(Client $client = null)
+    public function setClient(Client $client = null): ResidentQuestionnaire
     {
         $this->client = $client;
 
@@ -174,17 +174,17 @@ class ResidentQuestionnaire
     /**
      * Get client
      *
-     * @return \AppBundle\Entity\Client
+     * @return Client
      */
-    public function getClient()
+    public function getClient(): Client
     {
         return $this->client;
     }
 
     /**
-     * @return mixed
+     * @return int
      */
-    public function getTypeId()
+    public function getTypeId(): ?int
     {
         return $this->typeId;
     }
@@ -194,115 +194,115 @@ class ResidentQuestionnaire
      */
     public function getType()
     {
-        return isset(static::$types[$this->typeId]) ? static::$types[$this->typeId] : $this->typeId;
+        return static::$types[$this->typeId] ?? $this->typeId;
     }
 
     /**
-     * @param mixed $typeId
+     * @param int|null $typeId
      */
-    public function setTypeId($typeId)
+    public function setTypeId(?int $typeId)
     {
         $this->typeId = $typeId;
     }
 
     /**
-     * @return mixed
+     * @return bool|null
      */
-    public function getisDwelling()
+    public function getisDwelling(): ?bool
     {
         return $this->isDwelling;
     }
 
     /**
-     * @param mixed $isDwelling
+     * @param bool|null $isDwelling
      */
-    public function setIsDwelling($isDwelling)
+    public function setIsDwelling(?bool $isDwelling)
     {
         $this->isDwelling = $isDwelling;
     }
 
     /**
-     * @return mixed
+     * @return int|null
      */
-    public function getRoomTypeId()
+    public function getRoomTypeId(): ?int
     {
         return $this->roomTypeId;
     }
 
     /**
-     * @param mixed $roomTypeId
+     * @param int|null $roomTypeId
      */
-    public function setRoomTypeId($roomTypeId)
+    public function setRoomTypeId(?int $roomTypeId)
     {
         $this->roomTypeId = $roomTypeId;
     }
 
     /**
-     * @return mixed
+     * @return bool|null
      */
-    public function getisWork()
+    public function getisWork(): ?bool
     {
         return $this->isWork;
     }
 
     /**
-     * @param mixed $isWork
+     * @param bool|null $isWork
      */
-    public function setIsWork($isWork)
+    public function setIsWork(?bool $isWork)
     {
         $this->isWork = $isWork;
     }
 
     /**
-     * @return mixed
+     * @return bool|null
      */
-    public function getisWorkOfficial()
+    public function getisWorkOfficial(): ?bool
     {
         return $this->isWorkOfficial;
     }
 
     /**
-     * @param mixed $isWorkOfficial
+     * @param bool|null $isWorkOfficial
      */
-    public function setIsWorkOfficial($isWorkOfficial)
+    public function setIsWorkOfficial(?bool $isWorkOfficial)
     {
         $this->isWorkOfficial = $isWorkOfficial;
     }
 
     /**
-     * @return mixed
+     * @return bool|null
      */
-    public function getisWorkConstant()
+    public function getisWorkConstant(): ?bool
     {
         return $this->isWorkConstant;
     }
 
     /**
-     * @param mixed $isWorkConstant
+     * @param bool|null $isWorkConstant
      */
-    public function setIsWorkConstant($isWorkConstant)
+    public function setIsWorkConstant(?bool $isWorkConstant)
     {
         $this->isWorkConstant = $isWorkConstant;
     }
 
     /**
-     * @return mixed
+     * @return int|null
      */
-    public function getChangedJobsCountId()
+    public function getChangedJobsCountId(): ?int
     {
         return $this->changedJobsCountId;
     }
 
     /**
-     * @param mixed $changedJobsCountId
+     * @param int|null $changedJobsCountId
      */
-    public function setChangedJobsCountId($changedJobsCountId)
+    public function setChangedJobsCountId(?int $changedJobsCountId)
     {
         $this->changedJobsCountId = $changedJobsCountId;
     }
 
     /**
-     * @return mixed
+     * @return false|string[]
      */
     public function getReasonForTransitionIds()
     {
@@ -318,7 +318,7 @@ class ResidentQuestionnaire
     }
 
     /**
-     * @return mixed
+     * @return false|string[]
      */
     public function getReasonForPetitionIds()
     {
@@ -338,7 +338,7 @@ class ResidentQuestionnaire
      *
      * @return bool
      */
-    public function isFull()
+    public function isFull(): bool
     {
         return $this->isDwelling !== null ||
             $this->roomTypeId !== null ||
