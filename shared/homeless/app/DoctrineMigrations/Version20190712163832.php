@@ -18,9 +18,9 @@ class Version20190712163832 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
-        $this->addSql('INSERT INTO homeless.menu_item (created_by_id, updated_by_id, name, code, enabled, sync_id, sort, created_at, updated_at) VALUES (null, null, \'Напоминания\', \'notifications\', 1, null, 100, \'2019-07-24 16:12:41\', null);');
-        $this->addSql('INSERT INTO homeless.menu_item (created_by_id, updated_by_id, name, code, enabled, sync_id, sort, created_at, updated_at) VALUES (null, null, \'Статус "бездомный/не бездомный"\', \'status_homeless\', 0, null, 100, \'2019-07-24 16:12:41\', null);');
-        $this->addSql('INSERT INTO homeless.menu_item (created_by_id, updated_by_id, name, code, enabled, sync_id, sort, created_at, updated_at) VALUES (null, null, \'Анкета проживавшего\', \'questionnaire_living\', 0, null, 100, \'2019-07-24 16:12:41\', null);');
+        $this->addSql('INSERT INTO menu_item (created_by_id, updated_by_id, name, code, enabled, sync_id, sort, created_at, updated_at) VALUES (null, null, \'Напоминания\', \'notifications\', 1, null, 100, \'2019-07-24 16:12:41\', null);');
+        $this->addSql('INSERT INTO menu_item (created_by_id, updated_by_id, name, code, enabled, sync_id, sort, created_at, updated_at) VALUES (null, null, \'Статус "бездомный/не бездомный"\', \'status_homeless\', 0, null, 100, \'2019-07-24 16:12:41\', null);');
+        $this->addSql('INSERT INTO menu_item (created_by_id, updated_by_id, name, code, enabled, sync_id, sort, created_at, updated_at) VALUES (null, null, \'Анкета проживавшего\', \'questionnaire_living\', 0, null, 100, \'2019-07-24 16:12:41\', null);');
     }
 
     /**
