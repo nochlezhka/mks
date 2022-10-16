@@ -129,7 +129,7 @@ abstract class BaseEntity implements BaseEntityInterface
      *
      * @return DateTime|null
      */
-    public function getCreatedAt(): ?DateTime
+    public function getCreatedAt()
     {
         return $this->createdAt;
     }
