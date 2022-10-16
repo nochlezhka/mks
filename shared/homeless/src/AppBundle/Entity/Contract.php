@@ -21,25 +21,25 @@ class Contract extends BaseEntity implements DownloadableInterface
      * Комментарий
      * @ORM\Column(type="text", nullable=true)
      */
-    private ?string $comment;
+    private ?string $comment = null;
 
     /**
      * Номер
      * @ORM\Column(type="string", nullable=true)
      */
-    private ?string $number;
+    private ?string $number = null;
 
     /**
      * Дата начала
      * @ORM\Column(type="date", nullable=true)
      */
-    private ?DateTime $dateFrom;
+    private ?DateTime $dateFrom = null;
 
     /**
      * Дата завершения
      * @ORM\Column(type="date", nullable=true)
      */
-    private ?DateTime $dateTo;
+    private ?DateTime $dateTo = null;
 
     /**
      * Клиент

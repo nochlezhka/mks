@@ -19,43 +19,43 @@ class Document extends BaseEntity
      * Адрес
      * @ORM\Column(type="string", nullable=true)
      */
-    private ?string $address;
+    private ?string $address = null;
 
     /**
      * Город
      * @ORM\Column(type="string", nullable=true)
      */
-    private ?string $city;
+    private ?string $city = null;
 
     /**
      * Дата
      * @ORM\Column(type="date", nullable=true)
      */
-    private ?DateTime $date;
+    private ?DateTime $date = null;
 
     /**
      * Номер
      * @ORM\Column(type="string", nullable=true)
      */
-    private ?string $number;
+    private ?string $number = null;
 
     /**
      * Серия
      * @ORM\Column(type="string", nullable=true)
      */
-    private ?string $numberPrefix;
+    private ?string $numberPrefix = null;
 
     /**
      * Регистрация
      * @ORM\Column(type="integer", nullable=true)
      */
-    private ?int $registration;
+    private ?int $registration = null;
 
     /**
      * Кем и когда выдан
      * @ORM\Column(type="string", nullable=true)
      */
-    private ?string $issued;
+    private ?string $issued = null;
 
     /**
      * Клиент

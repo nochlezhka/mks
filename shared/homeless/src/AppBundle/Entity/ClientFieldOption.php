@@ -14,7 +14,7 @@ class ClientFieldOption extends BaseEntity
      * Название
      * @ORM\Column(type="string", nullable=true)
      */
-    private ?string $name;
+    private ?string $name = null;
 
     /**
      * Если - true, то при заполнении не может быть выбрано только

@@ -17,26 +17,26 @@ class Certificate extends BaseEntity implements DownloadableInterface
      * Город следования
      * @ORM\Column(type="string", nullable=true)
      */
-    private ?string $city;
+    private ?string $city = null;
 
     /**
      * Номер
      * @ORM\Column(type="string", nullable=true)
      */
-    private ?string $number;
+    private ?string $number = null;
 
     /**
      * Дата начала действия
      * @ORM\Column(type="date", nullable=true)
      */
-    private ?DateTime $dateFrom;
+    private ?DateTime $dateFrom = null;
 
     /**
      * Дата окончания действия
      * @ORM\Column(type="date", nullable=true)
      * @var DateTime|null
      */
-    private ?DateTime $dateTo;
+    private ?DateTime $dateTo = null;
 
     /**
      * Клиент

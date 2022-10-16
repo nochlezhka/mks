@@ -31,7 +31,7 @@ class ClientFormResponse extends BaseEntity
      * @ORM\ManyToOne(targetEntity="ClientForm")
      * @ORM\JoinColumn(nullable=false)
      */
-    private ?ClientForm $form;
+    private ?ClientForm $form = null;
 
     /**
      * Поля заполненной анкеты
@@ -51,7 +51,7 @@ class ClientFormResponse extends BaseEntity
      * @var integer|null
      * @ORM\Column(type="integer", nullable=true, unique=true)
      */
-    private ?int $residentQuestionnaireId;
+    private ?int $residentQuestionnaireId = null;
 
     /**
      * Набор значений полей формы из запроса на создание/обновление заполненной анкеты.

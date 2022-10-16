@@ -21,7 +21,7 @@ class HistoryDownload
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    private int $id;
+    private int $id = 0;
 
     /**
      * @var Client

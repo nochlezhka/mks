@@ -26,7 +26,7 @@ class ClientForm extends BaseEntity
      * @var string
      * @ORM\Column(type="string")
      */
-    private string $name;
+    private string $name = "";
 
     /**
      * Набор полей

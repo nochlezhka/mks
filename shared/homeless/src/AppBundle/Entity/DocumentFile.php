@@ -17,7 +17,7 @@ class DocumentFile extends BaseEntity
      * Комментарий
      * @ORM\Column(type="text", nullable=true)
      */
-    private ?string $comment;
+    private ?string $comment = null;
 
     /**
      * Клиент
@@ -35,7 +35,7 @@ class DocumentFile extends BaseEntity
      * Имя файла
      * @ORM\Column(type="string", nullable=true)
      */
-    private ?string $filename;
+    private ?string $filename = null;
 
     /**
      * Файл

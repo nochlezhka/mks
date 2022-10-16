@@ -23,13 +23,13 @@ class MenuItem extends BaseEntity
      * Название
      * @ORM\Column(type="string", nullable=true)
      */
-    private ?string $name;
+    private ?string $name = null;
 
     /**
      * Код
      * @ORM\Column(type="string", nullable=true, unique=true)
      */
-    private ?string $code;
+    private ?string $code = null;
 
     /**
      * Включено

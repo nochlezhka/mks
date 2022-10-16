@@ -16,19 +16,19 @@ class Meta
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    private int $id;
+    private int $id = 0;
 
     /**
      * @var string
      * @ORM\Column(type="string", length=32, unique=true, name="`key`")
      */
-    private string $key;
+    private string $key = "";
 
     /**
      * @var string
      * @ORM\Column(type="text")
      */
-    private string $value;
+    private string $value = "";
 
     /**
      * @return int

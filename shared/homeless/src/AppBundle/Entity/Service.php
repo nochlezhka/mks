@@ -15,13 +15,13 @@ class Service extends BaseEntity
      * Комментарий
      * @ORM\Column(type="text", nullable=true)
      */
-    private ?string $comment;
+    private ?string $comment = null;
 
     /**
      * Сумма денег
      * @ORM\Column(type="integer", nullable=true)
      */
-    private ?int $amount;
+    private ?int $amount = null;
 
     /**
      * Клиент

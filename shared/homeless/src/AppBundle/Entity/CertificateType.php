@@ -34,7 +34,7 @@ class CertificateType extends BaseEntity
      * Название
      * @ORM\Column(type="string", nullable=true)
      */
-    private ?string $name;
+    private ?string $name = null;
 
     /**
      * Доступен для скачивания
@@ -58,25 +58,25 @@ class CertificateType extends BaseEntity
      * Содержимое верхнего левого блока
      * @ORM\Column(type="text", nullable=true)
      */
-    private ?string $contentHeaderLeft;
+    private ?string $contentHeaderLeft = null;
 
     /**
      * Содержимое верхнего правого блока
      * @ORM\Column(type="text", nullable=true)
      */
-    private ?string $contentHeaderRight;
+    private ?string $contentHeaderRight = null;
 
     /**
      * Содержимое среднего блока
      * @ORM\Column(type="text", nullable=true)
      */
-    private ?string $contentBodyRight;
+    private ?string $contentBodyRight = null;
 
     /**
      * Содержимое нижнего блока
      * @ORM\Column(type="text", nullable=true)
      */
-    private ?string $contentFooter;
+    private ?string $contentFooter = null;
 
     public function __toString()
     {

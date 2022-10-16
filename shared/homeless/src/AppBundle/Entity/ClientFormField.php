@@ -40,7 +40,7 @@ class ClientFormField extends BaseEntity
      * @var string
      * @ORM\Column(type="string")
      */
-    private string $name;
+    private string $name = "";
 
     /**
      * Тип поля (см. константы класса, TYPE_*)
@@ -48,7 +48,7 @@ class ClientFormField extends BaseEntity
      * @var integer
      * @ORM\Column(type="integer")
      */
-    private int $type;
+    private int $type = 0;
 
     /**
      * Список вариантов для выбора в поле типа TYPE_OPTION.
@@ -57,13 +57,13 @@ class ClientFormField extends BaseEntity
      *
      * @ORM\Column(type="text", nullable=true)
      */
-    private ?string $options;
+    private ?string $options = null;
 
     /**
      * @var string[]
      * @ORM\Column(type="simple_array", nullable=true)
      */
-    private ?array $flags;
+    private ?array $flags = null;
 
     /**
      * @return ClientForm

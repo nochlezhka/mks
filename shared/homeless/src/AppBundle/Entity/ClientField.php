@@ -38,13 +38,13 @@ class ClientField extends BaseEntity
      * Название
      * @ORM\Column(type="string", nullable=true)
      */
-    private ?string $name;
+    private ?string $name = null;
 
     /**
      * Символьный код
      * @ORM\Column(type="string", nullable=true)
      */
-    private ?string $code;
+    private ?string $code = null;
 
     /**
      * Включено
@@ -62,7 +62,7 @@ class ClientField extends BaseEntity
      * Тип
      * @ORM\Column(type="integer", nullable=true)
      */
-    private ?int $type;
+    private ?int $type = null;
 
     /**
      * Обязательное
@@ -86,7 +86,7 @@ class ClientField extends BaseEntity
      * Подсказка
      * @ORM\Column(type="string", nullable=true)
      */
-    private ?string $description;
+    private ?string $description = null;
 
     /**
      * Поле

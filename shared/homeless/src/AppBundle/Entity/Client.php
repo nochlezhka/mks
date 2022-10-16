@@ -29,43 +29,43 @@ class Client extends BaseEntity
      * Название файла с фотографией (хранится с помощью VichUploaderBundle)
      * @ORM\Column(type="string", nullable=true)
      */
-    private ?string $photoName;
+    private ?string $photoName = null;
 
     /**
      * Дата рождения
      * @ORM\Column(type="date", nullable=true)
      */
-    private ?DateTime $birthDate;
+    private ?DateTime $birthDate = null;
 
     /**
      * Место рождения
      * @ORM\Column(type="string", nullable=true)
      */
-    private ?string $birthPlace;
+    private ?string $birthPlace = null;
 
     /**
      * Пол
      * @ORM\Column(type="integer", nullable=true)
      */
-    private ?int $gender;
+    private ?int $gender = null;
 
     /**
      * Имя
      * @ORM\Column(type="string", nullable=true)
      */
-    private ?string $firstname;
+    private ?string $firstname = null;
 
     /**
      * Отчество
      * @ORM\Column(type="string", nullable=true)
      */
-    private ?string $middlename;
+    private ?string $middlename = null;
 
     /**
      * Фамилия
      * @ORM\Column(type="string", nullable=true)
      */
-    private ?string $lastname;
+    private ?string $lastname = null;
 
     /**
      * Фамилия

@@ -46,31 +46,31 @@ class ServiceType extends BaseEntity
      * Название
      * @ORM\Column(type="string", nullable=true)
      */
-    private ?string $name;
+    private ?string $name = null;
 
     /**
      * Платная
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private ?bool $pay;
+    private ?bool $pay = null;
 
     /**
      * Документ
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private ?bool $document;
+    private ?bool $document = null;
 
     /**
      * Сумма
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private ?bool $amount;
+    private ?bool $amount = null;
 
     /**
      * Комметарий
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private ?bool $comment;
+    private ?bool $comment = null;
 
     public function __toString()
     {

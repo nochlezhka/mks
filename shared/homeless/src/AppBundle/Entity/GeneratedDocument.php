@@ -21,7 +21,7 @@ class GeneratedDocument extends BaseEntity implements DownloadableInterface
      * Номер
      * @ORM\Column(type="string", nullable=true)
      */
-    private ?string $number;
+    private ?string $number = null;
 
     /**
      * Тип
@@ -45,19 +45,19 @@ class GeneratedDocument extends BaseEntity implements DownloadableInterface
      * Текст
      * @ORM\Column(type="text", nullable=true)
      */
-    private ?string $text;
+    private ?string $text = null;
 
     /**
      * Для кого
      * @ORM\Column(type="text", nullable=true)
      */
-    private ?string $whom;
+    private ?string $whom = null;
 
     /**
      * Подпись
      * @ORM\Column(type="text", nullable=true)
      */
-    private ?string $signature;
+    private ?string $signature = null;
 
     /**
      * {@inheritdoc}

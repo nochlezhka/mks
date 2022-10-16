@@ -99,49 +99,49 @@ class ResidentQuestionnaire
      * Проживает в жилом помещении?
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private ?bool $isDwelling;
+    private ?bool $isDwelling = null;
 
     /**
      * Тип жилья
      * @ORM\Column(type="integer", nullable=true)
      */
-    private ?int $roomTypeId;
+    private ?int $roomTypeId = null;
 
     /**
      * Работает?
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private ?bool $isWork;
+    private ?bool $isWork = null;
 
     /**
      * Официальная работа?
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private ?bool $isWorkOfficial;
+    private ?bool $isWorkOfficial = null;
 
     /**
      * Постоянная работа?
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private ?bool $isWorkConstant;
+    private ?bool $isWorkConstant = null;
 
     /**
      * Сколько сменил работ
      * @ORM\Column(type="integer", nullable=true)
      */
-    private ?int $changedJobsCountId;
+    private ?int $changedJobsCountId = null;
 
     /**
      * Причина перехода на другую работу
      * @ORM\Column(type="text", nullable=true)
      */
-    private ?string $reasonForTransitionIds;
+    private ?string $reasonForTransitionIds = null;
 
     /**
      * Причина обращения
      * @ORM\Column(type="text", nullable=true)
      */
-    private ?string $reasonForPetitionIds;
+    private ?string $reasonForPetitionIds = null;
 
     /**
      * Клиент

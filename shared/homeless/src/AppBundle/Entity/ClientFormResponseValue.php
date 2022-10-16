@@ -66,7 +66,7 @@ class ClientFormResponseValue extends BaseEntity
      * @var string
      * @ORM\Column(type="text", nullable=false)
      */
-    private string $value;
+    private string $value = "";
 
     /**
      * @return ClientFormResponse

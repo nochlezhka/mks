@@ -16,13 +16,13 @@ class Region extends BaseEntity
      * Название
      * @ORM\Column(type="string", nullable=true)
      */
-    private ?string $name;
+    private ?string $name = null;
 
     /**
      * Сокращенное название
      * @ORM\Column(type="string", nullable=true)
      */
-    private ?string $shortName;
+    private ?string $shortName = null;
 
     /**
      * Районы

@@ -14,25 +14,25 @@ class ShelterRoom extends BaseEntity
      * Номер
      * @ORM\Column(type="string", nullable=true)
      */
-    private ?string $number;
+    private ?string $number = null;
 
     /**
      * Максимальное количество жильцов
      * @ORM\Column(type="integer", nullable=true)
      */
-    private ?int $maxOccupants;
+    private ?int $maxOccupants = null;
 
     /**
      * Текущее количество жильцов
      * @ORM\Column(type="integer", nullable=true)
      */
-    private ?int $currentOccupants;
+    private ?int $currentOccupants = null;
 
     /**
      * Комментарий
      * @ORM\Column(type="text", nullable=true)
      */
-    private ?string $comment;
+    private ?string $comment = null;
 
     public function __toString()
     {

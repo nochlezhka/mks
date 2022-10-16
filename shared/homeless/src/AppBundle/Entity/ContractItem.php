@@ -15,19 +15,19 @@ class ContractItem extends BaseEntity
      * Комментарий
      * @ORM\Column(type="text", nullable=true)
      */
-    private ?string $comment;
+    private ?string $comment = null;
 
     /**
      * Дата начала выполнения
      * @ORM\Column(type="date", nullable=true)
      */
-    private ?DateTime $dateStart;
+    private ?DateTime $dateStart = null;
 
     /**
      * Дата выполнения
      * @ORM\Column(type="date", nullable=true)
      */
-    private ?DateTime $date;
+    private ?DateTime $date = null;
 
     /**
      * Договор

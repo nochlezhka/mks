@@ -13,13 +13,13 @@ abstract class BaseEntity implements BaseEntityInterface
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    protected int $id;
+    protected int $id = 0;
 
     /**
      * Sync id
      * @ORM\Column(type="integer", nullable=true)
      */
-    protected ?int $syncId;
+    protected ?int $syncId = null;
 
     /**
      * Сортировка
@@ -31,7 +31,7 @@ abstract class BaseEntity implements BaseEntityInterface
      * Когда создано
      * @ORM\Column(type="datetime", nullable=true)
      */
-    protected ?DateTime $createdAt;
+    protected ?DateTime $createdAt = null;
 
     /**
      * Кем создано
@@ -43,7 +43,7 @@ abstract class BaseEntity implements BaseEntityInterface
      * Когда изменено
      * @ORM\Column(type="datetime", nullable=true)
      */
-    protected ?DateTime $updatedAt;
+    protected ?DateTime $updatedAt = null;
 
     /**
      * Кем изменено

@@ -15,43 +15,43 @@ class ShelterHistory extends BaseEntity
      * Комментарий
      * @ORM\Column(type="text", nullable=true)
      */
-    private ?string $comment;
+    private ?string $comment = null;
 
     /**
      * Дата прививки от дифтерии
      * @ORM\Column(type="date", nullable=true)
      */
-    private ?DateTime $diphtheriaVaccinationDate;
+    private ?DateTime $diphtheriaVaccinationDate = null;
 
     /**
      * Дата флюорографии
      * @ORM\Column(type="date", nullable=true)
      */
-    private ?DateTime $fluorographyDate;
+    private ?DateTime $fluorographyDate = null;
 
     /**
      * Дата прививки от гепатита
      * @ORM\Column(type="date", nullable=true)
      */
-    private ?DateTime $hepatitisVaccinationDate;
+    private ?DateTime $hepatitisVaccinationDate = null;
 
     /**
      * Дата прививки от тифа
      * @ORM\Column(type="date", nullable=true)
      */
-    private ?DateTime $typhusVaccinationDate;
+    private ?DateTime $typhusVaccinationDate = null;
 
     /**
      * Дата заселения
      * @ORM\Column(type="date", nullable=true)
      */
-    private ?DateTime $dateFrom;
+    private ?DateTime $dateFrom = null;
 
     /**
      * Дата выселения
      * @ORM\Column(type="date", nullable=true)
      */
-    private ?DateTime $dateTo;
+    private ?DateTime $dateTo = null;
 
     /**
      * Комната

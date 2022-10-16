@@ -33,13 +33,13 @@ class ClientFieldValue extends BaseEntity
      * Значение поля - текст
      * @ORM\Column(type="text", nullable=true)
      */
-    private ?string $text;
+    private ?string $text = null;
 
     /**
      * Значение поля - дата/время
      * @ORM\Column(type="datetime", nullable=true)
      */
-    private ?DateTime $datetime;
+    private ?DateTime $datetime = null;
 
     /**
      * Вариант значения (если поле не multiple)
@@ -57,7 +57,7 @@ class ClientFieldValue extends BaseEntity
      * Имя файла для файлового поля
      * @ORM\Column(type="string", nullable=true)
      */
-    private ?DateTime $filename;
+    private ?DateTime $filename = null;
 
     /**
      * Значение поля - файл

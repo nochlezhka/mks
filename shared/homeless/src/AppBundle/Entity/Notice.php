@@ -18,13 +18,13 @@ class Notice extends BaseEntity
      * Текст
      * @ORM\Column(type="text", nullable=true)
      */
-    private ?string $text;
+    private ?string $text = "";
 
     /**
      * Дата
      * @ORM\Column(type="date", nullable=true)
      */
-    private ?DateTime $date;
+    private ?DateTime $date = null;
 
     /**
      * Клиент

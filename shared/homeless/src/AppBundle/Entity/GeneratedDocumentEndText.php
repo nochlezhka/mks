@@ -14,19 +14,19 @@ class GeneratedDocumentEndText extends BaseEntity
      * Название
      * @ORM\Column(type="string", nullable=true)
      */
-    private ?string $name;
+    private ?string $name = null;
 
     /**
      * Код
      * @ORM\Column(type="string", nullable=true)
      */
-    private ?string $code;
+    private ?string $code = null;
 
     /**
      * Текст
      * @ORM\Column(type="text", nullable=true)
      */
-    private ?string $text;
+    private ?string $text = null;
 
     public function __toString()
     {

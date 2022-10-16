@@ -19,7 +19,7 @@ class ContractStatus extends BaseEntity
      * Название
      * @ORM\Column(type="string", nullable=true)
      */
-    private ?string $name;
+    private ?string $name = null;
 
     public function __toString()
     {

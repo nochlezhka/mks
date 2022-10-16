@@ -14,7 +14,7 @@ class Note extends BaseEntity
      * Текст
      * @ORM\Column(type="text", nullable=true)
      */
-    private ?string $text;
+    private ?string $text = null;
 
     /**
      * Клиент
