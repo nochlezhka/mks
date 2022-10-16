@@ -5,6 +5,7 @@ namespace AppBundle\Entity;
 use Application\Sonata\UserBundle\Entity\User;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
 
 abstract class BaseEntity implements BaseEntityInterface
 {
@@ -13,7 +14,7 @@ abstract class BaseEntity implements BaseEntityInterface
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    protected int $id = 0;
+    protected ?int $id = null;
 
     /**
      * Sync id
@@ -37,7 +38,7 @@ abstract class BaseEntity implements BaseEntityInterface
      * Кем создано
      * @ORM\ManyToOne(targetEntity="Application\Sonata\UserBundle\Entity\User")
      */
-    protected User $createdBy;
+    protected ?User $createdBy = null;
 
     /**
      * Когда изменено
@@ -56,7 +57,7 @@ abstract class BaseEntity implements BaseEntityInterface
      *
      * @return integer
      */
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }
@@ -128,7 +129,7 @@ abstract class BaseEntity implements BaseEntityInterface
      *
      * @return DateTime|null
      */
-    public function getCreatedAt()
+    public function getCreatedAt(): ?DateTime
     {
         return $this->createdAt;
     }
@@ -174,9 +175,9 @@ abstract class BaseEntity implements BaseEntityInterface
     /**
      * Get createdBy
      *
-     * @return User
+     * @return User|null
      */
-    public function getCreatedBy(): User
+    public function getCreatedBy(): ?User
     {
         return $this->createdBy;
     }

@@ -444,7 +444,7 @@ class ClientAdmin extends BaseAdmin
      * @param ClientField $field
      * @return bool
      */
-    private function canAdditionalFieldRemainEmpty(ClientField $field)
+    private function canAdditionalFieldRemainEmpty(ClientField $field): bool
     {
         if ($this->isAdditionalFieldDependant($field) && $this->getSubject()->getId()) {
             $curVal = $this->getSubject()->getAdditionalFieldValue($field->getCode());
