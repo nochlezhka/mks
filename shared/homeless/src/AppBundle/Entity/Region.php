@@ -28,7 +28,7 @@ class Region extends BaseEntity
      * Районы
      * @ORM\OneToMany(targetEntity="District", mappedBy="region")
      */
-    private ArrayCollection $districts;
+    private Collection $districts;
 
     public function __toString()
     {
