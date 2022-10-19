@@ -20,7 +20,7 @@ class District extends BaseEntity
      * Регион
      * @ORM\ManyToOne(targetEntity="Region", inversedBy="districts")
      */
-    private Region $region;
+    private ?Region $region = null;
 
     public function __toString()
     {
@@ -58,7 +58,7 @@ class District extends BaseEntity
      *
      * @return District
      */
-    public function setRegion(Region $region = null): District
+    public function setRegion(Region $region): District
     {
         $this->region = $region;
 
@@ -70,7 +70,7 @@ class District extends BaseEntity
      *
      * @return Region
      */
-    public function getRegion(): Region
+    public function getRegion(): ?Region
     {
         return $this->region;
     }

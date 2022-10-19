@@ -30,7 +30,7 @@ class Notice extends BaseEntity
      * Клиент
      * @ORM\ManyToOne(targetEntity="Client")
      */
-    private Client $client;
+    private ?Client $client = null;
 
     /**
      * Кем просмотрено
@@ -124,7 +124,7 @@ class Notice extends BaseEntity
      *
      * @return Notice
      */
-    public function setClient(Client $client = null): Notice
+    public function setClient(Client $client): Notice
     {
         $this->client = $client;
 
@@ -136,7 +136,7 @@ class Notice extends BaseEntity
      *
      * @return Client
      */
-    public function getClient(): Client
+    public function getClient(): ?Client
     {
         return $this->client;
     }

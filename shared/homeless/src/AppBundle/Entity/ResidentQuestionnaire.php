@@ -147,7 +147,7 @@ class ResidentQuestionnaire
      * Клиент
      * @ORM\ManyToOne(targetEntity="Client", inversedBy="documents")
      */
-    private Client $client;
+    private ?Client $client = null;
 
     /**
      * @return mixed
@@ -164,7 +164,7 @@ class ResidentQuestionnaire
      *
      * @return self
      */
-    public function setClient(Client $client = null): ResidentQuestionnaire
+    public function setClient(Client $client): ResidentQuestionnaire
     {
         $this->client = $client;
 
@@ -176,7 +176,7 @@ class ResidentQuestionnaire
      *
      * @return Client
      */
-    public function getClient(): Client
+    public function getClient(): ?Client
     {
         return $this->client;
     }

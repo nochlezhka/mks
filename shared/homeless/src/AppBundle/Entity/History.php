@@ -14,7 +14,7 @@ class History extends BaseEntity
      * Клиент
      * @ORM\ManyToOne(targetEntity="Client")
      */
-    private Client $client;
+    private ?Client $client = null;
 
     /**
      * Set client
@@ -35,7 +35,7 @@ class History extends BaseEntity
      *
      * @return Client
      */
-    public function getClient(): Client
+    public function getClient(): ?Client
     {
         return $this->client;
     }

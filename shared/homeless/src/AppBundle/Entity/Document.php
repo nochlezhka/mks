@@ -61,13 +61,13 @@ class Document extends BaseEntity
      * Клиент
      * @ORM\ManyToOne(targetEntity="Client", inversedBy="documents")
      */
-    private Client $client;
+    private ?Client $client = null;
 
     /**
      * Тип
      * @ORM\ManyToOne(targetEntity="DocumentType")
      */
-    private DocumentType $type;
+    private ?DocumentType $type = null;
 
     public function __toString()
     {
@@ -269,7 +269,7 @@ class Document extends BaseEntity
      *
      * @return Document
      */
-    public function setClient(Client $client = null): Document
+    public function setClient(Client $client): Document
     {
         $this->client = $client;
 
@@ -281,7 +281,7 @@ class Document extends BaseEntity
      *
      * @return Client
      */
-    public function getClient(): Client
+    public function getClient(): ?Client
     {
         return $this->client;
     }
@@ -293,7 +293,7 @@ class Document extends BaseEntity
      *
      * @return Document
      */
-    public function setType(DocumentType $type = null): Document
+    public function setType(DocumentType $type): Document
     {
         $this->type = $type;
 
@@ -305,7 +305,7 @@ class Document extends BaseEntity
      *
      * @return DocumentType
      */
-    public function getType(): DocumentType
+    public function getType(): ?DocumentType
     {
         return $this->type;
     }

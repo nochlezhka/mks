@@ -38,7 +38,7 @@ class ClientFormResponseValue extends BaseEntity
      * @ORM\ManyToOne(targetEntity="ClientFormResponse", inversedBy="values")
      * @ORM\JoinColumn(nullable=false)
      */
-    private ClientFormResponse $clientFormResponse;
+    private ?ClientFormResponse $clientFormResponse = null;
 
     /**
      * Поле формы
@@ -47,7 +47,7 @@ class ClientFormResponseValue extends BaseEntity
      * @ORM\ManyToOne(targetEntity="ClientFormField")
      * @ORM\JoinColumn(nullable=false)
      */
-    private ClientFormField $clientFormField;
+    private ?ClientFormField $clientFormField = null;
 
     /**
      * Клиент.
@@ -58,7 +58,7 @@ class ClientFormResponseValue extends BaseEntity
      * @ORM\ManyToOne(targetEntity="Client")
      * @ORM\JoinColumn(nullable=false)
      */
-    private Client $client;
+    private ?Client $client = null;
 
     /**
      * Значение поля
@@ -71,7 +71,7 @@ class ClientFormResponseValue extends BaseEntity
     /**
      * @return ClientFormResponse
      */
-    public function getClientFormResponse(): ClientFormResponse
+    public function getClientFormResponse(): ?ClientFormResponse
     {
         return $this->clientFormResponse;
     }
@@ -87,7 +87,7 @@ class ClientFormResponseValue extends BaseEntity
     /**
      * @return ClientFormField
      */
-    public function getClientFormField(): ClientFormField
+    public function getClientFormField(): ?ClientFormField
     {
         return $this->clientFormField;
     }
@@ -103,7 +103,7 @@ class ClientFormResponseValue extends BaseEntity
     /**
      * @return Client
      */
-    public function getClient(): Client
+    public function getClient(): ?Client
     {
         return $this->client;
     }

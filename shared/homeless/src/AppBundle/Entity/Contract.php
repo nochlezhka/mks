@@ -45,19 +45,19 @@ class Contract extends BaseEntity implements DownloadableInterface
      * Клиент
      * @ORM\ManyToOne(targetEntity="Client", inversedBy="contracts")
      */
-    private Client $client;
+    private ?Client $client = null;
 
     /**
      * Статус
      * @ORM\ManyToOne(targetEntity="ContractStatus")
      */
-    private ContractStatus $status;
+    private ?ContractStatus $status = null;
 
     /**
      * Документ
      * @ORM\ManyToOne(targetEntity="Document")
      */
-    private Document $document;
+    private ?Document $document = null;
 
     /**
      * Пункты
@@ -226,7 +226,7 @@ class Contract extends BaseEntity implements DownloadableInterface
      *
      * @return Contract
      */
-    public function setClient(Client $client = null): Contract
+    public function setClient(Client $client): Contract
     {
         $this->client = $client;
 
@@ -238,7 +238,7 @@ class Contract extends BaseEntity implements DownloadableInterface
      *
      * @return Client
      */
-    public function getClient(): Client
+    public function getClient(): ?Client
     {
         return $this->client;
     }
@@ -250,7 +250,7 @@ class Contract extends BaseEntity implements DownloadableInterface
      *
      * @return Contract
      */
-    public function setStatus(ContractStatus $status = null): Contract
+    public function setStatus(ContractStatus $status): Contract
     {
         $this->status = $status;
 
@@ -262,7 +262,7 @@ class Contract extends BaseEntity implements DownloadableInterface
      *
      * @return ContractStatus
      */
-    public function getStatus(): ContractStatus
+    public function getStatus(): ?ContractStatus
     {
         return $this->status;
     }
@@ -274,7 +274,7 @@ class Contract extends BaseEntity implements DownloadableInterface
      *
      * @return Contract
      */
-    public function setDocument(Document $document = null): Contract
+    public function setDocument(Document $document): Contract
     {
         $this->document = $document;
 
@@ -286,7 +286,7 @@ class Contract extends BaseEntity implements DownloadableInterface
      *
      * @return Document
      */
-    public function getDocument(): Document
+    public function getDocument(): ?Document
     {
         return $this->document;
     }

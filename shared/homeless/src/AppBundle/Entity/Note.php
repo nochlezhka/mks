@@ -20,7 +20,7 @@ class Note extends BaseEntity
      * Клиент
      * @ORM\ManyToOne(targetEntity="Client", inversedBy="notes")
      */
-    private Client $client;
+    private ?Client $client = null;
 
     /**
      * Важное
@@ -88,7 +88,7 @@ class Note extends BaseEntity
      *
      * @return Note
      */
-    public function setClient(Client $client = null): Note
+    public function setClient(Client $client): Note
     {
         $this->client = $client;
 
@@ -100,7 +100,7 @@ class Note extends BaseEntity
      *
      * @return Client
      */
-    public function getClient(): Client
+    public function getClient(): ?Client
     {
         return $this->client;
     }

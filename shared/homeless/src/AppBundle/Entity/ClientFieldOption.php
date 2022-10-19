@@ -27,7 +27,7 @@ class ClientFieldOption extends BaseEntity
      * Поле
      * @ORM\ManyToOne(targetEntity="ClientField", inversedBy="options")
      */
-    private ClientField $field;
+    private ?ClientField $field = null;
 
     public function __toString()
     {
@@ -89,7 +89,7 @@ class ClientFieldOption extends BaseEntity
      *
      * @return ClientFieldOption
      */
-    public function setField(ClientField $field = null): ClientFieldOption
+    public function setField(ClientField $field): ClientFieldOption
     {
         $this->field = $field;
 
@@ -101,7 +101,7 @@ class ClientFieldOption extends BaseEntity
      *
      * @return ClientField
      */
-    public function getField(): ClientField
+    public function getField(): ?ClientField
     {
         return $this->field;
     }

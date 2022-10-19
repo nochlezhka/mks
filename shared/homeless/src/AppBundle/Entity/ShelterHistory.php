@@ -57,25 +57,25 @@ class ShelterHistory extends BaseEntity
      * Комната
      * @ORM\ManyToOne(targetEntity="ShelterRoom")
      */
-    private ShelterRoom $room;
+    private ?ShelterRoom $room = null;
 
     /**
      * Клиент
      * @ORM\ManyToOne(targetEntity="Client", inversedBy="shelterHistories")
      */
-    private Client $client;
+    private ?Client $client = null;
 
     /**
      * Статус
      * @ORM\ManyToOne(targetEntity="ShelterStatus")
      */
-    private ShelterStatus $status;
+    private ?ShelterStatus $status = null;
 
     /**
      * Договор
      * @ORM\ManyToOne(targetEntity="Contract")
      */
-    private Contract $contract;
+    private ?Contract $contract = null;
 
     public function __toString()
     {
@@ -258,7 +258,7 @@ class ShelterHistory extends BaseEntity
      *
      * @return ShelterHistory
      */
-    public function setRoom(ShelterRoom $room = null): ShelterHistory
+    public function setRoom(ShelterRoom $room): ShelterHistory
     {
         $this->room = $room;
 
@@ -270,7 +270,7 @@ class ShelterHistory extends BaseEntity
      *
      * @return ShelterRoom
      */
-    public function getRoom(): ShelterRoom
+    public function getRoom(): ?ShelterRoom
     {
         return $this->room;
     }
@@ -282,7 +282,7 @@ class ShelterHistory extends BaseEntity
      *
      * @return ShelterHistory
      */
-    public function setClient(Client $client = null): ShelterHistory
+    public function setClient(Client $client): ShelterHistory
     {
         $this->client = $client;
 
@@ -294,7 +294,7 @@ class ShelterHistory extends BaseEntity
      *
      * @return Client
      */
-    public function getClient(): Client
+    public function getClient(): ?Client
     {
         return $this->client;
     }
@@ -306,7 +306,7 @@ class ShelterHistory extends BaseEntity
      *
      * @return ShelterHistory
      */
-    public function setStatus(ShelterStatus $status = null): ShelterHistory
+    public function setStatus(ShelterStatus $status): ShelterHistory
     {
         $this->status = $status;
 
@@ -318,7 +318,7 @@ class ShelterHistory extends BaseEntity
      *
      * @return ShelterStatus
      */
-    public function getStatus(): ShelterStatus
+    public function getStatus(): ?ShelterStatus
     {
         return $this->status;
     }
@@ -330,7 +330,7 @@ class ShelterHistory extends BaseEntity
      *
      * @return ShelterHistory
      */
-    public function setContract(Contract $contract = null): ShelterHistory
+    public function setContract(Contract $contract): ShelterHistory
     {
         $this->contract = $contract;
 
@@ -342,7 +342,7 @@ class ShelterHistory extends BaseEntity
      *
      * @return Contract
      */
-    public function getContract(): Contract
+    public function getContract(): ?Contract
     {
         return $this->contract;
     }

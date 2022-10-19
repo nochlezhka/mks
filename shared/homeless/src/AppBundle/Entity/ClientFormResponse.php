@@ -22,7 +22,7 @@ class ClientFormResponse extends BaseEntity
      * @ORM\ManyToOne(targetEntity="Client")
      * @ORM\JoinColumn(nullable=false)
      */
-    private Client $client;
+    private ?Client $client = null;
 
     /**
      * Форма заполненной анкеты
@@ -76,7 +76,7 @@ class ClientFormResponse extends BaseEntity
     /**
      * @return Client
      */
-    public function getClient(): Client
+    public function getClient(): ?Client
     {
         return $this->client;
     }

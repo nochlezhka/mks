@@ -42,19 +42,19 @@ class Certificate extends BaseEntity implements DownloadableInterface
      * Клиент
      * @ORM\ManyToOne(targetEntity="Client", inversedBy="certificates")
      */
-    private Client $client;
+    private ?Client $client = null;
 
     /**
      * Тип
      * @ORM\ManyToOne(targetEntity="CertificateType")
      */
-    private CertificateType $type;
+    private ?CertificateType $type = null;
 
     /**
      * Документ
      * @ORM\ManyToOne(targetEntity="Document")
      */
-    private Document $document;
+    private ?Document $document = null;
 
     /**
      * {@inheritdoc}
@@ -187,7 +187,7 @@ class Certificate extends BaseEntity implements DownloadableInterface
      *
      * @return Certificate
      */
-    public function setClient(Client $client = null): Certificate
+    public function setClient(Client $client): Certificate
     {
         $this->client = $client;
 
@@ -199,7 +199,7 @@ class Certificate extends BaseEntity implements DownloadableInterface
      *
      * @return Client
      */
-    public function getClient(): Client
+    public function getClient(): ?Client
     {
         return $this->client;
     }
@@ -211,7 +211,7 @@ class Certificate extends BaseEntity implements DownloadableInterface
      *
      * @return Certificate
      */
-    public function setType(CertificateType $type = null): Certificate
+    public function setType(CertificateType $type): Certificate
     {
         $this->type = $type;
 
@@ -223,7 +223,7 @@ class Certificate extends BaseEntity implements DownloadableInterface
      *
      * @return CertificateType
      */
-    public function getType(): CertificateType
+    public function getType(): ?CertificateType
     {
         return $this->type;
     }
@@ -235,7 +235,7 @@ class Certificate extends BaseEntity implements DownloadableInterface
      *
      * @return Certificate
      */
-    public function setDocument(Document $document = null): Certificate
+    public function setDocument(Document $document): Certificate
     {
         $this->document = $document;
 
@@ -247,7 +247,7 @@ class Certificate extends BaseEntity implements DownloadableInterface
      *
      * @return Document
      */
-    public function getDocument(): Document
+    public function getDocument(): ?Document
     {
         return $this->document;
     }

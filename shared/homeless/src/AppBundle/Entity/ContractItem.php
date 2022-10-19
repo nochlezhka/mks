@@ -33,13 +33,13 @@ class ContractItem extends BaseEntity
      * Договор
      * @ORM\ManyToOne(targetEntity="Contract", inversedBy="items")
      */
-    private Contract $contract;
+    private ?Contract $contract = null;
 
     /**
      * Тип
      * @ORM\ManyToOne(targetEntity="ContractItemType")
      */
-    private ContractItemType $type;
+    private ?ContractItemType $type;
 
     public function __toString()
     {
@@ -119,7 +119,7 @@ class ContractItem extends BaseEntity
      *
      * @return Contract
      */
-    public function getContract(): Contract
+    public function getContract(): ?Contract
     {
         return $this->contract;
     }
@@ -143,7 +143,7 @@ class ContractItem extends BaseEntity
      *
      * @return ContractItemType
      */
-    public function getType(): ContractItemType
+    public function getType(): ?ContractItemType
     {
         return $this->type;
     }

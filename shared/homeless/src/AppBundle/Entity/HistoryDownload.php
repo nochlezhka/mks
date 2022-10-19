@@ -31,7 +31,7 @@ class HistoryDownload
      *   @ORM\JoinColumn(name="client_id", referencedColumnName="id")
      * })
      */
-    private Client $client;
+    private ?Client $client = null;
 
     /**
      * @var User
@@ -41,7 +41,7 @@ class HistoryDownload
      *   @ORM\JoinColumn(name="user_id", referencedColumnName="id")
      * })
      */
-    private User $user;
+    private ?User $user = null;
 
     /**
      * @var DateTime
@@ -57,7 +57,7 @@ class HistoryDownload
      *   @ORM\JoinColumn(name="certificate_type_id", referencedColumnName="id")
      * })
      */
-    private CertificateType $certificateType;
+    private ?CertificateType $certificateType = null;
 
     /**
      * Get id
@@ -76,7 +76,7 @@ class HistoryDownload
      *
      * @return HistoryDownload
      */
-    public function setClient(Client $client = null): HistoryDownload
+    public function setClient(Client $client): HistoryDownload
     {
         $this->client = $client;
 
@@ -88,7 +88,7 @@ class HistoryDownload
      *
      * @return Client
      */
-    public function getClient(): Client
+    public function getClient(): ?Client
     {
         return $this->client;
     }
@@ -100,7 +100,7 @@ class HistoryDownload
      *
      * @return HistoryDownload
      */
-    public function setUser(User $user = null): HistoryDownload
+    public function setUser(User $user): HistoryDownload
     {
         $this->user = $user;
 
@@ -112,7 +112,7 @@ class HistoryDownload
      *
      * @return User
      */
-    public function getUser(): User
+    public function getUser(): ?User
     {
         return $this->user;
     }
@@ -160,7 +160,7 @@ class HistoryDownload
      *
      * @return CertificateType
      */
-    public function getCertificateType(): CertificateType
+    public function getCertificateType(): ?CertificateType
     {
         return $this->certificateType;
     }

@@ -21,13 +21,13 @@ class ClientFieldValue extends BaseEntity
      * Поле
      * @ORM\ManyToOne(targetEntity="ClientField")
      */
-    private ClientField $field;
+    private ?ClientField $field = null;
 
     /**
      * Клиент
      * @ORM\ManyToOne(targetEntity="Client", inversedBy="fieldValues")
      */
-    private Client $client;
+    private ?Client $client = null;
 
     /**
      * Значение поля - текст
@@ -45,7 +45,7 @@ class ClientFieldValue extends BaseEntity
      * Вариант значения (если поле не multiple)
      * @ORM\ManyToOne(targetEntity="ClientFieldOption")
      */
-    private ClientFieldOption $option;
+    private ?ClientFieldOption $option = null;
 
     /**
      * Варианты значений (если поле multiple)
@@ -223,7 +223,7 @@ class ClientFieldValue extends BaseEntity
      *
      * @return ClientFieldValue
      */
-    public function setField(ClientField $field = null): ClientFieldValue
+    public function setField(ClientField $field): ClientFieldValue
     {
         $this->field = $field;
 
@@ -235,7 +235,7 @@ class ClientFieldValue extends BaseEntity
      *
      * @return ClientField
      */
-    public function getField(): ClientField
+    public function getField(): ?ClientField
     {
         return $this->field;
     }
@@ -247,7 +247,7 @@ class ClientFieldValue extends BaseEntity
      *
      * @return ClientFieldValue
      */
-    public function setClient(Client $client = null): ClientFieldValue
+    public function setClient(Client $client): ClientFieldValue
     {
         $this->client = $client;
 
@@ -259,7 +259,7 @@ class ClientFieldValue extends BaseEntity
      *
      * @return Client
      */
-    public function getClient(): Client
+    public function getClient(): ?Client
     {
         return $this->client;
     }
@@ -271,7 +271,7 @@ class ClientFieldValue extends BaseEntity
      *
      * @return ClientFieldValue
      */
-    public function setOption(ClientFieldOption $option = null): ClientFieldValue
+    public function setOption(ClientFieldOption $option): ClientFieldValue
     {
         $this->option = $option;
 
@@ -283,7 +283,7 @@ class ClientFieldValue extends BaseEntity
      *
      * @return ClientFieldOption
      */
-    public function getOption(): ClientFieldOption
+    public function getOption(): ?ClientFieldOption
     {
         return $this->option;
     }

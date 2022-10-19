@@ -15,7 +15,7 @@ class ViewedClient extends BaseEntity
      * Клиент
      * @ORM\ManyToOne(targetEntity="Client", inversedBy="clientViews")
      */
-    private Client $client;
+    private ?Client $client = null;
 
     /**
      * Кем создано
@@ -31,7 +31,7 @@ class ViewedClient extends BaseEntity
      *
      * @return ViewedClient
      */
-    public function setClient(Client $client = null): ViewedClient
+    public function setClient(Client $client): ViewedClient
     {
         $this->client = $client;
 
@@ -43,7 +43,7 @@ class ViewedClient extends BaseEntity
      *
      * @return Client
      */
-    public function getClient(): Client
+    public function getClient(): ?Client
     {
         return $this->client;
     }

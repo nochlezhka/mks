@@ -27,13 +27,13 @@ class Service extends BaseEntity
      * Клиент
      * @ORM\ManyToOne(targetEntity="Client", inversedBy="services")
      */
-    private Client $client;
+    private ?Client $client = null;
 
     /**
      * Тип
      * @ORM\ManyToOne(targetEntity="ServiceType")
      */
-    private ServiceType $type;
+    private ?ServiceType $type = null;
 
     public function __toString()
     {
@@ -99,7 +99,7 @@ class Service extends BaseEntity
      *
      * @return Service
      */
-    public function setClient(Client $client = null): Service
+    public function setClient(Client $client): Service
     {
         $this->client = $client;
 
@@ -111,7 +111,7 @@ class Service extends BaseEntity
      *
      * @return Client
      */
-    public function getClient(): Client
+    public function getClient(): ?Client
     {
         return $this->client;
     }
@@ -123,7 +123,7 @@ class Service extends BaseEntity
      *
      * @return Service
      */
-    public function setType(ServiceType $type = null): Service
+    public function setType(ServiceType $type): Service
     {
         $this->type = $type;
 
@@ -135,7 +135,7 @@ class Service extends BaseEntity
      *
      * @return ServiceType
      */
-    public function getType(): ServiceType
+    public function getType(): ?ServiceType
     {
         return $this->type;
     }

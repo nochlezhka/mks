@@ -50,7 +50,7 @@ abstract class BaseEntity implements BaseEntityInterface
      * Кем изменено
      * @ORM\ManyToOne(targetEntity="Application\Sonata\UserBundle\Entity\User")
      */
-    protected User $updatedBy;
+    protected ?User $updatedBy = null;
 
     /**
      * Get id
@@ -201,7 +201,7 @@ abstract class BaseEntity implements BaseEntityInterface
      *
      * @return User
      */
-    public function getUpdatedBy(): User
+    public function getUpdatedBy(): ?User
     {
         return $this->updatedBy;
     }

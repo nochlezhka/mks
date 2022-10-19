@@ -32,7 +32,7 @@ class ClientFormField extends BaseEntity
      * @ORM\ManyToOne(targetEntity="ClientForm", inversedBy="fields")
      * @ORM\JoinColumn(nullable=false)
      */
-    private ClientForm $form;
+    private ?ClientForm $form = null;
 
     /**
      * Название поля
@@ -68,7 +68,7 @@ class ClientFormField extends BaseEntity
     /**
      * @return ClientForm
      */
-    public function getForm(): ClientForm
+    public function getForm(): ?ClientForm
     {
         return $this->form;
     }

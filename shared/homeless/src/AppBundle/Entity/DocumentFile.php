@@ -23,13 +23,13 @@ class DocumentFile extends BaseEntity
      * Клиент
      * @ORM\ManyToOne(targetEntity="Client", inversedBy="documentFiles")
      */
-    private Client $client;
+    private ?Client $client = null;
 
     /**
      * Тип
      * @ORM\ManyToOne(targetEntity="DocumentType")
      */
-    private DocumentType $type;
+    private ?DocumentType $type = null;
 
     /**
      * Имя файла
@@ -47,7 +47,7 @@ class DocumentFile extends BaseEntity
     {
         $type = $this->getType();
 
-        return $type->getName();
+        return $type ? $type->getName() : "UNKNOWN_TYPE";
     }
 
     public function getFile()
@@ -117,11 +117,11 @@ class DocumentFile extends BaseEntity
     /**
      * Set client
      *
-     * @param Client|null $client
+     * @param Client $client
      *
      * @return DocumentFile
      */
-    public function setClient(Client $client = null): DocumentFile
+    public function setClient(Client $client): DocumentFile
     {
         $this->client = $client;
 
@@ -133,7 +133,7 @@ class DocumentFile extends BaseEntity
      *
      * @return Client
      */
-    public function getClient(): Client
+    public function getClient(): ?Client
     {
         return $this->client;
     }
@@ -142,11 +142,11 @@ class DocumentFile extends BaseEntity
     /**
      * Set type
      *
-     * @param DocumentType|null $type
+     * @param DocumentType $type
      *
      * @return DocumentFile
      */
-    public function setType(DocumentType $type = null): DocumentFile
+    public function setType(DocumentType $type): DocumentFile
     {
         $this->type = $type;
 
@@ -158,7 +158,7 @@ class DocumentFile extends BaseEntity
      *
      * @return DocumentType
      */
-    public function getType(): DocumentType
+    public function getType(): ?DocumentType
     {
         return $this->type;
     }

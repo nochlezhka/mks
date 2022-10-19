@@ -78,14 +78,14 @@ class Client extends BaseEntity
      * @ORM\ManyToOne(targetEntity="District")
      * @ORM\JoinColumn(name="last_residence_district_id", referencedColumnName="id")
      */
-    private District $lastResidenceDistrict;
+    private ?District $lastResidenceDistrict = null;
 
     /**
      * Место последней регистрации
      * @ORM\ManyToOne(targetEntity="District")
      * @ORM\JoinColumn(name="last_registration_district_id", referencedColumnName="id")
      */
-    private District $lastRegistrationDistrict;
+    private ?District $lastRegistrationDistrict = null;
 
     /**
      * Значения дополнительных полей
@@ -590,7 +590,7 @@ class Client extends BaseEntity
      *
      * @return Client
      */
-    public function setLastResidenceDistrict(District $lastResidenceDistrict = null): Client
+    public function setLastResidenceDistrict(District $lastResidenceDistrict): Client
     {
         $this->lastResidenceDistrict = $lastResidenceDistrict;
 
@@ -602,7 +602,7 @@ class Client extends BaseEntity
      *
      * @return District
      */
-    public function getLastResidenceDistrict(): District
+    public function getLastResidenceDistrict(): ?District
     {
         return $this->lastResidenceDistrict;
     }
@@ -614,7 +614,7 @@ class Client extends BaseEntity
      *
      * @return Client
      */
-    public function setLastRegistrationDistrict(District $lastRegistrationDistrict = null): Client
+    public function setLastRegistrationDistrict(District $lastRegistrationDistrict): Client
     {
         $this->lastRegistrationDistrict = $lastRegistrationDistrict;
 
@@ -626,7 +626,7 @@ class Client extends BaseEntity
      *
      * @return District
      */
-    public function getLastRegistrationDistrict(): District
+    public function getLastRegistrationDistrict(): ?District
     {
         return $this->lastRegistrationDistrict;
     }
