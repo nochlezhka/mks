@@ -57,10 +57,10 @@ class User extends BaseUser implements BaseEntityInterface
      */
     private $positionText;
 
-    private ?int $syncId;
-    private ?int $sort;
-    private ?User $createdBy;
-    private ?User $updatedBy;
+    private ?int $syncId = null;
+    private ?int $sort = null;
+    private ?User $createdBy = null;
+    private ?User $updatedBy = null;
 
     public function __construct()
     {
