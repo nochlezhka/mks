@@ -84,7 +84,9 @@
     {% endspaceless %}
 {% endblock %}
 
-{% block side_bar_after_nav %}{% endblock %}
+{% block side_bar_after_nav %}
+<p class="text-center small" style="border-top: 1px solid #444444; padding-top: 10px"><a href="https://github.com/nochlezhka/mks" rel="noreferrer" target="_blank">Версия приложения: {{ app.request.server.get('APP_VER') }}</a></p>
+{% endblock %}
 
 {% block side_bar_nav %}
     {{ block('side_bar_nav', 'SonataAdminBundle::standard_layout.html.twig') }}
