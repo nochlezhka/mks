@@ -3,7 +3,7 @@ name: pipeline
 on:
   push:
     branches:
-      - 'update-versions'
+      - 'master'
       - 'release/**'
 
 env:
@@ -39,7 +39,7 @@ jobs:
         id: set_version
         uses: kvendingoldo/semver-action@v1.10
         with:
-          primary_branch: update-versions
+          primary_branch: master
       -
         name: Prepare files for docker build
         run: |
