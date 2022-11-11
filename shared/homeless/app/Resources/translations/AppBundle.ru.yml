@@ -71,6 +71,9 @@ breadcrumb:
       link_client_form_field_create: Создание поля формы
       link_resident_form_response_list: Анкеты проживающего
       link_resident_form_response_create: Заполнение анкеты проживающего
+      link_shelter_room_list: Список комнат
+      link_shelter_room_delete: Удалить комнату
+      link_shelter_room_create: Добавить комнату
 
 ClientFormField: Поле формы
 
