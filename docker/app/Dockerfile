@@ -25,13 +25,13 @@ RUN apk update \
  && apk upgrade \
  && apk add --no-cache \
       nodejs=~16.17 \
-      yarn=1.22.19-r0 \
+      yarn=~1.22.19 \
       curl=~7.83 \
-      icu-dev=71.1-r2	 \
-      libzip-dev=1.8.0-r1 \
-      libreoffice=7.2.7.2-r1 \
-      libpng-dev=1.6.37-r1 \
-      nginx=1.22.0-r1 \
+      icu-dev=~71.1 \
+      libzip-dev=~1.8.0 \
+      libreoffice=~7.2.7.2 \
+      libpng-dev=~1.6.37 \
+      nginx=~1.22.1 \
  && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer \
  && composer self-update 2.2.9 \
  && docker-php-ext-install gd zip bcmath intl pdo_mysql \
