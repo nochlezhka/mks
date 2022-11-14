@@ -219,7 +219,7 @@ class ReportService
             LEFT JOIN contract_item_type cit2 ON ci2.type_id = cit2.id
             JOIN contract_status cs ON con.status_id = cs.id
             WHERE h.date_to >= :dateFrom AND h.date_to <= :dateTo ' . ($userId ? 'AND u.id = :userId' : '') . '
-            GROUP BY con.id
+            GROUP BY con.id, h.id
             ORDER BY h.date_to DESC');
         $parameters = [
             ':dateFrom' => $dateFrom ?: '1960-01-01',
