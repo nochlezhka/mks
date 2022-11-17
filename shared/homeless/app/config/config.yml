@@ -59,6 +59,7 @@ twig:
         sanitation_name: "%env(SANITATION_NAME)%"
         sanitation_address: "%env(SANITATION_ADDRESS)%"
         sanitation_time: "%env(SANITATION_TIME)%"
+        logo_path: "%env(LOGO_PATH)%"
 
 sonata_formatter:
     default_formatter: richhtml
