@@ -65,7 +65,7 @@ class RenderService
             'certificate' => $certificate,
             'rootDir' => $this->kernel->getRootDir(),
             'webDir' => $this->kernel->getRootDir() . '/../web',
-            'logo' => 'data:image/png;base64,' . base64_encode(file_get_contents(dirname($this->kernel->getRootDir()) . "/web/render/logo_big.png")),
+            'logo' => 'data:image/png;base64,' . base64_encode(file_get_contents(dirname($this->kernel->getRootDir()) . "/web/" . getenv('BIG_LOGO_PATH'))),
             'image' => $image,
             'height' => $height,
             'width' => $width,
@@ -85,7 +85,7 @@ class RenderService
             'document' => $document,
             'rootDir' => $this->kernel->getRootDir(),
             'webDir' => $this->kernel->getRootDir() . '/../web',
-            'logo' => 'data:image/png;base64,' . base64_encode(file_get_contents(dirname($this->kernel->getRootDir()) . "/web/render/logo_big.png")),
+            'logo' => 'data:image/png;base64,' . base64_encode(file_get_contents(dirname($this->kernel->getRootDir()) . "/web/" . getenv('BIG_LOGO_PATH'))),
         ]);
     }
 
