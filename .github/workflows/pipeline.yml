@@ -5,6 +5,12 @@ on:
     branches:
       - 'master'
       - 'release/**'
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - ready_for_review
+      - synchronize
 
 env:
   registry_name: nochlezhka
@@ -13,8 +19,6 @@ env:
 jobs:
   build:
     runs-on: ubuntu-20.04
-    outputs:
-      version: ${{ steps.set_version.outputs.safe_version }}
     steps:
       -
         uses: actions/checkout@v3
@@ -36,10 +40,16 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       -
         name: Set application version
+        if: github.event_name == 'push'
         id: set_version
         uses: kvendingoldo/semver-action@v1.10
         with:
           primary_branch: master
+      -
+        name: Set application version (PR)
+        if: github.event_name == 'pull_request'
+        run: |
+          echo "VERSION_PR=$(date '+%Y%m%d-%H%M%S')-$(echo GITHUB_SHA | rev | cut -c5- | rev)" >> $GITHUB_ENV
       -
         name: Prepare files for docker build
         run: |
@@ -53,7 +63,12 @@ jobs:
           push: true
           tags: |
             ${{ env.registry_name }}/${{ env.app_image_name }}:latest
-            ${{ env.registry_name }}/${{ env.app_image_name }}:${{ steps.set_version.outputs.safe_version }}
+            ${{ env.registry_name }}/${{ env.app_image_name }}:${{ steps.set_version.outputs.safe_version }}${{ env.VERSION_PR }}
       -
         name: Print image version
         run: echo ${{ steps.set_version.outputs.safe_version }}
+      -
+        name: Output image version
+        run: |
+          echo '### Image version: ' >> $GITHUB_STEP_SUMMARY
+          echo '${{ steps.set_version.outputs.safe_version }}${{ env.VERSION_PR }}' >> $GITHUB_STEP_SUMMARY
