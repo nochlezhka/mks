@@ -1,4 +1,4 @@
-name: pipeline
+name: "CI/CD Pipeline"
 
 on:
   push:
@@ -12,6 +12,9 @@ on:
       - ready_for_review
       - synchronize
 
+concurrency:
+  group: cicd-pipeline-${{ github.workflow }}-${{ github.event.pull_request.number || github.event.pull_request.head.ref || github.ref }}
+
 env:
   registry_name: nochlezhka
   app_image_name: mks-app
@@ -22,11 +25,18 @@ jobs:
     steps:
       -
         uses: actions/checkout@v3
+        if: github.event_name == 'pull_request'
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+      -
+        uses: actions/checkout@v3
+        if: github.event_name == 'push'
         with:
           fetch-depth: 0
       -
         name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
+        uses: docker/setup-qemu-action@v2
         with:
           platforms: all
       -
@@ -62,7 +72,6 @@ jobs:
           file: ./docker/app/Dockerfile
           push: true
           tags: |
-            ${{ env.registry_name }}/${{ env.app_image_name }}:latest
             ${{ env.registry_name }}/${{ env.app_image_name }}:${{ steps.set_version.outputs.safe_version }}${{ env.VERSION_PR }}
       -
         name: Print image version
