@@ -49,7 +49,7 @@ jobs:
         name: Set application version (PR)
         if: github.event_name == 'pull_request'
         run: |
-          echo "VERSION_PR=$(date '+%Y%m%d-%H%M%S')-$(echo GITHUB_SHA | rev | cut -c5- | rev)" >> $GITHUB_ENV
+          echo "VERSION_PR=$(date '+%Y%m%d-%H%M%S')-$(echo $GITHUB_SHA | rev | cut -c5- | rev)" >> $GITHUB_ENV
       -
         name: Prepare files for docker build
         run: |
