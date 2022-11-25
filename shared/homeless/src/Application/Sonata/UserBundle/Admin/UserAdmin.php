@@ -5,6 +5,7 @@ namespace Application\Sonata\UserBundle\Admin;
 use AppBundle\Admin\BaseAdminTrait;
 use Application\Sonata\UserBundle\Entity\User;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
+use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Form\Type\ChoiceFieldMaskType;
 use Sonata\AdminBundle\Form\Type\ModelType;
@@ -133,5 +134,27 @@ class UserAdmin extends BaseUserAdmin
             ->add('username', null, ['advanced_filter' => false])
             ->add('email', null, ['advanced_filter' => false])
             ->add('groups', null, ['advanced_filter' => false]);
+    }
+
+    /**
+     * Переопределяем метод, чтобы использовать кастомный impersonating.html.twig, в котором есть дополнительные
+     * ограничения на то, можно перевоплощаться в данного пользователя или нет
+     * {@inheritdoc}
+     */
+    protected function configureListFields(ListMapper $listMapper): void
+    {
+        $listMapper
+            ->addIdentifier('username')
+            ->add('email')
+            ->add('groups')
+            ->add('enabled', null, ['editable' => true])
+            ->add('createdAt')
+        ;
+
+        if ($this->isGranted('ROLE_ALLOWED_TO_SWITCH')) {
+            $listMapper
+                ->add('impersonating', 'string', ['template' => '/admin/fields/impersonating.html.twig'])
+            ;
+        }
     }
 }
