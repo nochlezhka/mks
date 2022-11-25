@@ -69,7 +69,6 @@ class RenderService
             'image' => $image,
             'height' => $height,
             'width' => $width,
-            'isAdditionalInformation' => $type->getSyncId() == CertificateType::HELP
         ]);
     }
 
