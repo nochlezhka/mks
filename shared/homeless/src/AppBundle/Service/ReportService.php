@@ -208,7 +208,17 @@ class ReportService
             'комментарии к сервисному плану в целом',
             'ФИО соцработника, открывшего сервисный план',
         ]]);
-        $stmt = $this->em->getConnection()->prepare('SELECT c.id, concat(c.lastname, \' \', c.firstname, \' \', c.middlename), h.date_from, h.date_to, GROUP_CONCAT(CONCAT(cit1.name, \'(\' , ci1.comment, \')\')), GROUP_CONCAT(CONCAT(cit2.name, \'(\' , ci2.comment, \')\')), cs.name, con.comment, concat(u.lastname, \' \', u.firstname, \' \', u.middlename)
+        $stmt = $this->em->getConnection()->prepare('
+            SELECT 
+                c.id, 
+                concat(c.lastname, \' \', c.firstname, \' \', c.middlename), 
+                h.date_from, 
+                h.date_to, 
+                GROUP_CONCAT(CONCAT(cit1.name, COALESCE(CONCAT(\'(\', ci1.comment + \')\'), \'\'))), 
+                GROUP_CONCAT(CONCAT(cit2.name, COALESCE(CONCAT(\'(\', ci2.comment + \')\'), \'\'))), 
+                cs.name, 
+                con.comment, 
+                concat(u.lastname, \' \', u.firstname, \' \', u.middlename)
             FROM contract con
             JOIN shelter_history h ON con.id = h.contract_id
             JOIN fos_user_user u ON con.created_by_id = u.id
