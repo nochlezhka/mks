@@ -293,7 +293,7 @@ class ReportService
         $stmt = $this->em->getConnection()->prepare('SELECT 
               c.id, 
               concat(c.lastname, \' \', c.firstname, \' \', c.middlename), 
-              GROUP_CONCAT(CONCAT(cit1.name, \'(\' , ci1.comment, \')\')), 
+              GROUP_CONCAT(CONCAT(cit1.name, COALESCE(CONCAT(\'(\', ci1.comment + \')\'), \'\'))), 
               cs.name,  
               con.comment, 
               TO_DAYS(con.date_to) - TO_DAYS(con.date_from),
