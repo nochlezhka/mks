@@ -633,7 +633,7 @@ class ClientAdmin extends BaseAdmin
                 ]
             )
             ->add('contract', 'doctrine_orm_callback', [
-                    'label' => 'Сервистный план',
+                    'label' => 'Сервисный план',
                     'callback' => [$this, 'getClientSearchContract'],
                     'field_type' => 'text',
                     'global_search' => true,

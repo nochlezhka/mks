@@ -13,9 +13,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Xls;
 class ReportService
 {
     const ONE_OFF_SERVICES = 'one_off_services';
-    const ONE_OFF_SERVICES_USERS = 'one_off_services_users';
     const COMPLETED_ITEMS = 'completed_items';
-    const COMPLETED_ITEMS_USERS = 'completed_items_users';
     const OUTGOING = 'outgoing';
     const RESULTS_OF_SUPPORT = 'results_of_support';
     const ACCOMPANYING = 'accompanying';
@@ -40,9 +38,7 @@ class ReportService
     {
         return [
             static::ONE_OFF_SERVICES => 'Отчет о предоставленных разовых услугах',
-            static::ONE_OFF_SERVICES_USERS => 'Отчет о предоставленных разовых услугах по сотрудникам',
             static::COMPLETED_ITEMS => 'Отчет о выполненных пунктах сервисного плана',
-            static::COMPLETED_ITEMS_USERS => 'Отчет о выполненных пунктах сервисного плана по сотрудникам',
             static::OUTGOING => 'Отчет о выбывших из приюта',
             static::RESULTS_OF_SUPPORT => 'Отчет по результатам сопровождения ',
             static::ACCOMPANYING => 'Отчет по сопровождению',
@@ -89,16 +85,8 @@ class ReportService
                 $result = $this->oneOffServices($dateFrom, $dateTo, $userId);
                 break;
 
-            case static::ONE_OFF_SERVICES_USERS:
-                $result = $this->oneOffServicesUsers($dateFrom, $dateTo, $userId);
-                break;
-
             case static::COMPLETED_ITEMS:
                 $result = $this->completedItems($dateFrom, $dateTo, $userId);
-                break;
-
-            case static::COMPLETED_ITEMS_USERS:
-                $result = $this->completedItemsUsers($dateFrom, $dateTo, $userId);
                 break;
 
             case static::OUTGOING:
@@ -171,43 +159,6 @@ class ReportService
      * @param null $dateFrom
      * @param null $dateTo
      * @param null $userId
-     * @throws DBALException
-     * @throws DBALDriverException
-     */
-    private function oneOffServicesUsers($dateFrom = null, $dateTo = null, $userId = null): array
-    {
-        $this->doc->getActiveSheet()->fromArray([[
-            'ФИО сотрудникa',
-            'название услуги',
-            'сколько раз она была предоставлена',
-            'сумма'
-        ]]);
-        $stmt = $this->em->getConnection()->prepare('
-            SELECT
-            concat(u.lastname, \' \', u.firstname, \' \', u.middlename)
-            , st.name
-            , COUNT(DISTINCT s.id) count
-            , SUM(s.amount) as sum_amount
-            FROM service s
-            JOIN service_type st ON s.type_id = st.id
-            LEFT JOIN fos_user_user u ON s.created_by_id = u.id
-            WHERE s.created_at >= :dateFrom AND s.created_at <= :dateTo ' . ($userId ? 'AND s.created_by_id = :userId' : '') . '
-            GROUP BY u.id, s.type_id
-            ORDER BY st.sort');
-        $parameters = [
-            'dateFrom' => $dateFrom ?: '1960-01-01',
-            'dateTo' => $dateTo ?: date('Y-m-d'),
-        ];
-        if ($userId) {
-            $parameters['userId'] = $userId;
-        }
-        return $stmt->executeQuery($parameters)->fetchAllNumeric();
-    }
-
-    /**
-     * @param null $dateFrom
-     * @param null $dateTo
-     * @param null $userId
      * @return array
      * @throws DBALException
      * @throws DBALDriverException
@@ -244,39 +195,6 @@ class ReportService
      * @throws DBALException
      * @throws DBALDriverException
      */
-    private function completedItemsUsers($dateFrom = null, $dateTo = null, $userId = null): array
-    {
-        $this->doc->getActiveSheet()->fromArray([[
-            'ФИО сотрудника',
-            'название пункта',
-            'сколько раз он был выполнен'
-        ]]);
-        $stmt = $this->em->getConnection()->prepare('SELECT concat(u.lastname, \' \', u.firstname, \' \', u.middlename) full_name, cit.name, COUNT(*) count
-            FROM contract_item i
-              JOIN contract c ON i.contract_id = c.id
-              JOIN contract_item_type cit ON i.type_id = cit.id
-              LEFT JOIN fos_user_user u ON (i.created_by_id IS NOT NULL AND i.created_by_id = u.id) OR (i.created_by_id IS NULL AND c.created_by_id = u.id)
-            WHERE i.date >= :dateFrom AND i.date <= :dateTo ' . ($userId ? 'AND u.id = :userId' : '') . '
-            GROUP BY i.type_id, u.id
-            ORDER BY i.id, cit.sort');
-        $parameters = [
-            ':dateFrom' => $dateFrom ?: '1960-01-01',
-            ':dateTo' => $dateTo ?: date('Y-m-d'),
-        ];
-        if ($userId) {
-            $parameters[':userId'] = $userId;
-        }
-        return $stmt->executeQuery($parameters)->fetchAllNumeric();
-    }
-
-    /**
-     * @param null $dateFrom
-     * @param null $dateTo
-     * @param null $userId
-     * @return array
-     * @throws DBALException
-     * @throws DBALDriverException
-     */
     private function outgoing($dateFrom = null, $dateTo = null, $userId = null): array
     {
         $this->doc->getActiveSheet()->fromArray([[
@@ -290,7 +208,17 @@ class ReportService
             'комментарии к сервисному плану в целом',
             'ФИО соцработника, открывшего сервисный план',
         ]]);
-        $stmt = $this->em->getConnection()->prepare('SELECT c.id, concat(c.lastname, \' \', c.firstname, \' \', c.middlename), h.date_from, h.date_to, GROUP_CONCAT(CONCAT(cit1.name, \'(\' , ci1.comment, \')\')), GROUP_CONCAT(CONCAT(cit2.name, \'(\' , ci2.comment, \')\')), cs.name, con.comment, concat(u.lastname, \' \', u.firstname, \' \', u.middlename)
+        $stmt = $this->em->getConnection()->prepare('
+            SELECT 
+                c.id, 
+                concat(c.lastname, \' \', c.firstname, \' \', c.middlename), 
+                h.date_from, 
+                h.date_to, 
+                GROUP_CONCAT(CONCAT(cit1.name, COALESCE(CONCAT(\'(\', ci1.comment + \')\'), \'\'))), 
+                GROUP_CONCAT(CONCAT(cit2.name, COALESCE(CONCAT(\'(\', ci2.comment + \')\'), \'\'))), 
+                cs.name, 
+                con.comment, 
+                concat(u.lastname, \' \', u.firstname, \' \', u.middlename)
             FROM contract con
             JOIN shelter_history h ON con.id = h.contract_id
             JOIN fos_user_user u ON con.created_by_id = u.id
@@ -301,7 +229,7 @@ class ReportService
             LEFT JOIN contract_item_type cit2 ON ci2.type_id = cit2.id
             JOIN contract_status cs ON con.status_id = cs.id
             WHERE h.date_to >= :dateFrom AND h.date_to <= :dateTo ' . ($userId ? 'AND u.id = :userId' : '') . '
-            GROUP BY con.id
+            GROUP BY con.id, h.id
             ORDER BY h.date_to DESC');
         $parameters = [
             ':dateFrom' => $dateFrom ?: '1960-01-01',
@@ -375,10 +303,10 @@ class ReportService
         $stmt = $this->em->getConnection()->prepare('SELECT 
               c.id, 
               concat(c.lastname, \' \', c.firstname, \' \', c.middlename), 
-              GROUP_CONCAT(CONCAT(cit1.name, \'(\' , ci1.comment, \')\')), 
+              GROUP_CONCAT(CONCAT(cit1.name, COALESCE(CONCAT(\'(\', ci1.comment + \')\'), \'\'))), 
               cs.name,  
               con.comment, 
-              TO_DAYS(ci1.date) - TO_DAYS(ci1.date_start),
+              TO_DAYS(con.date_to) - TO_DAYS(con.date_from),
               concat(u.lastname, \' \', u.firstname, \' \', u.middlename)
             FROM contract con
             JOIN fos_user_user u ON con.created_by_id = u.id
