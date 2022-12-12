@@ -3,10 +3,10 @@ upstream php-upstream {
 }
 
 server {
-    server_name homeless.dev homeless.demo.code-pilots.com;
     listen 80;
-
-    #rewrite ^(.+)/+$ $1 permanent;
+    server_name _;
+    
+    ${return} 
 
     root /var/www/symfony/web;
 
@@ -30,19 +30,15 @@ server {
         include fastcgi_params;
         fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
         fastcgi_param DOCUMENT_ROOT $realpath_root;
-        #fastcgi_param HTTPS on;
     }
     # PROD
     location ~ ^/app\.php(/|$) {
         fastcgi_pass php-upstream;
         fastcgi_split_path_info ^(.+\.php)(/.*)$;
         include fastcgi_params;
+        include conf.d/opts.conf;
         fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
         fastcgi_param DOCUMENT_ROOT $realpath_root;
-        # fastcgi_param HTTPS on;
-        # Prevents URIs that include the front controller. This will 404:
-        # http://domain.tld/app.php/some-path
-        # Remove the internal directive to allow URIs like this
         internal;
     }
 
