@@ -3,7 +3,7 @@ services:
   nginx:
     container_name: mks-nginx
     image: nochlezhka/mks-app:${MKS_VERSION}
-    entrypoint: ["nginx"]
+    entrypoint: ["/etc/nginx/entrypoint.sh"]
     links:
       - php
     ports:
@@ -12,6 +12,8 @@ services:
     restart: always
     volumes:
       - "./storage/uploads:/var/www/symfony/web/uploads"
+    env_file:
+      - .env
     # TODO: temporary disabled, will be enabled by different MR
     # volumes:
     #   - "./shared/logs/nginx:/var/log/nginx"

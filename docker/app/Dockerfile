@@ -32,6 +32,7 @@ RUN apk update \
       libreoffice=~7.2.7.2 \
       libpng-dev=~1.6.37 \
       nginx=~1.22.1 \
+      gettext \
  && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer \
  && composer self-update 2.2.9 \
  && docker-php-ext-install gd zip bcmath intl pdo_mysql \
@@ -50,6 +51,7 @@ ENV HOME=/home/nochlezhka \
 COPY --chown=nochlezhka files/homeless /var/www/symfony
 COPY --chown=nochlezhka files/php/symfony.ini /usr/local/etc/php/conf.d/
 COPY --chown=nochlezhka files/nginx /etc/nginx/
+RUN chmod +x /etc/nginx/entrypoint.sh
 
 WORKDIR /var/www/symfony
 
