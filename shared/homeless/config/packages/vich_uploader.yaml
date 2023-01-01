@@ -1,0 +1,26 @@
+vich_uploader:
+    db_driver: orm
+
+    mappings:
+        client_photo:
+            uri_prefix:         /uploads/images/client/photo
+            upload_destination: "%kernel.project_dir%/public/uploads/images/client/photo"
+            namer:              vich_uploader.namer_hash
+            directory_namer:    vich_uploader.directory_namer_subdir
+            inject_on_load:     false
+            delete_on_update:   true
+            delete_on_remove:   true
+        client_field_file:
+            uri_prefix:         /uploads/files/client/field
+            upload_destination: "%kernel.project_dir%/public/uploads/files/client/field"
+            directory_namer:    vich_uploader.directory_namer_subdir
+            inject_on_load:     false
+            delete_on_update:   true
+            delete_on_remove:   true
+        document_file:
+            uri_prefix:         /uploads/files/document
+            upload_destination: "%kernel.project_dir%/public/uploads/files/document"
+            directory_namer:    vich_uploader.directory_namer_subdir
+            inject_on_load:     false
+            delete_on_update:   true
+            delete_on_remove:   true

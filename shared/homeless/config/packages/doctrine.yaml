@@ -1,0 +1,30 @@
+doctrine:
+    dbal:
+        driver:   "pdo_mysql"
+        host:     "%env(DB_HOST)%"
+        port:     "%env(DB_PORT)%"
+        dbname:   "%env(DB_NAME)%"
+        user:     "%env(DB_USER)%"
+        password: "%env(DB_PASSWORD)%"
+        server_version: "8.0.29"
+        charset:  UTF8
+        types:
+            json: Sonata\Doctrine\Types\JsonType
+
+    orm:
+        auto_generate_proxy_classes: true #"%kernel.debug%"
+        naming_strategy: doctrine.orm.naming_strategy.underscore
+        auto_mapping: true
+        #        metadata_cache_driver: apc
+        #        query_cache_driver: apc
+        #        result_cache_driver: apc
+        dql:
+            string_functions:
+                custom_part: App\DoctrineExtensions\Query\Mysql\CustomPart
+        mappings:
+            App:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/src/Entity'
+                prefix: 'App\Entity'
+                alias: App

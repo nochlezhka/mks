@@ -100,11 +100,11 @@ sudo chmod +x /usr/local/bin/docker-compose
 
 6. Запустите миграцию для создания первоначальной структуры базы данных и заполнения данными:
 
-    > `docker-compose exec php ./app/console doctrine:migrations:migrate`
+    > `docker-compose exec php ./bin/console doctrine:migrations:migrate`
 
 7. При желании можете поменять пароль для входа в систему
 
-    > `docker-compose exec php ./app/console fos:user:change-password admin`
+    > `docker-compose exec php ./bin/console fos:user:change-password admin`
 
 8. Настройте хост для проекта, перейдите по адресу хоста,
 если пароль не был изменен на шаге 7 - залогиньтесь с доступом `admin/password`.

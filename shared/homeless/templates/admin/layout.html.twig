@@ -1,0 +1,119 @@
+{% extends '@SonataAdmin/standard_layout.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+
+    <link rel="stylesheet" href="{{ asset('bundles/sonatatranslation/css/sonata-translation.css') }}"/>
+
+    {{ encore_entry_link_tags('app') }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    {{ encore_entry_script_tags('app') }}
+
+    {% if app.request.attributes.get('_route') == 'admin_app_client_certificate_list' %}
+        <script>
+            $.ajax({
+                url: "{{ path('admin_app_client_historydownload_list', {'id': app.request.attributes.get('id')}) }}",
+                cache: false,
+                success: function (html) {
+                    var newBlock = $(html);
+                    $('.added-block').html($(newBlock.find('.col-xs-12.col-md-12')[1]).parent().html());
+                }
+            });
+        </script>
+    {% endif %}
+
+{% endblock %}
+
+{% block sonata_top_nav_menu_user_block %}
+    {% set userBlock = include(get_global_template('user_block')) %}
+    {% if userBlock is not empty %}
+        <li class="dropdown user-menu">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                <i class="fas fa-user fa-fw" aria-hidden="true"></i>
+                {% if admin.myClientsNoticeCount is defined and admin.myClientsNoticeCount > 0 %}
+                    <span style="color: #d20808; font-weight: bold;">(<i class="fas fa-bell" aria-hidden="true"></i> &nbsp;{{ admin.myClientsNoticeCount }})</span>
+                {% endif %}
+                <i class="fas fa-caret-down" aria-hidden="true"></i>
+            </a>
+            <ul class="dropdown-menu dropdown-user">
+                {{ userBlock|raw }}
+                {% if admin.myClientsNoticeCount is defined and admin.myClientsNoticeCount > 0 %}
+                    {% include "notice_list_header.html.twig" %}
+                {% endif %}
+            </ul>
+        </li>
+    {% endif %}
+{% endblock %}
+
+{% block sonata_sidebar_search %}
+    <p style="color: white;margin: 0 10px;">проект "Ночлежки"<span style="float:right">homeless.ru</span></p>
+    <form action="{{ path('admin_app_client_list') }}" method="GET" class="sidebar-form" role="search">
+        <div class="input-group custom-search-form">
+            <div class="input-group custom-search-form">
+                <input type="text" name="q" value="{{ app.request.get('q') }}" class="form-control"
+                       placeholder="{{ 'search_placeholder'|trans({}, 'SonataAdminBundle') }}">
+                <span class="input-group-btn">
+                    <button class="btn btn-flat" type="submit">
+                        <i class="fas fa-search" aria-hidden="true"></i>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </form>
+{% endblock sonata_sidebar_search %}
+
+{% block logo %}
+    {% apply spaceless %}
+        <a class="logo" href="{{ path('my_clients') }}">
+            <img src="{{ logo_path }}" style="max-width: 100%;"/>
+        </a>
+    {% endapply %}
+{% endblock %}
+
+{% block side_bar_after_nav_content %}
+    <a href="https://github.com/nochlezhka/mks" rel="noreferrer" target="_blank">
+        Версия приложения: {{ app.request.server.get('APP_VER') }}
+    </a>
+{% endblock %}
+
+{% block side_bar_nav %}
+    {{ parent() }}
+
+    {% if is_granted('ROLE_SUPER_ADMIN') or is_granted('ROLE_SONATA_USER_ADMIN_USER_EDIT') %}
+        <ul class="sidebar-menu">
+            <li class="treeview">
+                <a href="{{ path('report') }}">
+                    <i class="fa fa-file-text"></i>
+                    <span>Отчёты</span>
+                    <span class="pull-right-container"></span>
+                </a>
+            </li>
+        </ul>
+    {% endif %}
+
+    {% if app.user and (app.user.viewedClients is not empty) %}
+        <br/><br/><br/>
+        <ul class="sidebar-menu">
+            <li class="treeview active">
+                <a href="#"><span>История просмотров<br/>анкет клиентов</span><span class="pull-right-container"></span></a>
+                <ul class="active treeview-menu menu_level_1 menu-open history" style="display: block;">
+                    {% for viewedClient in app.user.viewedClients %}
+                        <li class="first">
+                            <a href="{{ path('admin_app_client_show', {id: viewedClient.client.id}) }}"><i
+                                        class="fa fa-angle-double-right"
+                                        aria-hidden="true"></i>{{ viewedClient.client.lastnameAndInitials }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </li>
+        </ul>
+    {% endif %}
+{% endblock %}
+
+{% block sonata_top_nav_menu_add_block %}{% endblock %}
+
+{% block tab_menu_navbar_header %}{% endblock %}

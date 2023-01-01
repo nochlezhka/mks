@@ -1,0 +1,27 @@
+{% extends '@SonataAdmin/CRUD/base_list_field.html.twig' %}
+
+{% block field %}
+    {% set title = 'Срок действия последнего заключенного договора неизвестен' %}
+    {% set color = 'black' %}
+
+    {% if object.lastContract %}
+        {% set duration = object.lastContract.duration %}
+        {% if duration is not null %}
+            {% if duration < 3 %}
+                {% set title = 'Последний заключенный договор является краткосрочным' %}
+                {% set color = 'green' %}
+            {% elseif duration >= 3 and duration <= 6 %}
+                {% set title = 'Последний заключенный договор является среднесрочным' %}
+                {% set color = 'yellow' %}
+            {% elseif duration > 6 %}
+                {% set title = 'Последний заключенный договор является долгосрочным' %}
+                {% set color = 'red' %}
+            {% endif %}
+        {% endif %}
+    {% else %}
+        {% set title = 'Заключенные договора отсутствуют' %}
+        {% set color = 'grey' %}
+    {% endif %}
+
+    <a href="{{ admin.generateObjectUrl(route_name, object, route_parameters) }}" title="{{ title }}" style="color: {{ color }}">&#11044;</a>
+{% endblock %}

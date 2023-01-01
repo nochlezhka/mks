@@ -1,0 +1,22 @@
+{% extends '@SonataAdmin/CRUD/base_list_field.html.twig' %}
+
+{% block field %}
+    {% set title = 'Срок действия неизвестен' %}
+    {% set color = 'black' %}
+
+    {% set duration = object.duration %}
+    {% if duration is not null %}
+        {% if duration < 3 %}
+            {% set title = 'Краткосрочный' %}
+            {% set color = 'green' %}
+        {% elseif duration >= 3 and duration <= 6 %}
+            {% set title = 'Среднесрочный' %}
+            {% set color = 'yellow' %}
+        {% elseif duration > 6 %}
+            {% set title = 'Долгосрочный' %}
+            {% set color = 'red' %}
+        {% endif %}
+    {% endif %}
+
+    <a href="{{ admin.generateObjectUrl(route_name, object, route_parameters) }}" title="{{ title }}" style="color: {{ color }}">&#11044;</a>
+{% endblock %}

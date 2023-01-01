@@ -17,7 +17,6 @@
 
 
 # Managed by Composer
-/app/bootstrap.php.cache
 /var/bootstrap.php.cache
 /bin/*
 !bin/console
@@ -53,3 +52,29 @@ web/sitemap.xml
 
 node_modules/
 .cache/*
+
+###> liip/imagine-bundle ###
+/public/media/cache/
+###< liip/imagine-bundle ###
+
+###> symfony/phpunit-bridge ###
+.phpunit
+.phpunit.result.cache
+/phpunit.xml
+###< symfony/phpunit-bridge ###
+
+###> symfony/webpack-encore-bundle ###
+/node_modules/
+/public/build/
+npm-debug.log
+yarn-error.log
+###< symfony/webpack-encore-bundle ###
+
+###> symfony/framework-bundle ###
+/.env.local
+/.env.local.php
+/.env.*.local
+/public/bundles/
+/var/
+/vendor/
+###< symfony/framework-bundle ###

@@ -33,6 +33,8 @@ services:
     links:
       - db
     environment:
+      APP_ENV: dev
+      LOGO_PATH: '/render/logo.png'
       DB_HOST: db
       DB_NAME: $MYSQL_DATABASE
       DB_PORT: $MYSQL_PORT

@@ -15,7 +15,9 @@ out/
 # Project files
 shared/logs/
 shared/mysql
-shared/homeless/web/images/
+shared/homeless/public/images/
+shared/homeless/public/_assets/
+shared/homeless/public/uploads/
 backup/
 shared/homeless/.bash_history
 shared/homeless/.composer/

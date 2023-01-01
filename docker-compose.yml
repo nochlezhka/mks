@@ -24,7 +24,7 @@ services:
       - db
     restart: always
     volumes:
-      - "./storage/uploads:/var/www/symfony/web/uploads"
+      - "./storage/uploads:/var/www/symfony/public/uploads"
     env_file:
       - .env
   db:

@@ -1,0 +1,69 @@
+sonata_admin:
+    title:      ' '
+    title_logo: /render/logo.png
+    security:
+        handler: sonata.admin.security.handler.role
+    breadcrumbs:
+        child_admin_route: show
+    assets:
+        javascripts:
+            - bundles/sonataadmin/app.js
+            - bundles/sonataform/app.js
+            - bundles/fosckeditor/ckeditor.js
+        stylesheets:
+            - bundles/sonataadmin/app.css
+            - bundles/sonataform/app.css
+    templates:
+        layout: admin/layout.html.twig
+        tab_menu_template: admin/tab_menu_template.html.twig
+        select: App:Admin:CRUD:list__select.html.twig
+    show_mosaic_button: false
+    dashboard:
+        groups:
+            app.clients:
+                label: Клиенты
+                icon: '<i class="fa fa-users"></i>'
+                items:
+                    - route: my_clients
+                      label: 'Мои клиенты'
+                      roles:
+                        [ROLE_APP_CLIENT_ADMIN_LIST, ROLE_ADMIN]
+                    - route: add_client
+                      label: 'Добавить клиента'
+                      roles:
+                        [ROLE_APP_CLIENT_ADMIN_CREATE, ROLE_ADMIN]
+                    - route: my_ex_clients
+                      label: 'Мои бывшие клиенты'
+                      roles:
+                        [ROLE_APP_CLIENT_ADMIN_LIST, ROLE_ADMIN]
+            app.profile:
+                label: Личный кабинет
+                icon: '<i class="fa fa-user"></i>'
+                items:
+                    - route: my_services
+                      label: 'Оказанные мной услуги'
+                      roles:
+                        [ROLE_APP_SERVICE_ADMIN_ALL, ROLE_ADMIN]
+                    - route: profile
+                      label: 'Мой профиль'
+                      roles:
+                        [ROLE_SONATA_USER_ADMIN_USER_EDIT, ROLE_ADMIN]
+            app.settings:
+                label: Настройки
+                icon: '<i class="fa fa-wrench"></i>'
+                items:
+                    - app.client_field.admin
+                    - app.region.admin
+                    - app.service_type.admin
+                    - app.contract_item_type.admin
+                    - app.generated_document_type.admin
+                    - app.generated_document_start_text.admin
+                    - app.generated_document_end_text.admin
+                    - app.certificate_type.admin
+                    - app.menu_item.admin
+                    - app.position.admin
+                    - sonata.user.admin.user
+                    - app.client_form.admin
+                    - app.shelter_room.admin
+                roles:
+                  [ROLE_ADMIN]

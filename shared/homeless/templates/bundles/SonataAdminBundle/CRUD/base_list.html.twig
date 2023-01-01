@@ -1,0 +1,120 @@
+{% extends '@!SonataAdmin/CRUD/base_list.html.twig' %}
+
+{% block list_footer %}
+    {% if datagrid_has_results %}
+        <div class="box-footer">
+            <div class="form-inline clearfix">
+                {% if not app.request.isXmlHttpRequest %}
+                    <div class="pull-left">
+                        {% if admin.baseCodeRoute == "app.client.admin|app.contract.admin" %}
+                            <div class="clear-buttom-li">
+                                <li>
+                                    <a class="sonata-action-element" href="{{ path('admin_app_client_shelterhistory_create', {id: admin.datagrid.values.client.value}) }}" style="font-weight: 600; color: rgb(0, 166, 90);">
+                                        <i class="fa fa-plus-circle" aria-hidden="true"></i>
+                                        Добавить проживание в приюте
+                                    </a>
+                                </li>
+                            </div>
+                        {% endif %}
+
+                        {% if admin.hasRoute('batch') and batchactions|length > 0 %}
+                            {% block batch %}
+                                <script>
+                                    {% block batch_javascript %}
+                                    jQuery(document).ready(function ($) {
+                                        // Toggle individual checkboxes when the batch checkbox is changed
+                                        $('#list_batch_checkbox').on('ifChanged change', function () {
+                                            var checkboxes = $(this)
+                                                .closest('table')
+                                                .find('td.sonata-ba-list-field-batch input[type="checkbox"], div.sonata-ba-list-field-batch input[type="checkbox"]')
+                                            ;
+
+                                            if (Admin.get_config('USE_ICHECK')) {
+                                                checkboxes.iCheck($(this).is(':checked') ? 'check' : 'uncheck');
+                                            } else {
+                                                checkboxes.prop('checked', this.checked);
+                                            }
+                                        });
+
+                                        // Add a CSS class to rows when they are selected
+                                        $('td.sonata-ba-list-field-batch input[type="checkbox"], div.sonata-ba-list-field-batch input[type="checkbox"]')
+                                            .on('ifChanged change', function () {
+                                                $(this)
+                                                    .closest('tr, div.sonata-ba-list-field-batch')
+                                                    .toggleClass('sonata-ba-list-row-selected', $(this).is(':checked'))
+                                                ;
+                                            })
+                                            .trigger('ifChanged')
+                                        ;
+                                    });
+                                    {% endblock %}
+                                </script>
+
+                            {% block batch_actions %}
+                                <label class="checkbox" for="{{ admin.uniqid }}_all_elements">
+                                    <input type="checkbox" name="all_elements" id="{{ admin.uniqid }}_all_elements">
+                                    {{ 'all_elements'|trans({}, 'SonataAdminBundle') }}
+                                    ({{ admin.datagrid.pager.countResults() }})
+                                </label>
+
+                                <select name="action" style="width: auto; height: auto" class="form-control">
+                                    {% for action, options in batchactions %}
+                                        <option value="{{ action }}">
+                                            {% if options.translation_domain is defined and options.translation_domain is same as(false) %}
+                                                {{ options.label }}
+                                            {% else %}
+                                                {{ options.label|trans({}, options.translation_domain ?? admin.translationDomain) }}
+                                            {% endif %}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            {% endblock %}
+
+                                <input type="submit" class="btn btn-small btn-primary" value="{{ 'btn_batch'|trans({}, 'SonataAdminBundle') }}">
+                            {% endblock %}
+                        {% endif %}
+                    </div>
+
+                    <div class="pull-right">
+                        {% if admin.hasRoute('export') and admin.hasAccess('export') and export_formats|length %}
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                    <i class="fas fa-share-square" aria-hidden="true"></i>
+                                    {{ "label_export_download"|trans({}, "SonataAdminBundle") }}
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    {% for format in export_formats %}
+                                        <li>
+                                            <a href="{{ admin.generateUrl('export', admin.datagrid.paginationparameters(0) + {'format' : format}) }}">
+                                                <i class="fas fa-arrow-circle-o-down" aria-hidden="true"></i>
+                                                {{ ("export_format_" ~ format)|trans({}, 'SonataAdminBundle') }}
+                                            </a>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+
+                            {% if block('pager_results') is not empty %}
+                                &nbsp;-&nbsp;
+                            {% endif %}
+                        {% endif %}
+
+                        {% block pager_results %}
+                            {% include get_admin_template('pager_results', admin.code) %}
+                        {% endblock %}
+                    </div>
+                {% endif %}
+            </div>
+
+            {% block pager_links %}
+                {% if admin.datagrid.pager.haveToPaginate() %}
+                    <hr/>
+                    {% include get_admin_template('pager_links', admin.code) %}
+                {% endif %}
+            {% endblock %}
+        </div>
+    {% endif %}
+{% endblock %}
+
+

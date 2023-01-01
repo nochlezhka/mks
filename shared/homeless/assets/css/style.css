@@ -1,3 +1,7 @@
+.sonata-ba-list-field-header {
+    vertical-align: middle;
+}
+
 form .sonata-ba-form-actions.stuck{
     position: initial;
 }
