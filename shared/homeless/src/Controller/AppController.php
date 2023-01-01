@@ -76,7 +76,7 @@ class AppController extends AbstractController
         }
 
         return $this->forward(
-            ClientController::class.'::list',
+            ClientController::class.'::listAction',
             [],
             ['_sonata_admin' => 'app.client.admin', 'filter' => $filter]
         );
