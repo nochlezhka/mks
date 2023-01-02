@@ -2,46 +2,30 @@
 
 namespace App\Form\DataTransformer;
 
-use App\Repository\PositionRepository;
+use App\Entity\Position;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Form\DataTransformerInterface;
 
 class PositionToChoiceFieldMaskTypeTransformer implements DataTransformerInterface
 {
+    private ManagerRegistry $managerRegistry;
 
-    /** @var  PositionRepository */
-    private $positionRepository;
-
-    public function __construct(PositionRepository $positionRepository)
+    public function __construct(ManagerRegistry $managerRegistry)
     {
-        $this->positionRepository = $positionRepository;
+        $this->managerRegistry = $managerRegistry;
     }
 
-    /**
-     * @param mixed $value
-     * @return null
-     */
-    public function transform($value)
+    public function transform(mixed $value)
     {
-        if (null === $value) {
-            return $value;
-        }
+        return $value?->getId();
 
-        return $value->getId();
     }
 
-    /**
-     * @param mixed $value
-     * @return null|object
-     */
-    public function reverseTransform($value)
+    public function reverseTransform(mixed $value)
     {
-        $result = null;
-
         if (null === $value) {
-            return $result;
-        } else {
-            $result = $this->positionRepository->find($value);
-            return $result;
+            return null;
         }
+        return $this->managerRegistry->getRepository(Position::class)->find($value);
     }
 }

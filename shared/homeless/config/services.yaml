@@ -89,6 +89,12 @@ services:
         calls:
             - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
 
+    App\User\UserAdmin:
+        class: App\Admin\UserAdmin
+        arguments: ['@sonata.user.manager.user']
+        tags:
+            - { name: sonata.admin, manager_type: orm, label: 'services', model_class: 'App\Entity\User' }
+
     app.client_field.admin:
         class: App\Admin\ClientFieldAdmin
         tags:
@@ -330,11 +336,6 @@ services:
     app.position_to_choice_field_mask_type.transformer:
         class: App\Form\DataTransformer\PositionToChoiceFieldMaskTypeTransformer
         arguments: ['@app.position_option.repository']
-
-    app.position_option.repository:
-        class: App\Repository\PositionRepository
-        factory: ['@doctrine.orm.default_entity_manager', getRepository]
-        arguments: ['App\Entity\Position']
 
     app.client_field_option.repository:
         class: App\Repository\ClientFieldOptionRepository

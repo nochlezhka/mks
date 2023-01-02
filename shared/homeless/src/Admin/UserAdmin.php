@@ -1,30 +1,45 @@
 <?php
 
-namespace App\Sonata\UserBundle\Admin;
+namespace App\Admin;
 
-use App\Admin\BaseAdminTrait;
+use App\Entity\Position;
 use App\Entity\User;
+use App\Form\DataTransformer\PositionToChoiceFieldMaskTypeTransformer;
+use JsonException;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Form\Type\ChoiceFieldMaskType;
 use Sonata\AdminBundle\Form\Type\ModelType;
+use Sonata\Form\Type\DatePickerType;
 use Sonata\UserBundle\Admin\Model\UserAdmin as BaseUserAdmin;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Contracts\Service\Attribute\Required;
 
 class UserAdmin extends BaseUserAdmin
 {
     use BaseAdminTrait;
+
+    private AuthorizationCheckerInterface $authorizationChecker;
+
+    private PositionToChoiceFieldMaskTypeTransformer $transformer;
+
+    #[Required]
+    public function setTransformer(PositionToChoiceFieldMaskTypeTransformer $transformer): void
+    {
+        $this->transformer = $transformer;
+    }
 
     /**
      * {@inheritdoc}
      */
     protected function configureFormFields(FormMapper $form): void
     {
-        $user = $this->getConfigurationPool()->getContainer()->get('security.token_storage')->getToken()->getUser();
-        $isSuperAdmin = $this->getConfigurationPool()->getContainer()->get('security.authorization_checker')->isGranted('ROLE_SUPER_ADMIN');
+        $user = $this->tokenStorage->getToken()->getUser();
+        $isSuperAdmin = $this->authorizationChecker->isGranted('ROLE_SUPER_ADMIN');
 
         if (!$user instanceof User || (!$isSuperAdmin && $user != $this->getSubject())) {
             throw new AccessDeniedException();
@@ -59,7 +74,7 @@ class UserAdmin extends BaseUserAdmin
         $positions = [
             'Другая должность' => ''
         ];
-        foreach ($this->getConfigurationPool()->getContainer()->get('app.position_option.repository')->findAll() as $item) {
+        foreach ($this->manager->getRepository(Position::class)->findAll() as $item) {
             $positions[$item->getName()] = $item->getId();
         }
 
@@ -97,10 +112,7 @@ class UserAdmin extends BaseUserAdmin
             ->add('passport', TextareaType::class, array('required' => false, 'label' => 'Паспортные данные'))
             ->end();
 
-        $transformer = $this
-            ->getConfigurationPool()
-            ->getContainer()->get('app.position_to_choice_field_mask_type.transformer');
-        $form->getFormBuilder()->get('position')->addModelTransformer($transformer);
+        $form->getFormBuilder()->get('position')->addModelTransformer($this->transformer);
         if ($isSuperAdmin) {
             $form
                 ->end();
@@ -126,9 +138,9 @@ class UserAdmin extends BaseUserAdmin
     /**
      * {@inheritdoc}
      */
-    protected function configureDatagridFilters(DatagridMapper $filterMapper): void
+    protected function configureDatagridFilters(DatagridMapper $filter): void
     {
-        $filterMapper
+        $filter
             ->add('id', null, ['advanced_filter' => false])
             ->add('username', null, ['advanced_filter' => false])
             ->add('email', null, ['advanced_filter' => false])
@@ -138,7 +150,8 @@ class UserAdmin extends BaseUserAdmin
     /**
      * Переопределяем метод, чтобы использовать кастомный impersonating.html.twig, в котором есть дополнительные
      * ограничения на то, можно перевоплощаться в данного пользователя или нет
-     * {@inheritdoc}
+     *
+     * @throws JsonException
      */
     protected function configureListFields(ListMapper $list): void
     {
