@@ -111,7 +111,7 @@ class AppController extends AbstractController
 
         $filter = ['createdBy' => ['value' => $user->getId()]];
 
-        return $this->forward('SonataAdminBundle:CRUD:list', [], ['_sonata_admin' => 'app.service.admin', 'filter' => $filter]);
+        return $this->forward(CRUDController::class.'::listAction', [], ['_sonata_admin' => 'app.service.admin', 'filter' => $filter]);
     }
 
     /**

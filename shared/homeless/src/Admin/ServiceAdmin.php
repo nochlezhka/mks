@@ -3,14 +3,16 @@
 namespace App\Admin;
 
 use App\Entity\ServiceType;
-use App\Form\DataTransformer\AdditionalFieldToArrayTransformer;
 use App\Form\DataTransformer\ServiceTypeToChoiceFieldMaskTypeTransformer;
+use DateTime;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Form\Type\ChoiceFieldMaskType;
+use Sonata\DoctrineORMAdminBundle\Filter\DateRangeFilter;
+use Sonata\Form\Type\DateRangePickerType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Contracts\Service\Attribute\Required;
@@ -100,7 +102,7 @@ class ServiceAdmin extends BaseAdmin
 
         $form
             ->add('createdAt', 'Sonata\Form\Type\DatePickerType', [
-                'dp_default_date' => (new \DateTime())->format('Y-m-d'),
+                'dp_default_date' => (new DateTime())->format('Y-m-d'),
                 'format' => 'dd.MM.yyyy',
                 'label' => 'Когда добавлена',
             ]);
@@ -132,11 +134,11 @@ class ServiceAdmin extends BaseAdmin
                 'label' => 'Когда добавлена',
                 'pattern' => 'dd.MM.YYYY',
             ])
-            ->add('createdBy.lastname', null, [
+            ->add('createdBy', null, [
                 'label' => 'Кем добавлена',
-                'template' => '@App/Admin/Service/fields/_user_name.twig',
+                'route' => ['Fullname' => 'show']
             ])
-            ->add('_action', null, [
+            ->add(ListMapper::NAME_ACTIONS, ListMapper::TYPE_ACTIONS, [
                 'label' => 'Действие',
                 'actions' => [
                     'edit' => [],
@@ -175,16 +177,19 @@ class ServiceAdmin extends BaseAdmin
             ])
             ->add(
                 'createdAt',
-                'Sonata\Form\Type\DateRangePickerType',
+                DateRangeFilter::class,
                 ['label' => 'Когда добавлена', 'advanced_filter' => false,],
                 [
-                    'field_options_start' => [
-                        'label' => 'От',
-                        'format' => 'dd.MM.yyyy'
-                    ],
-                    'field_options_end' => [
-                        'label' => 'До',
-                        'format' => 'dd.MM.yyyy'
+                    'field_type'=> DateRangePickerType::class,
+                    'field_options' => [
+                        'field_options_start' => [
+                            'label' => 'От',
+                            'format' => 'dd.MM.yyyy'
+                        ],
+                        'field_options_end' => [
+                            'label' => 'До',
+                            'format' => 'dd.MM.yyyy'
+                        ]
                     ]
                 ]
             );

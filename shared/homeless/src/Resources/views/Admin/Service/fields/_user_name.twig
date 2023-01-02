@@ -1,5 +1,0 @@
-{% extends 'SonataAdminBundle:CRUD:base_list_field.html.twig' %}
-
-{% block field %}
-    <a href="{{ path('admin_sonata_user_user_edit', {id: object.createdBy.id}) }}">{{ object.createdBy }}</a>
-{% endblock %}
