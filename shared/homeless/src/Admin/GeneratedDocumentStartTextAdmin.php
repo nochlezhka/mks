@@ -7,12 +7,12 @@ use Sonata\AdminBundle\Form\FormMapper;
 
 class GeneratedDocumentStartTextAdmin extends BaseAdmin
 {
-    protected $datagridValues = array(
+    protected array $datagridValues = array(
         '_sort_order' => 'ASC',
         '_sort_by' => 'name',
     );
 
-    protected $translationDomain = 'App';
+    protected string $translationDomain = 'App';
 
     /**
      * @param FormMapper $form
@@ -35,7 +35,7 @@ class GeneratedDocumentStartTextAdmin extends BaseAdmin
             ->addIdentifier('name', null, [
                 'label' => 'Текст',
             ])
-            ->add('_action', null, [
+            ->add(ListMapper::NAME_ACTIONS, ListMapper::TYPE_ACTIONS, [
                 'label' => 'Действие',
                 'actions' => [
                     'edit' => [],

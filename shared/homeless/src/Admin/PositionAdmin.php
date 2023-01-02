@@ -7,12 +7,12 @@ use Sonata\AdminBundle\Form\FormMapper;
 
 class PositionAdmin extends BaseAdmin
 {
-    protected $datagridValues = array(
+    protected array $datagridValues = array(
         '_sort_order' => 'ASC',
         '_sort_by' => 'sort',
     );
 
-    protected $translationDomain = 'App';
+    protected string $translationDomain = 'App';
 
     /**
      * @param FormMapper $form
@@ -43,7 +43,7 @@ class PositionAdmin extends BaseAdmin
             ->add('sort', null, [
                 'label' => 'Сортировка',
             ])
-            ->add('_action', null, [
+            ->add(ListMapper::NAME_ACTIONS, ListMapper::TYPE_ACTIONS, [
                 'label' => 'Действие',
                 'actions' => [
                     'edit' => [],

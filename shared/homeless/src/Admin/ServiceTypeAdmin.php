@@ -8,12 +8,12 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 class ServiceTypeAdmin extends BaseAdmin
 {
-    protected $datagridValues = array(
+    protected array $datagridValues = array(
         '_sort_order' => 'ASC',
         '_sort_by' => 'sort',
     );
 
-    protected $translationDomain = 'App';
+    protected string $translationDomain = 'App';
 
     /**
      * @param FormMapper $form
@@ -57,7 +57,7 @@ class ServiceTypeAdmin extends BaseAdmin
             ->add('amount', 'boolean', [
                 'label' => 'Сумма',
             ])
-            ->add('_action', null, [
+            ->add(ListMapper::NAME_ACTIONS, ListMapper::TYPE_ACTIONS, [
                 'label' => 'Действие',
                 'actions' => [
                     'edit' => [],

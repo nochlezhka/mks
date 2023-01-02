@@ -12,12 +12,12 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 class ClientFieldAdmin extends BaseAdmin
 {
-    protected $datagridValues = array(
+    protected array $datagridValues = array(
         '_sort_order' => 'ASC',
         '_sort_by' => 'sort',
     );
 
-    protected $translationDomain = 'App';
+    protected string $translationDomain = 'App';
 
     protected function configureFormFields(FormMapper $form): void
     {
@@ -97,7 +97,7 @@ class ClientFieldAdmin extends BaseAdmin
             ->add('enabledForHomeless', null, [
                 'label' => 'Включено для бездомных',
             ])
-            ->add('_action', null, [
+            ->add(ListMapper::NAME_ACTIONS, ListMapper::TYPE_ACTIONS, [
                 'label' => 'Действие',
                 'actions' => [
                     'edit' => [],

@@ -13,12 +13,12 @@ use Sonata\AdminBundle\Route\RouteCollectionInterface;
 
 class ShelterRoomAdmin extends BaseAdmin
 {
-    protected $datagridValues = array(
+    protected array $datagridValues = array(
         '_sort_order' => 'DESC',
         '_sort_by' => 'dateFrom',
     );
 
-    protected $translationDomain = 'App';
+    protected string $translationDomain = 'App';
 
     protected function configureRoutes(RouteCollectionInterface $collection): void
     {
@@ -58,7 +58,7 @@ class ShelterRoomAdmin extends BaseAdmin
     protected function configureListFields(ListMapper $list): void
     {
         $list
-            ->addIdentifier('name', null, [
+            ->addIdentifier('number', null, [
                 'label' => 'Название',
             ])
         ;

@@ -14,12 +14,12 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 class ClientFormAdmin extends BaseAdmin
 {
-    protected $datagridValues = array(
+    protected array $datagridValues = array(
         '_sort_order' => 'ASC',
         '_sort_by' => 'sort',
     );
 
-    protected $translationDomain = 'App';
+    protected string $translationDomain = 'App';
 
     /**
      * @param FormMapper $form

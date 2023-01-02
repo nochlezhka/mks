@@ -52,18 +52,18 @@ sonata_admin:
                 label: Настройки
                 icon: '<i class="fa fa-wrench"></i>'
                 items:
-                    - app.client_field.admin
-                    - app.region.admin
-                    - app.service_type.admin
-                    - app.contract_item_type.admin
-                    - app.generated_document_type.admin
-                    - app.generated_document_start_text.admin
-                    - app.generated_document_end_text.admin
-                    - app.certificate_type.admin
-                    - app.menu_item.admin
-                    - app.position.admin
+                    - App\Admin\ClientFieldAdmin
+                    - App\Admin\RegionAdmin
+                    - App\Admin\ServiceTypeAdmin
+                    - App\Admin\ContractItemTypeAdmin
+                    - App\Admin\GeneratedDocumentTypeAdmin
+                    - App\Admin\GeneratedDocumentStartTextAdmin
+                    - App\Admin\GeneratedDocumentEndTextAdmin
+                    - App\Admin\CertificateTypeAdmin
+                    - App\Admin\MenuItemAdmin
+                    - App\Admin\PositionAdmin
                     - sonata.user.admin.user
-                    - app.client_form.admin
-                    - app.shelter_room.admin
+                    - App\Admin\ClientFormAdmin
+                    - App\Admin\ShelterRoomAdmin
                 roles:
                   [ROLE_ADMIN]

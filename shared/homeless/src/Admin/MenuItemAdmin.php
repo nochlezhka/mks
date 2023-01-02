@@ -7,12 +7,12 @@ use Sonata\AdminBundle\Form\FormMapper;
 
 class MenuItemAdmin extends BaseAdmin
 {
-    protected $datagridValues = array(
+    protected array $datagridValues = array(
         '_sort_order' => 'ASC',
         '_sort_by' => 'name',
     );
 
-    protected $translationDomain = 'App';
+    protected string $translationDomain = 'App';
 
     /**
      * @param FormMapper $form
@@ -46,7 +46,7 @@ class MenuItemAdmin extends BaseAdmin
             ->add('enabled', null, [
                 'label' => 'Включен',
             ])
-            ->add('_action', null, [
+            ->add(ListMapper::NAME_ACTIONS, ListMapper::TYPE_ACTIONS, [
                 'label' => 'Действие',
                 'actions' => [
                     'edit' => [],

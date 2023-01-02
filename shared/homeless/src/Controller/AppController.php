@@ -41,7 +41,7 @@ class AppController extends AbstractController
         }
 
         return $this->forward(
-            ClientController::class.'::listAction',
+            'sonata.admin.controller.crud::listAction',
             [],
             ['_sonata_admin' => 'app.client.admin', 'filter' => $filter]
         );
@@ -76,7 +76,7 @@ class AppController extends AbstractController
         }
 
         return $this->forward(
-            ClientController::class.'::listAction',
+            'sonata.admin.controller.crud::listAction',
             [],
             ['_sonata_admin' => 'app.client.admin', 'filter' => $filter]
         );
@@ -94,7 +94,7 @@ class AppController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        return $this->forward(CRUDController::class.'::createAction', [], ['_sonata_admin' => 'app.client.admin']);
+        return $this->forward('sonata.admin.controller.crud::createAction', [], ['_sonata_admin' => 'app.client.admin']);
     }
 
     /**
@@ -111,7 +111,7 @@ class AppController extends AbstractController
 
         $filter = ['createdBy' => ['value' => $user->getId()]];
 
-        return $this->forward(CRUDController::class.'::listAction', [], ['_sonata_admin' => 'app.service.admin', 'filter' => $filter]);
+        return $this->forward('sonata.admin.controller.crud::listAction', [], ['_sonata_admin' => 'app.service.admin', 'filter' => $filter]);
     }
 
     /**
@@ -126,7 +126,7 @@ class AppController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        return $this->forward('SonataAdminBundle:CRUD:edit', [], ['_sonata_admin' => 'sonata.user.admin.user', 'id' => $user->getId()]);
+        return $this->forward('sonata.admin.controller.crud::editAction', [], ['_sonata_admin' => 'sonata.user.admin.user', 'id' => $user->getId()]);
     }
 
     #[Route("/client/list", name: "client_search")]
@@ -209,39 +209,6 @@ class AppController extends AbstractController
             $request->get('breadwinner')
         );
         return $response;
-    }
-
-    #[Route("/shelterroom/list", name: "shelter_room")]
-    public function shelterRoomAction(ManagerRegistry $doctrine): Response
-    {
-        $user = $this->getUser();
-
-        if (!$user instanceof User || !$this->isGranted('ROLE_ADMIN')) {
-            throw $this->createAccessDeniedException();
-        }
-
-//        $filter = ['contractCreatedBy' => ['value' => $user->getId()]];
-
-        $roomData = [];
-        foreach ($doctrine->getRepository(ShelterRoom::class)->findAll() as $item) {
-
-            $roomData[] = [
-                'id' => $item->getId(),
-                'number' => $item->getNumber(),
-                'maxOccupants' => $item->getMaxOccupants(),
-                'currentOccupants' => $item->getcurrentOccupants(),
-                'comment' => $item->getComment(),
-            ];
-        }
-
-
-        // if ($inProcessStatus instanceof ContractStatus) {
-        //     $filter['contractStatus'] = ['value' => [(string)$inProcessStatus->getId()]];
-        // }
-
-        return $this->render('@App/Admin/shelter_room.html.twig', [
-            'rooms' => $roomData
-        ]);
     }
 
     #[Route("/shelterroom/create", name: "shelter_room_add")]
