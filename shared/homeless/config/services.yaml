@@ -11,13 +11,6 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
-    app.base_entity.subscriber:
-        class: App\EventSubscriber\BaseEntitySubscriber
-        arguments:
-            - '@security.token_storage'
-        tags:
-            - { name: doctrine.event_subscriber, connection: default }
-
     app.contract.listener:
         class: App\EventListener\ContractListener
         tags:
