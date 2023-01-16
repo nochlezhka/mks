@@ -145,10 +145,6 @@ input#filter_search_value{
     width: 40%;
 }
 
-.modal-dialog .checkbox label{
-    margin-left: 0;
-}
-
 .history.treeview-menu.menu_level_1.menu-open{
     height: 300px;
     overflow-x: auto;

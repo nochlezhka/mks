@@ -16,7 +16,7 @@ services:
         tags:
             - { name: sonata.admin, manager_type: orm, label: 'Клиенты', model_class: 'App\Entity\Client', controller: 'App\Controller\ClientController' }
         calls:
-            - [addChild, ['@app.note.admin', 'client']]
+            - [addChild, ['@App\Admin\NoteAdmin', 'client']]
             - [addChild, ['@app.service.admin', 'client']]
             - [addChild, ['@app.document.admin', 'client']]
             - [addChild, ['@app.document_file.admin', 'client']]
@@ -32,14 +32,6 @@ services:
             - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
             - [setTemplate, ['layout', 'admin/layout.html.twig']]
             - [setTemplate, ['edit', 'admin/client/edit.html.twig']]
-
-    app.note.admin:
-        class: App\Admin\NoteAdmin
-        tags:
-            - { name: sonata.admin, manager_type: orm, label: 'Примечания' }
-        arguments: [null, App\Entity\Note, App:CRUD]
-        calls:
-            - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
 
     app.history_download.admin:
         class: App\Admin\HistoryDownloadAdmin

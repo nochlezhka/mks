@@ -87,6 +87,7 @@ form:
   group_contract: Сервисный план
   group_contract_items: Пункты
   group_shelter_history: Проживание в приюте
+  group_notes: Примечания
 
 show:
   group_last_services: Последние услуги
@@ -94,3 +95,4 @@ show:
   group_photo: Фото
   group_base_info: Основная информация
   group_additional_info: Дополнительная информация
+  group_notes: Примечания
