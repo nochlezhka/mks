@@ -4,7 +4,9 @@ namespace App\EventListener;
 
 use App\Entity\Notice;
 use App\Entity\User;
-use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\Bundle\DoctrineBundle\Attribute\AsEntityListener;
+use Doctrine\ORM\Events;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
@@ -12,30 +14,27 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
  * Устанавливает признак просмотренности напоминания текущим пользователем
  * при загрузке сущности
  */
+#[AsEntityListener(event: Events::postLoad, method: 'postLoad', entity: Notice::class)]
 class NoticeListener
 {
-    private $tokenStorage;
+    private TokenStorageInterface $tokenStorage;
 
     public function __construct(TokenStorageInterface $tokenStorage)
     {
         $this->tokenStorage = $tokenStorage;
     }
 
-    public function postLoad(LifecycleEventArgs $args)
+    public function postLoad(Notice $notice, LifecycleEventArgs $args)
     {
-        $entity = $args->getEntity();
         $user = $this->getUser();
-
-        if ($entity instanceof Notice && $user instanceof User) {
-            if ($entity->getViewedBy()->contains($user)) {
-                $entity->setViewed(true);
-            } else {
-                $entity->setViewed(false);
-            }
+        if ($notice->getViewedBy()->contains($user)) {
+            $notice->setViewed(true);
+        } else {
+            $notice->setViewed(false);
         }
     }
 
-    public function getUser()
+    public function getUser(): ?User
     {
         $token = $this->tokenStorage->getToken();
 

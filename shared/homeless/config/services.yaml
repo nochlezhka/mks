@@ -11,32 +11,6 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
-    app.contract.listener:
-        class: App\EventListener\ContractListener
-        tags:
-            - { name: doctrine.event_listener, event: postPersist}
-
-    app.shelter_history.listener:
-        class: App\EventListener\ShelterRoomListener
-        tags:
-            - { name: doctrine.event_listener, event: postPersist }
-    app.shelter_history_delete.listener:
-        class: App\EventListener\ShelterRoomListener
-        tags:
-            - { name: doctrine.event_listener, event: postRemove }
-
-    app.notice.listener:
-        class: App\EventListener\NoticeListener
-        arguments:
-            - '@security.token_storage'
-        tags:
-            - { name: doctrine.event_listener, event: postLoad}
-
-    app.certificate.listener:
-        class: App\EventListener\CertificateListener
-        tags:
-            - { name: doctrine.event_listener, event: postPersist}
-
     app.client.admin:
         class: App\Admin\ClientAdmin
         tags:

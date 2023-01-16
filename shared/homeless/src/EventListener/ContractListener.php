@@ -3,23 +3,23 @@
 namespace App\EventListener;
 
 use App\Entity\Contract;
-use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\Bundle\DoctrineBundle\Attribute\AsEntityListener;
+use Doctrine\ORM\Events;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 
+#[AsEntityListener(event: Events::postPersist, method: 'postPersist', entity: Contract::class)]
 class ContractListener
 {
     /**
      * При создании договора номер устанавливается равным id
-     * @param LifecycleEventArgs $args
      */
-    public function postPersist(LifecycleEventArgs $args)
+    public function postPersist(Contract $contract, LifecycleEventArgs $event): void
     {
-        $entity = $args->getEntity();
-
-        if (($entity instanceof Contract) && empty($entity->getNumber())) {
-            $entity->setNumber($entity->getId());
-            $em = $args->getEntityManager();
-            $em->persist($entity);
-            $em->flush($entity);
+        if (empty($contract->getNumber())) {
+            $contract->setNumber($contract->getId());
+            $em = $event->getObjectManager();
+            $em->persist($contract);
+            $em->flush($contract);
         }
     }
 }
