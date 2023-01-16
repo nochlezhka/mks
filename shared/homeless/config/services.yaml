@@ -17,7 +17,7 @@ services:
             - { name: sonata.admin, manager_type: orm, label: 'Клиенты', model_class: 'App\Entity\Client', controller: 'App\Controller\ClientController' }
         calls:
             - [addChild, ['@App\Admin\NoteAdmin', 'client']]
-            - [addChild, ['@app.service.admin', 'client']]
+            - [addChild, ['@App\Admin\ServiceAdmin', 'client']]
             - [addChild, ['@app.document.admin', 'client']]
             - [addChild, ['@app.document_file.admin', 'client']]
             - [addChild, ['@app.contract.admin', 'client']]
@@ -38,13 +38,6 @@ services:
         tags:
             - { name: sonata.admin, manager_type: orm, label: 'История скачиваний' }
         arguments: [~, App\Entity\HistoryDownload, App:CRUD]
-        calls:
-            - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
-
-    app.service.admin:
-        class: App\Admin\ServiceAdmin
-        tags:
-            - { name: sonata.admin, manager_type: orm, label: 'services', model_class: 'App\Entity\Service', controller: 'App\Controller\CRUDController' }
         calls:
             - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
 

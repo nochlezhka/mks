@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Admin\ServiceAdmin;
 use App\Entity\ClientField;
 use App\Entity\ContractStatus;
 use App\Service\ReportService;
@@ -111,7 +112,7 @@ class AppController extends AbstractController
 
         $filter = ['createdBy' => ['value' => $user->getId()]];
 
-        return $this->forward('sonata.admin.controller.crud::listAction', [], ['_sonata_admin' => 'app.service.admin', 'filter' => $filter]);
+        return $this->forward('sonata.admin.controller.crud::listAction', [], ['_sonata_admin' => ServiceAdmin::class, 'filter' => $filter]);
     }
 
     /**

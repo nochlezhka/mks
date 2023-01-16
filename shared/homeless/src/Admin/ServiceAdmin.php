@@ -2,6 +2,8 @@
 
 namespace App\Admin;
 
+use App\Controller\CRUDController;
+use App\Entity\Service;
 use App\Entity\ServiceType;
 use App\Form\DataTransformer\ServiceTypeToChoiceFieldMaskTypeTransformer;
 use DateTime;
@@ -13,10 +15,17 @@ use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Form\Type\ChoiceFieldMaskType;
 use Sonata\DoctrineORMAdminBundle\Filter\DateRangeFilter;
 use Sonata\Form\Type\DateRangePickerType;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Contracts\Service\Attribute\Required;
 
+#[AutoconfigureTag(name: 'sonata.admin', attributes: [
+    'manager_type' => 'orm',
+    'label' => 'services',
+    'model_class' => Service::class,
+    'controller' => CRUDController::class,
+    'label_translator_strategy' => 'sonata.admin.label.strategy.underscore'
+])]
 class ServiceAdmin extends BaseAdmin
 {
     protected array $datagridValues = array(
@@ -30,16 +39,11 @@ class ServiceAdmin extends BaseAdmin
 
     private ServiceTypeToChoiceFieldMaskTypeTransformer $transformer;
 
-    #[Required]
-    public function setManager(ManagerRegistry $managerRegistry): void
+    public function __construct(ManagerRegistry $managerRegistry, ServiceTypeToChoiceFieldMaskTypeTransformer $transformer)
     {
         $this->managerRegistry = $managerRegistry;
-    }
-
-    #[Required]
-    public function setTransformer(ServiceTypeToChoiceFieldMaskTypeTransformer $transformer): void
-    {
         $this->transformer = $transformer;
+        parent::__construct();
     }
 
     protected function configureFormFields(FormMapper $form): void
