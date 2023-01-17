@@ -2,6 +2,8 @@
 
 namespace App\Admin;
 
+use App\Controller\CRUDController;
+use App\Entity\Contract;
 use App\Entity\User;
 use App\Form\Type\AppContractDurationType;
 use DateTime;
@@ -13,6 +15,15 @@ use Sonata\AdminBundle\Route\RouteCollectionInterface;
 use Sonata\Form\Type\CollectionType;
 use Sonata\Form\Type\DatePickerType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
+
+#[AutoconfigureTag(name: 'sonata.admin', attributes: [
+    'manager_type' => 'orm',
+    'label' => 'Сервисные планы',
+    'model_class' => Contract::class,
+    'controller'=> CRUDController::class,
+    'label_translator_strategy' => 'sonata.admin.label.strategy.underscore'
+])]
 
 class ContractAdmin extends BaseAdmin
 {

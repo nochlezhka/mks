@@ -2,8 +2,19 @@
 
 namespace App\Admin;
 
+use App\Controller\ClientController;
+use App\Entity\Client;
+use App\Entity\DocumentFile;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
+
+#[AutoconfigureTag(name: 'sonata.admin', attributes: [
+    'manager_type' => 'orm',
+    'label' => 'Загруженные файлы',
+    'model_class' => DocumentFile::class,
+    'label_translator_strategy' => 'sonata.admin.label.strategy.underscore'
+])]
 
 class DocumentFileAdmin extends BaseAdmin
 {

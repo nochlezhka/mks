@@ -7,9 +7,7 @@ use Symfony\Component\Form\DataTransformerInterface;
 
 class CertificateTypeToChoiceFieldMaskTypeTransformer implements DataTransformerInterface
 {
-
-    /** @var  CertificateTypeRepository */
-    private $certificateTypeRepository;
+    private CertificateTypeRepository $certificateTypeRepository;
 
     public function __construct(CertificateTypeRepository $certificateTypeRepository)
     {

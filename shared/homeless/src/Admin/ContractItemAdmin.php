@@ -2,11 +2,19 @@
 
 namespace App\Admin;
 
+use App\Entity\ContractItem;
 use Doctrine\ORM\EntityRepository;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\Form\Type\DateTimePickerType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
+#[AutoconfigureTag(name: 'sonata.admin', attributes: [
+    'manager_type' => 'orm',
+    'label' => 'Пункты сервисного плана',
+    'model_class' => ContractItem::class,
+    'label_translator_strategy' => 'sonata.admin.label.strategy.underscore'
+])]
 class ContractItemAdmin extends BaseAdmin
 {
     protected function configureFormFields(FormMapper $form): void

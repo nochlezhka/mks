@@ -8,6 +8,7 @@ use App\Entity\Client;
 use App\Entity\Contract;
 use App\Entity\GeneratedDocument;
 use App\Entity\User;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Templating\EngineInterface;
 use Twig\Environment;
@@ -26,8 +27,8 @@ class RenderService
      * @param Environment $twig
      */
     public function __construct(
-        KernelInterface $kernel,
-        Environment $twig
+        #[Autowire('@kernel')] KernelInterface $kernel,
+        #[Autowire('@twig')] Environment $twig
     ) {
         $this->kernel = $kernel;
         $this->twig = $twig;

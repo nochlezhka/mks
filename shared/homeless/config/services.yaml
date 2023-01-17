@@ -17,59 +17,6 @@ services:
             - [setTemplate, ['layout', 'admin/layout.html.twig']]
             - [setTemplate, ['edit', 'admin/client/edit.html.twig']]
 
-    app.document.admin:
-        class: App\Admin\DocumentAdmin
-        tags:
-            - { name: sonata.admin, manager_type: orm, label: 'Документы' }
-        arguments: [null, App\Entity\Document, SonataAdminBundle:CRUD]
-        calls:
-            - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
-
-    app.document_file.admin:
-        class: App\Admin\DocumentFileAdmin
-        tags:
-            - { name: sonata.admin, manager_type: orm, label: 'Загруженные файлы', model_class: 'App\Entity\DocumentFile' }
-        calls:
-            - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
-
-    app.contract.admin:
-        class: App\Admin\ContractAdmin
-        tags:
-            - { name: sonata.admin, manager_type: orm, label: 'Сервисные планы', model_class: 'App\Entity\Contract', controller: 'App\Controller\CRUDController'}
-        calls:
-            - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
-
-    app.resident_questionnaire.admin:
-        class: App\Admin\ResidentQuestionnaireAdmin
-        tags:
-            - { name: sonata.admin, manager_type: orm, label: 'Анкета проживающего' }
-        arguments: [null, App\Entity\ResidentQuestionnaire, App:CRUD]
-        calls:
-            - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
-
-    app.contract_item.admin:
-        class: App\Admin\ContractItemAdmin
-        tags:
-            - { name: sonata.admin, manager_type: orm, label: 'Пункты сервисного плана' }
-        arguments: [null, App\Entity\ContractItem, SonataAdminBundle:CRUD]
-        calls:
-            - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
-
-    app.shelter_history.admin:
-        class: App\Admin\ShelterHistoryAdmin
-        tags:
-            - { name: sonata.admin, manager_type: orm, label: 'shelter_history', model_class: 'App\Entity\ShelterHistory' }
-        calls:
-            - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
-
-    app.certificate.admin:
-        class: App\Admin\CertificateAdmin
-        tags:
-            - { name: sonata.admin, manager_type: orm, label: 'Справки' }
-        arguments: [null, App\Entity\Certificate, App:CRUD]
-        calls:
-            - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
-
     app.generated_document.admin:
         class: App\Admin\GeneratedDocumentAdmin
         tags:
@@ -170,55 +117,12 @@ services:
         calls:
             - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
 
-    app.file_type:
-        class: App\Form\Type\AppFileType
-        tags:
-            - { name: form.type, alias: 'app_file' }
-        calls:
-            - [setStorage, ['@vich_uploader.storage']]
-
-    app.photo_type:
-        class: App\Form\Type\AppPhotoType
-        tags:
-            - { name: form.type, alias: 'app_photo' }
-
-    app.contract_duration_type:
-        class: App\Form\Type\AppContractDurationType
-        tags:
-            - { name: form.type, alias: 'app_contract_duration' }
-
-    app.render_service:
-        class: App\Service\RenderService
-        arguments: ['@templating', '@kernel', '@twig']
-
-    app.certificate_recreator_service:
-        class: App\Service\CertificateRecreator
-        arguments: ['@doctrine.orm.default_entity_manager']
-        autowire: true
-
-    app.report_service:
-        class: App\Service\ReportService
-        arguments: ['@doctrine.orm.default_entity_manager']
-        autowire: true
-
-    app.additional_field_to_array.transformer:
-        class: App\Form\DataTransformer\AdditionalFieldToArrayTransformer
-        arguments: ['@app.client_field_option.repository']
-
-    app.certificate_type_to_choice_field_mask_type.transformer:
-        class: App\Form\DataTransformer\CertificateTypeToChoiceFieldMaskTypeTransformer
-        arguments: ['@app.certificate_type.repository']
-
-    app.position_to_choice_field_mask_type.transformer:
-        class: App\Form\DataTransformer\PositionToChoiceFieldMaskTypeTransformer
-        arguments: ['@app.position_option.repository']
-
-    app.client_field_option.repository:
+    App\Repository\ClientFieldOptionRepository:
         class: App\Repository\ClientFieldOptionRepository
         factory: ['@doctrine.orm.default_entity_manager', getRepository]
         arguments: ['App\Entity\ClientFieldOption']
 
-    app.certificate_type.repository:
+    App\Repository\CertificateTypeRepository:
         class: App\Repository\CertificateTypeRepository
         factory: ['@doctrine.orm.default_entity_manager', getRepository]
         arguments: ['App\Entity\CertificateType']
@@ -248,29 +152,12 @@ services:
         factory: [ '@doctrine.orm.default_entity_manager', getRepository ]
         arguments: [ 'App\Entity\ClientFieldValue' ]
 
-    app.client_form_response.repository:
+    App\Repository\ClientFormResponseRepository:
         class: App\Repository\ClientFormResponseRepository
         factory: ['@doctrine.orm.default_entity_manager', getRepository]
         arguments: ['App\Entity\ClientFormResponse']
 
-    app.client_form.repository:
+    App\Repository\ClientFormRepository:
         class: App\Repository\ClientFormRepository
         factory: ['@doctrine.orm.default_entity_manager', getRepository]
         arguments: ['App\Entity\ClientForm']
-
-    app.resident_questionnaire_converter:
-        class: App\Service\ResidentQuestionnaireConverter
-        arguments:
-            - '@doctrine.orm.entity_manager'
-            - '@app.client_form_response.repository'
-            - '@app.client_form.repository'
-
-    app.meta_service:
-        class: App\Service\MetaService
-        arguments: ['@doctrine.orm.entity_manager']
-        public: true
-
-    sonata.admin.request.fetcher:
-        class: Sonata\AdminBundle\Request\AdminFetcher
-        public: true
-        arguments: ['@sonata.admin.pool']

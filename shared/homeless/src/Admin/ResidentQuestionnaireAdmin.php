@@ -2,23 +2,32 @@
 
 namespace App\Admin;
 
+use App\Controller\CRUDController;
 use App\Entity\ResidentQuestionnaire;
 use App\Service\MetaService;
 use App\Service\ResidentQuestionnaireConverter;
 use Doctrine\ORM\EntityManager;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+
+#[AutoconfigureTag(name: 'sonata.admin', attributes: [
+    'manager_type' => 'orm',
+    'label' => 'Анкета проживающего',
+    'model_class' => ResidentQuestionnaire::class,
+    'controller'=> CRUDController::class,
+    'label_translator_strategy' => 'sonata.admin.label.strategy.underscore'
+])]
 
 class ResidentQuestionnaireAdmin extends BaseAdmin
 {
-    protected $datagridValues = array(
+    protected array $datagridValues = array(
         '_sort_order' => 'DESC',
         '_sort_by' => 'typeId',
     );
 
-    protected $translationDomain = 'App';
+    protected string $translationDomain = 'App';
 
     /**
      * @param FormMapper $form
@@ -85,36 +94,12 @@ class ResidentQuestionnaireAdmin extends BaseAdmin
                 'label' => 'Заполнено',
             ]);
         $list
-            ->add('_action', null, [
+            ->add(ListMapper::NAME_ACTIONS, ListMapper::TYPE_ACTIONS, [
                 'label' => 'Действие',
                 'actions' => [
                     'edit' => [],
                     'delete' => [],
                 ]
             ]);
-    }
-
-    /**
-     * @return EntityManager
-     */
-    private function getEntityManager()
-    {
-        return $this->getConfigurationPool()->getContainer()->get('doctrine.orm.entity_manager');
-    }
-
-    /**
-     * @return ResidentQuestionnaireConverter
-     */
-    private function getConverter()
-    {
-        return $this->getConfigurationPool()->getContainer()->get('app.resident_questionnaire_converter');
-    }
-
-    /**
-     * @return MetaService
-     */
-    private function getMetaService()
-    {
-        return $this->getConfigurationPool()->getContainer()->get('app.meta_service');
     }
 }

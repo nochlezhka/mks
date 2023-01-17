@@ -5,8 +5,7 @@ namespace App\Service;
 use DateTime;
 use Doctrine\DBAL\Driver\Exception as DBALDriverException;
 use Doctrine\DBAL\Exception as DBALException;
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use PhpOffice\PhpSpreadsheet\Exception as PhpSpreadsheetException;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xls;
@@ -22,16 +21,12 @@ class ReportService
     const AVERAGE_COMPLETED_ITEMS = 'average_completed_items';
     const AGGREGATED2 = 'aggregated2';
 
-    private EntityManagerInterface $em;
+    private ManagerRegistry $em;
     private Spreadsheet $doc;
 
-    /**
-     * CertificateRecreator constructor.
-     * @param EntityManager $entityManager
-     */
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(ManagerRegistry $managerRegistry)
     {
-        $this->em = $entityManager;
+        $this->em = $managerRegistry;
         $this->doc = new Spreadsheet();
     }
 
@@ -65,7 +60,7 @@ class ReportService
      * @throws DBALException
      * @throws DBALDriverException
      */
-    public function generate($type, $dateFrom = null, $dateTo = null, $userId = null, $createClientdateFrom = null, $createClientFromTo = null, $createServicedateFrom = null, $createServiceFromTo = null, $homelessReason = null, $disease = null, $breadwinner = null)
+    public function generate($type, $dateFrom = null, $dateTo = null, $userId = null, $createClientdateFrom = null, $createClientFromTo = null, $createServicedateFrom = null, $createServiceFromTo = null, $homelessReason = null, $disease = null, $breadwinner = null): void
     {
         if ($dateFrom) {
             $date = new DateTime();

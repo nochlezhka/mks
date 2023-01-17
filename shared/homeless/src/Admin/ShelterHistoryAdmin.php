@@ -2,13 +2,23 @@
 
 namespace App\Admin;
 
+use App\Controller\ClientController;
+use App\Entity\Client;
+use App\Entity\ShelterHistory;
 use DateTime;
 use Doctrine\ORM\EntityRepository;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\Form\Type\DatePickerType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
+#[AutoconfigureTag(name: 'sonata.admin', attributes: [
+    'manager_type' => 'orm',
+    'label' => 'shelter_history',
+    'model_class' => ShelterHistory::class,
+    'label_translator_strategy' => 'sonata.admin.label.strategy.underscore'
+])]
 class ShelterHistoryAdmin extends BaseAdmin
 {
     protected array $datagridValues = array(
@@ -134,7 +144,7 @@ class ShelterHistoryAdmin extends BaseAdmin
                 'label' => 'Дата прививки от тифа',
                 'pattern' => 'dd.MM.YYYY',
             ])
-            ->add('_action', null, [
+            ->add(ListMapper::NAME_ACTIONS, ListMapper::TYPE_ACTIONS, [
                 'label' => 'Действие',
                 'actions' => [
                     'edit' => [],

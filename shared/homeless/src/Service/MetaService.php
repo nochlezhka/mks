@@ -6,7 +6,6 @@ namespace App\Service;
 
 use App\Entity\Meta;
 use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Contracts\Service\Attribute\Required;
 
 /**
  * Чтение и включение флажков
@@ -18,6 +17,11 @@ class MetaService
     private ManagerRegistry $managerRegistry;
 
     private array $booleanMetaCache = [];
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
 
     /**
      * Разрешено ли использование анкеты проживающего в новом формате.
@@ -71,11 +75,5 @@ class MetaService
         }
         $meta->setValue(!!$value ? '1' : '0');
         $this->booleanMetaCache[$name] = !!$value;
-    }
-
-    #[Required]
-    public function setManagerRegistry(ManagerRegistry $managerRegistry): void
-    {
-        $this->managerRegistry = $managerRegistry;
     }
 }

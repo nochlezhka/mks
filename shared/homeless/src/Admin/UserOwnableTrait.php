@@ -2,16 +2,15 @@
 
 namespace App\Admin;
 
+use App\Entity\Client;
+
 /**
  * Trait UserOwnableTrait
  * @package App\Admin
  */
 trait UserOwnableTrait
 {
-    /**
-     * @return null
-     */
-    public function getClient(){
+    public function getClient(): ?Client{
         $result = null;
         try {
             $result = $this->getParent()->getSubject();

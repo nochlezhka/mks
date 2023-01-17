@@ -2,29 +2,56 @@
 
 namespace App\Admin;
 
+use App\Controller\CRUDController;
 use App\Entity\Certificate;
 use App\Entity\CertificateType;
+use App\Form\DataTransformer\CertificateTypeToChoiceFieldMaskTypeTransformer;
+use App\Repository\CertificateTypeRepository;
 use App\Repository\DocumentRepository;
+use App\Service\CertificateRecreator;
+use Doctrine\ORM\OptimisticLockException;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Form\Type\ChoiceFieldMaskType;
-use Sonata\AdminBundle\Route\RouteCollection;
 use Sonata\AdminBundle\Route\RouteCollectionInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
+#[AutoconfigureTag(name: 'sonata.admin', attributes: [
+    'manager_type' => 'orm',
+    'label' => 'Справки',
+    'model_class' => Certificate::class,
+    'controller'=> CRUDController::class,
+    'label_translator_strategy' => 'sonata.admin.label.strategy.underscore'
+])]
 class CertificateAdmin extends BaseAdmin
 {
     use UserOwnableTrait;
 
-    protected $datagridValues = array(
+    protected array $datagridValues = array(
         '_sort_order' => 'DESC',
         '_sort_by' => 'dateFrom',
     );
 
-    protected $translationDomain = 'App';
+    protected string $translationDomain = 'App';
+    private CertificateTypeRepository $certificateTypeRepository;
+    private CertificateTypeToChoiceFieldMaskTypeTransformer $transformer;
+    private CertificateRecreator $certificateRecreator;
+
+    public function __construct(
+        CertificateTypeRepository $certificateTypeRepository,
+        CertificateTypeToChoiceFieldMaskTypeTransformer $transformer,
+        CertificateRecreator $certificateRecreator
+    )
+    {
+        parent::__construct();
+        $this->certificateTypeRepository = $certificateTypeRepository;
+        $this->transformer = $transformer;
+        $this->certificateRecreator = $certificateRecreator;
+    }
 
     protected function configureRoutes(RouteCollectionInterface $collection): void
     {
@@ -63,20 +90,16 @@ class CertificateAdmin extends BaseAdmin
 
         /* type */
         $typeOptions = [];
-        $certificateTypeRepository = $this
-            ->getConfigurationPool()
-            ->getContainer()
-            ->get('app.certificate_type.repository');
 
-        $availableCertTypes = $certificateTypeRepository->getAvailableForCertificate($this->getSubject());
+        $availableCertTypes = $this->certificateTypeRepository->getAvailableForCertificate($this->getSubject());
         foreach ($availableCertTypes as $availableCertType) {
             $typeOptions['choices'][$availableCertType->getName()] = $availableCertType->getId();
         }
 
         /** @var CertificateType $travelType */
-        $travelType = $certificateTypeRepository->findOneBySyncId(CertificateType::TRAVEL);
+        $travelType = $this->certificateTypeRepository->findOneBySyncId(CertificateType::TRAVEL);
         /** @var CertificateType $registrationType */
-        $registrationType = $certificateTypeRepository->findOneBySyncId(CertificateType::REGISTRATION);
+        $registrationType = $this->certificateTypeRepository->findOneBySyncId(CertificateType::REGISTRATION);
 
         $typeOptions['map'] = [
             $travelType->getId() => ['city'],
@@ -85,10 +108,7 @@ class CertificateAdmin extends BaseAdmin
         $typeOptions['multiple'] = false;
         $typeOptions['label'] = 'Тип';
         $form->add('type', ChoiceFieldMaskType::class, $typeOptions);
-        $transformer = $this
-            ->getConfigurationPool()
-            ->getContainer()->get('app.certificate_type_to_choice_field_mask_type.transformer');
-        $form->getFormBuilder()->get('type')->addModelTransformer($transformer);
+        $form->getFormBuilder()->get('type')->addModelTransformer($this->transformer);
 
         $form->add('city', null, [
                 'label' => 'Город следования *',
@@ -106,15 +126,12 @@ class CertificateAdmin extends BaseAdmin
 
     /**
      * @param ListMapper $list
+     * @throws OptimisticLockException
      */
     protected function configureListFields(ListMapper $list): void
     {
         $client = $this->getClient();
-        $this
-            ->getConfigurationPool()
-            ->getContainer()
-            ->get('app.certificate_recreator_service')
-            ->recreateFor($client);
+        $this->certificateRecreator->recreateFor($client);
 
         $list
             ->add('type', null, [
@@ -129,7 +146,7 @@ class CertificateAdmin extends BaseAdmin
                     return $documentRepository->getRegistrationDocumentsQueryBuilderByClient($this->getParent()->getSubject());
                 },
             ])
-            ->add('_action', null, [
+            ->add(ListMapper::NAME_ACTIONS, ListMapper::TYPE_ACTIONS, [
                 'label' => 'Действие',
                 'actions' => [
                     'delete' => [],

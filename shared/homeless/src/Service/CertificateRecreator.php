@@ -6,48 +6,33 @@ use App\Entity\Certificate;
 use App\Entity\CertificateType;
 use App\Entity\Client;
 use App\Repository\CertificateTypeRepository;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Exception\ORMException;
+use Symfony\Bridge\Doctrine\ManagerRegistry;
 
-/**
- * Class CertificateRecreator
- */
 class CertificateRecreator
 {
-    /**
-     * @var EntityManager
-     */
-    private $entityManager;
-    /**
-     * @var CertificateTypeRepository
-     */
-    private $certificateTypeRepository;
+    private ManagerRegistry $managerRegistry;
+    private CertificateTypeRepository $certificateTypeRepository;
 
-    /**
-     * CertificateRecreator constructor.
-     * @param EntityManager $entityManager
-     * @param CertificateTypeRepository $certificateTypeRepository
-     */
     public function __construct(
-        EntityManager $entityManager,
+        ManagerRegistry $managerRegistry,
         CertificateTypeRepository $certificateTypeRepository
     ) {
-        $this->entityManager = $entityManager;
+        $this->managerRegistry = $managerRegistry;
         $this->certificateTypeRepository = $certificateTypeRepository;
     }
 
     /**
      * Пересоздание всех справок для пользователя
      *
-     * @param Client $client
-     *
-     * @throws \Doctrine\ORM\OptimisticLockException
-     * @throws \Doctrine\ORM\ORMInvalidArgumentException
+     * @throws ORMException
      */
-    public function recreateFor(Client $client)
+    public function recreateFor(Client $client): void
     {
+        $em = $this->managerRegistry->getManager()
         /** @var Certificate $certificate */
         foreach ($client->getCertificates() as $certificate) {
-            $this->entityManager->remove($certificate);
+            $em->remove($certificate);
         }
 
         /** @var CertificateType[] $certificateTypes */
@@ -57,9 +42,9 @@ class CertificateRecreator
             $clientCertificate = new Certificate();
             $clientCertificate->setClient($client);
             $clientCertificate->setType($certificateType);
-            $this->entityManager->persist($clientCertificate);
+            $em->persist($clientCertificate);
         }
 
-        $this->entityManager->flush();
+        $em->flush();
     }
 }

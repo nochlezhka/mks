@@ -2,20 +2,30 @@
 
 namespace App\Admin;
 
+use App\Entity\Document;
 use App\Entity\DocumentType;
+use DateTime;
 use Doctrine\ORM\EntityRepository;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
+
+#[AutoconfigureTag(name: 'sonata.admin', attributes: [
+    'manager_type' => 'orm',
+    'label' => 'Документы',
+    'model_class' => Document::class,
+    'label_translator_strategy' => 'sonata.admin.label.strategy.underscore'
+])]
 
 class DocumentAdmin extends BaseAdmin
 {
-    protected $datagridValues = array(
+    protected array $datagridValues = array(
         '_sort_order' => 'DESC',
         '_sort_by' => 'createdAt',
     );
 
-    protected $translationDomain = 'App';
+    protected string $translationDomain = 'App';
 
     /**
      * @param FormMapper $form
@@ -50,7 +60,7 @@ class DocumentAdmin extends BaseAdmin
                 'label' => 'Кем выдан',
             ])
             ->add('date', 'Sonata\Form\Type\DatePickerType', [
-                'dp_default_date' => (new \DateTime())->format('Y-m-d'),
+                'dp_default_date' => (new DateTime())->format('Y-m-d'),
                 'format' => 'dd.MM.yyyy',
                 'label' => 'Когда выдан',
                 'required' => true,
@@ -89,7 +99,7 @@ class DocumentAdmin extends BaseAdmin
             ->add('createdBy', null, [
                 'label' => 'Кем добавлен',
             ])
-            ->add('_action', null, [
+            ->add(ListMapper::NAME_ACTIONS, ListMapper::TYPE_ACTIONS, [
                 'label' => 'Действие',
                 'actions' => [
                     'edit' => [],
