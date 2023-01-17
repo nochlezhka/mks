@@ -29,7 +29,7 @@ class CertificateRecreator
      */
     public function recreateFor(Client $client): void
     {
-        $em = $this->managerRegistry->getManager()
+        $em = $this->managerRegistry->getManager();
         /** @var Certificate $certificate */
         foreach ($client->getCertificates() as $certificate) {
             $em->remove($certificate);

@@ -10,7 +10,7 @@ class AppDocumentFileType extends AppPhotoType
     /**
      * {@inheritdoc}
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'app_document_file';
     }
