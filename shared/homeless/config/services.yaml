@@ -11,51 +11,11 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
-    app.client.admin:
+    App\Admin\ClientAdmin:
         class: App\Admin\ClientAdmin
-        tags:
-            - { name: sonata.admin, manager_type: orm, label: 'Клиенты', model_class: 'App\Entity\Client', controller: 'App\Controller\ClientController' }
         calls:
-            - [addChild, ['@App\Admin\NoteAdmin', 'client']]
-            - [addChild, ['@App\Admin\ServiceAdmin', 'client']]
-            - [addChild, ['@app.document.admin', 'client']]
-            - [addChild, ['@app.document_file.admin', 'client']]
-            - [addChild, ['@app.contract.admin', 'client']]
-            - [addChild, ['@app.shelter_history.admin', 'client']]
-            - [addChild, ['@app.resident_questionnaire.admin', 'client']]
-            - [addChild, ['@app.certificate.admin', 'client']]
-            - [addChild, ['@app.contract.admin', 'client']]
-            - [addChild, ['@app.generated_document.admin', 'client']]
-            - [addChild, ['@app.notice.admin', 'client']]
-            - [addChild, ['@app.history_download.admin', 'client']]
-            - [addChild, ['@app.resident_form_response.admin', 'client']]
-            - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
             - [setTemplate, ['layout', 'admin/layout.html.twig']]
             - [setTemplate, ['edit', 'admin/client/edit.html.twig']]
-
-    app.history_download.admin:
-        class: App\Admin\HistoryDownloadAdmin
-        tags:
-            - { name: sonata.admin, manager_type: orm, label: 'История скачиваний' }
-        arguments: [~, App\Entity\HistoryDownload, App:CRUD]
-        calls:
-            - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
-
-    App\Admin\RegionAdmin:
-        class: App\Admin\RegionAdmin
-        tags:
-            - { name: sonata.admin, manager_type: orm, label: 'Регионы', model_class: 'App\Entity\Region' }
-        calls:
-            - [addChild, ['@app.district.admin', 'region']]
-            - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
-
-    app.district.admin:
-        class: App\Admin\DistrictAdmin
-        tags:
-            - { name: sonata.admin, manager_type: orm, label: 'Районы' }
-        arguments: [null, App\Entity\District, SonataAdminBundle:CRUD]
-        calls:
-            - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
 
     app.document.admin:
         class: App\Admin\DocumentAdmin

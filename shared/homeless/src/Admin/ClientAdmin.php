@@ -2,6 +2,7 @@
 
 namespace App\Admin;
 
+use App\Controller\ClientController;
 use App\Entity\Client;
 use App\Entity\ClientField;
 use App\Entity\ClientFieldOption;
@@ -33,6 +34,8 @@ use Sonata\DoctrineORMAdminBundle\Datagrid\ProxyQueryInterface;
 use Sonata\DoctrineORMAdminBundle\Filter\CallbackFilter;
 use Sonata\DoctrineORMAdminBundle\Filter\DateRangeFilter;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -41,12 +44,16 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use Symfony\Contracts\Service\Attribute\Required;
 
+#[AutoconfigureTag(name: 'sonata.admin', attributes: [
+    'manager_type' => 'orm',
+    'label' => 'Клиенты',
+    'model_class' => Client::class,
+    'controller'=> ClientController::class,
+    'label_translator_strategy' => 'sonata.admin.label.strategy.underscore'
+])]
 class ClientAdmin extends BaseAdmin
 {
-
-
     protected array $datagridValues = [
         '_sort_order' => 'DESC',
         '_sort_by' => 'contracts.dateFrom',
@@ -97,6 +104,44 @@ class ClientAdmin extends BaseAdmin
 
     private ClientFieldRepository $clientFieldRepository;
     private ClientFieldValueRepository $clientFieldValueRepository;
+
+    public function __construct(
+        NoteAdmin $noteAdmin,
+        ServiceAdmin $serviceAdmin,
+        #[Autowire('@app.document.admin')] DocumentAdmin $documentAdmin,
+        #[Autowire('@app.document_file.admin')] DocumentFileAdmin $documentFileAdmin,
+        #[Autowire('@app.contract.admin')] ContractAdmin $contractAdmin,
+        #[Autowire('@app.shelter_history.admin')] ShelterHistoryAdmin $shelterHistoryAdmin,
+        #[Autowire('@app.resident_questionnaire.admin')] ResidentQuestionnaireAdmin $residentQuestionnaireAdmin,
+        #[Autowire('@app.certificate.admin')] CertificateAdmin $certificateAdmin,
+        #[Autowire('@app.generated_document.admin')] GeneratedDocumentAdmin $generatedDocumentAdmin,
+        #[Autowire('@app.notice.admin')] NoticeAdmin $noticeAdmin,
+        HistoryDownloadAdmin $historyDownloadAdmin,
+        #[Autowire('@app.resident_form_response.admin')] ResidentFormResponseAdmin $residentFormResponseAdmin,
+        AdditionalFieldToArrayTransformer $additionalFieldToArrayTransformer,
+        AuthorizationCheckerInterface $authorizationChecker,
+        ClientFieldRepository $clientFieldRepository,
+        ClientFieldValueRepository $clientFieldValueRepository
+    )
+    {
+        $this->addChild($noteAdmin, 'client');
+        $this->addChild($serviceAdmin, 'client');
+        $this->addChild($documentAdmin, 'client');
+        $this->addChild($documentFileAdmin, 'client');
+        $this->addChild($contractAdmin, 'client');
+        $this->addChild($shelterHistoryAdmin, 'client');
+        $this->addChild($residentQuestionnaireAdmin, 'client');
+        $this->addChild($certificateAdmin, 'client');
+        $this->addChild($generatedDocumentAdmin, 'client');
+        $this->addChild($noticeAdmin, 'client');
+        $this->addChild($historyDownloadAdmin, 'client');
+        $this->addChild($residentFormResponseAdmin, 'client');
+        $this->additionalFieldToArrayTransformer = $additionalFieldToArrayTransformer;
+        $this->authorizationChecker = $authorizationChecker;
+        $this->clientFieldRepository = $clientFieldRepository;
+        $this->clientFieldValueRepository = $clientFieldValueRepository;
+        parent::__construct();
+    }
 
     /**
      * @throws ReflectionException
@@ -251,33 +296,6 @@ class ClientAdmin extends BaseAdmin
             }
             $show->end();
         }
-    }
-
-    #[Required]
-    public function setAdditionalFieldToArrayTransformer(
-        AdditionalFieldToArrayTransformer $additionalFieldToArrayTransformer
-    ): ClientAdmin
-    {
-        $this->additionalFieldToArrayTransformer = $additionalFieldToArrayTransformer;
-        return $this;
-    }
-
-    #[Required]
-    public function setAuthorizationChecker(AuthorizationCheckerInterface $authorizationChecker): void
-    {
-        $this->authorizationChecker = $authorizationChecker;
-    }
-
-    #[Required]
-    public function setClientFieldValueRepository(ClientFieldValueRepository $clientFieldValueRepository): void
-    {
-        $this->clientFieldValueRepository = $clientFieldValueRepository;
-    }
-
-    #[Required]
-    public function setClientFieldRepository(ClientFieldRepository $clientFieldRepository): void
-    {
-        $this->clientFieldRepository = $clientFieldRepository;
     }
 
     /**

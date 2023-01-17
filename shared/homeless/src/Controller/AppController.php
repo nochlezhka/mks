@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Admin\ClientAdmin;
 use App\Admin\ServiceAdmin;
 use App\Entity\ClientField;
 use App\Entity\ContractStatus;
@@ -44,7 +45,7 @@ class AppController extends AbstractController
         return $this->forward(
             'sonata.admin.controller.crud::listAction',
             [],
-            ['_sonata_admin' => 'app.client.admin', 'filter' => $filter]
+            ['_sonata_admin' => ClientAdmin::class, 'filter' => $filter]
         );
     }
 
@@ -79,7 +80,7 @@ class AppController extends AbstractController
         return $this->forward(
             'sonata.admin.controller.crud::listAction',
             [],
-            ['_sonata_admin' => 'app.client.admin', 'filter' => $filter]
+            ['_sonata_admin' => ClientAdmin::class, 'filter' => $filter]
         );
     }
 
@@ -95,7 +96,7 @@ class AppController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        return $this->forward('sonata.admin.controller.crud::createAction', [], ['_sonata_admin' => 'app.client.admin']);
+        return $this->forward('sonata.admin.controller.crud::createAction', [], ['_sonata_admin' => ClientAdmin::class]);
     }
 
     /**
@@ -152,7 +153,7 @@ class AppController extends AbstractController
             $filter['search']['value'] = 'Введите запрос...';
         }
 
-        return $this->forward('SonataAdminBundle:CRUD:list', [], ['_sonata_admin' => 'app.client.admin', 'filter' => $filter]);
+        return $this->forward('SonataAdminBundle:CRUD:list', [], ['_sonata_admin' => ClientAdmin::class, 'filter' => $filter]);
 
     }
 

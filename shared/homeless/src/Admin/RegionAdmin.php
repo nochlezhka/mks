@@ -2,11 +2,19 @@
 
 namespace App\Admin;
 
+use App\Entity\Region;
 use Knp\Menu\ItemInterface;
 use Sonata\AdminBundle\Admin\AdminInterface;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
+#[AutoconfigureTag(name: 'sonata.admin', attributes: [
+    'manager_type' => 'orm',
+    'label' => 'Регионы',
+    'model_class' => Region::class,
+    'label_translator_strategy' => 'sonata.admin.label.strategy.underscore'
+])]
 class RegionAdmin extends BaseAdmin
 {
     protected array $datagridValues = array(
@@ -15,6 +23,14 @@ class RegionAdmin extends BaseAdmin
     );
 
     protected string $translationDomain = 'App';
+
+    public function __construct(
+        DistrictAdmin $districtAdmin
+    )
+    {
+        $this->addChild($districtAdmin, 'region');
+        parent::__construct();
+    }
 
     /**
      * @param FormMapper $form

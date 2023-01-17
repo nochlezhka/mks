@@ -2,16 +2,27 @@
 
 namespace App\Admin;
 
+use App\Controller\CRUDController;
+use App\Entity\HistoryDownload;
 use Sonata\AdminBundle\Datagrid\ListMapper;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
+
+#[AutoconfigureTag(name: 'sonata.admin', attributes: [
+    'manager_type' => 'orm',
+    'label' => 'История скачиваний',
+    'model_class' => HistoryDownload::class,
+    'controller' => CRUDController::class,
+    'label_translator_strategy' => 'sonata.admin.label.strategy.underscore'
+])]
 
 class HistoryDownloadAdmin extends BaseAdmin
 {
-    protected $datagridValues = array(
+    protected array $datagridValues = array(
         '_sort_order' => 'DESC',
         '_sort_by' => 'date',
     );
 
-    protected $translationDomain = 'App';
+    protected string $translationDomain = 'App';
 
     /**
      * @param ListMapper $list
