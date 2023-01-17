@@ -8,8 +8,15 @@ use Knp\Menu\ItemInterface as MenuItemInterface;
 use Sonata\AdminBundle\Admin\AdminInterface;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
+#[AutoconfigureTag(name: 'sonata.admin', attributes: [
+    'manager_type' => 'orm',
+    'label' => 'client_fields',
+    'model_class' => ClientField::class,
+    'label_translator_strategy' => 'sonata.admin.label.strategy.underscore'
+])]
 class ClientFieldAdmin extends BaseAdmin
 {
     protected array $datagridValues = array(
@@ -18,6 +25,12 @@ class ClientFieldAdmin extends BaseAdmin
     );
 
     protected string $translationDomain = 'App';
+
+    public function __construct(ClientFieldOptionAdmin $clientFieldOptionAdmin)
+    {
+        $this->addChild($clientFieldOptionAdmin, 'field');
+        parent::__construct();
+    }
 
     protected function configureFormFields(FormMapper $form): void
     {
@@ -124,7 +137,7 @@ class ClientFieldAdmin extends BaseAdmin
         if ($admin->getSubject() instanceof ClientField && $admin->getSubject()->getType() == ClientField::TYPE_OPTION) {
             $menu->addChild(
                 'Варианты выбора',
-                ['uri' => $admin->generateUrl('app.client_field_option.admin.list', ['id' => $id])]
+                ['uri' => $admin->generateUrl(ClientFieldOptionAdmin::class.'.list', ['id' => $id])]
             );
         }
     }

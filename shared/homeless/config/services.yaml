@@ -41,22 +41,6 @@ services:
         calls:
             - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
 
-    App\Admin\ClientFieldAdmin:
-        class: App\Admin\ClientFieldAdmin
-        tags:
-            - { name: sonata.admin, manager_type: orm, label: 'Доп. поля клиентов', model_class: 'App\Entity\ClientField' }
-        calls:
-            - [addChild, ['@app.client_field_option.admin', 'field']]
-            - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
-
-    app.client_field_option.admin:
-        class: App\Admin\ClientFieldOptionAdmin
-        tags:
-            - { name: sonata.admin, manager_type: orm, label: 'Вариант выбора' }
-        arguments: [null, App\Entity\ClientFieldOption, SonataAdminBundle:CRUD]
-        calls:
-            - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
-
     App\Admin\RegionAdmin:
         class: App\Admin\RegionAdmin
         tags:

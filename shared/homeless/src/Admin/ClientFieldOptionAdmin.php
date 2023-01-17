@@ -2,17 +2,25 @@
 
 namespace App\Admin;
 
+use App\Entity\ClientFieldOption;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
+#[AutoconfigureTag(name: 'sonata.admin', attributes: [
+    'manager_type' => 'orm',
+    'label' => 'choice_field_options',
+    'model_class' => ClientFieldOption::class,
+    'label_translator_strategy' => 'sonata.admin.label.strategy.underscore'
+])]
 class ClientFieldOptionAdmin extends BaseAdmin
 {
-    protected $datagridValues = array(
+    protected array $datagridValues = array(
         '_sort_order' => 'ASC',
         '_sort_by' => 'sort',
     );
 
-    protected $translationDomain = 'App';
+    protected string $translationDomain = 'App';
 
     /**
      * @param FormMapper $form
@@ -53,7 +61,7 @@ class ClientFieldOptionAdmin extends BaseAdmin
             ->add('sort', 'number', [
                 'label' => 'Порядок сортировки',
             ])
-            ->add('_action', null, [
+            ->add(ListMapper::NAME_ACTIONS, ListMapper::TYPE_ACTIONS, [
                 'label' => 'Действие',
                 'actions' => [
                     'edit' => [],

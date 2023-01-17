@@ -88,6 +88,8 @@ form:
   group_contract_items: Пункты
   group_shelter_history: Проживание в приюте
   group_notes: Примечания
+  group_client_fields: Доп. поля клиентов
+  group_choice_field_options: Вариант выбора
 
 show:
   group_last_services: Последние услуги
@@ -96,3 +98,7 @@ show:
   group_base_info: Основная информация
   group_additional_info: Дополнительная информация
   group_notes: Примечания
+  group_client_fields: Доп. поля клиентов
+  group_choice_field_options: Вариант выбора
+
+client_fields: Доп. поля клиентов
