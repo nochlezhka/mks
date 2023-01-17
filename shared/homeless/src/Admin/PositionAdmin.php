@@ -2,9 +2,19 @@
 
 namespace App\Admin;
 
+use App\Controller\ClientController;
+use App\Entity\Client;
+use App\Entity\Position;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
+#[AutoconfigureTag(name: 'sonata.admin', attributes: [
+    'manager_type' => 'orm',
+    'label' => 'Должности',
+    'model_class' => Position::class,
+    'label_translator_strategy' => 'sonata.admin.label.strategy.underscore'
+])]
 class PositionAdmin extends BaseAdmin
 {
     protected array $datagridValues = array(

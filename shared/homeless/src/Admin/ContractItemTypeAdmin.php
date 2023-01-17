@@ -2,8 +2,17 @@
 
 namespace App\Admin;
 
+use App\Entity\ContractItemType;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
+
+#[AutoconfigureTag(name: 'sonata.admin', attributes: [
+    'manager_type' => 'orm',
+    'label' => 'Типы пунктов договоров',
+    'model_class' => ContractItemType::class,
+    'label_translator_strategy' => 'sonata.admin.label.strategy.underscore'
+])]
 
 class ContractItemTypeAdmin extends BaseAdmin
 {

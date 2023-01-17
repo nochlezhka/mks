@@ -4,13 +4,21 @@
 namespace App\Admin;
 
 
+use App\Entity\ClientForm;
 use Knp\Menu\ItemInterface;
 use Sonata\AdminBundle\Admin\AdminInterface;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
-use Sonata\AdminBundle\Route\RouteCollection;
 use Sonata\AdminBundle\Route\RouteCollectionInterface;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+
+#[AutoconfigureTag(name: 'sonata.admin', attributes: [
+    'manager_type' => 'orm',
+    'label' => 'Редактирование форм',
+    'model_class' => ClientForm::class,
+    'label_translator_strategy' => 'sonata.admin.label.strategy.underscore'
+])]
 
 class ClientFormAdmin extends BaseAdmin
 {
@@ -20,6 +28,12 @@ class ClientFormAdmin extends BaseAdmin
     );
 
     protected string $translationDomain = 'App';
+
+    public function __construct(ClientFormFieldAdmin $clientFormFieldAdmin)
+    {
+        $this->addChild($clientFormFieldAdmin, 'form');
+        parent::__construct();
+    }
 
     /**
      * @param FormMapper $form

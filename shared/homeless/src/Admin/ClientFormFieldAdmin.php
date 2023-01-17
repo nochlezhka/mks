@@ -4,12 +4,15 @@
 namespace App\Admin;
 
 
+use App\Controller\ClientController;
+use App\Entity\Client;
 use App\Entity\ClientFormField;
 use App\Util\ClientFormUtil;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Form\Type\ChoiceFieldMaskType;
 use Sonata\AdminBundle\Show\ShowMapper;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -21,14 +24,20 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
  *
  * @package App\Admin
  */
+#[AutoconfigureTag(name: 'sonata.admin', attributes: [
+    'manager_type' => 'orm',
+    'label' => 'ClientFormField',
+    'model_class' => ClientFormField::class,
+    'label_translator_strategy' => 'sonata.admin.label.strategy.underscore'
+])]
 class ClientFormFieldAdmin extends BaseAdmin
 {
-    protected $datagridValues = array(
+    protected array $datagridValues = array(
         '_sort_order' => 'ASC',
         '_sort_by' => 'sort',
     );
 
-    protected $translationDomain = 'App';
+    protected string $translationDomain = 'App';
 
     /**
      * @inheritDoc
@@ -122,7 +131,7 @@ class ClientFormFieldAdmin extends BaseAdmin
                 'label' => 'Сортировка',
             ]);
 
-        $list->add('_action', null, [
+        $list->add(ListMapper::NAME_ACTIONS, ListMapper::TYPE_ACTIONS, [
             'label' => 'Действие',
             'actions' => ['show' => [], 'edit' => []],
         ]);

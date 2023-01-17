@@ -2,22 +2,31 @@
 
 namespace App\Admin;
 
+use App\Controller\CRUDController;
+use App\Entity\GeneratedDocument;
 use Doctrine\ORM\EntityRepository;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
-use Sonata\AdminBundle\Route\RouteCollection;
 use Sonata\AdminBundle\Route\RouteCollectionInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 
+#[AutoconfigureTag(name: 'sonata.admin', attributes: [
+    'manager_type' => 'orm',
+    'label' => 'Построить документ',
+    'model_class' => GeneratedDocument::class,
+    'controller'=> CRUDController::class,
+    'label_translator_strategy' => 'sonata.admin.label.strategy.underscore'
+])]
 class GeneratedDocumentAdmin extends BaseAdmin
 {
-    protected $datagridValues = array(
+    protected array $datagridValues = array(
         '_sort_order' => 'DESC',
         '_sort_by' => 'createdAt',
     );
 
-    protected $translationDomain = 'App';
+    protected string $translationDomain = 'App';
 
     protected function configureRoutes(RouteCollectionInterface $collection): void
     {
@@ -98,7 +107,7 @@ class GeneratedDocumentAdmin extends BaseAdmin
             ->add('createdBy', null, [
                 'label' => 'Кем добавлен',
             ])
-            ->add('_action', null, [
+            ->add(ListMapper::NAME_ACTIONS, ListMapper::TYPE_ACTIONS, [
                 'label' => 'Действие',
                 'actions' => [
                     'download' => [

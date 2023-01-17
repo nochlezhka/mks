@@ -2,14 +2,20 @@
 
 namespace App\Admin;
 
-use Doctrine\DBAL\Types\BigIntType;
-use Doctrine\DBAL\Types\StringType;
-use Doctrine\DBAL\Types\TextType;
-use Doctrine\ORM\EntityRepository;
+use App\Controller\ShelterRoomController;
+use App\Entity\ShelterRoom;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
-use Sonata\AdminBundle\Route\RouteCollection;
 use Sonata\AdminBundle\Route\RouteCollectionInterface;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
+
+#[AutoconfigureTag(name: 'sonata.admin', attributes: [
+    'manager_type' => 'orm',
+    'label' => 'Приют',
+    'model_class' => ShelterRoom::class,
+    'controller'=> ShelterRoomController::class,
+    'label_translator_strategy' => 'sonata.admin.label.strategy.underscore'
+])]
 
 class ShelterRoomAdmin extends BaseAdmin
 {

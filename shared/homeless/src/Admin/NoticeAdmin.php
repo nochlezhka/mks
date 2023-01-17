@@ -2,6 +2,8 @@
 
 namespace App\Admin;
 
+use App\Controller\ClientController;
+use App\Entity\Client;
 use App\Entity\Notice;
 use App\Entity\User;
 use InvalidArgumentException;
@@ -14,8 +16,16 @@ use Sonata\DoctrineORMAdminBundle\Filter\CallbackFilter;
 use Sonata\DoctrineORMAdminBundle\Filter\DateRangeFilter;
 use Sonata\DoctrineORMAdminBundle\Filter\NumberFilter;
 use Sonata\Form\Type\DatePickerType;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+
+#[AutoconfigureTag(name: 'sonata.admin', attributes: [
+    'manager_type' => 'orm',
+    'label' => 'Напоминания',
+    'model_class' => Notice::class,
+    'label_translator_strategy' => 'sonata.admin.label.strategy.underscore'
+])]
 
 class NoticeAdmin extends BaseAdmin
 {
@@ -72,7 +82,7 @@ class NoticeAdmin extends BaseAdmin
             ->add('createdBy', null, [
                 'label' => 'Кем добавлено',
             ])
-            ->add('_action', null, [
+            ->add(ListMapper::NAME_ACTIONS, ListMapper::TYPE_ACTIONS, [
                 'label' => 'Действие',
                 'actions' => [
                     'edit' => [],

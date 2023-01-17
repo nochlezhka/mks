@@ -2,9 +2,19 @@
 
 namespace App\Admin;
 
+use App\Controller\ClientController;
+use App\Entity\Client;
+use App\Entity\GeneratedDocumentEndText;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
+#[AutoconfigureTag(name: 'sonata.admin', attributes: [
+    'manager_type' => 'orm',
+    'label' => 'Заключения постр. док-тов',
+    'model_class' => GeneratedDocumentEndText::class,
+    'label_translator_strategy' => 'sonata.admin.label.strategy.underscore'
+])]
 class GeneratedDocumentEndTextAdmin extends BaseAdmin
 {
     protected array $datagridValues = array(
