@@ -41,12 +41,6 @@ services:
         calls:
             - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
 
-    App\User\UserAdmin:
-        class: App\Admin\UserAdmin
-        arguments: ['@sonata.user.manager.user']
-        tags:
-            - { name: sonata.admin, manager_type: orm, label: 'services', model_class: 'App\Entity\User' }
-
     App\Admin\ClientFieldAdmin:
         class: App\Admin\ClientFieldAdmin
         tags:

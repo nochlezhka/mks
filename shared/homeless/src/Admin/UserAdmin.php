@@ -13,12 +13,19 @@ use Sonata\AdminBundle\Form\Type\ChoiceFieldMaskType;
 use Sonata\AdminBundle\Form\Type\ModelType;
 use Sonata\Form\Type\DatePickerType;
 use Sonata\UserBundle\Admin\Model\UserAdmin as BaseUserAdmin;
+use Sonata\UserBundle\Model\UserManagerInterface;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-use Symfony\Contracts\Service\Attribute\Required;
 
+#[AutoconfigureTag(name: 'sonata.admin', attributes: [
+    'manager_type' => 'orm',
+    'label' => 'services',
+    'model_class' => User::class,
+])]
 class UserAdmin extends BaseUserAdmin
 {
     use BaseAdminTrait;
@@ -27,10 +34,16 @@ class UserAdmin extends BaseUserAdmin
 
     private PositionToChoiceFieldMaskTypeTransformer $transformer;
 
-    #[Required]
-    public function setTransformer(PositionToChoiceFieldMaskTypeTransformer $transformer): void
+    public function __construct(
+        AuthorizationCheckerInterface $authorizationChecker,
+        PositionToChoiceFieldMaskTypeTransformer $transformer,
+        #[Autowire(service: "sonata.user.manager.user")]
+        UserManagerInterface $manager
+    )
     {
+        $this->authorizationChecker = $authorizationChecker;
         $this->transformer = $transformer;
+        parent::__construct($manager);
     }
 
     /**
