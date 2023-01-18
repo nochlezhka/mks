@@ -6,14 +6,14 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * История просмотров анкет клиентов
- * @ORM\Entity()
  */
+#[ORM\Entity]
 class History extends BaseEntity
 {
     /**
      * Клиент
-     * @ORM\ManyToOne(targetEntity="Client")
      */
+    #[ORM\ManyToOne(targetEntity: Client::class)]
     private ?Client $client = null;
 
     /**

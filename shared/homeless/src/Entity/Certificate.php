@@ -9,51 +9,51 @@ use Exception;
 
 /**
  * Справка
- * @ORM\Entity()
  */
+#[ORM\Entity]
 class Certificate extends BaseEntity implements DownloadableInterface
 {
     /**
      * Город следования
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: "string", nullable: true)]
     private ?string $city = null;
 
     /**
      * Номер
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: "string", nullable:true)]
     private ?string $number = null;
 
     /**
      * Дата начала действия
-     * @ORM\Column(type="date", nullable=true)
      */
+    #[ORM\Column(type: "date", nullable: true)]
     private ?DateTime $dateFrom = null;
 
     /**
      * Дата окончания действия
-     * @ORM\Column(type="date", nullable=true)
      * @var DateTime|null
      */
+    #[ORM\Column(type: "date", nullable: true)]
     private ?DateTime $dateTo = null;
 
     /**
      * Клиент
-     * @ORM\ManyToOne(targetEntity="Client", inversedBy="certificates")
      */
+    #[ORM\ManyToOne(targetEntity: Client::class, inversedBy: "certificates")]
     private ?Client $client = null;
 
     /**
      * Тип
-     * @ORM\ManyToOne(targetEntity="CertificateType")
      */
+    #[ORM\ManyToOne(targetEntity: CertificateType::class)]
     private ?CertificateType $type = null;
 
     /**
      * Документ
-     * @ORM\ManyToOne(targetEntity="Document")
      */
+    #[ORM\ManyToOne(targetEntity: Document::class)]
     private ?Document $document = null;
 
     /**

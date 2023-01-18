@@ -7,32 +7,32 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Полученная услуга
- * @ORM\Entity()
  */
+#[ORM\Entity]
 class Service extends BaseEntity
 {
     /**
      * Комментарий
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: "text", nullable: true)]
     private ?string $comment = null;
 
     /**
      * Сумма денег
-     * @ORM\Column(type="integer", nullable=true)
      */
+    #[ORM\Column(type: "integer", nullable: true)]
     private ?int $amount = null;
 
     /**
      * Клиент
-     * @ORM\ManyToOne(targetEntity="Client", inversedBy="services")
      */
+    #[ORM\ManyToOne(targetEntity: Client::class, inversedBy: "services")]
     private ?Client $client = null;
 
     /**
      * Тип
-     * @ORM\ManyToOne(targetEntity="ServiceType")
      */
+    #[ORM\ManyToOne(targetEntity: ServiceType::class)]
     private ?ServiceType $type = null;
 
     public function __toString()

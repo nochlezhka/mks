@@ -6,26 +6,26 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Примечание
- * @ORM\Entity()
  */
+#[ORM\Entity]
 class Note extends BaseEntity
 {
     /**
      * Текст
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: "text", nullable: true)]
     private ?string $text = null;
 
     /**
      * Клиент
-     * @ORM\ManyToOne(targetEntity="Client", inversedBy="notes")
      */
+    #[ORM\ManyToOne(targetEntity: Client::class, inversedBy: "notes")]
     private ?Client $client = null;
 
     /**
      * Важное
-     * @ORM\Column(type="boolean", nullable=true)
      */
+    #[ORM\Column(type: "boolean", nullable: true)]
     private ?bool $important = false;
 
     public function __toString()

@@ -6,21 +6,20 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Просмотренная анкета клиента (для истории просмотров)
- * @ORM\Entity()
  */
+#[ORM\Entity]
 class ViewedClient extends BaseEntity
 {
     /**
      * Клиент
-     * @ORM\ManyToOne(targetEntity="Client", inversedBy="clientViews")
      */
+    #[ORM\ManyToOne(targetEntity: Client::class, inversedBy: "clientViews")]
     private ?Client $client = null;
 
     /**
      * Кем создано
-     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="viewedClients")
-     * @var User|null
      */
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: "viewedClients")]
     protected ?User $createdBy = null;
 
     /**

@@ -6,20 +6,20 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Район региона РФ
- * @ORM\Entity()
  */
+#[ORM\Entity]
 class District extends BaseEntity
 {
     /**
      * Название
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: "string", nullable: true)]
     private ?string $name = null;
 
     /**
      * Регион
-     * @ORM\ManyToOne(targetEntity="Region", inversedBy="districts")
      */
+    #[ORM\ManyToOne(targetEntity: Region::class, inversedBy: "districts")]
     private ?Region $region = null;
 
     public function __toString()

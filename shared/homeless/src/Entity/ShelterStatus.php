@@ -6,8 +6,8 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Статус проживания в приюте
- * @ORM\Entity()
  */
+#[ORM\Entity]
 class ShelterStatus extends BaseEntity
 {
     /**
@@ -17,8 +17,8 @@ class ShelterStatus extends BaseEntity
 
     /**
      * Название
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: "string", nullable: true)]
     private ?string $name = null;
 
     public function __toString()

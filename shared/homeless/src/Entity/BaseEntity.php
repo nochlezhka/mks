@@ -8,47 +8,45 @@ use PhpOffice\PhpSpreadsheet\Shared\Date;
 
 abstract class BaseEntity implements BaseEntityInterface
 {
-    /**
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
+    #[ORM\Column(type: 'integer')]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: "AUTO")]
     protected ?int $id = null;
 
     /**
      * Sync id
-     * @ORM\Column(type="integer", nullable=true)
      */
+    #[ORM\Column(type: "integer", nullable: true)]
     protected ?int $syncId = null;
 
     /**
      * Сортировка
-     * @ORM\Column(type="integer", nullable=true)
      */
+    #[ORM\Column(type: "integer", nullable: true)]
     protected ?int $sort = 100;
 
     /**
      * Когда создано
-     * @ORM\Column(type="datetime", nullable=true)
      */
+    #[ORM\Column(type: "datetime", nullable: true)]
     protected ?DateTime $createdAt = null;
 
     /**
      * Кем создано
-     * @ORM\ManyToOne(targetEntity="User")
      */
+    #[ORM\ManyToOne(targetEntity: User::class)]
     protected ?User $createdBy = null;
 
     /**
      * Когда изменено
-     * @ORM\Column(type="datetime", nullable=true)
      */
+    #[ORM\Column(type: "datetime", nullable: true)]
     protected ?DateTime $updatedAt = null;
 
     /**
      * Кем изменено
-     * @ORM\ManyToOne(targetEntity="User")
      */
+    #[ORM\ManyToOne(targetEntity: User::class)]
     protected ?User $updatedBy = null;
 
     /**

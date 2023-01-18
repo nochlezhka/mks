@@ -12,17 +12,9 @@ use Doctrine\ORM\Mapping\UniqueConstraint;
  * Значение хранится в виде строки даже если тип поля - чекбокс или выбор варианта.
  * Для чекбоксов хранится `'1'` или `'0'`, а для выбора варианта - текст самого варианта.
  * Так проще и, возможно, поможет не потерять данные.
- *
- * @ORM\Entity
- * @ORM\Table(
- *     uniqueConstraints={
- *          @UniqueConstraint(name="client_form_response_uniq", columns={"client_form_response_id", "client_form_field_id"})
- *     },
- *     indexes={
- *          @Index(name="client_field_idx", columns={"client_id", "client_form_field_id"})
- *     }
- * )
  */
+#[ORM\Entity]
+#[ORM\UniqueConstraint(name: "client_form_response_uniq", columns: ["client_form_response_id", "client_form_field_id"])]
 class ClientFormResponseValue extends BaseEntity
 {
     // константы-значения фиксированных полей
@@ -33,39 +25,31 @@ class ClientFormResponseValue extends BaseEntity
 
     /**
      * Анкета
-     *
-     * @var ClientFormResponse
-     * @ORM\ManyToOne(targetEntity="ClientFormResponse", inversedBy="values")
-     * @ORM\JoinColumn(nullable=false)
      */
+    #[ORM\ManyToOne(targetEntity: ClientFormResponse::class, inversedBy: "values")]
+    #[ORM\JoinColumn(nullable: false)]
     private ?ClientFormResponse $clientFormResponse = null;
 
     /**
      * Поле формы
-     *
-     * @var ClientFormField
-     * @ORM\ManyToOne(targetEntity="ClientFormField")
-     * @ORM\JoinColumn(nullable=false)
      */
+    #[ORM\ManyToOne(targetEntity: ClientFormField::class)]
+    #[ORM\JoinColumn(nullable: false)]
     private ?ClientFormField $clientFormField = null;
 
     /**
      * Клиент.
      * Эта информация дублируется с `ClientFormResponse::client` сознательно для того, чтобы было легче делать запрос
      * на поиск по значениям полей всех анкет клиента.
-     *
-     * @var Client
-     * @ORM\ManyToOne(targetEntity="Client")
-     * @ORM\JoinColumn(nullable=false)
      */
+    #[ORM\ManyToOne(targetEntity: Client::class)]
+    #[ORM\JoinColumn(nullable: false)]
     private ?Client $client = null;
 
     /**
      * Значение поля
-     *
-     * @var string
-     * @ORM\Column(type="text", nullable=false)
      */
+    #[ORM\Column(type: "text", nullable: false)]
     private string $value = "";
 
     /**

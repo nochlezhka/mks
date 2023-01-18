@@ -2,13 +2,14 @@
 
 namespace App\Entity;
 
+use App\Repository\DocumentRepository;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Документ
- * @ORM\Entity(repositoryClass="App\Repository\DocumentRepository")
  */
+#[ORM\Entity(repositoryClass: DocumentRepository::class)]
 class Document extends BaseEntity
 {
     const REGISTRATION_UNKNOWN = 0;
@@ -17,56 +18,56 @@ class Document extends BaseEntity
 
     /**
      * Адрес
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: "string", nullable: true)]
     private ?string $address = null;
 
     /**
      * Город
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: "string", nullable: true)]
     private ?string $city = null;
 
     /**
      * Дата
-     * @ORM\Column(type="date", nullable=true)
      */
+    #[ORM\Column(type: "date", nullable: true)]
     private ?DateTime $date = null;
 
     /**
      * Номер
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: "string", nullable: true)]
     private ?string $number = null;
 
     /**
      * Серия
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: "string", nullable: true)]
     private ?string $numberPrefix = null;
 
     /**
      * Регистрация
-     * @ORM\Column(type="integer", nullable=true)
      */
+    #[ORM\Column(type: "integer", nullable: true)]
     private ?int $registration = null;
 
     /**
      * Кем и когда выдан
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: "string", nullable: true)]
     private ?string $issued = null;
 
     /**
      * Клиент
-     * @ORM\ManyToOne(targetEntity="Client", inversedBy="documents")
      */
+    #[ORM\ManyToOne(targetEntity: Client::class, inversedBy: "documents")]
     private ?Client $client = null;
 
     /**
      * Тип
-     * @ORM\ManyToOne(targetEntity="DocumentType")
      */
+    #[ORM\ManyToOne(targetEntity: DocumentType::class)]
     private ?DocumentType $type = null;
 
     public function __toString()

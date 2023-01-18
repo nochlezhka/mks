@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Repository\UserRepository;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -13,107 +14,91 @@ use Symfony\Component\Security\Core\User\LegacyPasswordAuthenticatedUserInterfac
 /**
  * Пользователь (сотрудник)
  * Таблица в старой БД: Worker
- * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
- * @ORM\Table(name="fos_user_user")
  */
+#[ORM\Entity(repositoryClass: UserRepository::class)]
+#[ORM\Table(name: "fos_user_user")]
 class User extends BaseUser implements BaseEntityInterface, TimezoneAwareInterface, LegacyPasswordAuthenticatedUserInterface
 {
-    /**
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
+    #[ORM\Column(type: "integer")]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: "AUTO")]
     protected $id;
 
     /**
      * Должность
      * Поле в старой БД: rules
-     * @ORM\ManyToOne(targetEntity="Position", inversedBy="users")
      */
+    #[ORM\ManyToOne(targetEntity: Position::class, inversedBy: "users")]
     private ?Position $position;
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
+    #[ORM\Column(type: "string", nullable: true)]
     private ?string $lastname = null;
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
+    #[ORM\Column(type: "string", nullable: true)]
     private ?string $firstname = null;
 
     /**
      * Отчество
      * Поле в старой БД: middlename
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: "string", nullable: true)]
     private ?string $middlename;
 
     /**
      * Дата доверенности
      * Поле в старой БД: warrantDate
-     * @ORM\Column(type="date", nullable=true)
      */
+    #[ORM\Column(type: "date", nullable: true)]
     private ?DateTime $proxyDate;
 
     /**
      * Номер доверенности
      * Поле в старой БД: warrantNum
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: "string", nullable: true)]
     private ?string $proxyNum;
 
     /**
      * Паспортные данные
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: "text", nullable: true)]
     private ?string $passport;
 
     /**
      * Просмотренные уведомления
-     * @ORM\ManyToMany(targetEntity="Notice", inversedBy="viewedBy")
-     * @ORM\JoinTable(
-     *     name="notice_user",
-     *     joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="notice_id", referencedColumnName="id", unique=true)}
-     * )
      */
+    #[ORM\ManyToMany(targetEntity: Notice::class, inversedBy: "viewedBy")]
+    #[ORM\JoinTable(name: "notice_user")]
+    #[ORM\JoinColumn(name: "user_id", referencedColumnName: "id")]
+    #[ORM\InverseJoinColumn(name: "notice_id", referencedColumnName: "id", unique: true)]
     private Collection $viewedNotices;
 
     /**
      * Просмотренные анкеты клиентов
-     * @ORM\OneToMany(targetEntity="ViewedClient", mappedBy="createdBy")
-     * @ORM\OrderBy({"createdAt" = "DESC"})
      */
+    #[ORM\OneToMany(mappedBy: "createdBy", targetEntity: ViewedClient::class)]
+    #[ORM\OrderBy(["createdAt" => "DESC"])]
     private Collection $viewedClients;
 
     /**
      * Должность текстом
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: "text", nullable: true)]
     private ?string $positionText;
 
     /**
      * Таймзона
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: "string", nullable: true)]
     private ?string $timezone;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column(type: "integer", nullable: true)]
     private ?int $syncId = null;
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column(type: "integer", nullable: true)]
     private ?int $sort = null;
-    /**
-     * @ORM\ManyToOne(targetEntity="User")
-     */
+    #[ORM\ManyToOne(targetEntity: User::class)]
     private ?User $createdBy = null;
-    /**
-     * @ORM\ManyToOne(targetEntity="User")
-     */
+    #[ORM\ManyToOne(targetEntity: User::class)]
     private ?User $updatedBy = null;
 
     public function __construct()

@@ -7,74 +7,74 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Данные о проживании в приюте (договор о заселении)
- * @ORM\Entity()
  */
+#[ORM\Entity]
 class ShelterHistory extends BaseEntity
 {
     /**
      * Комментарий
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: "text", nullable: true)]
     private ?string $comment = null;
 
     /**
      * Дата прививки от дифтерии
-     * @ORM\Column(type="date", nullable=true)
      */
+    #[ORM\Column(type: "date", nullable: true)]
     private ?DateTime $diphtheriaVaccinationDate = null;
 
     /**
      * Дата флюорографии
-     * @ORM\Column(type="date", nullable=true)
      */
+    #[ORM\Column(type: "date", nullable: true)]
     private ?DateTime $fluorographyDate = null;
 
     /**
      * Дата прививки от гепатита
-     * @ORM\Column(type="date", nullable=true)
      */
+    #[ORM\Column(type: "date", nullable: true)]
     private ?DateTime $hepatitisVaccinationDate = null;
 
     /**
      * Дата прививки от тифа
-     * @ORM\Column(type="date", nullable=true)
      */
+    #[ORM\Column(type: "date", nullable: true)]
     private ?DateTime $typhusVaccinationDate = null;
 
     /**
      * Дата заселения
-     * @ORM\Column(type="date", nullable=true)
      */
+    #[ORM\Column(type: "date", nullable: true)]
     private ?DateTime $dateFrom = null;
 
     /**
      * Дата выселения
-     * @ORM\Column(type="date", nullable=true)
      */
+    #[ORM\Column(type: "date", nullable: true)]
     private ?DateTime $dateTo = null;
 
     /**
      * Комната
-     * @ORM\ManyToOne(targetEntity="ShelterRoom")
      */
+    #[ORM\ManyToOne(targetEntity: ShelterRoom::class)]
     private ?ShelterRoom $room = null;
 
     /**
      * Клиент
-     * @ORM\ManyToOne(targetEntity="Client", inversedBy="shelterHistories")
      */
+    #[ORM\ManyToOne(targetEntity: Client::class, inversedBy: "shelterHistories")]
     private ?Client $client = null;
 
     /**
      * Статус
-     * @ORM\ManyToOne(targetEntity="ShelterStatus")
      */
+    #[ORM\ManyToOne(targetEntity: ShelterStatus::class)]
     private ?ShelterStatus $status = null;
 
     /**
      * Договор
-     * @ORM\ManyToOne(targetEntity="Contract")
      */
+    #[ORM\ManyToOne(targetEntity: Contract::class)]
     private ?Contract $contract = null;
 
     public function __toString()

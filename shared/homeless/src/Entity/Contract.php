@@ -12,57 +12,57 @@ use Symfony\Component\Validator\Context\ExecutionContext;
 
 /**
  * Договор (сервисный план)
- * @ORM\Entity()
  */
+#[ORM\Entity]
 class Contract extends BaseEntity implements DownloadableInterface
 {
     /**
      * Комментарий
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: "text", nullable: true)]
     private ?string $comment = null;
 
     /**
      * Номер
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: "string", nullable: true)]
     private ?string $number = null;
 
     /**
      * Дата начала
-     * @ORM\Column(type="date", nullable=true)
      */
+    #[ORM\Column(type: "date", nullable: true)]
     private ?DateTime $dateFrom = null;
 
     /**
      * Дата завершения
-     * @ORM\Column(type="date", nullable=true)
      */
+    #[ORM\Column(type: "date", nullable: true)]
     private ?DateTime $dateTo = null;
 
     /**
      * Клиент
-     * @ORM\ManyToOne(targetEntity="Client", inversedBy="contracts")
      */
+    #[ORM\ManyToOne(targetEntity: Client::class, inversedBy: "contracts")]
     private ?Client $client = null;
 
     /**
      * Статус
-     * @ORM\ManyToOne(targetEntity="ContractStatus")
      */
+    #[ORM\ManyToOne(targetEntity: ContractStatus::class)]
     private ?ContractStatus $status = null;
 
     /**
      * Документ
-     * @ORM\ManyToOne(targetEntity="Document")
      */
+    #[ORM\ManyToOne(targetEntity: Document::class)]
     private ?Document $document = null;
 
     /**
      * Пункты
-     * @ORM\OneToMany(targetEntity="ContractItem", mappedBy="contract", cascade={"all"}, orphanRemoval=true)
-     * @ORM\OrderBy({"date" = "DESC", "id" = "DESC"})
      */
+    #[ORM\OneToMany(mappedBy: "contract", targetEntity: ContractItem::class, cascade: ["all"], orphanRemoval: true)]
+    #[ORM\OrderBy(["date" => "DESC", "id" => "DESC"])]
     private Collection $items;
 
     /**
@@ -118,7 +118,7 @@ class Contract extends BaseEntity implements DownloadableInterface
     public function getDuration(): ?int
     {
         $dateTo = $this->dateTo;
-        if($dateTo == null) return null;
+        if ($dateTo == null) return null;
         return $this->dateFrom->diff($dateTo)->m;
     }
 

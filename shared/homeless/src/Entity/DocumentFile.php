@@ -8,39 +8,39 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
  * Загруженный файл документа
- * @ORM\Entity()
- * @Vich\Uploadable
  */
+#[ORM\Entity]
+#[Vich\Uploadable]
 class DocumentFile extends BaseEntity
 {
     /**
      * Комментарий
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: "text", nullable: true)]
     private ?string $comment = null;
 
     /**
      * Клиент
-     * @ORM\ManyToOne(targetEntity="Client", inversedBy="documentFiles")
      */
+    #[ORM\ManyToOne(targetEntity: Client::class, inversedBy: "documentFiles")]
     private ?Client $client = null;
 
     /**
      * Тип
-     * @ORM\ManyToOne(targetEntity="DocumentType")
      */
+    #[ORM\ManyToOne(targetEntity: DocumentType::class)]
     private ?DocumentType $type = null;
 
     /**
      * Имя файла
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: "string", nullable: true)]
     private ?string $filename = null;
 
     /**
      * Файл
-     * @Vich\UploadableField(mapping="document_file", fileNameProperty="filename")
      */
+    #[Vich\UploadableField(mapping: "document_file", fileNameProperty: "filename")]
     private $file;
 
     public function __toString()

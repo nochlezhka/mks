@@ -6,8 +6,7 @@ use App\Entity\Certificate;
 use App\Entity\CertificateType;
 use App\Entity\Client;
 use App\Repository\CertificateTypeRepository;
-use Doctrine\ORM\Exception\ORMException;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 
 class CertificateRecreator
 {
@@ -25,7 +24,6 @@ class CertificateRecreator
     /**
      * Пересоздание всех справок для пользователя
      *
-     * @throws ORMException
      */
     public function recreateFor(Client $client): void
     {

@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Repository\NoticeRepository;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -9,32 +10,32 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Напоминание
- * @ORM\Entity(repositoryClass="App\Repository\NoticeRepository")
  */
+#[ORM\Entity(repositoryClass: NoticeRepository::class)]
 class Notice extends BaseEntity
 {
     /**
      * Текст
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: "text", nullable: true)]
     private ?string $text = "";
 
     /**
      * Дата
-     * @ORM\Column(type="date", nullable=true)
      */
+    #[ORM\Column(type: "date", nullable: true)]
     private ?DateTime $date = null;
 
     /**
      * Клиент
-     * @ORM\ManyToOne(targetEntity="Client")
      */
+    #[ORM\ManyToOne(targetEntity: Client::class)]
     private ?Client $client = null;
 
     /**
      * Кем просмотрено
-     * @ORM\ManyToMany(targetEntity="App\Entity\User", mappedBy="viewedNotices")
      */
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: "viewedNotices")]
     private Collection $viewedBy;
 
     public function __toString()

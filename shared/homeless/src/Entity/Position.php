@@ -2,26 +2,27 @@
 
 namespace App\Entity;
 
+use App\Repository\PositionRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Должность пользователя
- * @ORM\Entity(repositoryClass="App\Repository\PositionRepository")
  */
+#[ORM\Entity(repositoryClass: PositionRepository::class)]
 class Position extends BaseEntity
 {
     /**
      * Название
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: "string", nullable: true)]
     private ?string $name = null;
 
     /**
      * Пользователи с данной должностью
-     * @ORM\OneToMany(targetEntity="App\Entity\User", mappedBy="position")
      */
+    #[ORM\OneToMany(mappedBy: "position", targetEntity: User::class)]
     private Collection $users;
 
     public function __construct()

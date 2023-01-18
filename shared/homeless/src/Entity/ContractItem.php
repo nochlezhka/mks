@@ -7,38 +7,38 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Пункт договора (сервисного плана)
- * @ORM\Entity()
  */
+#[ORM\Entity]
 class ContractItem extends BaseEntity
 {
     /**
      * Комментарий
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: "text", nullable: true)]
     private ?string $comment = null;
 
     /**
      * Дата начала выполнения
-     * @ORM\Column(type="date", nullable=true)
      */
+    #[ORM\Column(type: "date", nullable: true)]
     private ?DateTime $dateStart = null;
 
     /**
      * Дата выполнения
-     * @ORM\Column(type="date", nullable=true)
      */
+    #[ORM\Column(type: "date", nullable: true)]
     private ?DateTime $date = null;
 
     /**
      * Договор
-     * @ORM\ManyToOne(targetEntity="Contract", inversedBy="items")
      */
+    #[ORM\ManyToOne(targetEntity: Contract::class, inversedBy: "items")]
     private ?Contract $contract = null;
 
     /**
      * Тип
-     * @ORM\ManyToOne(targetEntity="ContractItemType")
      */
+    #[ORM\ManyToOne(targetEntity: ContractItemType::class)]
     private ?ContractItemType $type;
 
     public function __toString()

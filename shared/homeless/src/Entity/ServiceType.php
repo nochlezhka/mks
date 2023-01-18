@@ -2,12 +2,13 @@
 
 namespace App\Entity;
 
+use App\Repository\ServiceTypeRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Тип услуги
- * @ORM\Entity(repositoryClass="App\Repository\ServiceTypeRepository")
  */
+#[ORM\Entity(repositoryClass: ServiceTypeRepository::class)]
 class ServiceType extends BaseEntity
 {
     // SyncId различных типов
@@ -44,32 +45,32 @@ class ServiceType extends BaseEntity
 
     /**
      * Название
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: "string", nullable: true)]
     private ?string $name = null;
 
     /**
      * Платная
-     * @ORM\Column(type="boolean", nullable=true)
      */
+    #[ORM\Column(type: "boolean", nullable: true)]
     private ?bool $pay = null;
 
     /**
      * Документ
-     * @ORM\Column(type="boolean", nullable=true)
      */
+    #[ORM\Column(type: "boolean", nullable: true)]
     private ?bool $document = null;
 
     /**
      * Сумма
-     * @ORM\Column(type="boolean", nullable=true)
      */
+    #[ORM\Column(type: "boolean", nullable: true)]
     private ?bool $amount = null;
 
     /**
      * Комметарий
-     * @ORM\Column(type="boolean", nullable=true)
      */
+    #[ORM\Column(type: "boolean", nullable: true)]
     private ?bool $comment = null;
 
     public function __toString()

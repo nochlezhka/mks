@@ -6,20 +6,20 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Тип построенного документа
- * @ORM\Entity()
  */
+#[ORM\Entity]
 class GeneratedDocumentType extends BaseEntity
 {
     /**
      * Название
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: "string", nullable: true)]
     private ?string $name = null;
 
     /**
      * Код
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: "string", nullable: true)]
     private ?string $code = null;
 
     public function __toString()

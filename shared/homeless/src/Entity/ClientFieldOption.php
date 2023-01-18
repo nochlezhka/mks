@@ -6,27 +6,27 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Вариант значения дополнительного поля клиента
- * @ORM\Entity
  */
+#[ORM\Entity]
 class ClientFieldOption extends BaseEntity
 {
     /**
      * Название
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: "string", nullable: true)]
     private ?string $name = null;
 
     /**
      * Если - true, то при заполнении не может быть выбрано только
      * одно это значение, необходимо указать еще какое-нибудь
-     * @ORM\Column(type="boolean", nullable=true)
      */
+    #[ORM\Column(type: "boolean", nullable: true)]
     private ?bool $notSingle = false;
 
     /**
      * Поле
-     * @ORM\ManyToOne(targetEntity="ClientField", inversedBy="options")
      */
+    #[ORM\ManyToOne(targetEntity: ClientField::class, inversedBy: "options")]
     private ?ClientField $field = null;
 
     public function __toString()

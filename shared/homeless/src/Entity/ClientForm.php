@@ -3,6 +3,7 @@
 
 namespace App\Entity;
 
+use App\Repository\ClientFormRepository;
 use App\Util\BaseEntityUtil;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -10,9 +11,8 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Редактируемая форма
- *
- * @ORM\Entity(repositoryClass="App\Repository\ClientFormRepository")
  */
+#[ORM\Entity(repositoryClass: ClientFormRepository::class)]
 class ClientForm extends BaseEntity
 {
     /**
@@ -24,15 +24,15 @@ class ClientForm extends BaseEntity
     /**
      * Название
      * @var string
-     * @ORM\Column(type="string")
      */
+    #[ORM\Column(type: "string")]
     private string $name = "";
 
     /**
      * Набор полей
      * @var Collection
-     * @ORM\OneToMany(targetEntity="ClientFormField", mappedBy="form")
      */
+    #[ORM\OneToMany(mappedBy: "form", targetEntity: ClientFormField::class)]
     private Collection $fields;
 
     /**

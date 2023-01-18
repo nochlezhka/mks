@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Repository\ClientFieldValueRepository;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -11,58 +12,58 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
  * Значение дополнительного поля клиента
- * @ORM\Table(uniqueConstraints={@UniqueConstraint(name="value_unique", columns={"field_id", "client_id"})})
- * @ORM\Entity(repositoryClass="App\Repository\ClientFieldValueRepository")
- * @Vich\Uploadable
  */
+#[UniqueConstraint(name: "value_unique", columns: ["field_id", "client_id"])]
+#[ORM\Entity(repositoryClass: ClientFieldValueRepository::class)]
+#[Vich\Uploadable]
 class ClientFieldValue extends BaseEntity
 {
     /**
      * Поле
-     * @ORM\ManyToOne(targetEntity="ClientField")
      */
+    #[ORM\ManyToOne(targetEntity: ClientField::class)]
     private ?ClientField $field = null;
 
     /**
      * Клиент
-     * @ORM\ManyToOne(targetEntity="Client", inversedBy="fieldValues")
      */
+    #[ORM\ManyToOne(targetEntity: Client::class, inversedBy: "fieldValues")]
     private ?Client $client = null;
 
     /**
      * Значение поля - текст
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: "text", nullable: true)]
     private ?string $text = null;
 
     /**
      * Значение поля - дата/время
-     * @ORM\Column(type="datetime", nullable=true)
      */
+    #[ORM\Column(type: "datetime", nullable: true)]
     private ?DateTime $datetime = null;
 
     /**
      * Вариант значения (если поле не multiple)
-     * @ORM\ManyToOne(targetEntity="ClientFieldOption")
      */
+    #[ORM\ManyToOne(targetEntity: ClientFieldOption::class)]
     private ?ClientFieldOption $option = null;
 
     /**
      * Варианты значений (если поле multiple)
-     * @ORM\ManyToMany(targetEntity="ClientFieldOption")
      */
+    #[ORM\ManyToMany(targetEntity: ClientFieldOption::class)]
     private Collection $options;
 
     /**
      * Имя файла для файлового поля
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: "string", nullable: true)]
     private ?DateTime $filename = null;
 
     /**
      * Значение поля - файл
-     * @Vich\UploadableField(mapping="client_field_file", fileNameProperty="filename")
      */
+    #[Vich\UploadableField(mapping: "client_field_file", fileNameProperty: "filename")]
     private $file;
 
     public function getFile()

@@ -6,8 +6,8 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Тип документа
- * @ORM\Entity()
  */
+#[ORM\Entity]
 class DocumentType extends BaseEntity
 {
     /**
@@ -22,14 +22,14 @@ class DocumentType extends BaseEntity
 
     /**
      * Название
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: "string", nullable: true)]
     private ?string $name = null;
 
     /**
      * Тип
-     * @ORM\Column(type="integer", nullable=true)
      */
+    #[ORM\Column(type: "integer", nullable: true)]
     private ?int $type = self::TYPE_OTHER;
 
     public function __toString()

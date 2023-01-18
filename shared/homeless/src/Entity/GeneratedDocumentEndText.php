@@ -6,26 +6,26 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Вараиант конечного текста построенного документа
- * @ORM\Entity()
  */
+#[ORM\Entity]
 class GeneratedDocumentEndText extends BaseEntity
 {
     /**
      * Название
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: "string", nullable: true)]
     private ?string $name = null;
 
     /**
      * Код
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: "string", nullable: true)]
     private ?string $code = null;
 
     /**
      * Текст
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: "text", nullable: true)]
     private ?string $text = null;
 
     public function __toString()

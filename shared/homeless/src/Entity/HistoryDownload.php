@@ -2,60 +2,39 @@
 
 namespace App\Entity;
 
+use App\Repository\HistoryDownloadRepository;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * HistoryDownload
- *
- * @ORM\Table(name="history_download")
- * @ORM\Entity(repositoryClass="App\Repository\HistoryDownloadRepository")
  */
+#[ORM\Table(name: "history_download")]
+#[ORM\Entity(repositoryClass: HistoryDownloadRepository::class)]
 class HistoryDownload
 {
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
+
+    #[ORM\Column(name: "id", type: "integer")]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: "AUTO")]
     private int $id = 0;
 
-    /**
-     * @var Client
-     *
-     * @ORM\ManyToOne(targetEntity="Client", inversedBy="historyDownloads")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="client_id", referencedColumnName="id")
-     * })
-     */
+    #[ORM\ManyToOne(targetEntity: Client::class, inversedBy: "historyDownloads")]
+    #[ORM\JoinColumn(name: "client_id", referencedColumnName: "id")]
     private ?Client $client = null;
 
-    /**
-     * @var User
-     *
-     * @ORM\ManyToOne(targetEntity="User")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="user_id", referencedColumnName="id")
-     * })
-     */
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: "user_id", referencedColumnName: "id")]
     private ?User $user = null;
 
-    /**
-     * @var DateTime
-     *
-     * @ORM\Column(name="date", type="datetime")
-     */
+    #[ORM\Column(name: "date", type: "datetime")]
     private DateTime $date;
 
     /**
      * Тип сертификата
-     * @ORM\ManyToOne(targetEntity="CertificateType")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="certificate_type_id", referencedColumnName="id")
-     * })
      */
+    #[ORM\ManyToOne(targetEntity: CertificateType::class)]
+    #[ORM\JoinColumn(name: "certificate_type_id", referencedColumnName: "id")]
     private ?CertificateType $certificateType = null;
 
     /**

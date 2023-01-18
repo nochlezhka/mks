@@ -7,56 +7,56 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Построенный документ
- * @ORM\Entity()
  */
+#[ORM\Entity]
 class GeneratedDocument extends BaseEntity implements DownloadableInterface
 {
     /**
      * Клиент
-     * @ORM\ManyToOne(targetEntity="Client", inversedBy="generatedDocuments")
      */
+    #[ORM\ManyToOne(targetEntity: Client::class, inversedBy: "generatedDocuments")]
     private ?Client $client = null;
 
     /**
      * Номер
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: "string", nullable: true)]
     private ?string $number = null;
 
     /**
      * Тип
-     * @ORM\ManyToOne(targetEntity="GeneratedDocumentType")
      */
+    #[ORM\ManyToOne(targetEntity: GeneratedDocumentType::class)]
     private ?GeneratedDocumentType $type = null;
 
     /**
      * Начальный текст
-     * @ORM\ManyToOne(targetEntity="GeneratedDocumentStartText")
      */
+    #[ORM\ManyToOne(targetEntity: GeneratedDocumentStartText::class)]
     private ?GeneratedDocumentStartText $startText = null;
 
     /**
      * Конечный текст
-     * @ORM\ManyToOne(targetEntity="GeneratedDocumentEndText")
      */
+    #[ORM\ManyToOne(targetEntity: GeneratedDocumentEndText::class)]
     private ?GeneratedDocumentEndText $endText = null;
 
     /**
      * Текст
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: "text", nullable: true)]
     private ?string $text = null;
 
     /**
      * Для кого
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: "text", nullable: true)]
     private ?string $whom = null;
 
     /**
      * Подпись
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: "text", nullable: true)]
     private ?string $signature = null;
 
     /**

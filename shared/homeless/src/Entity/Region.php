@@ -8,26 +8,26 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Регион РФ
- * @ORM\Entity()
  */
+#[ORM\Entity]
 class Region extends BaseEntity
 {
     /**
      * Название
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: "string", nullable: true)]
     private ?string $name = null;
 
     /**
      * Сокращенное название
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: "string", nullable: true)]
     private ?string $shortName = null;
 
     /**
      * Районы
-     * @ORM\OneToMany(targetEntity="District", mappedBy="region")
      */
+    #[ORM\OneToMany(mappedBy: "region", targetEntity: District::class)]
     private Collection $districts;
 
     public function __toString()

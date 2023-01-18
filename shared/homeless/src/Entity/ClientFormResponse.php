@@ -3,6 +3,7 @@
 
 namespace App\Entity;
 
+use App\Repository\ClientFormResponseRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -10,47 +11,40 @@ use LogicException;
 
 /**
  * Заполненная редактируемая форма
- *
-* @ORM\Entity(repositoryClass="App\Repository\ClientFormResponseRepository")
 */
+#[ORM\Entity(repositoryClass: ClientFormResponseRepository::class)]
 class ClientFormResponse extends BaseEntity
 {
     /**
      * Клиент, к которому относится анкета
-     *
-     * @var Client
-     * @ORM\ManyToOne(targetEntity="Client")
-     * @ORM\JoinColumn(nullable=false)
      */
+    #[ORM\ManyToOne(targetEntity: Client::class)]
+    #[ORM\JoinColumn(nullable: false)]
     private ?Client $client = null;
 
     /**
      * Форма заполненной анкеты
-     *
-     * @var ClientForm|null
-     * @ORM\ManyToOne(targetEntity="ClientForm")
-     * @ORM\JoinColumn(nullable=false)
      */
+    #[ORM\ManyToOne(targetEntity: ClientForm::class)]
+    #[ORM\JoinColumn(nullable: false)]
     private ?ClientForm $form = null;
 
     /**
      * Поля заполненной анкеты
-     *
-     * @var ArrayCollection
-     * @ORM\OneToMany(targetEntity="ClientFormResponseValue", mappedBy="clientFormResponse",
-     *     cascade={"persist", "remove", "detach"},
-     *     orphanRemoval=true,
-     * )
      */
+    #[ORM\OneToMany(
+        mappedBy: "clientFormResponse",
+        targetEntity: ClientFormResponseValue::class,
+        cascade: ["persist", "remove", "detach"],
+        orphanRemoval: true
+    )]
     private Collection $values;
 
     /**
      * Ссылка на ResidentQuestionnaire, из которого была скопирована заполненная анкета.
      * Нужна на период миграции из старой формы анкеты в новую.
-     *
-     * @var integer|null
-     * @ORM\Column(type="integer", nullable=true, unique=true)
      */
+    #[ORM\Column(type: "integer", unique: true, nullable: true)]
     private ?int $residentQuestionnaireId = null;
 
     /**
@@ -60,8 +54,6 @@ class ClientFormResponse extends BaseEntity
      * Ключ - ID поля, значение - значение поля.
      * Не записывается в базу. Админка перед сохранением заполненной анкеты преобразует массив в набор объектов,
      * который потом будет записан в $values
-     *
-     * @var array
      */
     private array $_submittedFields = [];
 

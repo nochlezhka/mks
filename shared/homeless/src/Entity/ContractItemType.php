@@ -6,20 +6,20 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Тип пункта договора (сервисного плана)
- * @ORM\Entity()
  */
+#[ORM\Entity]
 class ContractItemType extends BaseEntity
 {
     /**
      * Название
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: "string", nullable: true)]
     private ?string $name = null;
 
     /**
      * Сокращенное название
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: "string", nullable: true)]
     private ?string $shortName = null;
 
     public function __toString()

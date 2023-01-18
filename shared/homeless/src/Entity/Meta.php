@@ -5,29 +5,18 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity
- */
+#[ORM\Entity]
 class Meta
 {
-    /**
-     * @var int
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
+    #[ORM\Column(type: "integer")]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: "AUTO")]
     private int $id = 0;
 
-    /**
-     * @var string
-     * @ORM\Column(type="string", length=32, unique=true, name="`key`")
-     */
+    #[ORM\Column(name: "`key`", type: "string", length: 32, unique: true)]
     private string $key = "";
 
-    /**
-     * @var string
-     * @ORM\Column(type="text")
-     */
+    #[ORM\Column(type: "text")]
     private string $value = "";
 
     /**

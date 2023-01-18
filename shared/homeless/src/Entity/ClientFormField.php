@@ -7,9 +7,8 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Поле настраиваемой формы
- *
- * @ORM\Entity
  */
+#[ORM\Entity]
 class ClientFormField extends BaseEntity
 {
     // ID фиксированного поля формы анкеты проживающего
@@ -29,45 +28,41 @@ class ClientFormField extends BaseEntity
      * Форма, которой принадлежит поле
      *
      * @var ClientForm
-     * @ORM\ManyToOne(targetEntity="ClientForm", inversedBy="fields")
-     * @ORM\JoinColumn(nullable=false)
      */
+    #[ORM\ManyToOne(targetEntity: ClientForm::class, inversedBy: "fields")]
+    #[ORM\JoinColumn(nullable: false)]
     private ?ClientForm $form = null;
 
     /**
      * Название поля
      *
      * @var string
-     * @ORM\Column(type="string")
      */
+    #[ORM\Column(type: "string")]
     private string $name = "";
 
     /**
      * Тип поля (см. константы класса, TYPE_*)
      *
      * @var integer
-     * @ORM\Column(type="integer")
      */
+    #[ORM\Column(type: "integer")]
     private int $type = 0;
 
     /**
      * Список вариантов для выбора в поле типа TYPE_OPTION.
      * Варианты разделены переводом строки.
      * Не имеет значения для других типов поля.
-     *
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: "text", nullable:true)]
     private ?string $options = null;
 
     /**
      * @var string[]
-     * @ORM\Column(type="simple_array", nullable=true)
      */
+    #[ORM\Column(type: "simple_array", nullable: true)]
     private ?array $flags = null;
 
-    /**
-     * @return ClientForm
-     */
     public function getForm(): ?ClientForm
     {
         return $this->form;
@@ -184,7 +179,7 @@ class ClientFormField extends BaseEntity
      */
     public function __toString()
     {
-        return "Поле ".$this->getName();
+        return "Поле " . $this->getName();
     }
 
     protected function getFlags(): ?array
@@ -212,7 +207,9 @@ class ClientFormField extends BaseEntity
         if ($flagValue) {
             $this->setFlags(array_unique(array_merge($flags, [$flagName])));
         } else {
-            $this->setFlags(array_filter($flags, function($el) use ($flagName) {return $el != $flagName; }));
+            $this->setFlags(array_filter($flags, function ($el) use ($flagName) {
+                return $el != $flagName;
+            }));
         }
     }
 

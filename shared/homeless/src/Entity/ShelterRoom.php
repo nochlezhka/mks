@@ -6,32 +6,32 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Комната приюта
- * @ORM\Entity()
  */
+#[ORM\Entity]
 class ShelterRoom extends BaseEntity
 {
     /**
      * Номер
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: "string", nullable: true)]
     private ?string $number = null;
 
     /**
      * Максимальное количество жильцов
-     * @ORM\Column(type="integer", nullable=true)
      */
+    #[ORM\Column(type: "integer", nullable: true)]
     private ?int $maxOccupants = null;
 
     /**
      * Текущее количество жильцов
-     * @ORM\Column(type="integer", nullable=true)
      */
+    #[ORM\Column(type: "integer", nullable: true)]
     private ?int $currentOccupants = null;
 
     /**
      * Комментарий
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: "text", nullable: true)]
     private ?string $comment = null;
 
     public function __toString()

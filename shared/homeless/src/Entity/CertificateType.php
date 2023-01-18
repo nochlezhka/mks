@@ -2,12 +2,13 @@
 
 namespace App\Entity;
 
+use App\Repository\CertificateTypeRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Тип справки
- * @ORM\Entity(repositoryClass="App\Repository\CertificateTypeRepository")
  */
+#[ORM\Entity(repositoryClass: CertificateTypeRepository::class)]
 class CertificateType extends BaseEntity
 {
     // SyncId различных типов
@@ -32,50 +33,50 @@ class CertificateType extends BaseEntity
 
     /**
      * Название
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: "string", nullable: true)]
     private ?string $name = null;
 
     /**
      * Доступен для скачивания
-     * @ORM\Column(type="boolean", nullable=true)
      */
+    #[ORM\Column(type: "boolean", nullable: true)]
     private ?bool $downloadable = false;
 
     /**
      * Отображать фото клиента
-     * @ORM\Column(type="boolean", nullable=true)
      */
+    #[ORM\Column(type: "boolean", nullable: true)]
     private ?bool $showPhoto = false;
 
     /**
      * Отображать дату ниже ФИО сотрудника
-     * @ORM\Column(type="boolean", nullable=true)
      */
+    #[ORM\Column(type: "boolean", nullable: true)]
     private ?bool $showDate = false;
 
     /**
      * Содержимое верхнего левого блока
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: "text", nullable: true)]
     private ?string $contentHeaderLeft = null;
 
     /**
      * Содержимое верхнего правого блока
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: "text", nullable: true)]
     private ?string $contentHeaderRight = null;
 
     /**
      * Содержимое среднего блока
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: "text", nullable: true)]
     private ?string $contentBodyRight = null;
 
     /**
      * Содержимое нижнего блока
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: "text", nullable: true)]
     private ?string $contentFooter = null;
 
     public function __toString()

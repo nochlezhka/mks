@@ -10,9 +10,9 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
  * Клиент
- * @ORM\Entity()
- * @Vich\Uploadable
  */
+#[ORM\Entity]
+#[Vich\Uploadable]
 class Client extends BaseEntity
 {
     /**
@@ -27,132 +27,131 @@ class Client extends BaseEntity
 
     /**
      * Название файла с фотографией (хранится с помощью VichUploaderBundle)
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: "string", nullable: true)]
     private ?string $photoName = null;
 
     /**
      * Дата рождения
-     * @ORM\Column(type="date", nullable=true)
      */
+    #[ORM\Column(type: "date", nullable: true)]
     private ?DateTime $birthDate = null;
 
     /**
      * Место рождения
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: "string", nullable: true)]
     private ?string $birthPlace = null;
 
     /**
      * Пол
-     * @ORM\Column(type="integer", nullable=true)
      */
+    #[ORM\Column(type: "integer", nullable: true)]
     private ?int $gender = null;
 
     /**
      * Имя
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: "string", nullable: true)]
     private ?string $firstname = null;
 
     /**
      * Отчество
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: "string", nullable: true)]
     private ?string $middlename = null;
 
     /**
      * Фамилия
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: "string", nullable: true)]
     private ?string $lastname = null;
 
     /**
      * Фамилия
-     * @ORM\Column(type="boolean", nullable=true)
      */
+    #[ORM\Column(type: "boolean", nullable: true)]
     private ?bool $isHomeless = true;
 
     /**
      * Место последнего проживания
-     * @ORM\ManyToOne(targetEntity="District")
-     * @ORM\JoinColumn(name="last_residence_district_id", referencedColumnName="id")
      */
+    #[ORM\ManyToOne(targetEntity: District::class)]
+    #[ORM\JoinColumn(name: "last_residence_district_id", referencedColumnName: "id")]
     private ?District $lastResidenceDistrict = null;
 
     /**
      * Место последней регистрации
-     * @ORM\ManyToOne(targetEntity="District")
-     * @ORM\JoinColumn(name="last_registration_district_id", referencedColumnName="id")
      */
+    #[ORM\ManyToOne(targetEntity: District::class)]
+    #[ORM\JoinColumn(name: "last_registration_district_id", referencedColumnName: "id")]
     private ?District $lastRegistrationDistrict = null;
 
     /**
      * Значения дополнительных полей
-     * @ORM\OneToMany(targetEntity="ClientFieldValue", mappedBy="client", cascade={"remove"})
      */
+    #[ORM\OneToMany(mappedBy: "client", targetEntity: ClientFieldValue::class, cascade: ["remove"])]
     private Collection $fieldValues;
 
     /**
      * Примечания
-     * @ORM\OneToMany(targetEntity="Note", mappedBy="client", cascade={"remove"})
-     * @ORM\OrderBy({"createdAt" = "DESC", "id" = "DESC"})
      */
+    #[ORM\OneToMany(mappedBy: "client", targetEntity: Note::class, cascade: ["remove"])]
+    #[ORM\OrderBy(["createdAt" => "DESC", "id" => "DESC"])]
     private Collection $notes;
 
     /**
      * Договоры
-     * @ORM\OneToMany(targetEntity="Contract", mappedBy="client", cascade={"remove"})
-     * @ORM\OrderBy({"dateFrom" = "DESC"})
      */
+    #[ORM\OneToMany(mappedBy: "client", targetEntity: Contract::class, cascade: ["remove"])]
+    #[ORM\OrderBy(["dateFrom" => "DESC"])]
     private Collection $contracts;
 
     /**
      * Документы
-     * @ORM\OneToMany(targetEntity="Document", mappedBy="client", cascade={"remove"})
      */
+    #[ORM\OneToMany(mappedBy: "client", targetEntity: Document::class, cascade: ["remove"])]
     private Collection $documents;
 
     /**
      * Данные о проживаниях в приюте (договоры о заселении)
-     * @ORM\OneToMany(targetEntity="ShelterHistory", mappedBy="client", cascade={"remove"})
      */
+    #[ORM\OneToMany(mappedBy: "client", targetEntity: ShelterHistory::class, cascade: ["remove"])]
     private Collection $shelterHistories;
 
     /**
      * Загруженные файлы документов
-     * @ORM\OneToMany(targetEntity="DocumentFile", mappedBy="client", cascade={"remove"})
      */
+    #[ORM\OneToMany(mappedBy: "client", targetEntity: DocumentFile::class, cascade: ["remove"])]
     private Collection $documentFiles;
 
     /**
      * Полученные услуги
-     * @ORM\OneToMany(targetEntity="Service", mappedBy="client", cascade={"remove"})
-     * @ORM\OrderBy({"createdAt" = "DESC", "id" = "DESC"})
      */
+    #[ORM\OneToMany(mappedBy: "client", targetEntity: Service::class, cascade: ["remove"])]
+    #[ORM\OrderBy(["createdAt" => "DESC", "id" => "DESC"])]
     private Collection $services;
 
     /**
      * Справки
-     * @ORM\OneToMany(targetEntity="Certificate", mappedBy="client", cascade={"remove"})
      */
+    #[ORM\OneToMany(mappedBy: "client", targetEntity: Certificate::class, cascade: ["remove"])]
     private Collection $certificates;
 
     /**
      * Построенные документы
-     * @ORM\OneToMany(targetEntity="GeneratedDocument", mappedBy="client", cascade={"remove"})
      */
+    #[ORM\OneToMany(mappedBy: "client", targetEntity: GeneratedDocument::class, cascade: ["remove"])]
     private Collection $generatedDocuments;
 
-    /**
-     * @ORM\OneToMany(targetEntity="ViewedClient", mappedBy="client", cascade={"remove"})
-     */
+    #[ORM\OneToMany(mappedBy: "client", targetEntity: ViewedClient::class, cascade: ["remove"])]
     private Collection $clientViews;
 
-    /**
-     * @ORM\OneToMany(targetEntity="HistoryDownload", mappedBy="client", cascade={"remove"})
-     */
+    #[ORM\OneToMany(mappedBy: "client", targetEntity: HistoryDownload::class, cascade: ["remove"])]
     private Collection $historyDownloads;
+
+    #[Vich\UploadableField(mapping: "client_photo", fileNameProperty: "photoName")]
+    private $photo;
 
     /**
      * Constructor
@@ -168,11 +167,6 @@ class Client extends BaseEntity
         $this->services = new ArrayCollection();
         $this->generatedDocuments = new ArrayCollection();
     }
-
-    /**
-     * @Vich\UploadableField(mapping="client_photo", fileNameProperty="photoName")
-     */
-    private $photo;
 
     public function getPhoto()
     {

@@ -2,12 +2,13 @@
 
 namespace App\Entity;
 
+use App\Repository\ResidentQuestionnaireRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Анкета проживающего
- * @ORM\Entity(repositoryClass="App\Repository\ResidentQuestionnaireRepository")
  */
+#[ORM\Entity(repositoryClass: ResidentQuestionnaireRepository::class)]
 class ResidentQuestionnaire
 {
     const TYPE_3 = 1;
@@ -82,71 +83,69 @@ class ResidentQuestionnaire
         'Повторное заселение' => self::REASON_FOR_PETITION_RE_SETTLEMENT,
     ];
 
-    /**
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
+    #[ORM\Column(type: "integer")]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: "AUTO")]
     protected $id;
 
     /**
      * Тип анкеты проживающего
-     * @ORM\Column(type="integer", nullable=true)
      */
+    #[ORM\Column(type: "integer", nullable: true)]
     private ?int $typeId = self::TYPE_3;
 
     /**
      * Проживает в жилом помещении?
-     * @ORM\Column(type="boolean", nullable=true)
      */
+    #[ORM\Column(type: "boolean", nullable: true)]
     private ?bool $isDwelling = null;
 
     /**
      * Тип жилья
-     * @ORM\Column(type="integer", nullable=true)
      */
+    #[ORM\Column(type: "integer", nullable: true)]
     private ?int $roomTypeId = null;
 
     /**
      * Работает?
-     * @ORM\Column(type="boolean", nullable=true)
      */
+    #[ORM\Column(type: "boolean", nullable: true)]
     private ?bool $isWork = null;
 
     /**
      * Официальная работа?
-     * @ORM\Column(type="boolean", nullable=true)
      */
+    #[ORM\Column(type: "boolean", nullable: true)]
     private ?bool $isWorkOfficial = null;
 
     /**
      * Постоянная работа?
-     * @ORM\Column(type="boolean", nullable=true)
      */
+    #[ORM\Column(type: "boolean", nullable: true)]
     private ?bool $isWorkConstant = null;
 
     /**
      * Сколько сменил работ
-     * @ORM\Column(type="integer", nullable=true)
      */
+    #[ORM\Column(type: "integer", nullable: true)]
     private ?int $changedJobsCountId = null;
 
     /**
      * Причина перехода на другую работу
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: "text", nullable: true)]
     private ?string $reasonForTransitionIds = null;
 
     /**
      * Причина обращения
-     * @ORM\Column(type="text", nullable=true)
      */
+    #[ORM\Column(type: "text", nullable: true)]
     private ?string $reasonForPetitionIds = null;
 
     /**
      * Клиент
-     * @ORM\ManyToOne(targetEntity="Client", inversedBy="documents")
      */
+    #[ORM\ManyToOne(targetEntity: Client::class, inversedBy: "documents")]
     private ?Client $client = null;
 
     /**

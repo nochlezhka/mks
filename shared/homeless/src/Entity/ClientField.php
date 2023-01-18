@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Form\Type\AppFileType;
+use App\Repository\ClientFieldRepository;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -14,8 +15,8 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 
 /**
  * Дополнительное поле клиента
- * @ORM\Entity(repositoryClass="App\Repository\ClientFieldRepository")
  */
+#[ORM\Entity(repositoryClass: ClientFieldRepository::class)]
 class ClientField extends BaseEntity
 {
     /**
@@ -40,62 +41,62 @@ class ClientField extends BaseEntity
 
     /**
      * Название
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: "string", nullable: true)]
     private ?string $name = null;
 
     /**
      * Символьный код
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: "string", nullable: true)]
     private ?string $code = null;
 
     /**
      * Включено
-     * @ORM\Column(type="boolean", nullable=true)
      */
+    #[ORM\Column(type: "boolean", nullable: true)]
     private ?bool $enabled = true;
 
     /**
      * Включено для бездомных
-     * @ORM\Column(type="boolean", nullable=true)
      */
+    #[ORM\Column(type: "boolean", nullable: true)]
     private ?bool $enabledForHomeless = true;
 
     /**
      * Тип
-     * @ORM\Column(type="integer", nullable=true)
      */
+    #[ORM\Column(type: "integer", nullable: true)]
     private ?int $type = null;
 
     /**
      * Обязательное
-     * @ORM\Column(type="boolean", nullable=true)
      */
+    #[ORM\Column(type: "boolean", nullable: true)]
     private ?bool $required = false;
 
     /**
      * Обязательное для бездомных
-     * @ORM\Column(type="boolean", nullable=true)
      */
+    #[ORM\Column(type: "boolean", nullable: true)]
     private ?bool $mandatoryForHomeless = false;
 
     /**
      * Допускается выбор нескольких вариантов одновременно
-     * @ORM\Column(type="boolean", nullable=true)
      */
+    #[ORM\Column(type: "boolean", nullable: true)]
     private ?bool $multiple = false;
 
     /**
      * Подсказка
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: "string", nullable: true)]
     private ?string $description = null;
 
     /**
      * Поле
-     * @ORM\OneToMany(targetEntity="ClientFieldOption", mappedBy="field")
      */
+    #[ORM\OneToMany(mappedBy: "field", targetEntity: ClientFieldOption::class)]
     private Collection $options;
 
     public function __toString()

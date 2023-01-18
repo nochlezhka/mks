@@ -2,14 +2,15 @@
 
 namespace App\Entity;
 
+use App\Repository\MenuItemRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * Для настройки отображения пунктов меню в анкете клиента
- * @ORM\Entity(repositoryClass="App\Repository\MenuItemRepository")
- * @UniqueEntity("code")
  */
+#[ORM\Entity(repositoryClass: MenuItemRepository::class)]
+#[UniqueEntity("code")]
 class MenuItem extends BaseEntity
 {
     const CODE_SHELTER_HISTORY = 'shelter_history';
@@ -21,20 +22,20 @@ class MenuItem extends BaseEntity
 
     /**
      * Название
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: "string", nullable: true)]
     private ?string $name = null;
 
     /**
      * Код
-     * @ORM\Column(type="string", nullable=true, unique=true)
      */
+    #[ORM\Column(type: "string", unique: true, nullable: true)]
     private ?string $code = null;
 
     /**
      * Включено
-     * @ORM\Column(type="boolean", nullable=true)
      */
+    #[ORM\Column(type: "boolean", nullable: true)]
     private ?bool $enabled = true;
 
     public function __toString()
