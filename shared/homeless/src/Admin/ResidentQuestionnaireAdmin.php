@@ -4,9 +4,6 @@ namespace App\Admin;
 
 use App\Controller\CRUDController;
 use App\Entity\ResidentQuestionnaire;
-use App\Service\MetaService;
-use App\Service\ResidentQuestionnaireConverter;
-use Doctrine\ORM\EntityManager;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
@@ -14,7 +11,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 #[AutoconfigureTag(name: 'sonata.admin', attributes: [
     'manager_type' => 'orm',
-    'label' => 'Анкета проживающего',
+    'label' => 'resident_questionnaire',
     'model_class' => ResidentQuestionnaire::class,
     'controller'=> CRUDController::class,
     'label_translator_strategy' => 'sonata.admin.label.strategy.underscore'

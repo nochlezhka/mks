@@ -11,7 +11,6 @@ use App\Entity\ResidentQuestionnaire;
 use App\Repository\ClientFormRepository;
 use App\Repository\ClientFormResponseRepository;
 use Doctrine\DBAL\LockMode;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 

@@ -76,6 +76,17 @@ breadcrumb:
   link_shelter_room_create: Добавить комнату
 
 ClientFormField: Поле формы
+choice_field_options: Вариант выбора
+notes: Примечания
+users: Пользователи
+resident_form_response: Анкета проживающего
+resident_questionnaire: Анкета проживающего 2
+services: Услуги
+shelter_history: Проживание в приюте
+media: Медиа
+gallery: Галерея
+gallery_item: Изображение в галерее
+
 
 list:
   label_id: ID

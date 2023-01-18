@@ -23,7 +23,6 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 #[AutoconfigureTag(name: 'sonata.admin', attributes: [
     'manager_type' => 'orm',
-    'label' => 'services',
     'model_class' => User::class,
 ])]
 class UserAdmin extends BaseUserAdmin

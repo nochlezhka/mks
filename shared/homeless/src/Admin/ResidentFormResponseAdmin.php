@@ -18,7 +18,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
  */
 #[AutoconfigureTag(name: 'sonata.admin', attributes: [
     'manager_type' => 'orm',
-    'label' => 'Анкета проживающего',
+    'label' => 'resident_form_response',
     'model_class' => ClientFormResponse::class,
     'label_translator_strategy' => 'sonata.admin.label.strategy.underscore'
 ])]
