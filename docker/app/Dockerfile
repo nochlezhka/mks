@@ -34,12 +34,12 @@ RUN apk update \
       nginx=~1.22.1 \
       gettext \
  && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer \
- && composer self-update 2.2.9 \
+ && composer self-update 2.5.1 \
  && docker-php-ext-install gd zip bcmath intl pdo_mysql \
  \
  && touch /run/nginx.pid \
- && mkdir -p /var/cache/nginx /etc/nginx /var/log/nginx /var/www/symfony/vendor /var/lib/nginx /var/log/php7 \
- && chown -R 1000:1000 /var/www /var/cache/nginx /etc/nginx /var/log/nginx /run/nginx.pid /var/lib/nginx /var/log/php7 \
+ && mkdir -p /var/cache/nginx /etc/nginx /var/log/nginx /var/www/symfony/vendor /var/lib/nginx /var/log/php8 \
+ && chown -R 1000:1000 /var/www /var/cache/nginx /etc/nginx /var/log/nginx /run/nginx.pid /var/lib/nginx /var/log/php8 \
  && chmod -R 755 /var/www \
  && rm -f /etc/nginx/conf.d/default.conf
 
