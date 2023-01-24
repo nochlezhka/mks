@@ -3,6 +3,7 @@
 namespace App\EventListener;
 
 use App\Entity\ShelterHistory;
+use App\Entity\ShelterRoom;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsEntityListener;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Events;
@@ -47,7 +48,7 @@ class ShelterRoomListener
         $updatedEntities = $unitOfWork->getEntityChangeSet($shelterHistory);
         if ($args->hasChangedField('room')) {
             $changeSetId = $updatedEntities['room'][0]->getId();
-            $oldRoom = $em->getRepository('AppBundle:ShelterRoom')->find($changeSetId);
+            $oldRoom = $em->getRepository(ShelterRoom::class)->find($changeSetId);
             $oldRoom->setCurrentOccupants(($oldRoom->getCurrentOccupants() == 0) ? 0 : $oldRoom->getCurrentOccupants() - 1);
             $em->persist($oldRoom);
             $newRoom = $shelterHistory->getRoom();
