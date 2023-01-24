@@ -1,4 +1,4 @@
-FROM php:8.2.0-fpm-alpine
+FROM php:8.1.0-fpm-alpine
 
 #
 # Setup Moscow time
@@ -24,14 +24,14 @@ RUN addgroup -S --gid 1000 nochlezhka \
 RUN apk update \
  && apk upgrade \
  && apk add --no-cache \
-      nodejs=~16.17 \
-      yarn=~1.22.19 \
-      curl=~7.83 \
-      icu-dev=~71.1 \
-      libzip-dev=~1.8.0 \
-      libreoffice=~7.2.7.2 \
-      libpng-dev=~1.6.37 \
-      nginx=~1.22.1 \
+      nodejs \
+      yarn \
+      curl \
+      icu-dev \
+      libzip-dev \
+      libreoffice \
+      libpng-dev \
+      nginx \
       gettext \
  && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer \
  && composer self-update 2.5.1 \
@@ -58,10 +58,13 @@ WORKDIR /var/www/symfony
 #
 # Install PHP dependencies
 #
-RUN composer install --no-scripts --no-dev \
+RUN composer install --no-scripts --no-dev --optimize-autoloader \
  && yarn install \
  && yarn cache clean
-RUN ./bin/console fos:js-routing:dump \
+RUN chmod +x ./bin/console \
+ && composer require symfony/dotenv \
+ && composer require mnvx/lowrapper \
+ && ./bin/console fos:js-routing:dump \
  && ./bin/console ckeditor:install \
  && ./bin/console assets:install --symlink \
  && yarn encore prod \

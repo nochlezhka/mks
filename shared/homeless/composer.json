@@ -61,10 +61,6 @@
         "symfony/symfony": "*"
     },
     "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/bongrun/lowrapper"
-        }
     ],
     "scripts": {
         "post-install-cmd": [
