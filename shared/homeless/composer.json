@@ -9,6 +9,7 @@
         "symfony/config": "^6.0",
         "symfony/asset": "^6.0",
         "symfony/console": "^6.0",
+        "symfony/runtime": "^6.0",
         "symfony/cache": "^6.0",
         "symfony/framework-bundle": "^6.0",
         "symfony/dependency-injection": "^6.0",
@@ -78,7 +79,8 @@
     "config": {
         "bin-dir": "bin",
         "allow-plugins": {
-            "symfony/flex": true
+            "symfony/flex": true,
+            "symfony/runtime": true
         }
     },
     "extra": {
