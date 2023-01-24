@@ -62,8 +62,6 @@ RUN composer install --no-scripts --no-dev --optimize-autoloader \
  && yarn install \
  && yarn cache clean
 RUN chmod +x ./bin/console \
- && composer require symfony/dotenv \
- && composer require mnvx/lowrapper \
  && ./bin/console fos:js-routing:dump \
  && ./bin/console ckeditor:install \
  && ./bin/console assets:install --symlink \
