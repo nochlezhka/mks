@@ -65,5 +65,4 @@ RUN chmod +x ./bin/console \
  && ./bin/console fos:js-routing:dump \
  && ./bin/console ckeditor:install \
  && ./bin/console assets:install --symlink \
- && yarn encore prod \
- && php vendor/sensio/distribution-bundle/Resources/bin/build_bootstrap.php
+ && yarn encore prod
