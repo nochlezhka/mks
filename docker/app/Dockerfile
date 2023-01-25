@@ -62,7 +62,6 @@ RUN composer install --no-scripts --no-dev --optimize-autoloader \
  && yarn install \
  && yarn cache clean
 RUN chmod +x ./bin/console \
- && ./bin/console fos:js-routing:dump \
  && ./bin/console ckeditor:install \
  && ./bin/console assets:install --symlink \
  && yarn encore prod
