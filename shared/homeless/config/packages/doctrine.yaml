@@ -1,3 +1,10 @@
+parameters:
+    env(DB_HOST): localhost
+    env(DB_PORT): "3306"
+    env(DB_NAME): homeless
+    env(DB_USER): homeless
+    env(DB_PASSWORD): password
+
 doctrine:
     dbal:
         driver:   "pdo_mysql"
