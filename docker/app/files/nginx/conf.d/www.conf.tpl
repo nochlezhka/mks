@@ -8,7 +8,7 @@ server {
     
     ${return} 
 
-    root /var/www/symfony/web;
+    root /var/www/symfony/public;
 
     location ~* /sitemap(.*).xml {
         try_files $uri @rewrite;
