@@ -46,7 +46,8 @@ RUN apk update \
 USER 1000:1000
 ENV HOME=/home/nochlezhka \
     USER=nochlezhka \
-    XDG_RUNTIME_DIR=/run/user/1000
+    XDG_RUNTIME_DIR=/run/user/1000 \
+    APP_ENV=prod
 
 COPY --chown=nochlezhka files/homeless /var/www/symfony
 COPY --chown=nochlezhka files/php/symfony.ini /usr/local/etc/php/conf.d/
