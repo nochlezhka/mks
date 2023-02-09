@@ -32,7 +32,7 @@ class ClientFormField extends BaseEntity
      * @ORM\ManyToOne(targetEntity="ClientForm", inversedBy="fields")
      * @ORM\JoinColumn(nullable=false)
      */
-    private ?ClientForm $form = null;
+    private $form;
 
     /**
      * Название поля
@@ -40,7 +40,7 @@ class ClientFormField extends BaseEntity
      * @var string
      * @ORM\Column(type="string")
      */
-    private string $name = "";
+    private $name;
 
     /**
      * Тип поля (см. константы класса, TYPE_*)
@@ -48,27 +48,28 @@ class ClientFormField extends BaseEntity
      * @var integer
      * @ORM\Column(type="integer")
      */
-    private int $type = 0;
+    private $type;
 
     /**
      * Список вариантов для выбора в поле типа TYPE_OPTION.
      * Варианты разделены переводом строки.
      * Не имеет значения для других типов поля.
      *
+     * @var string
      * @ORM\Column(type="text", nullable=true)
      */
-    private ?string $options = null;
+    private $options;
 
     /**
      * @var string[]
      * @ORM\Column(type="simple_array", nullable=true)
      */
-    private ?array $flags = null;
+    private $flags;
 
     /**
      * @return ClientForm
      */
-    public function getForm(): ?ClientForm
+    public function getForm()
     {
         return $this->form;
     }
@@ -76,7 +77,7 @@ class ClientFormField extends BaseEntity
     /**
      * @param ClientForm $form
      */
-    public function setForm(ClientForm $form)
+    public function setForm($form)
     {
         $this->form = $form;
     }
@@ -84,7 +85,7 @@ class ClientFormField extends BaseEntity
     /**
      * @return string
      */
-    public function getName(): string
+    public function getName()
     {
         return $this->name;
     }
@@ -92,7 +93,7 @@ class ClientFormField extends BaseEntity
     /**
      * @param string $name
      */
-    public function setName(string $name)
+    public function setName($name)
     {
         $this->name = $name;
     }
@@ -100,7 +101,7 @@ class ClientFormField extends BaseEntity
     /**
      * @return integer
      */
-    public function getType(): int
+    public function getType()
     {
         return $this->type;
     }
@@ -108,7 +109,7 @@ class ClientFormField extends BaseEntity
     /**
      * @param integer $type
      */
-    public function setType(int $type)
+    public function setType($type)
     {
         $this->type = $type;
     }
@@ -116,15 +117,15 @@ class ClientFormField extends BaseEntity
     /**
      * @return string
      */
-    public function getOptions(): ?string
+    public function getOptions()
     {
         return $this->options;
     }
 
     /**
-     * @param string|null $options
+     * @param string $options
      */
-    public function setOptions(?string $options)
+    public function setOptions($options)
     {
         $this->options = $options;
     }
@@ -132,7 +133,7 @@ class ClientFormField extends BaseEntity
     /**
      * @return bool
      */
-    public function isRequired(): bool
+    public function isRequired()
     {
         return $this->getBooleanFlag(self::FLAG_REQUIRED);
     }
@@ -140,7 +141,7 @@ class ClientFormField extends BaseEntity
     /**
      * @param bool $required
      */
-    public function setRequired(bool $required)
+    public function setRequired($required)
     {
         $this->setBooleanFlag($required, self::FLAG_REQUIRED);
     }
@@ -148,7 +149,7 @@ class ClientFormField extends BaseEntity
     /**
      * @return bool
      */
-    public function isMultiselect(): bool
+    public function isMultiselect()
     {
         return $this->getBooleanFlag(self::FLAG_MULTISELECT);
     }
@@ -156,7 +157,7 @@ class ClientFormField extends BaseEntity
     /**
      * @param bool $multiselect
      */
-    public function setMultiselect(bool $multiselect)
+    public function setMultiselect($multiselect)
     {
         $this->setBooleanFlag($multiselect, self::FLAG_MULTISELECT);
     }
@@ -166,7 +167,7 @@ class ClientFormField extends BaseEntity
      *
      * @return bool
      */
-    public function isFixed(): bool
+    public function isFixed()
     {
         return $this->getBooleanFlag(self::FLAG_FIXED);
     }
@@ -174,7 +175,7 @@ class ClientFormField extends BaseEntity
     /**
      * @param bool $fixed
      */
-    public function setFixed(bool $fixed)
+    public function setFixed($fixed)
     {
         $this->setBooleanFlag($fixed, self::FLAG_FIXED);
     }
@@ -187,12 +188,12 @@ class ClientFormField extends BaseEntity
         return "Поле ".$this->getName();
     }
 
-    protected function getFlags(): ?array
+    protected function getFlags()
     {
         return $this->flags;
     }
 
-    protected function setFlags(?array $flags)
+    protected function setFlags($flags)
     {
         $this->flags = $flags;
     }
@@ -203,7 +204,7 @@ class ClientFormField extends BaseEntity
      * @param bool $flagValue
      * @param string $flagName
      */
-    private function setBooleanFlag(bool $flagValue, string $flagName)
+    private function setBooleanFlag($flagValue, $flagName)
     {
         $flags = $this->getFlags();
         if ($flags === null) {
@@ -222,7 +223,7 @@ class ClientFormField extends BaseEntity
      * @param string $flagName
      * @return bool
      */
-    private function getBooleanFlag(string $flagName): bool
+    private function getBooleanFlag($flagName)
     {
         $flags = $this->getFlags();
         if ($flags === null) {

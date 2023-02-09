@@ -19,21 +19,21 @@ class ContractStatus extends BaseEntity
      * Название
      * @ORM\Column(type="string", nullable=true)
      */
-    private ?string $name = null;
+    private $name;
 
     public function __toString()
     {
-        return $this->name;
+        return (string)$this->name;
     }
 
     /**
      * Set name
      *
-     * @param string|null $name
+     * @param string $name
      *
      * @return ContractStatus
      */
-    public function setName(?string $name): ContractStatus
+    public function setName($name)
     {
         $this->name = $name;
 
@@ -45,7 +45,7 @@ class ContractStatus extends BaseEntity
      *
      * @return string
      */
-    public function getName(): ?string
+    public function getName()
     {
         return $this->name;
     }

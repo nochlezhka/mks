@@ -13,17 +13,18 @@ class History extends BaseEntity
     /**
      * Клиент
      * @ORM\ManyToOne(targetEntity="Client")
+     * @ORM\JoinColumn(name="client_id", referencedColumnName="id", onDelete="CASCADE")
      */
-    private ?Client $client = null;
+    private $client;
 
     /**
      * Set client
      *
-     * @param Client|null $client
+     * @param \AppBundle\Entity\Client $client
      *
      * @return History
      */
-    public function setClient(Client $client = null): History
+    public function setClient(Client $client = null)
     {
         $this->client = $client;
 
@@ -33,9 +34,9 @@ class History extends BaseEntity
     /**
      * Get client
      *
-     * @return Client
+     * @return \AppBundle\Entity\Client
      */
-    public function getClient(): ?Client
+    public function getClient()
     {
         return $this->client;
     }

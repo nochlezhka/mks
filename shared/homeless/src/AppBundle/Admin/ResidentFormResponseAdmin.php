@@ -6,6 +6,8 @@ namespace AppBundle\Admin;
 
 use AppBundle\Entity\ClientForm;
 use AppBundle\Entity\ClientFormResponse;
+use AppBundle\Entity\ShelterHistory;
+use AppBundle\Admin\ClientAdmin;
 use AppBundle\Service\MetaService;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
@@ -23,6 +25,7 @@ class ResidentFormResponseAdmin extends ClientFormResponseAdmin
     protected $baseRouteName = 'resident_form_response';
     protected $baseRoutePattern = 'resident_form_response';
     protected $classnameLabel = 'resident_form_response';
+    public $shelterDates = '';
 
     /**
      * @inheritDoc
@@ -30,6 +33,7 @@ class ResidentFormResponseAdmin extends ClientFormResponseAdmin
      */
     public function hasAccess($action, $object = null)
     {
+        $this->shelterDates = $this->getClientShelterHistoryDates();
         if ($this->getMetaService()->isClientFormsEnabled()) {
             return parent::hasAccess($action, $object);
         }
@@ -72,5 +76,35 @@ class ResidentFormResponseAdmin extends ClientFormResponseAdmin
     private function getMetaService()
     {
         return $this->getConfigurationPool()->getContainer()->get('app.meta_service');
+    }
+
+    public function getClientShelterHistoryDates()
+    {
+        $admin = $this->isChild() ? $this->getParent() : $this;
+        $id = $admin->getRequest()->get('id');
+        $lived_to_formatted = '';
+        $lived_from_formatted = '';
+
+        $lived_to = $this->getConfigurationPool()->getContainer()->get('doctrine.orm.entity_manager')
+            ->getRepository('AppBundle:ShelterHistory')->findOneBy(['client' => $id])->getDateTo();
+        $lived_from = $this->getConfigurationPool()->getContainer()->get('doctrine.orm.entity_manager')
+            ->getRepository('AppBundle:ShelterHistory')->findOneBy(['client' => $id])->getDateFrom();
+
+        if (!empty($lived_to)) {
+            $lived_to_formatted = $lived_to->format('d.m.Y');
+        }
+        if (!empty($lived_from)) {
+            $lived_from_formatted = $lived_from->format('d.m.Y');
+        }
+
+        if (!empty($lived_to_formatted) && !empty($lived_from_formatted)) {
+            return 'Проживание с ' . $lived_from_formatted . ' по ' . $lived_to_formatted;
+        } else if (!empty($lived_to_formatted) && empty($lived_from_formatted)) {
+            return 'Проживание по ' . $lived_to_formatted;
+        } else if (!empty($lived_from_formatted) && empty($lived_to_formatted)) {
+            return 'Проживание с ' . $lived_from_formatted;
+        } else {
+            return '';
+        }
     }
 }

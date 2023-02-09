@@ -3,9 +3,7 @@
 namespace AppBundle\Entity;
 
 use Application\Sonata\UserBundle\Entity\User;
-use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -18,25 +16,31 @@ class Notice extends BaseEntity
      * Текст
      * @ORM\Column(type="text", nullable=true)
      */
-    private ?string $text = "";
+    private $text;
 
     /**
      * Дата
      * @ORM\Column(type="date", nullable=true)
      */
-    private ?DateTime $date = null;
+    private $date;
+
+    /**
+     * Тип оповещения (ручное - 1; авто - 0)
+     * @ORM\Column(type="smallint", nullable=false)
+     */
+    private $manual;
 
     /**
      * Клиент
      * @ORM\ManyToOne(targetEntity="Client")
      */
-    private ?Client $client = null;
+    private $client;
 
     /**
      * Кем просмотрено
      * @ORM\ManyToMany(targetEntity="Application\Sonata\UserBundle\Entity\User", mappedBy="viewedNotices")
      */
-    private Collection $viewedBy;
+    private $viewedBy;
 
     public function __toString()
     {
@@ -51,12 +55,12 @@ class Notice extends BaseEntity
     /**
      * Просмотрено текущим пользователем
      */
-    private bool $viewed = false;
+    private $viewed = false;
 
     /**
-     * @return bool
+     * @return mixed
      */
-    public function getViewed(): bool
+    public function getViewed()
     {
         return $this->viewed;
     }
@@ -72,11 +76,11 @@ class Notice extends BaseEntity
     /**
      * Set text
      *
-     * @param string|null $text
+     * @param string $text
      *
      * @return Notice
      */
-    public function setText(?string $text): Notice
+    public function setText($text)
     {
         $this->text = $text;
 
@@ -88,19 +92,43 @@ class Notice extends BaseEntity
      *
      * @return string
      */
-    public function getText(): ?string
+    public function getText()
     {
         return $this->text;
     }
 
     /**
-     * Set date
+     * Set manual
      *
-     * @param DateTime|null $date
+     * @param int $manual
      *
      * @return Notice
      */
-    public function setDate(?DateTime $date): Notice
+    public function setManual($manual)
+    {
+        $this->manual = $manual;
+
+        return $this;
+    }
+
+    /**
+     * Get manual
+     *
+     * @return int
+     */
+    public function getManual()
+    {
+        return $this->manual;
+    }
+
+    /**
+     * Set date
+     *
+     * @param \DateTime $date
+     *
+     * @return Notice
+     */
+    public function setDate($date)
     {
         $this->date = $date;
 
@@ -110,9 +138,9 @@ class Notice extends BaseEntity
     /**
      * Get date
      *
-     * @return DateTime
+     * @return \DateTime
      */
-    public function getDate(): ?DateTime
+    public function getDate()
     {
         return $this->date;
     }
@@ -120,11 +148,11 @@ class Notice extends BaseEntity
     /**
      * Set client
      *
-     * @param Client|null $client
+     * @param \AppBundle\Entity\Client $client
      *
      * @return Notice
      */
-    public function setClient(Client $client): Notice
+    public function setClient(Client $client = null)
     {
         $this->client = $client;
 
@@ -134,9 +162,9 @@ class Notice extends BaseEntity
     /**
      * Get client
      *
-     * @return Client
+     * @return \AppBundle\Entity\Client
      */
-    public function getClient(): ?Client
+    public function getClient()
     {
         return $this->client;
     }
@@ -144,11 +172,11 @@ class Notice extends BaseEntity
     /**
      * Add viewedBy
      *
-     * @param User $viewedBy
+     * @param \Application\Sonata\UserBundle\Entity\User $viewedBy
      *
      * @return Notice
      */
-    public function addViewedBy(User $viewedBy): Notice
+    public function addViewedBy(User $viewedBy)
     {
         $this->viewedBy[] = $viewedBy;
         $viewedBy->addViewedNotice($this);
@@ -159,7 +187,7 @@ class Notice extends BaseEntity
     /**
      * Remove viewedBy
      *
-     * @param User $viewedBy
+     * @param \Application\Sonata\UserBundle\Entity\User $viewedBy
      */
     public function removeViewedBy(User $viewedBy)
     {
@@ -170,7 +198,7 @@ class Notice extends BaseEntity
     /**
      * Get viewedBy
      *
-     * @return Collection
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getViewedBy()
     {

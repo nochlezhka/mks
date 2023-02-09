@@ -3,7 +3,6 @@
 namespace Application\Sonata\UserBundle\Entity;
 
 use AppBundle\Entity\BaseEntityInterface;
-use DateTime;
 use Sonata\UserBundle\Entity\BaseGroup as BaseGroup;
 
 /**
@@ -16,12 +15,12 @@ class Group extends BaseGroup implements BaseEntityInterface
      */
     protected $id;
 
-    private ?int $syncId;
-    private ?int $sort;
-    private ?User $createdBy;
-    private ?DateTime $createdAt;
-    private ?User $updatedBy;
-    private ?DateTime $updatedAt;
+    private $syncId;
+    private $sort;
+    private $createdBy;
+    private $createdAt;
+    private $updatedBy;
+    private $updatedAt;
 
     private $code;
 
@@ -38,11 +37,11 @@ class Group extends BaseGroup implements BaseEntityInterface
     /**
      * Set syncId
      *
-     * @param int|null $syncId
+     * @param integer $syncId
      *
      * @return Group
      */
-    public function setSyncId(?int $syncId): Group
+    public function setSyncId($syncId)
     {
         $this->syncId = $syncId;
 
@@ -54,7 +53,7 @@ class Group extends BaseGroup implements BaseEntityInterface
      *
      * @return integer
      */
-    public function getSyncId(): ?int
+    public function getSyncId()
     {
         return $this->syncId;
     }
@@ -62,11 +61,11 @@ class Group extends BaseGroup implements BaseEntityInterface
     /**
      * Set createdAt
      *
-     * @param DateTime|null $createdAt
+     * @param \DateTime $createdAt
      *
      * @return Group
      */
-    public function setCreatedAt(DateTime $createdAt = null)
+    public function setCreatedAt(\DateTime $createdAt = null)
     {
         $this->createdAt = $createdAt;
 
@@ -76,7 +75,7 @@ class Group extends BaseGroup implements BaseEntityInterface
     /**
      * Get createdAt
      *
-     * @return DateTime|null
+     * @return \DateTime
      */
     public function getCreatedAt()
     {
@@ -86,11 +85,11 @@ class Group extends BaseGroup implements BaseEntityInterface
     /**
      * Set updatedAt
      *
-     * @param DateTime|null $updatedAt
+     * @param \DateTime $updatedAt
      *
      * @return Group
      */
-    public function setUpdatedAt(DateTime $updatedAt = null)
+    public function setUpdatedAt(\DateTime $updatedAt = null)
     {
         $this->updatedAt = $updatedAt;
 
@@ -100,7 +99,7 @@ class Group extends BaseGroup implements BaseEntityInterface
     /**
      * Get updatedAt
      *
-     * @return DateTime
+     * @return \DateTime
      */
     public function getUpdatedAt()
     {
@@ -110,11 +109,11 @@ class Group extends BaseGroup implements BaseEntityInterface
     /**
      * Set createdBy
      *
-     * @param User|null $createdBy
+     * @param \Application\Sonata\UserBundle\Entity\User $createdBy
      *
      * @return Group
      */
-    public function setCreatedBy(?User $createdBy = null): BaseEntityInterface
+    public function setCreatedBy(\Application\Sonata\UserBundle\Entity\User $createdBy = null)
     {
         $this->createdBy = $createdBy;
 
@@ -124,9 +123,9 @@ class Group extends BaseGroup implements BaseEntityInterface
     /**
      * Get createdBy
      *
-     * @return User
+     * @return \Application\Sonata\UserBundle\Entity\User
      */
-    public function getCreatedBy(): ?User
+    public function getCreatedBy()
     {
         return $this->createdBy;
     }
@@ -134,11 +133,11 @@ class Group extends BaseGroup implements BaseEntityInterface
     /**
      * Set updatedBy
      *
-     * @param User|null $updatedBy
+     * @param \Application\Sonata\UserBundle\Entity\User $updatedBy
      *
      * @return Group
      */
-    public function setUpdatedBy(?User $updatedBy = null): BaseEntityInterface
+    public function setUpdatedBy(\Application\Sonata\UserBundle\Entity\User $updatedBy = null)
     {
         $this->updatedBy = $updatedBy;
 
@@ -148,9 +147,9 @@ class Group extends BaseGroup implements BaseEntityInterface
     /**
      * Get updatedBy
      *
-     * @return User
+     * @return \Application\Sonata\UserBundle\Entity\User
      */
-    public function getUpdatedBy(): ?User
+    public function getUpdatedBy()
     {
         return $this->updatedBy;
     }
@@ -182,11 +181,11 @@ class Group extends BaseGroup implements BaseEntityInterface
     /**
      * Set sort
      *
-     * @param int|null $sort
+     * @param integer $sort
      *
      * @return Group
      */
-    public function setSort(?int $sort): BaseEntityInterface
+    public function setSort($sort)
     {
         $this->sort = $sort;
 
@@ -198,7 +197,7 @@ class Group extends BaseGroup implements BaseEntityInterface
      *
      * @return integer
      */
-    public function getSort(): ?int
+    public function getSort()
     {
         return $this->sort;
     }

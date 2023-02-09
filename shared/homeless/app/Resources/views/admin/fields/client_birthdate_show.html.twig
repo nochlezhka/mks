@@ -1,0 +1,11 @@
+{% extends 'SonataAdminBundle:CRUD:base_show_field.html.twig' %}
+
+{% block field%}
+    {%- if value is empty -%}
+        &nbsp;
+    {%- elseif field_description.options.format is defined -%}
+        {{ value|date(field_description.options.format) }}
+    {%- else -%}
+        {{ value|format_date('dd.MM.YYYY') }}
+    {%- endif -%}
+{% endblock %}

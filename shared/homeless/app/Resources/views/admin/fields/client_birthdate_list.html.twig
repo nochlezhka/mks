@@ -1,0 +1,5 @@
+{% extends 'SonataAdminBundle:CRUD:base_list_field.html.twig' %}
+{% block field %}
+    <p>{{ object.birthdate|format_date('dd.MM.YYYY') }}</p>
+    {# <a href="{{ admin.generateObjectUrl(route, object) }}" title="{{ title }}" style="color: {{ color }}">&#11044;</a> #}
+{% endblock %}

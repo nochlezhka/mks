@@ -4,16 +4,22 @@ namespace AppBundle\Admin;
 
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
-use Sonata\FormatterBundle\Form\Type\SimpleFormatterType;
 
 class NoteAdmin extends BaseAdmin
 {
     protected $datagridValues = array(
         '_sort_order' => 'ASC',
         '_sort_by' => 'createdAt',
+        '_sort_by' => 'important',
+        '_sort_by' => 'ASC'
     );
 
     protected $translationDomain = 'AppBundle';
+
+    public function configure()
+    {
+        $this->parentAssociationMapping = 'client';
+    }
 
     /**
      * @param FormMapper $formMapper
@@ -21,7 +27,7 @@ class NoteAdmin extends BaseAdmin
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
-            ->add('text', SimpleFormatterType::class, [
+            ->add('text', 'sonata_simple_formatter_type', [
                 'label' => 'Текст',
                 'required' => true,
                 'format' => 'richhtml',

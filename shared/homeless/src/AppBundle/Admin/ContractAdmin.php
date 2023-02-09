@@ -2,7 +2,6 @@
 
 namespace AppBundle\Admin;
 
-use AppBundle\Form\Type\AppContractDurationType;
 use Doctrine\ORM\EntityRepository;
 use Sonata\AdminBundle\Route\RouteCollection;
 use Sonata\AdminBundle\Datagrid\ListMapper;
@@ -29,6 +28,14 @@ class ContractAdmin extends BaseAdmin
     /**
      * {@inheritdoc}
      */
+    public function configure()
+    {
+        $this->parentAssociationMapping = 'client';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
@@ -36,13 +43,11 @@ class ContractAdmin extends BaseAdmin
 
         if ($this->getSubject()->getId() > 0) {
             $formMapper
-                ->add('duration', AppContractDurationType::class, ['label' => 'Долгосрочность', 'required' => false,])
+                ->add('duration', 'app_contract_duration', ['label' => 'Долгосрочность', 'required' => false,])
                 ->add('number', null, [
                     'label' => 'Номер',
+                    'read_only' => true,
                     'disabled' => true,
-                    'attr' => array(
-                        'readonly' => true,
-                    )
                 ]);
         }
 
@@ -56,14 +61,14 @@ class ContractAdmin extends BaseAdmin
                         ->orderBy('s.name', 'ASC');
                 },
             ])
-            ->add('dateFrom', 'Sonata\Form\Type\DatePickerType', [
+            ->add('dateFrom', 'sonata_type_date_picker', [
                 'dp_default_date' => (new \DateTime())->format('Y-m-d'),
                 'format' => 'dd.MM.yyyy',
                 'view_timezone' => $this->getParameter('admin_view_timezone'),
                 'label' => 'Дата начала',
                 'required' => true,
             ])
-            ->add('dateTo', 'Sonata\Form\Type\DatePickerType', [
+            ->add('dateTo', 'sonata_type_date_picker', [
                 'dp_default_date' => (new \DateTime())->format('Y-m-d'),
                 'format' => 'dd.MM.yyyy',
                 'label' => 'Дата окончания',

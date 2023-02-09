@@ -1,0 +1,26 @@
+<td>
+    {% block field %}
+        {% for note in value|slice(0, 25) %}
+            {% set id = object.id ~ '_note_' ~ note.id  %}
+                {% if note.important  %}
+                    <p>
+                        <strong>
+                            <i class="fa fa-exclamation"></i>
+                            {{ note.createdAt|date('d.m.Y') }}
+                            ({% if note.createdBy %}{{ note.createdBy.lastname }}{% endif %})
+                        </strong>
+                        <strong>{{ note.text|striptags|replace({ '&nbsp;': '' })|replace({ '&quot;': '' }) }}</strong>
+                    </p>
+                    <style>
+                        #field_dialog_{{ id }} .modal-content {
+                            border-radius: 6px;
+                            padding: 15px 10px 1px 10px;
+                        }
+                    </style>
+                    {% include 'SonataDoctrineORMAdminBundle:CRUD:edit_modal.html.twig' %}
+                {% endif %}
+
+        {% endfor %}
+
+    {% endblock %}
+</td>

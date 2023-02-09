@@ -2,7 +2,6 @@
 
 namespace AppBundle\Entity;
 
-use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -15,38 +14,38 @@ class ContractItem extends BaseEntity
      * Комментарий
      * @ORM\Column(type="text", nullable=true)
      */
-    private ?string $comment = null;
+    private $comment;
 
     /**
      * Дата начала выполнения
      * @ORM\Column(type="date", nullable=true)
      */
-    private ?DateTime $dateStart = null;
+    private $dateStart;
 
     /**
      * Дата выполнения
      * @ORM\Column(type="date", nullable=true)
      */
-    private ?DateTime $date = null;
+    private $date;
 
     /**
      * Договор
      * @ORM\ManyToOne(targetEntity="Contract", inversedBy="items")
      */
-    private ?Contract $contract = null;
+    private $contract;
 
     /**
      * Тип
      * @ORM\ManyToOne(targetEntity="ContractItemType")
      */
-    private ?ContractItemType $type;
+    private $type;
 
     public function __toString()
     {
         $type = $this->getType();
 
         if ($type instanceof ContractItemType) {
-            return $type->getName();
+            return (string)$type->getName();
         }
 
         return '';
@@ -55,11 +54,11 @@ class ContractItem extends BaseEntity
     /**
      * Set comment
      *
-     * @param string|null $comment
+     * @param string $comment
      *
      * @return ContractItem
      */
-    public function setComment(?string $comment): ContractItem
+    public function setComment($comment)
     {
         $this->comment = $comment;
 
@@ -71,7 +70,7 @@ class ContractItem extends BaseEntity
      *
      * @return string
      */
-    public function getComment(): ?string
+    public function getComment()
     {
         return $this->comment;
     }
@@ -79,11 +78,11 @@ class ContractItem extends BaseEntity
     /**
      * Set date
      *
-     * @param DateTime|null $date
+     * @param \DateTime $date
      *
      * @return ContractItem
      */
-    public function setDate(?DateTime $date): ContractItem
+    public function setDate($date)
     {
         $this->date = $date;
 
@@ -93,9 +92,9 @@ class ContractItem extends BaseEntity
     /**
      * Get date
      *
-     * @return DateTime
+     * @return \DateTime
      */
-    public function getDate(): ?DateTime
+    public function getDate()
     {
         return $this->date;
     }
@@ -103,11 +102,11 @@ class ContractItem extends BaseEntity
     /**
      * Set contract
      *
-     * @param Contract|null $contract
+     * @param \AppBundle\Entity\Contract $contract
      *
      * @return ContractItem
      */
-    public function setContract(Contract $contract = null): ContractItem
+    public function setContract(Contract $contract = null)
     {
         $this->contract = $contract;
 
@@ -117,9 +116,9 @@ class ContractItem extends BaseEntity
     /**
      * Get contract
      *
-     * @return Contract
+     * @return \AppBundle\Entity\Contract
      */
-    public function getContract(): ?Contract
+    public function getContract()
     {
         return $this->contract;
     }
@@ -127,11 +126,11 @@ class ContractItem extends BaseEntity
     /**
      * Set type
      *
-     * @param ContractItemType|null $type
+     * @param \AppBundle\Entity\ContractItemType $type
      *
      * @return ContractItem
      */
-    public function setType(ContractItemType $type = null): ContractItem
+    public function setType(ContractItemType $type = null)
     {
         $this->type = $type;
 
@@ -141,25 +140,25 @@ class ContractItem extends BaseEntity
     /**
      * Get type
      *
-     * @return ContractItemType
+     * @return \AppBundle\Entity\ContractItemType
      */
-    public function getType(): ?ContractItemType
+    public function getType()
     {
         return $this->type;
     }
 
     /**
-     * @return DateTime|null
+     * @return mixed
      */
-    public function getDateStart(): ?DateTime
+    public function getDateStart()
     {
         return $this->dateStart;
     }
 
     /**
-     * @param DateTime|null $dateStart
+     * @param mixed $dateStart
      */
-    public function setDateStart(?DateTime $dateStart)
+    public function setDateStart($dateStart)
     {
         $this->dateStart = $dateStart;
     }

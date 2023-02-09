@@ -30,6 +30,11 @@ class CertificateAdmin extends BaseAdmin
             ->add('download', $this->getRouterIdParameter() . '/download');
     }
 
+    public function configure()
+    {
+        $this->parentAssociationMapping = 'client';
+    }
+
     /**
      * @param FormMapper $formMapper
      */
@@ -68,7 +73,7 @@ class CertificateAdmin extends BaseAdmin
 
         $availableCertTypes = $certificateTypeRepository->getAvailableForCertificate($this->getSubject());
         foreach ($availableCertTypes as $availableCertType) {
-            $typeOptions['choices'][$availableCertType->getName()] = $availableCertType->getId();
+            $typeOptions['choices'][$availableCertType->getId()] = $availableCertType->getName();
         }
 
         /** @var CertificateType $travelType */

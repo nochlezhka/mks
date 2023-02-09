@@ -2,7 +2,6 @@
 
 namespace AppBundle\Entity;
 
-use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -15,30 +14,33 @@ class Service extends BaseEntity
      * Комментарий
      * @ORM\Column(type="text", nullable=true)
      */
-    private ?string $comment = null;
+    private $comment;
 
     /**
      * Сумма денег
      * @ORM\Column(type="integer", nullable=true)
      */
-    private ?int $amount = null;
+    private $amount;
 
     /**
      * Клиент
      * @ORM\ManyToOne(targetEntity="Client", inversedBy="services")
      */
-    private ?Client $client = null;
+    private $client;
 
     /**
      * Тип
      * @ORM\ManyToOne(targetEntity="ServiceType")
+     * @ORM\JoinColumn(name="type_id", referencedColumnName="id", onDelete="SET NULL")
      */
-    private ?ServiceType $type = null;
+    private $type;
 
     public function __toString()
     {
-        if ($this->getType() instanceof ServiceType) {
-            return $this->getType()->getName();
+        $type = $this->getType();
+
+        if ($type instanceof ServiceType) {
+            return (string)$type->getName();
         }
 
         return '';
@@ -47,11 +49,11 @@ class Service extends BaseEntity
     /**
      * Set comment
      *
-     * @param string|null $comment
+     * @param string $comment
      *
      * @return Service
      */
-    public function setComment(?string $comment): Service
+    public function setComment($comment)
     {
         $this->comment = $comment;
 
@@ -63,7 +65,7 @@ class Service extends BaseEntity
      *
      * @return string
      */
-    public function getComment(): ?string
+    public function getComment()
     {
         return $this->comment;
     }
@@ -71,11 +73,11 @@ class Service extends BaseEntity
     /**
      * Set amount
      *
-     * @param int|null $amount
+     * @param integer $amount
      *
      * @return Service
      */
-    public function setAmount(?int $amount): Service
+    public function setAmount($amount)
     {
         $this->amount = $amount;
 
@@ -87,7 +89,7 @@ class Service extends BaseEntity
      *
      * @return integer
      */
-    public function getAmount(): ?int
+    public function getAmount()
     {
         return $this->amount;
     }
@@ -95,11 +97,11 @@ class Service extends BaseEntity
     /**
      * Set client
      *
-     * @param Client|null $client
+     * @param \AppBundle\Entity\Client $client
      *
      * @return Service
      */
-    public function setClient(Client $client): Service
+    public function setClient(Client $client = null)
     {
         $this->client = $client;
 
@@ -109,9 +111,9 @@ class Service extends BaseEntity
     /**
      * Get client
      *
-     * @return Client
+     * @return \AppBundle\Entity\Client
      */
-    public function getClient(): ?Client
+    public function getClient()
     {
         return $this->client;
     }
@@ -119,11 +121,11 @@ class Service extends BaseEntity
     /**
      * Set type
      *
-     * @param ServiceType|null $type
+     * @param \AppBundle\Entity\ServiceType $type
      *
      * @return Service
      */
-    public function setType(ServiceType $type): Service
+    public function setType(ServiceType $type = null)
     {
         $this->type = $type;
 
@@ -133,9 +135,9 @@ class Service extends BaseEntity
     /**
      * Get type
      *
-     * @return ServiceType
+     * @return \AppBundle\Entity\ServiceType
      */
-    public function getType(): ?ServiceType
+    public function getType()
     {
         return $this->type;
     }
@@ -143,10 +145,10 @@ class Service extends BaseEntity
     /**
      * Returns the creation date.
      *
-     * @return DateTime
+     * @return \DateTime|null
      */
     public function getCreatedAt()
     {
-        return $this->createdAt ?: new DateTime();
+        return $this->createdAt ? $this->createdAt : new \DateTime();
     }
 }

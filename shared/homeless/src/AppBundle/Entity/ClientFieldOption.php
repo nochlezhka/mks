@@ -14,34 +14,34 @@ class ClientFieldOption extends BaseEntity
      * Название
      * @ORM\Column(type="string", nullable=true)
      */
-    private ?string $name = null;
+    private $name;
 
     /**
      * Если - true, то при заполнении не может быть выбрано только
      * одно это значение, необходимо указать еще какое-нибудь
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private ?bool $notSingle = false;
+    private $notSingle = false;
 
     /**
      * Поле
      * @ORM\ManyToOne(targetEntity="ClientField", inversedBy="options")
      */
-    private ?ClientField $field = null;
+    private $field;
 
     public function __toString()
     {
-        return $this->name;
+        return (string)$this->name;
     }
 
     /**
      * Set name
      *
-     * @param string|null $name
+     * @param string $name
      *
      * @return ClientFieldOption
      */
-    public function setName(?string $name): ClientFieldOption
+    public function setName($name)
     {
         $this->name = $name;
 
@@ -53,7 +53,7 @@ class ClientFieldOption extends BaseEntity
      *
      * @return string
      */
-    public function getName(): ?string
+    public function getName()
     {
         return $this->name;
     }
@@ -65,7 +65,7 @@ class ClientFieldOption extends BaseEntity
      *
      * @return ClientFieldOption
      */
-    public function setNotSingle(?bool $notSingle): ClientFieldOption
+    public function setNotSingle($notSingle)
     {
         $this->notSingle = $notSingle;
 
@@ -77,7 +77,7 @@ class ClientFieldOption extends BaseEntity
      *
      * @return boolean
      */
-    public function getNotSingle(): ?bool
+    public function getNotSingle()
     {
         return $this->notSingle;
     }
@@ -85,11 +85,11 @@ class ClientFieldOption extends BaseEntity
     /**
      * Set field
      *
-     * @param ClientField|null $field
+     * @param \AppBundle\Entity\ClientField $field
      *
      * @return ClientFieldOption
      */
-    public function setField(ClientField $field): ClientFieldOption
+    public function setField(ClientField $field = null)
     {
         $this->field = $field;
 
@@ -99,9 +99,9 @@ class ClientFieldOption extends BaseEntity
     /**
      * Get field
      *
-     * @return ClientField
+     * @return \AppBundle\Entity\ClientField
      */
-    public function getField(): ?ClientField
+    public function getField()
     {
         return $this->field;
     }

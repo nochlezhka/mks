@@ -15,6 +15,9 @@
 !var/logs/.gitkeep
 !var/sessions/.gitkeep
 
+# Parameters
+/app/config/parameters.yml
+/app/config/parameters.ini
 
 # Managed by Composer
 /app/bootstrap.php.cache
@@ -26,6 +29,7 @@
 
 # Assets and user uploads
 /web/bundles/
+/web/uploads/
 /web/fonts/
 /web/img/
 /web/adminer.php
@@ -48,8 +52,9 @@
 
 web/js
 web/css
-web/_assets
+web/assetic
 web/sitemap.xml
 
 node_modules/
 .cache/*
+.config/

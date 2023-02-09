@@ -23,33 +23,33 @@ class MenuItem extends BaseEntity
      * Название
      * @ORM\Column(type="string", nullable=true)
      */
-    private ?string $name = null;
+    private $name;
 
     /**
      * Код
      * @ORM\Column(type="string", nullable=true, unique=true)
      */
-    private ?string $code = null;
+    private $code;
 
     /**
      * Включено
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private ?bool $enabled = true;
+    private $enabled = true;
 
     public function __toString()
     {
-        return $this->name;
+        return (string)$this->name;
     }
 
     /**
      * Set name
      *
-     * @param string|null $name
+     * @param string $name
      *
      * @return MenuItem
      */
-    public function setName(?string $name): MenuItem
+    public function setName($name)
     {
         $this->name = $name;
 
@@ -61,7 +61,7 @@ class MenuItem extends BaseEntity
      *
      * @return string
      */
-    public function getName(): ?string
+    public function getName()
     {
         return $this->name;
     }
@@ -69,11 +69,11 @@ class MenuItem extends BaseEntity
     /**
      * Set code
      *
-     * @param string|null $code
+     * @param string $code
      *
      * @return MenuItem
      */
-    public function setCode(?string $code): MenuItem
+    public function setCode($code)
     {
         $this->code = $code;
 
@@ -85,7 +85,7 @@ class MenuItem extends BaseEntity
      *
      * @return string
      */
-    public function getCode(): ?string
+    public function getCode()
     {
         return $this->code;
     }
@@ -97,7 +97,7 @@ class MenuItem extends BaseEntity
      *
      * @return MenuItem
      */
-    public function setEnabled(?bool $enabled): MenuItem
+    public function setEnabled($enabled)
     {
         $this->enabled = $enabled;
 
@@ -109,7 +109,7 @@ class MenuItem extends BaseEntity
      *
      * @return boolean
      */
-    public function getEnabled(): ?bool
+    public function getEnabled()
     {
         return $this->enabled;
     }

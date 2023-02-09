@@ -2,7 +2,6 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Admin\ClientAdmin;
 use AppBundle\Entity\Certificate;
 use AppBundle\Entity\Client;
 use AppBundle\Entity\Contract;
@@ -11,8 +10,6 @@ use AppBundle\Entity\GeneratedDocument;
 use AppBundle\Entity\HistoryDownload;
 use AppBundle\Entity\ViewedClient;
 use AppBundle\Service\DownloadableInterface;
-use AppBundle\Service\RenderService;
-use AppBundle\Util\UploadedDataStringFile;
 use Application\Sonata\UserBundle\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
 use Mnvx\Lowrapper\Converter;
@@ -20,7 +17,7 @@ use Mnvx\Lowrapper\DocumentType;
 use Mnvx\Lowrapper\Format;
 use Mnvx\Lowrapper\LowrapperParameters;
 use Sonata\AdminBundle\Controller\CRUDController as Controller;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -60,7 +57,7 @@ class CRUDController extends Controller
                 }
                 $client = $object->getClient();
                 $this->getDoctrine()->getManager()->initializeObject($client);
-                $html = $this->getRenderService()->renderCertificate($object, $client);
+                $html = $this->get('app.render_service')->renderCertificate($object, $client, $this->getUser());
                 $historyDownload = new HistoryDownload();
                 $historyDownload->setUser($this->getUser());
                 $historyDownload->setClient($client);
@@ -71,13 +68,13 @@ class CRUDController extends Controller
                 break;
 
             case GeneratedDocument::class:
-                $html = $this->getRenderService()->renderGeneratedDocument($object);
+                $html = $this->get('app.render_service')->renderGeneratedDocument($object, $this->getUser());
                 break;
 
             case Contract::class;
                 $client = $object->getClient();
                 $this->getDoctrine()->getManager()->initializeObject($client);
-                $html = $this->getRenderService()->renderContract($object,$client, $this->getUser());
+                $html = $this->get('app.render_service')->renderContract($object,$client, $this->getUser());
                 break;
         }
 
@@ -102,21 +99,6 @@ class CRUDController extends Controller
                 'Content-Disposition' => 'attachment; filename="' . $filename . '"'
             ]
         );
-    }
-
-    public function preEdit(Request $request, $object)
-    {
-        if(!($object instanceof Client)) {
-            return;
-        }
-        $base64Photo = $request->request->get('photo');
-        if($base64Photo === null || substr($base64Photo, 0, strlen("data:image")) !== "data:image") {
-            return;
-        }
-
-        $file = new UploadedDataStringFile($base64Photo, "client.png");
-        $object->setPhoto($file);
-        $this->admin->update($object);
     }
 
     /**
@@ -167,14 +149,6 @@ class CRUDController extends Controller
     }
 
     /**
-     * @return RenderService
-     */
-    public function getRenderService(): RenderService
-    {
-        return $this->get('app.render_service');
-    }
-
-    /**
      * {@inheritdoc}
      */
     protected function redirectTo($object)
@@ -189,5 +163,33 @@ class CRUDController extends Controller
         }
 
         return parent::redirectTo($object);
+    }
+
+    public function clientMatchesAction(Request $request)
+    {
+            $user = $this->getUser();
+
+            if (!$user instanceof User || !$this->isGranted('ROLE_SONATA_ADMIN')) {
+                throw $this->createAccessDeniedException();
+            }
+
+            $uniqid = $request->query->get('uniqid');
+            $formData = $request->request->get($uniqid);
+            $clients = [];
+            if ($formData) {
+                $clients = $this->getDoctrine()->getRepository('AppBundle:Client')
+                    ->searchMatches($formData);
+            }
+
+            $router = $this->admin;
+
+            return new JsonResponse([
+                    'ok' => count($clients) > 0 ? 1 : 0,
+                    'clients' => $clients ? array_map(function($v) use($router) {
+                        $v['url'] = $router->generateUrl('show',['id' => $v['id']]);
+                        $v['birthDate'] = !is_null($v['birthDate']) ? $v['birthDate']->format('d.m.Y') : 'н/д';
+                        return $v;
+                    },$clients) : []
+                ]);
     }
 }

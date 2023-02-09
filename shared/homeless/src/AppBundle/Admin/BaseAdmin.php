@@ -3,6 +3,7 @@
 namespace AppBundle\Admin;
 
 use Sonata\AdminBundle\Admin\AbstractAdmin;
+use Sonata\AdminBundle\Route\RouteCollection;
 
 class BaseAdmin extends AbstractAdmin
 {
@@ -35,5 +36,10 @@ class BaseAdmin extends AbstractAdmin
     public function getParameter($name)
     {
         return $this->getConfigurationPool()->getContainer()->getParameter($name);
+    }
+
+    protected function configureRoutes(RouteCollection $collection)
+    {
+        $collection->remove('export');
     }
 }

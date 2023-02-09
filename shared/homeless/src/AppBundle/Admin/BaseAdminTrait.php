@@ -19,7 +19,7 @@ trait BaseAdminTrait
             ->isEnableCode(MenuItem::CODE_NOTIFICATIONS)) {
             return 0;
         }
-        $user = $this->getConfigurationPool()->getContainer()->get('security.token_storage')->getToken()->getUser();
+        $user = $this->getConfigurationPool()->getContainer()->get('security.context')->getToken()->getUser();
 
         $filter = ['contractCreatedBy' => $user->getId()];
 
@@ -61,7 +61,7 @@ trait BaseAdminTrait
         $user = $this
             ->getConfigurationPool()
             ->getContainer()
-            ->get('security.token_storage')
+            ->get('security.context')
             ->getToken()
             ->getUser();
 

@@ -6,6 +6,7 @@ namespace AppBundle\Admin;
 use AppBundle\Entity\ClientForm;
 use AppBundle\Entity\ClientFormField;
 use AppBundle\Entity\ClientFormResponse;
+use AppBundle\Entity\ShelterHistory;
 use AppBundle\Form\DataTransformer\ClientFormCheckboxTransformer;
 use AppBundle\Form\DataTransformer\ClientFormMultiselectTransformer;
 use AppBundle\Repository\ClientFormResponseRepository;
@@ -30,6 +31,8 @@ class ClientFormResponseAdmin extends BaseAdmin
         '_sort_by' => 'sort',
     );
 
+    protected $parentAssociationMapping = 'client';
+
     protected $translationDomain = 'AppBundle';
 
     /**
@@ -51,7 +54,6 @@ class ClientFormResponseAdmin extends BaseAdmin
             ];
         }
     }
-
 
     protected function configureDatagridFilters(DatagridMapper $datagridMapper)
     {

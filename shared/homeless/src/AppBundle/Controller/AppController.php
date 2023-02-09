@@ -2,15 +2,20 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Admin\ShelterRoomAdmin;
+use AppBundle\Entity\Branch;
 use AppBundle\Entity\ClientField;
+use AppBundle\Entity\ClientFormResponseValue;
+use AppBundle\Entity\ContractItemType;
 use AppBundle\Entity\ContractStatus;
-use AppBundle\Service\ReportService;
+use AppBundle\Entity\DeliveryItem;
+use AppBundle\Entity\ServiceType;
 use AppBundle\Entity\ShelterRoom;
 use Application\Sonata\UserBundle\Entity\User;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/app")
@@ -22,7 +27,7 @@ class AppController extends Controller
      * Мои клиенты
      * @Route("/my-clients", name="my_clients")
      * @param Request $request
-     * @return Response
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function myClientsAction(Request $request)
     {
@@ -32,7 +37,7 @@ class AppController extends Controller
             throw $this->createAccessDeniedException();
         }
 
-        $filter = ['contractCreatedBy' => ['value' => $user->getId()]];
+        $filter = ['contractCreatedBy' => ['value' => [(string)$user->getId()]]];
 
         $inProcessStatus = $this
             ->getDoctrine()
@@ -51,7 +56,7 @@ class AppController extends Controller
      * Мои бывшие клиенты
      * @Route("/my-ex-clients", name="my_ex_clients")
      * @param Request $request
-     * @return Response
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function myExClientsAction(Request $request)
     {
@@ -61,7 +66,7 @@ class AppController extends Controller
             throw $this->createAccessDeniedException();
         }
 
-        $filter = ['contractCreatedBy' => ['value' => $user->getId()]];
+        $filter = ['contractCreatedBy' => ['value' => [(string)$user->getId()]]];
 
         $statuses = $this
             ->getDoctrine()
@@ -86,7 +91,7 @@ class AppController extends Controller
      * Добавить клиента
      * @Route("/add-client", name="add_client")
      * @param Request $request
-     * @return Response
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function addClientAction(Request $request)
     {
@@ -103,7 +108,7 @@ class AppController extends Controller
      * Оказанные мной услуги
      * @Route("/my-services", name="my_services")
      * @param Request $request
-     * @return Response
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function myServicesAction(Request $request)
     {
@@ -122,7 +127,7 @@ class AppController extends Controller
      * Профиль
      * @Route("/profile", name="profile")
      * @param Request $request
-     * @return Response
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function profileAction(Request $request)
     {
@@ -138,7 +143,7 @@ class AppController extends Controller
     /**
      * @Route("/client/list",name="client_search")
      * @param Request $request
-     * @return Response
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function clientsSearchAction(Request $request)
     {
@@ -168,7 +173,7 @@ class AppController extends Controller
     /**
      * @Route("/report",name="report")
      * @param Request $request
-     * @return Response
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function reportAction(Request $request)
     {
@@ -184,51 +189,78 @@ class AppController extends Controller
         $fieldHomelessBreadwinner = $this->getDoctrine()->getRepository(ClientField::class)->findOneBy(['code' => 'breadwinner']);
         $optionsBreadwinner = $fieldHomelessBreadwinner ? $fieldHomelessBreadwinner->getOptionsArray() : [];
 
+        $branch = [];
+        foreach ($this->getDoctrine()->getRepository(Branch::class)->findAll() as $item) {
+            $branch[] = ['id' => $item->getId(), 'name' => $item->getName()];
+        }
+
+        $serviceTypes = [];
+        foreach ($this->getDoctrine()->getRepository(ServiceType::class)->findAll() as $serviceType) {
+            $serviceTypes[] = ['id' => $serviceType->getId(), 'name' => $serviceType->getName()];
+        }
+
+        $contractItemTypes = [];
+        foreach ($this->getDoctrine()->getRepository(ContractItemType::class)->findAll() as $contractType) {
+            $contractItemTypes[] = ['id' => $contractType->getId(), 'name' => $contractType->getName()];
+        }
+
+        $deliveryItems = [];
+        foreach ($this->getDoctrine()->getRepository(DeliveryItem::class)->findAll() as $item) {
+            $deliveryItems[] = ['id' => $item->getId(), 'name' => $item->getName()];
+        }
+
+        $clientFormResponseVals = [
+            ClientFormResponseValue::RESIDENT_QUESTIONNAIRE_TYPE_1_YEAR,
+            ClientFormResponseValue::RESIDENT_QUESTIONNAIRE_TYPE_2_YEARS,
+            ClientFormResponseValue::RESIDENT_QUESTIONNAIRE_TYPE_3_MONTHS,
+            ClientFormResponseValue::RESIDENT_QUESTIONNAIRE_TYPE_6_MONTHS,
+            ClientFormResponseValue::RESIDENT_QUESTIONNAIRE_TYPE_WHEN_LEAVING,
+        ];
+
         return $this->render('@App/Admin/report.html.twig', [
             'users' => $this->getDoctrine()->getEntityManager()->getRepository('ApplicationSonataUserBundle:User')->findBy([
-                'enabled' => true,
+                'locked' => false,
             ]),
             'types' => $report->getTypes(),
             'optionsHomelessReason' => $optionsHomelessReason,
             'optionsDisease' => $optionsDisease,
             'optionsBreadwinner' => $optionsBreadwinner,
+            'branches' => $branch,
+            'serviceTypes' => $serviceTypes,
+            'contractItemTypes' => $contractItemTypes,
+            'deliveryItems' => $deliveryItems,
+            'clientFormResponseValue' => $clientFormResponseVals
         ]);
     }
 
     /**
      * @Route("/report-download",name="reportDownload")
      * @param Request $request
-     * @return Response
+     * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function reportDownloadAction(Request $request): Response
+    public function reportDownloadAction(Request $request)
     {
-        $type = $request->get('type');
-        $response = new Response();
-        $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        $response->headers->set('Content-Disposition', 'attachment;filename="' . $type . '.xls"');
-        $response->headers->set('Cache-Control', 'max-age=0');
-        $response->sendHeaders();
-        $this->reportService()->generate(
-            $type,
-            $request->get('dateFrom'),
-            $request->get('dateTo'),
-            $request->get('userId'),
+        $report = $this->get('app.report_service');
+        $report->generate(
+            $request->get('type'),
+            $request->get('dateFrom', null),
+            $request->get('dateTo', null),
+            $request->get('userId', null),
 
-            $request->get('createClientdateFrom'),
-            $request->get('createClientFromTo'),
-            $request->get('createServicedateFrom'),
-            $request->get('createServiceFromTo'),
+            $request->get('createClientdateFrom', null),
+            $request->get('createClientFromTo', null),
+            $request->get('createServicedateFrom', null),
+            $request->get('createServiceFromTo', null),
 
-            $request->get('homelessReason'),
-            $request->get('disease'),
-            $request->get('breadwinner')
+            $request->get('homelessReason', null),
+            $request->get('disease', null),
+            $request->get('breadwinner', null),
+            $request->get('branchId', null),
+            $request->get('serviceId', null),
+            $request->get('contractTypeId', null),
+            $request->get('deliveryItemId', null),
+            $request->get('clientFormResponseValue', null)
         );
-        return $response;
-    }
-
-    private function reportService(): ReportService
-    {
-        return $this->get('app.report_service');
     }
 
     /**
@@ -286,24 +318,24 @@ class AppController extends Controller
         $room = new ShelterRoom();
 
         $form = $this->createFormBuilder()
-            ->setAction('/app/shelterroom/save')
-            ->setMethod('GET')
-            ->add('number', null, [
-                'label' => 'Номер комнаты'
-            ])
-            ->add('maxOccupants', null, [
-                'label' => 'Максимальное кол-во жильцов',
-                'required' => false
-            ])
-            ->add('currentOccupants', null, [
-                'label' => 'Текущее кол-во жильцов',
-                'required' => false
-            ])
-            ->add('comment', null, [
-                'label' => 'Комментарий',
-                'required' => false
-            ])
-            ->getForm();
+        ->setAction('/app/shelterroom/save')
+        ->setMethod('GET')
+        ->add('number', null, [
+            'label' => 'Номер комнаты'
+        ])
+        ->add('maxOccupants', null, [
+            'label' => 'Максимальное кол-во жильцов',
+            'required' => false
+        ])
+        ->add('currentOccupants', null, [
+            'label' => 'Текущее кол-во жильцов',
+            'required' => false
+        ])
+        ->add('comment', null, [
+            'label' => 'Комментарий',
+            'required' => false
+        ])
+        ->getForm();
 
         $form->handleRequest($request);
 
@@ -386,24 +418,24 @@ class AppController extends Controller
         $room = $em->getRepository('AppBundle:ShelterRoom')->find($roomId);
 
         $form = $this->createFormBuilder()
-            ->setAction('/app/shelterroom/save')
-            ->setMethod('GET')
-            ->add('number', null, [
-                'label' => 'Номер комнаты'
-            ])
-            ->add('maxOccupants', null, [
-                'label' => 'Максимальное кол-во жильцов',
-                'required' => false
-            ])
-            ->add('currentOccupants', null, [
-                'label' => 'Текущее кол-во жильцов',
-                'required' => false
-            ])
-            ->add('comment', null, [
-                'label' => 'Комментарий',
-                'required' => false
-            ])
-            ->getForm();
+        ->setAction('/app/shelterroom/save')
+        ->setMethod('GET')
+        ->add('number', null, [
+            'label' => 'Номер комнаты'
+        ])
+        ->add('maxOccupants', null, [
+            'label' => 'Максимальное кол-во жильцов',
+            'required' => false
+        ])
+        ->add('currentOccupants', null, [
+            'label' => 'Текущее кол-во жильцов',
+            'required' => false
+        ])
+        ->add('comment', null, [
+            'label' => 'Комментарий',
+            'required' => false
+        ])
+        ->getForm();
 
 
         $formData = [
@@ -449,7 +481,7 @@ class AppController extends Controller
 
         $query = $em->createQuery(
             'DELETE FROM AppBundle:ShelterHistory AS e WHERE e.room = :room_id'
-        )->setParameter('room_id', $roomId)->execute();
+         )->setParameter('room_id', $roomId)->execute();
 
 
         $room = $em->getReference('AppBundle:ShelterRoom', $roomId);

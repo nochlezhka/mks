@@ -11,11 +11,11 @@ use AppBundle\Entity\Notice;
 use AppBundle\Form\DataTransformer\ImageStringToFileTransformer;
 use AppBundle\Form\Type\AppHomelessFromDateType;
 use AppBundle\Service\MetaService;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Knp\Menu\ItemInterface as MenuItemInterface;
 use Sonata\AdminBundle\Admin\AdminInterface;
@@ -24,13 +24,12 @@ use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Form\Type\ChoiceFieldMaskType;
 use Sonata\AdminBundle\Show\ShowMapper;
-use Sonata\DoctrineORMAdminBundle\Datagrid\OrderByToSelectWalker;
-use Sonata\DoctrineORMAdminBundle\Datagrid\ProxyQuery;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
+use Sonata\AdminBundle\Route\RouteCollection;
 
 class ClientAdmin extends BaseAdmin
 {
@@ -114,12 +113,14 @@ class ClientAdmin extends BaseAdmin
             ->add('gender', 'choice', [
                 'label' => 'Пол',
                 'choices' => [
-                    'Мужской' => Client::GENDER_MALE,
-                    'Женский' => Client::GENDER_FEMALE,
+                    Client::GENDER_MALE => 'Мужской',
+                    Client::GENDER_FEMALE => 'Женский',
                 ],
             ])
             ->add('birthDate', 'date', [
                 'label' => 'Дата рождения',
+                'format' => 'd.m.Y',
+                'template' => '/admin/fields/client_birthdate_show.html.twig',
             ])
             ->add('birthPlace', null, [
                 'label' => 'Место рождения',
@@ -141,8 +142,8 @@ class ClientAdmin extends BaseAdmin
         }
         $showMapper->end();
 
-        $authorizationChecker = $this->getConfigurationPool()->getContainer()->get('security.authorization_checker');
-        if ($authorizationChecker->isGranted('ROLE_SUPER_ADMIN') || $authorizationChecker->isGranted('ROLE_APP_SERVICE_ADMIN_LIST') || $authorizationChecker->isGranted('ROLE_APP_SERVICE_ADMIN_ALL')) {
+        $securityContext = $this->getConfigurationPool()->getContainer()->get('security.context');
+        if ($securityContext->isGranted('ROLE_SUPER_ADMIN') || $securityContext->isGranted('ROLE_APP_SERVICE_ADMIN_LIST') || $securityContext->isGranted('ROLE_APP_SERVICE_ADMIN_ALL')) {
             $showMapper
                 ->with('Последние услуги', ['class' => 'col-md-4'])
                 ->add('services', 'array', [
@@ -152,8 +153,17 @@ class ClientAdmin extends BaseAdmin
                 ->end();
         }
 
+        if ($securityContext->isGranted('ROLE_SUPER_ADMIN') || $securityContext->isGranted('ROLE_APP_SERVICE_ADMIN_LIST') || $securityContext->isGranted('ROLE_APP_SERVICE_ADMIN_ALL')) {
+            $showMapper
+                ->with('Последние выдачи', ['class' => 'col-md-4'])
+                ->add('deliveries', 'array', [
+                    'label' => ' ',
+                    'template' => '/admin/fields/client_humaid_deliveries_show.html.twig',
+                ])
+                ->end();
+        }
 
-        if ($authorizationChecker->isGranted('ROLE_SUPER_ADMIN') || $authorizationChecker->isGranted('ROLE_APP_NOTE_ADMIN_LIST') || $authorizationChecker->isGranted('ROLE_APP_NOTE_ADMIN_ALL')) {
+        if ($securityContext->isGranted('ROLE_SUPER_ADMIN') || $securityContext->isGranted('ROLE_APP_NOTE_ADMIN_LIST') || $securityContext->isGranted('ROLE_APP_NOTE_ADMIN_ALL')) {
             $showMapper
                 ->with('Последние примечания')
                 ->add('notes', 'array', [
@@ -161,9 +171,17 @@ class ClientAdmin extends BaseAdmin
                     'template' => '/admin/fields/client_notes_show.html.twig',
                 ])
                 ->end();
+        } else if ($securityContext->isGranted('ROLE_SUPER_ADMIN') || $securityContext->isGranted('ROLE_APP_SERVICE_ADMIN_LIST') || $securityContext->isGranted('ROLE_APP_SERVICE_ADMIN_ALL')) {
+            $showMapper
+                ->with('Важные примечания')
+                ->add('notes', 'array', [
+                    'label' => ' ',
+                    'template' => '/admin/fields/client_notes_show_volunteer.html.twig',
+                ])
+                ->end();
         }
 
-        if ($authorizationChecker->isGranted('ROLE_SUPER_ADMIN') || $authorizationChecker->isGranted('ROLE_APP_CLIENT_ADMIN_EDIT') || $authorizationChecker->isGranted('ROLE_APP_CLIENT_ADMIN_ALL')) {
+        if ($securityContext->isGranted('ROLE_SUPER_ADMIN') || $securityContext->isGranted('ROLE_APP_CLIENT_ADMIN_EDIT') || $securityContext->isGranted('ROLE_APP_CLIENT_ADMIN_ALL')) {
             $showMapper
                 ->with('Дополнительная информация', [
                     'class' => 'col-md-12',
@@ -278,7 +296,8 @@ class ClientAdmin extends BaseAdmin
                     continue;
                 }
                 $newVal = $event->getForm()->get($addFieldName)->getData();
-                if (self::isAdditionalFieldValueEmpty($newVal)
+                if (
+                    self::isAdditionalFieldValueEmpty($newVal)
                     // не требуем заполненности скрытых полей
                     && $this->fieldCanBeShown($clientsField, $event->getForm())
                     // если редактируется старый клиент, и значение в БД уже пустое - прощаем
@@ -318,18 +337,17 @@ class ClientAdmin extends BaseAdmin
                         $event->getForm()->get(self::getAdditionalFieldName($field->getCode()))->addError(new FormError("'{$value->getName()}' не может быть единственным ответом"));
                     }
                 }
-
             }
         });
 
         $formMapper
             ->with('Основная информация')
-            ->add('photo', 'AppBundle\Form\Type\AppPhotoType', [
+            ->add('photo', 'app_photo', [
                 'label' => 'Фото',
                 'required' => false,
                 'allow_delete' => false,
                 'download_link' => false,
-                'attr' => ['class' => 'client_photo_file'],
+                'attr' => ['class' => 'client_photo_input'],
             ])
             ->add('lastname', null, [
                 'label' => 'Фамилия',
@@ -347,11 +365,11 @@ class ClientAdmin extends BaseAdmin
                 'label' => 'Пол',
                 'required' => true,
                 'choices' => [
-                    'Мужской' => Client::GENDER_MALE,
-                    'Женский' => Client::GENDER_FEMALE,
+                    Client::GENDER_MALE => 'Мужской',
+                    Client::GENDER_FEMALE => 'Женский',
                 ],
             ])
-            ->add('birthDate', 'Sonata\Form\Type\DatePickerType', [
+            ->add('birthDate', 'sonata_type_date_picker', [
                 'dp_default_date' => (new \DateTime('-50 year'))->format('Y-m-d'),
                 'format' => 'dd.MM.yyyy',
                 'label' => 'Дата рождения',
@@ -384,11 +402,12 @@ class ClientAdmin extends BaseAdmin
             ->findByEnabledAll();
 
         $this->initFieldDependencies($fields);
+
         foreach ($fields as $field) {
             $options = [
                 'label' => $field->getName(),
                 'required' => $field->getRequired(),
-                'attr' => ["class" => ($field->getMandatoryForHomeless() ? 'mandatory-for-homeless' : '') . ' ' . (!$field->getEnabled() && $field->getEnabledForHomeless() ? 'enabled-for-homeless' : '')],
+                'attr' => ["class" => ($field->getMandatoryForHomeless() && !$field->getRequired() ? 'mandatory-for-homeless' : '') . ' ' . (!$field->getEnabled() && $field->getEnabledForHomeless() ? 'enabled-for-homeless' : '')],
             ];
             // если скрываемое поле раньше не было обязательным, разрешаем ему оставаться пустым
             // (это также поддержано в валидации в обработчике `FormEvents::SUBMIT`)
@@ -410,6 +429,13 @@ class ClientAdmin extends BaseAdmin
                     if ($field->getMultiple()) {
                         $options['multiple'] = true;
                     }
+
+                    // Уберем некоторые предвыбранные ответы
+                    if ($options['required'] && in_array($field->getCode(), ['citizenship', 'pensioner', 'maritalStatus', 'relativesContacts', 'dependents', 'student', 'education', 'orphanageGraduate', 'wasImprisoned', 'registration'])) {
+                        $options['placeholder'] = '';
+                        // $options['required'] = false;
+                    }
+
                     // когда у селекта выставлен `required`, по-умолчанию выбирается первый элемент из списка
                     // Это может быть нежелательно для скрываемых полей - мы делаем их необязательными, если они скрыты
                     // Чтобы избежать незаметной отправки непустого значения, указываем `placeholder`
@@ -435,6 +461,8 @@ class ClientAdmin extends BaseAdmin
 
         $formMapper
             ->end();
+
+        $formMapper->getFormBuilder()->get('photo')->addModelTransformer(new ImageStringToFileTransformer());
     }
 
     /**
@@ -444,7 +472,7 @@ class ClientAdmin extends BaseAdmin
      * @param ClientField $field
      * @return bool
      */
-    private function canAdditionalFieldRemainEmpty(ClientField $field): bool
+    private function canAdditionalFieldRemainEmpty(ClientField $field)
     {
         if ($this->isAdditionalFieldDependant($field) && $this->getSubject()->getId()) {
             $curVal = $this->getSubject()->getAdditionalFieldValue($field->getCode());
@@ -567,14 +595,24 @@ class ClientAdmin extends BaseAdmin
                 'route' => ['name' => 'show'],
             ])
             ->add('birthDate', 'date', [
-                'label' => 'Дата рождения',
-            ])
-            ->add('contracts.dateFrom', null, [
-                'template' => '/admin/fields/client_contract_list.html.twig',
-                'label' => 'Договор',
-            ])
+                'template' => '/admin/fields/client_birthdate_list.html.twig',
+                'label' => 'Дата рождения'
+            ]);
+
+        if (!empty($this->getConfigurationPool()->getContainer()->get('app.branch_option.repository')->findAll())) {
+            $listMapper->add('createdBy.branch.name', null, [
+                'label' => 'Отделение',
+            ]);
+        }
+
+
+        $listMapper->add('contracts.dateFrom', null, [
+            'template' => '/admin/fields/client_contract_list.html.twig',
+            'label' => 'Договор',
+        ])
             ->add('createdAt', 'date', [
                 'label' => 'Когда добавлен',
+                'template' => '/admin/fields/client_createdat_list.html.twig',
             ])
             ->add('_action', null, [
                 'label' => 'Действие',
@@ -592,23 +630,54 @@ class ClientAdmin extends BaseAdmin
     protected function configureDatagridFilters(DatagridMapper $datagridMapper)
     {
         $datagridMapper
-            ->add('search', 'doctrine_orm_callback', [
+            ->add(
+                'search',
+                'doctrine_orm_callback',
+                [
                     'label' => 'Поиск',
                     'callback' => [$this, 'getClientSearchFilter'],
                     'field_type' => 'text',
                     'global_search' => true,
                     'advanced_filter' => false,
+                    'show_filter' => true
                 ]
             )
-            ->add('lastName', 'doctrine_orm_callback', [
+            ->add(
+                'gender',
+                'doctrine_orm_callback',
+                [
+                    'label' => 'Пол',
+                    'callback' => [$this, 'getClientSearchByGenderFilter'],
+                    'field_type' => 'choice',
+                    'field_options' => [
+                        'choices' => [
+                            Client::GENDER_MALE => 'Мужской',
+                            Client::GENDER_FEMALE => 'Женский',
+                        ]
+                    ],
+                    'expanded' => true,
+                    'multiple' => false,
+                    'global_search' => true,
+                    'advanced_filter' => false,
+                    'show_filter' => true
+                ]
+            )
+            ->add(
+                'lastName',
+                'doctrine_orm_callback',
+                [
                     'label' => 'Фамилия',
                     'callback' => [$this, 'getClientSearchLastName'],
                     'field_type' => 'text',
                     'global_search' => true,
                     'advanced_filter' => false,
+                    'show_filter' => true
                 ]
             )
-            ->add('firstName', 'doctrine_orm_callback', [
+            ->add(
+                'firstName',
+                'doctrine_orm_callback',
+                [
                     'label' => 'Имя',
                     'callback' => [$this, 'getClientSearchFirstName'],
                     'field_type' => 'text',
@@ -616,7 +685,10 @@ class ClientAdmin extends BaseAdmin
                     'advanced_filter' => false,
                 ]
             )
-            ->add('middleName', 'doctrine_orm_callback', [
+            ->add(
+                'middleName',
+                'doctrine_orm_callback',
+                [
                     'label' => 'Отчество',
                     'callback' => [$this, 'getClientSearchMiddleName'],
                     'field_type' => 'text',
@@ -624,7 +696,10 @@ class ClientAdmin extends BaseAdmin
                     'advanced_filter' => false,
                 ]
             )
-            ->add('note', 'doctrine_orm_callback', [
+            ->add(
+                'note',
+                'doctrine_orm_callback',
+                [
                     'label' => 'Примечание',
                     'callback' => [$this, 'getClientSearchNote'],
                     'field_type' => 'text',
@@ -632,17 +707,22 @@ class ClientAdmin extends BaseAdmin
                     'advanced_filter' => false,
                 ]
             )
-            ->add('contract', 'doctrine_orm_callback', [
-                    'label' => 'Сервисный план',
+            ->add(
+                'contract',
+                'doctrine_orm_callback',
+                [
+                    'label' => 'Сервистный план',
                     'callback' => [$this, 'getClientSearchContract'],
                     'field_type' => 'text',
                     'global_search' => true,
                     'advanced_filter' => false,
                 ]
             )
-            ->add('birthDate', 'doctrine_orm_date_range',
+            ->add(
+                'birthDate',
+                'doctrine_orm_date_range',
                 ['label' => 'Дата рождения', 'advanced_filter' => false,],
-                'Sonata\Form\Type\DateRangePickerType',
+                'sonata_type_date_range_picker',
                 [
                     'field_options_start' => [
                         'label' => 'От',
@@ -654,14 +734,17 @@ class ClientAdmin extends BaseAdmin
                     ],
                 ]
             )
-            ->add('contractCreatedBy', 'doctrine_orm_callback', [
+            ->add(
+                'contractCreatedBy',
+                'doctrine_orm_callback',
+                [
                     'label' => 'Кем добавлен договор',
                     'callback' => [$this, 'getContractCreatedByFilter'],
                     'field_type' => 'entity',
                     'field_options' => [
                         'class' => 'Application\Sonata\UserBundle\Entity\User',
-                        'choice_label' => 'fullname',
-                        'multiple' => false,
+                        'property' => 'fullname',
+                        'multiple' => true,
                         'query_builder' => function (EntityRepository $er) {
                             return $er->createQueryBuilder('u')
                                 ->select('u')
@@ -671,13 +754,16 @@ class ClientAdmin extends BaseAdmin
                     'advanced_filter' => false,
                 ]
             )
-            ->add('contractStatus', 'doctrine_orm_callback', [
+            ->add(
+                'contractStatus',
+                'doctrine_orm_callback',
+                [
                     'label' => 'Статус договора',
                     'callback' => [$this, 'getContractStatusFilter'],
                     'field_type' => 'entity',
                     'field_options' => [
                         'class' => 'AppBundle\Entity\ContractStatus',
-                        'choice_label' => 'name',
+                        'property' => 'name',
                         'multiple' => true,
                         'query_builder' => function (EntityRepository $er) {
                             return $er->createQueryBuilder('s')
@@ -687,8 +773,111 @@ class ClientAdmin extends BaseAdmin
                     'advanced_filter' => false,
                 ]
             );
+
+
+        $branch = [];
+
+        foreach ($this->getConfigurationPool()->getContainer()->get('app.branch_option.repository')->findAll() as $item) {
+            $branch[$item->getId()] = $item->getName();
+        }
+
+
+
+        /** @var ClientField[] $fields */
+        $fields = $this
+            ->getConfigurationPool()
+            ->getContainer()
+            ->get('doctrine.orm.entity_manager')
+            ->getRepository(ClientField::class)
+            ->findByEnabledAll();
+
+        $this->initFieldDependencies($fields);
+
+        foreach ($fields as $field) {
+
+            switch ($field->getType()) {
+                case ClientField::TYPE_OPTION:
+
+                    $datagridMapper
+                        ->add(
+                            $field->getCode(),
+                            'doctrine_orm_callback',
+                            [
+                                'label' => $field->getName(),
+                                'callback' => [$this, 'getClientFieldFilter'],
+                                'field_type' => 'entity',
+                                'field_options' => [
+                                    'class' => 'AppBundle\Entity\ClientFieldOption',
+                                    'property' => 'name',
+                                    'multiple' => $field->getMultiple(),
+                                    'query_builder' => function (EntityRepository $er) use($field) {
+                                        return $er->createQueryBuilder('b')
+                                            ->andWhere('b.field = :fieldType')
+                                            ->setParameter('fieldType', $field->getId())
+                                            ->orderBy('b.name', 'ASC');
+                                    },
+                                ],
+                                'global_search' => true,
+                                'advanced_filter' => false,
+                            ]
+                        );
+
+                    break;
+
+                case ClientField::TYPE_DATETIME:
+                    $datagridMapper
+                        ->add(
+                            $field->getCode(),
+                            'doctrine_orm_callback',
+                            [
+                                'label' => $field->getName(),
+                                'callback' => [$this, 'getClientFieldDatesFilter'],
+                                'field_type' => 'sonata_type_date_picker',
+                                'global_search' => true,
+                                'advanced_filter' => false,
+                        ]
+                    );
+                break;
+            }
+
+        }
+
+
+
+        if (!empty($branch)) {
+            $datagridMapper->add(
+                'branch',
+                'doctrine_orm_callback',
+                [
+                    'label' => 'Отделения',
+                    'callback' => [$this, 'getBranchFilter'],
+                    'field_type' => 'entity',
+                    'field_options' => [
+                        'class' => 'AppBundle\Entity\Branch',
+                        'property' => 'name',
+                        'multiple' => true,
+                        'query_builder' => function (EntityRepository $er) {
+                            return $er->createQueryBuilder('b')
+                                ->orderBy('b.name', 'ASC');
+                        },
+                    ],
+                    'advanced_filter' => false,
+                ]
+            );
+        }
     }
 
+    public function getBranchFilter(\Sonata\DoctrineORMAdminBundle\Datagrid\ProxyQuery $queryBuilder, $alias, $field, $value)
+    {
+        if ($value['value']->isEmpty()) {
+            return;
+        }
+        $queryBuilder->leftJoin($alias . '.createdBy', 'u3');
+        $queryBuilder->andWhere('u3.branch = :branch');
+        $queryBuilder->setParameter('branch', $value['value']);
+
+        return true;
+    }
     /**
      * @param $queryBuilder
      * @param $alias
@@ -699,13 +888,13 @@ class ClientAdmin extends BaseAdmin
      */
     public function getContractCreatedByFilter($queryBuilder, $alias, $field, $value)
     {
-        if (null === $value['value']) {
+        if ($value['value']->isEmpty()) {
             return;
         }
 
         $queryBuilder->leftJoin($alias . '.contracts', 'c1');
         $queryBuilder->leftJoin('c1.createdBy', 'u1');
-        $queryBuilder->andWhere('u1.id = :userId');
+        $queryBuilder->andWhere('u1.id IN(:userId)');
         $queryBuilder->setParameter('userId', $value['value']);
 
         return true;
@@ -737,13 +926,14 @@ class ClientAdmin extends BaseAdmin
     }
 
     /**
+     * @param QueryBuilder $queryBuilder
      * @param $alias
      * @param $field
      * @param $value
      *
      * @return bool|void
      */
-    public function getClientSearchFilter(ProxyQuery $queryBuilder, $alias, $field, $value)
+    public function getClientSearchFilter($queryBuilder, $alias, $field, $value)
     {
         if (null === $value['value']) {
             return;
@@ -757,11 +947,105 @@ class ClientAdmin extends BaseAdmin
             $word = trim($word);
             if (!empty($word)) {
                 $queryBuilder->andWhere("($alias.lastname LIKE :word$key OR $alias.firstname LIKE :word$key OR $alias.middlename LIKE :word$key OR $alias.id LIKE :word$key OR $alias.birthDate LIKE :word$key OR n.text LIKE :word$key)");
-                $queryBuilder->orderBy("$alias.lastname, $alias.firstname, $alias.middlename", "ASC");
+                $queryBuilder->orderBy("CUSTOM_PART(
+                    CASE
+                        WHEN $alias.lastname like :word$key THEN 0
+                        WHEN $alias.firstname like :word$key THEN 1
+                        WHEN $alias.middlename like :word$key THEN 2
+                        WHEN $alias.id like :word$key THEN 3
+                        WHEN $alias.birthDate like :word$key THEN 4
+                        WHEN n.text like :word$key THEN 5
+                        ELSE 6 END)", "ASC");
                 $queryBuilder->setParameter("word$key", "%$word%");
             }
         }
 
+        return true;
+    }
+
+
+    /**
+     * @param QueryBuilder $queryBuilder
+     * @param $alias
+     * @param $field
+     * @param $value
+     *
+     * @return bool|void
+     */
+    public function getClientSearchByGenderFilter($queryBuilder, $alias, $field, $value)
+    {
+        if (null === $value['value']) {
+            return;
+        }
+
+        $queryBuilder->andWhere("$alias.gender =:g");
+        $queryBuilder->setParameter(':g',$value['value']);
+        return true;
+    }
+
+    /**
+     * @param QueryBuilder $queryBuilder
+     * @param $alias
+     * @param $field
+     * @param $value
+     *
+     * @return bool|void
+     */
+    public function getClientFieldFilter($queryBuilder, $alias, $field, $value)
+    {
+
+        if (null === $value['value']) {
+            return;
+        }
+
+        if ($value['value'] instanceof ArrayCollection && $value['value']->isEmpty()) {
+            return;
+        }
+
+        if (!in_array('cv', $queryBuilder->getAllAliases())) {
+            $queryBuilder->leftJoin($alias . '.fieldValues', 'cv');
+            $queryBuilder->leftJoin('cv.field', 'cf');
+            $queryBuilder->leftJoin('cv.options', 'co');
+        }
+
+        $queryBuilder->andWhere('cv.option IN (:search)');
+        $queryBuilder->andWhere('cf.code = :code');
+        $queryBuilder->setParameter('search', $value['value']);
+        $queryBuilder->setParameter('code', $field);
+
+        return true;
+    }
+
+
+    /**
+     * @param QueryBuilder $queryBuilder
+     * @param $alias
+     * @param $field
+     * @param $value
+     *
+     * @return bool|void
+     */
+    public function getClientFieldDatesFilter($queryBuilder, $alias, $field, $value)
+    {
+
+        if (null === $value['value']) {
+            return;
+        }
+
+        if ($value['value'] instanceof ArrayCollection && $value['value']->isEmpty()) {
+            return;
+        }
+
+        if (!in_array('cv', $queryBuilder->getAllAliases())) {
+            $queryBuilder->leftJoin($alias . '.fieldValues', 'cv');
+            $queryBuilder->leftJoin('cv.field', 'cf');
+            $queryBuilder->leftJoin('cv.options', 'co');
+        }
+
+        $queryBuilder->andWhere('cv.datetime >= :date');
+        $queryBuilder->andWhere('cf.code = :code');
+        $queryBuilder->setParameter('date', $value['value']->format('Y-m-d 00:00:00'));
+        $queryBuilder->setParameter('code', $field);
         return true;
     }
 
@@ -917,29 +1201,29 @@ class ClientAdmin extends BaseAdmin
 
         $id = $admin->getRequest()->get('id');
 
-        $authorizationChecker = $this->getConfigurationPool()->getContainer()->get('security.authorization_checker');
+        $securityContext = $this->getConfigurationPool()->getContainer()->get('security.context');
 
-        if ($authorizationChecker->isGranted('ROLE_SUPER_ADMIN') || $authorizationChecker->isGranted('ROLE_APP_DOCUMENT_ADMIN_LIST') || $authorizationChecker->isGranted('ROLE_APP_DOCUMENT_ADMIN_ALL')) {
+        if ($securityContext->isGranted('ROLE_SUPER_ADMIN') || $securityContext->isGranted('ROLE_APP_DOCUMENT_ADMIN_LIST') || $securityContext->isGranted('ROLE_APP_DOCUMENT_ADMIN_ALL')) {
             $menu->addChild(
                 'Документы',
                 ['uri' => $admin->generateUrl('app.document.admin.list', ['id' => $id])]
             );
         }
 
-        if ($authorizationChecker->isGranted('ROLE_SUPER_ADMIN') || $authorizationChecker->isGranted('ROLE_APP_DOCUMENT_FILE_ADMIN_LIST') || $authorizationChecker->isGranted('ROLE_APP_DOCUMENT_FILE_ADMIN_ALL')) {
+        if ($securityContext->isGranted('ROLE_SUPER_ADMIN') || $securityContext->isGranted('ROLE_APP_DOCUMENT_FILE_ADMIN_LIST') || $securityContext->isGranted('ROLE_APP_DOCUMENT_FILE_ADMIN_ALL')) {
             $menu->addChild(
                 'Файлы',
                 ['uri' => $admin->generateUrl('app.document_file.admin.list', ['id' => $id])]
             );
         }
 
-        if ($authorizationChecker->isGranted('ROLE_SUPER_ADMIN') || $authorizationChecker->isGranted('ROLE_APP_CONTRACT_ADMIN_LIST') || $authorizationChecker->isGranted('ROLE_APP_CONTRACT_ADMIN_ALL')) {
+        if ($securityContext->isGranted('ROLE_SUPER_ADMIN') || $securityContext->isGranted('ROLE_APP_CONTRACT_ADMIN_LIST') || $securityContext->isGranted('ROLE_APP_CONTRACT_ADMIN_ALL')) {
             $menu->addChild(
                 'Сервисные планы',
                 ['uri' => $admin->generateUrl('app.contract.admin.list', ['id' => $id])]
             );
         }
-        if ($this->isMenuItemEnabled(MenuItem::CODE_SHELTER_HISTORY) && $authorizationChecker->isGranted('ROLE_SUPER_ADMIN') || $authorizationChecker->isGranted('ROLE_APP_SHELTER_HISTORY_ADMIN_LIST') || $authorizationChecker->isGranted('ROLE_APP_SHELTER_HISTORY_ADMIN_ALL')) {
+        if ($this->isMenuItemEnabled(MenuItem::CODE_SHELTER_HISTORY) && $securityContext->isGranted('ROLE_SUPER_ADMIN') || $securityContext->isGranted('ROLE_APP_SHELTER_HISTORY_ADMIN_LIST') || $securityContext->isGranted('ROLE_APP_SHELTER_HISTORY_ADMIN_ALL')) {
             if ($this->isMenuItemEnabled(MenuItem::CODE_SHELTER_HISTORY) && $this->isMenuItemEnabledShelterHistory($id)) {
                 $menu->addChild(
                     'Проживание в приюте',
@@ -949,7 +1233,7 @@ class ClientAdmin extends BaseAdmin
         }
 
         $clientFormsEnabled = $this->metaService->isClientFormsEnabled();
-        if ($authorizationChecker->isGranted('ROLE_SUPER_ADMIN') || $authorizationChecker->isGranted('ROLE_APP_RESIDENT_QUESTIONNAIRE_ADMIN_LIST') || $authorizationChecker->isGranted('ROLE_APP_RESIDENT_QUESTIONNAIRE_ADMIN_ALL')) {
+        if ($securityContext->isGranted('ROLE_SUPER_ADMIN') || $securityContext->isGranted('ROLE_APP_RESIDENT_QUESTIONNAIRE_ADMIN_LIST') || $securityContext->isGranted('ROLE_APP_RESIDENT_QUESTIONNAIRE_ADMIN_ALL')) {
             if ($this->isMenuItemEnabled(MenuItem::CODE_QUESTIONNAIRE_LIVING) && $this->isMenuItemEnabledShelterHistory($id)) {
                 $name = $clientFormsEnabled ? 'Старая анкета' : 'Анкета';
                 $menu->addChild(
@@ -958,17 +1242,21 @@ class ClientAdmin extends BaseAdmin
                 );
             }
         }
-        if ($authorizationChecker->isGranted('ROLE_SUPER_ADMIN') || $authorizationChecker->isGranted('ROLE_APP_RESIDENT_FORM_RESPONSE_ADMIN_LIST') || $authorizationChecker->isGranted('ROLE_APP_RESIDENT_FORM_RESPONSE_ADMIN_ALL')) {
+        if ($securityContext->isGranted('ROLE_SUPER_ADMIN') || $securityContext->isGranted('ROLE_APP_RESIDENT_FORM_RESPONSE_ADMIN_LIST') || $securityContext->isGranted('ROLE_APP_RESIDENT_FORM_RESPONSE_ADMIN_ALL')) {
             if ($this->isMenuItemEnabled(MenuItem::CODE_QUESTIONNAIRE_LIVING) && $this->isMenuItemEnabledShelterHistory($id)) {
                 $name = $clientFormsEnabled ? 'Анкета' : 'Новая анкета';
                 $menu->addChild(
                     $name,
                     ['uri' => $admin->generateUrl('app.resident_form_response.admin.list', ['id' => $id])]
                 );
+
+                if (!$this->isClientLivingInShelter($id)) {
+                    $menu[$name]->setLinkAttribute('class', 'background-red');
+                }
             }
         }
 
-        if ($authorizationChecker->isGranted('ROLE_SUPER_ADMIN') || $authorizationChecker->isGranted('ROLE_APP_CERTIFICATE_ADMIN_LIST') || $authorizationChecker->isGranted('ROLE_APP_CERTIFICATE_ADMIN_ALL')) {
+        if ($securityContext->isGranted('ROLE_SUPER_ADMIN') || $securityContext->isGranted('ROLE_APP_CERTIFICATE_ADMIN_LIST') || $securityContext->isGranted('ROLE_APP_CERTIFICATE_ADMIN_ALL')) {
             if ($this->isMenuItemEnabled(MenuItem::CODE_CERTIFICATE)) {
                 $menu->addChild(
                     'Выдать справку',
@@ -977,7 +1265,7 @@ class ClientAdmin extends BaseAdmin
             }
         }
 
-        if ($authorizationChecker->isGranted('ROLE_SUPER_ADMIN') || $authorizationChecker->isGranted('ROLE_APP_GENERATED_DOCUMENT_ADMIN_LIST') || $authorizationChecker->isGranted('ROLE_APP_GENERATED_DOCUMENT_ADMIN_ALL')) {
+        if ($securityContext->isGranted('ROLE_SUPER_ADMIN') || $securityContext->isGranted('ROLE_APP_GENERATED_DOCUMENT_ADMIN_LIST') || $securityContext->isGranted('ROLE_APP_GENERATED_DOCUMENT_ADMIN_ALL')) {
             if ($this->isMenuItemEnabled(MenuItem::CODE_GENERATED_DOCUMENT)) {
                 $menu->addChild(
                     'Построить документ',
@@ -986,7 +1274,7 @@ class ClientAdmin extends BaseAdmin
             }
         }
 
-        if ($authorizationChecker->isGranted('ROLE_SUPER_ADMIN') || $authorizationChecker->isGranted('ROLE_APP_NOTICE_ADMIN_LIST') || $authorizationChecker->isGranted('ROLE_APP_NOTICE_ADMIN_ALL')) {
+        if ($securityContext->isGranted('ROLE_SUPER_ADMIN') || $securityContext->isGranted('ROLE_APP_NOTICE_ADMIN_LIST') || $securityContext->isGranted('ROLE_APP_NOTICE_ADMIN_ALL')) {
             $user = $this
                 ->getConfigurationPool()
                 ->getContainer()
@@ -1038,6 +1326,22 @@ class ClientAdmin extends BaseAdmin
     }
 
     /**
+     * @param Client
+     *
+     * @return Boolean
+     */
+
+    public function isClientLivingInShelter($client)
+    {
+        $lived_to = $this->getConfigurationPool()->getContainer()->get('doctrine.orm.entity_manager')
+            ->getRepository('AppBundle:ShelterHistory')->findOneBy(['client' => $client])->getDateTo();
+
+        $date_now = new DateTime();
+
+        return !empty($lived_to) ? boolval($lived_to > $date_now) : true;
+    }
+
+    /**
      * Возвращает массив для использования как значение опции choices в конструкторе поля формы
      *
      * @param ClientField $field
@@ -1048,7 +1352,7 @@ class ClientAdmin extends BaseAdmin
         $result = [];
 
         foreach ($field->getOptions() as $clientFieldOption) {
-            $result[$clientFieldOption->getName()] = $clientFieldOption->getId();
+            $result[$clientFieldOption->getId()] = $clientFieldOption->getName();
         }
 
         return $result;
@@ -1164,6 +1468,10 @@ class ClientAdmin extends BaseAdmin
             'disease' => [
                 'Другие' => ['diseaseOther'],
             ],
+            'lastRfResidence' => [
+                'Да' => ['geoRegion'],
+                'Нет' => []
+            ]
         ];
 
         foreach ($enabledFields as $field) {
@@ -1298,4 +1606,37 @@ class ClientAdmin extends BaseAdmin
 
         return $name;
     }
+
+    public function getExportFormats()
+    {
+        return ['json','csv', 'xls'];
+
+    }
+
+
+    public function configureExportFields(AdminInterface $admin, array $fields)
+    {
+        return $fields;
+    }
+
+    public function getExportFields()
+    {
+        return [
+            'ID' => 'getId',
+            'ФИО' => 'getFullname',
+            'Дата рождения' => 'getFormattedBirthDate',
+            'Пол' => 'getGenderAsString',
+            'Договор' => 'getContractsAsString',
+            'Отделение' => 'createdBy.branch.name',
+            'Когда добавлен' => 'getFormattedCreatedDate',
+
+        ];
+    }
+
+    protected function configureRoutes(RouteCollection $collection)
+    {
+        $collection->add('export');
+        $collection->add('clientMatches');
+    }
+
 }

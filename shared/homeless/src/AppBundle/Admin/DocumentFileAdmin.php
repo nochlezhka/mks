@@ -14,13 +14,18 @@ class DocumentFileAdmin extends BaseAdmin
 
     protected $translationDomain = 'AppBundle';
 
+    public function configure()
+    {
+        $this->parentAssociationMapping = 'client';
+    }
+
     /**
      * @param FormMapper $formMapper
      */
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
-            ->add('file', 'Vich\UploaderBundle\Form\Type\VichFileType', [
+            ->add('file', 'vich_file', [
                 'label' => 'Файл',
                 'required' => true,
                 'allow_delete' => false,

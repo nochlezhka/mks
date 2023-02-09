@@ -3,8 +3,12 @@
 {% block stylesheets %}
     {{ parent() }}
 
-    <link rel="stylesheet" href="{{ asset('bundles/sonataadmin/vendor/jqueryui/themes/flick/jquery-ui.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('bundles/sonatatranslation/css/sonata-translation.css') }}" />
+    {% stylesheets '@SonataTranslationBundle/Resources/public/css/sonata-translation.css'
+        'bundles/sonataadmin/vendor/jqueryui/themes/flick/jquery-ui.min.css' %}
+
+        <link rel="stylesheet" href="{{ asset_url }}"/>
+
+    {% endstylesheets %}
 
     <style type="text/css">
 
@@ -156,6 +160,7 @@
 {% block javascripts %}
     {{ parent() }}
 
+    <script src="{{ asset('bundles/ivoryckeditor/ckeditor.js') }}" type="text/javascript"></script>
     <script src="{{ asset('bundles/sonataadmin/vendor/jquery.scrollTo/jquery.scrollTo.min.js') }}"
             type="text/javascript"></script>
     <script src="{{ asset('bundles/sonataformatter/vendor/markitup-markitup/markitup/jquery.markitup.js') }}"
@@ -166,7 +171,9 @@
     <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
     <script src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
 
-    {{ encore_entry_script_tags('app') }}
+    {% javascripts '@jpeg_camera' %}
+        <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
 
     <script>
         var camera; // Initialized at the end
@@ -428,7 +435,9 @@
     {% block logo %}
         {% spaceless %}
             <a class="logo" href="{{ path('my_clients') }}">
-                <img src="{{ logo_path }}" style="max-width: 100%;"/>
+                {% image '@logo' %}
+                    <img src="{{ asset_url }}" style="max-width: 100%;"/>
+                {% endimage %}
             </a>
         {% endspaceless %}
     {% endblock %}
@@ -582,14 +591,81 @@
 
                                             </div>
                                         </div>
+
+                                        {% if branches %}
+                                                    <div id="sonata-ba-collapsed-fields">
+                                                        <div class="form-group" id="sonata-ba-field-container-s5a37cdd74da55_branch">
+                                                            <label class="control-label" for="">
+                                                                Отделение
+                                                            </label>
+                                                            <div class="sonata-ba-field sonata-ba-field-standard-natural">
+                                                                <select id="" name="branchId"
+                                                                        class=" form-control">
+                                                                    <option value="0">Все</option>
+                                                                    {% for branch in branches %}
+                                                                        <option value="{{ branch.id }}">{{ branch.name }}</option>
+                                                                    {% endfor %}
+                                                                </select>
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                        {% endif %}
+
                                         <div id="type-default">
+                                        {% if serviceTypes %}
+                                                <div class="form-group" id="sonata-ba-field-container-s5a37cdd74da55_serviceType">
+                                                    <label class="control-label" for="">
+                                                        Исключить сервисы
+                                                    </label>
+                                                    <div class="sonata-ba-field sonata-ba-field-standard-natural">
+                                                        <select id="" name="serviceId[]"
+                                                                class=" form-control"  multiple="multiple">
+                                                            {% for item in serviceTypes %}
+                                                                <option value="{{ item.id }}">{{ item.name }}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                        {% endif %}
+                                        {% if contractItemTypes %}
+                                                <div class="form-group" style="display: none;" id="sonata-ba-field-container-s5a37cdd74da55_contractType">
+                                                    <label class="control-label" for="">
+                                                        Исключить пункты сервисного плана
+                                                    </label>
+                                                    <div class="sonata-ba-field sonata-ba-field-standard-natural">
+                                                        <select id="" name="contractTypeId[]"
+                                                                class=" form-control"  multiple="multiple">
+                                                            {% for item in contractItemTypes %}
+                                                                <option value="{{ item.id }}">{{ item.name }}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                        {% endif %}
+                                        {% if deliveryItems %}
+                                                <div class="form-group" style="display: none;" id="sonata-ba-field-container-s5a37cdd74da55_deliveryItem">
+                                                    <label class="control-label" for="">
+                                                        Исключить предметы из пункта выдачи
+                                                    </label>
+                                                    <div class="sonata-ba-field sonata-ba-field-standard-natural">
+                                                        <select id="" name="deliveryItemId[]"
+                                                                class=" form-control"  multiple="multiple">
+                                                            {% for item in deliveryItems %}
+                                                                <option value="{{ item.id }}">{{ item.name }}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                        {% endif %}
                                             <div class="form-group" id="sonata-ba-field-container-s5a37cdd74da55_type">
                                                 <label class="control-label" for="s5a37cdd74da55_type">
                                                     Сотрудник
                                                 </label>
                                                 <div class="sonata-ba-field sonata-ba-field-standard-natural">
-                                                    <select id="s5a37cdd74da55_type" name="userId"
-                                                            class=" form-control">
+                                                    <select id="s5a37cdd74da55_type" name="userId[]"
+                                                            class=" form-control" multiple="multiple">
                                                         <option value=""></option>
                                                         {% for user in users %}
                                                             <option value="{{ user.id }}">{{ user.fullname }}</option>
@@ -891,7 +967,7 @@
                                                             class=" form-control">
                                                         <option value=""></option>
                                                         {% for id,value in optionsHomelessReason %}
-                                                            <option value="{{ value }}">{{ id }}</option>
+                                                            <option value="{{ id }}">{{ value }}</option>
                                                         {% endfor %}
                                                     </select>
 
@@ -906,7 +982,7 @@
                                                             class=" form-control">
                                                         <option value=""></option>
                                                         {% for id,value in optionsDisease %}
-                                                            <option value="{{ value }}">{{ id }}</option>
+                                                            <option value="{{ id }}">{{ value }}</option>
                                                         {% endfor %}
                                                     </select>
 
@@ -921,7 +997,7 @@
                                                             class=" form-control">
                                                         <option value=""></option>
                                                         {% for id,value in optionsBreadwinner %}
-                                                            <option value="{{ value }}">{{ id }}</option>
+                                                            <option value="{{ id }}">{{ value }}</option>
                                                         {% endfor %}
                                                     </select>
 
@@ -972,6 +1048,7 @@
 
     <script>
       function changeType() {
+          console.log('type: ' + $('#s5a37cdd74da55_type').val());
         if ($('#s5a37cdd74da55_type').val() === 'aggregated') {
             $('#type-default').hide();
             $('#type-aggregated2').hide();
@@ -980,10 +1057,31 @@
             $('#type-default').hide();
             $('#type-aggregated').show();
             $('#type-aggregated2').show();
+        } else if ($('#s5a37cdd74da55_type').val() === 'shelter_report') {
+            $('#sonata-ba-field-container-s5a37cdd74da55_branch').hide();
+            $('#sonata-ba-field-container-s5a37cdd74da55_serviceType').hide();
         } else {
+            $('#sonata-ba-field-container-s5a37cdd74da55_branch').show();
             $('#type-default').show();
             $('#type-aggregated').hide();
             $('#type-aggregated2').hide();
+            if ($('#s5a37cdd74da55_type').val() ==='one_off_services') {
+                $('#sonata-ba-field-container-s5a37cdd74da55_serviceType').show();
+                $('#sonata-ba-field-container-s5a37cdd74da55_contractType').hide();
+                $('#sonata-ba-field-container-s5a37cdd74da55_deliveryItem').hide();
+            } else if ($('#s5a37cdd74da55_type').val() === 'completed_items') {
+                $('#sonata-ba-field-container-s5a37cdd74da55_serviceType').hide();
+                $('#sonata-ba-field-container-s5a37cdd74da55_deliveryItem').hide();
+                $('#sonata-ba-field-container-s5a37cdd74da55_contractType').show();
+            } else if ($('#s5a37cdd74da55_type').val() === 'delivery') {
+                $('#sonata-ba-field-container-s5a37cdd74da55_deliveryItem').show();
+                $('#sonata-ba-field-container-s5a37cdd74da55_serviceType').hide();
+                $('#sonata-ba-field-container-s5a37cdd74da55_contractType').hide();
+            } else {
+                $('#sonata-ba-field-container-s5a37cdd74da55_deliveryItem').hide();
+                $('#sonata-ba-field-container-s5a37cdd74da55_serviceType').hide();
+                $('#sonata-ba-field-container-s5a37cdd74da55_contractType').hide();
+            }
         }
       }
     </script>

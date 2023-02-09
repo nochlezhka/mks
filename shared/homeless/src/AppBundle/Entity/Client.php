@@ -2,7 +2,6 @@
 
 namespace AppBundle\Entity;
 
-use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -10,7 +9,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
  * Клиент
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\ClientRepository")
  * @Vich\Uploadable
  */
 class Client extends BaseEntity
@@ -25,134 +24,143 @@ class Client extends BaseEntity
      */
     const GENDER_FEMALE = 2;
 
+    const GENDER_LIST = [
+        self::GENDER_MALE  => 'Мужской',
+        self::GENDER_FEMALE => 'Женский'
+    ];
+
     /**
      * Название файла с фотографией (хранится с помощью VichUploaderBundle)
      * @ORM\Column(type="string", nullable=true)
      */
-    private ?string $photoName = null;
+    private $photoName;
 
     /**
      * Дата рождения
      * @ORM\Column(type="date", nullable=true)
      */
-    private ?DateTime $birthDate = null;
+    private $birthDate;
 
     /**
      * Место рождения
      * @ORM\Column(type="string", nullable=true)
      */
-    private ?string $birthPlace = null;
+    private $birthPlace;
 
     /**
      * Пол
      * @ORM\Column(type="integer", nullable=true)
      */
-    private ?int $gender = null;
+    private $gender;
 
     /**
      * Имя
      * @ORM\Column(type="string", nullable=true)
      */
-    private ?string $firstname = null;
+    private $firstname;
 
     /**
      * Отчество
      * @ORM\Column(type="string", nullable=true)
      */
-    private ?string $middlename = null;
+    private $middlename;
 
     /**
      * Фамилия
      * @ORM\Column(type="string", nullable=true)
      */
-    private ?string $lastname = null;
+    private $lastname;
 
     /**
      * Фамилия
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private ?bool $isHomeless = true;
+    private $isHomeless = true;
 
     /**
      * Место последнего проживания
      * @ORM\ManyToOne(targetEntity="District")
      * @ORM\JoinColumn(name="last_residence_district_id", referencedColumnName="id")
      */
-    private ?District $lastResidenceDistrict = null;
+    private $lastResidenceDistrict;
 
     /**
      * Место последней регистрации
      * @ORM\ManyToOne(targetEntity="District")
      * @ORM\JoinColumn(name="last_registration_district_id", referencedColumnName="id")
      */
-    private ?District $lastRegistrationDistrict = null;
+    private $lastRegistrationDistrict;
 
     /**
      * Значения дополнительных полей
-     * @ORM\OneToMany(targetEntity="ClientFieldValue", mappedBy="client", cascade="remove")
+     * @ORM\OneToMany(targetEntity="ClientFieldValue", mappedBy="client", cascade={"remove"})
+    //  * @ORM\OneToMany(targetEntity="ClientFieldValue", mappedBy="client")
      */
-    private Collection $fieldValues;
+    private $fieldValues;
 
     /**
      * Примечания
-     * @ORM\OneToMany(targetEntity="Note", mappedBy="client", cascade="remove")
+     * @ORM\OneToMany(targetEntity="Note", mappedBy="client", cascade={"remove"})
      * @ORM\OrderBy({"createdAt" = "DESC", "id" = "DESC"})
      */
-    private Collection $notes;
+    private $notes;
 
     /**
      * Договоры
-     * @ORM\OneToMany(targetEntity="Contract", mappedBy="client", cascade="remove")
+     * @ORM\OneToMany(targetEntity="Contract", mappedBy="client", cascade={"remove"})
+    //  * @ORM\OneToMany(targetEntity="Contract", mappedBy="client")
      * @ORM\OrderBy({"dateFrom" = "DESC"})
      */
-    private Collection $contracts;
+    private $contracts;
 
     /**
      * Документы
-     * @ORM\OneToMany(targetEntity="Document", mappedBy="client", cascade="remove")
+     * @ORM\OneToMany(targetEntity="Document", mappedBy="client", cascade={"remove"})
+    //  * @ORM\OneToMany(targetEntity="Document", mappedBy="client")
      */
-    private Collection $documents;
+    private $documents;
 
     /**
      * Данные о проживаниях в приюте (договоры о заселении)
-     * @ORM\OneToMany(targetEntity="ShelterHistory", mappedBy="client", cascade="remove")
+     * @ORM\OneToMany(targetEntity="ShelterHistory", mappedBy="client", cascade={"remove"})
+    //  * @ORM\OneToMany(targetEntity="ShelterHistory", mappedBy="client")
      */
-    private Collection $shelterHistories;
+    private $shelterHistories;
 
     /**
      * Загруженные файлы документов
-     * @ORM\OneToMany(targetEntity="DocumentFile", mappedBy="client", cascade="remove")
+     * @ORM\OneToMany(targetEntity="DocumentFile", mappedBy="client", cascade={"remove"})
+    //  * @ORM\OneToMany(targetEntity="DocumentFile", mappedBy="client")
      */
-    private Collection $documentFiles;
+    private $documentFiles;
 
     /**
      * Полученные услуги
-     * @ORM\OneToMany(targetEntity="Service", mappedBy="client", cascade="remove")
+     * @ORM\OneToMany(targetEntity="Service", mappedBy="client", cascade={"remove"})
      * @ORM\OrderBy({"createdAt" = "DESC", "id" = "DESC"})
      */
-    private Collection $services;
+    private $services;
+
+    /**
+     * Выданные вещи (одежда, предметы гигиены, ...)
+     * @ORM\OneToMany(targetEntity="Delivery", mappedBy="client",cascade={"remove"})
+     * @ORM\OrderBy({"createdAt" = "DESC", "id" = "DESC"})
+     */
+    private $deliveries;
 
     /**
      * Справки
-     * @ORM\OneToMany(targetEntity="Certificate", mappedBy="client", cascade="remove")
+     * @ORM\OneToMany(targetEntity="Certificate", mappedBy="client", cascade={"remove"})
+    //  * @ORM\OneToMany(targetEntity="Certificate", mappedBy="client")
      */
-    private Collection $certificates;
+    private $certificates;
 
     /**
      * Построенные документы
-     * @ORM\OneToMany(targetEntity="GeneratedDocument", mappedBy="client", cascade="remove")
+     * @ORM\OneToMany(targetEntity="GeneratedDocument", mappedBy="client", cascade={"remove"})
+    //  * @ORM\OneToMany(targetEntity="GeneratedDocument", mappedBy="client")
      */
-    private Collection $generatedDocuments;
-
-    /**
-     * @ORM\OneToMany(targetEntity="ViewedClient", mappedBy="client", cascade="remove")
-     */
-    private Collection $clientViews;
-
-    /**
-     * @ORM\OneToMany(targetEntity="HistoryDownload", mappedBy="client", cascade="remove")
-     */
-    private Collection $historyDownloads;
+    private $generatedDocuments;
 
     /**
      * Constructor
@@ -179,17 +187,17 @@ class Client extends BaseEntity
         return $this->photo;
     }
 
-    public function getPhotoPathWeb(): string
+    public function getPhotoPathWeb()
     {
         return 'uploads/images/client/photo/' . substr($this->getPhotoName(), 0, 2) . '/' . $this->getPhotoName();
     }
 
-    public function getPhotoPath(): string
+    public function getPhotoPath()
     {
         return __DIR__ . '/../../../web/' . $this->getPhotoPathWeb();
     }
 
-    public function getPhotoSize($width, $height): array
+    public function getPhotoSize($width, $height)
     {
         if (!$this->isImage()) {
             return [$width, $height];
@@ -210,7 +218,7 @@ class Client extends BaseEntity
         return [$width, $height];
     }
 
-    public function getPhotoFileBase64(): ?string
+    public function getPhotoFileBase64()
     {
         if (!$this->isImage()) {
             return null;
@@ -219,17 +227,17 @@ class Client extends BaseEntity
         return 'data:image/png;base64,' . base64_encode(file_get_contents($this->getPhotoPath()));
     }
 
-    private function isImage(): bool
+    private function isImage()
     {
         return file_exists($this->getPhotoPath()) && @is_array(getimagesize($this->getPhotoPath()));
     }
 
-    public function setPhoto($photo = null): Client
+    public function setPhoto($photo = null)
     {
         $this->photo = $photo;
 
         if ($photo) {
-            $this->setUpdatedAt(new DateTime());
+            $this->setUpdatedAt(new \DateTime());
         }
 
         return $this;
@@ -238,7 +246,7 @@ class Client extends BaseEntity
     /**
      * ФИО
      */
-    public function getFullname(): string
+    public function getFullname()
     {
         $fullname = [];
 
@@ -315,7 +323,7 @@ class Client extends BaseEntity
     /**
      * Возвращает значение дополнительного поля клиента по коду поля
      * @param $fieldCode
-     * @return ClientFieldOption|DateTime|Collection|null|string
+     * @return ClientFieldOption|\DateTime|\Doctrine\Common\Collections\Collection|null|string
      */
     public function getAdditionalFieldValue($fieldCode)
     {
@@ -333,14 +341,14 @@ class Client extends BaseEntity
      * для обработки в методах prePersist и preUpdate админки AppBundle\Admin\ClientAdmin
      * @var array
      */
-    public array $additionalFieldValues = [];
+    public $additionalFieldValues = [];
 
     /**
      * Коды полей, для которых необходимо удалить объекты значений
      * для обработки в методах prePersist и preUpdate админки AppBundle\Admin\ClientAdmin
      * @var array
      */
-    public array $additionalFieldValuesToRemove = [];
+    public $additionalFieldValuesToRemove = [];
 
     /**
      * Подготавливает массивы $additionalFieldValues и $additionalFieldValuesToRemove
@@ -362,7 +370,7 @@ class Client extends BaseEntity
      * Есть ли у клиента документ для постановки на учет
      * @return bool
      */
-    public function hasRegistrationDocument(): bool
+    public function hasRegistrationDocument()
     {
         foreach ($this->getDocuments() as $document) {
             $type = $document->getType();
@@ -383,7 +391,7 @@ class Client extends BaseEntity
     /**
      * Иницииалы
      */
-    public function getInitials(): string
+    public function getInitials()
     {
         $initials = '';
 
@@ -402,14 +410,14 @@ class Client extends BaseEntity
      * Фамилия и инициалы
      * @return string
      */
-    public function getLastnameAndInitials(): string
+    public function getLastnameAndInitials()
     {
         if (empty($this->lastname)) {
-            return $this->firstname;
+            return (string)$this->firstname;
         }
 
         if (empty($this->firstname)) {
-            return $this->lastname;
+            return (string)$this->lastname;
         }
 
         return $this->lastname . ' ' . $this->getInitials();
@@ -418,11 +426,11 @@ class Client extends BaseEntity
     /**
      * Set photoName
      *
-     * @param string|null $photoName
+     * @param string $photoName
      *
      * @return Client
      */
-    public function setPhotoName(?string $photoName): Client
+    public function setPhotoName($photoName)
     {
         $this->photoName = $photoName;
 
@@ -434,7 +442,7 @@ class Client extends BaseEntity
      *
      * @return string
      */
-    public function getPhotoName(): ?string
+    public function getPhotoName()
     {
         return $this->photoName;
     }
@@ -442,11 +450,11 @@ class Client extends BaseEntity
     /**
      * Set birthDate
      *
-     * @param DateTime|null $birthDate
+     * @param \DateTime $birthDate
      *
      * @return Client
      */
-    public function setBirthDate(?DateTime $birthDate): Client
+    public function setBirthDate($birthDate)
     {
         $this->birthDate = $birthDate;
 
@@ -456,9 +464,9 @@ class Client extends BaseEntity
     /**
      * Get birthDate
      *
-     * @return DateTime
+     * @return \DateTime
      */
-    public function getBirthDate(): ?DateTime
+    public function getBirthDate()
     {
         return $this->birthDate;
     }
@@ -466,11 +474,11 @@ class Client extends BaseEntity
     /**
      * Set birthPlace
      *
-     * @param string|null $birthPlace
+     * @param string $birthPlace
      *
      * @return Client
      */
-    public function setBirthPlace(?string $birthPlace): Client
+    public function setBirthPlace($birthPlace)
     {
         $this->birthPlace = $birthPlace;
 
@@ -482,7 +490,7 @@ class Client extends BaseEntity
      *
      * @return string
      */
-    public function getBirthPlace(): ?string
+    public function getBirthPlace()
     {
         return $this->birthPlace;
     }
@@ -490,11 +498,11 @@ class Client extends BaseEntity
     /**
      * Set gender
      *
-     * @param int|null $gender
+     * @param integer $gender
      *
      * @return Client
      */
-    public function setGender(?int $gender): Client
+    public function setGender($gender)
     {
         $this->gender = $gender;
 
@@ -506,7 +514,7 @@ class Client extends BaseEntity
      *
      * @return integer
      */
-    public function getGender(): ?int
+    public function getGender()
     {
         return $this->gender;
     }
@@ -514,11 +522,11 @@ class Client extends BaseEntity
     /**
      * Set firstname
      *
-     * @param string|null $firstname
+     * @param string $firstname
      *
      * @return Client
      */
-    public function setFirstname(?string $firstname): Client
+    public function setFirstname($firstname)
     {
         $this->firstname = $firstname;
 
@@ -528,9 +536,9 @@ class Client extends BaseEntity
     /**
      * Get firstname
      *
-     * @return string|null
+     * @return string
      */
-    public function getFirstname(): ?string
+    public function getFirstname()
     {
         return $this->firstname;
     }
@@ -538,11 +546,11 @@ class Client extends BaseEntity
     /**
      * Set middlename
      *
-     * @param string|null $middlename
+     * @param string $middlename
      *
      * @return Client
      */
-    public function setMiddlename(?string $middlename): Client
+    public function setMiddlename($middlename)
     {
         $this->middlename = $middlename;
 
@@ -554,7 +562,7 @@ class Client extends BaseEntity
      *
      * @return string
      */
-    public function getMiddlename(): ?string
+    public function getMiddlename()
     {
         return $this->middlename;
     }
@@ -562,11 +570,11 @@ class Client extends BaseEntity
     /**
      * Set lastname
      *
-     * @param string|null $lastname
+     * @param string $lastname
      *
      * @return Client
      */
-    public function setLastname(?string $lastname): Client
+    public function setLastname($lastname)
     {
         $this->lastname = $lastname;
 
@@ -578,7 +586,7 @@ class Client extends BaseEntity
      *
      * @return string
      */
-    public function getLastname(): ?string
+    public function getLastname()
     {
         return $this->lastname;
     }
@@ -586,11 +594,11 @@ class Client extends BaseEntity
     /**
      * Set lastResidenceDistrict
      *
-     * @param District|null $lastResidenceDistrict
+     * @param \AppBundle\Entity\District $lastResidenceDistrict
      *
      * @return Client
      */
-    public function setLastResidenceDistrict(District $lastResidenceDistrict): Client
+    public function setLastResidenceDistrict(District $lastResidenceDistrict = null)
     {
         $this->lastResidenceDistrict = $lastResidenceDistrict;
 
@@ -600,9 +608,9 @@ class Client extends BaseEntity
     /**
      * Get lastResidenceDistrict
      *
-     * @return District
+     * @return \AppBundle\Entity\District
      */
-    public function getLastResidenceDistrict(): ?District
+    public function getLastResidenceDistrict()
     {
         return $this->lastResidenceDistrict;
     }
@@ -610,11 +618,11 @@ class Client extends BaseEntity
     /**
      * Set lastRegistrationDistrict
      *
-     * @param District|null $lastRegistrationDistrict
+     * @param \AppBundle\Entity\District $lastRegistrationDistrict
      *
      * @return Client
      */
-    public function setLastRegistrationDistrict(District $lastRegistrationDistrict): Client
+    public function setLastRegistrationDistrict(District $lastRegistrationDistrict = null)
     {
         $this->lastRegistrationDistrict = $lastRegistrationDistrict;
 
@@ -624,9 +632,9 @@ class Client extends BaseEntity
     /**
      * Get lastRegistrationDistrict
      *
-     * @return District
+     * @return \AppBundle\Entity\District
      */
-    public function getLastRegistrationDistrict(): ?District
+    public function getLastRegistrationDistrict()
     {
         return $this->lastRegistrationDistrict;
     }
@@ -634,11 +642,11 @@ class Client extends BaseEntity
     /**
      * Add fieldValue
      *
-     * @param ClientFieldValue $fieldValue
+     * @param \AppBundle\Entity\ClientFieldValue $fieldValue
      *
      * @return Client
      */
-    public function addFieldValue(ClientFieldValue $fieldValue): Client
+    public function addFieldValue(ClientFieldValue $fieldValue)
     {
         $this->fieldValues[] = $fieldValue;
 
@@ -648,7 +656,7 @@ class Client extends BaseEntity
     /**
      * Remove fieldValue
      *
-     * @param ClientFieldValue $fieldValue
+     * @param \AppBundle\Entity\ClientFieldValue $fieldValue
      */
     public function removeFieldValue(ClientFieldValue $fieldValue)
     {
@@ -658,7 +666,7 @@ class Client extends BaseEntity
     /**
      * Get fieldValues
      *
-     * @return Collection
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getFieldValues()
     {
@@ -668,11 +676,11 @@ class Client extends BaseEntity
     /**
      * Add note
      *
-     * @param Note $note
+     * @param \AppBundle\Entity\Note $note
      *
      * @return Client
      */
-    public function addNote(Note $note): Client
+    public function addNote(Note $note)
     {
         $this->notes[] = $note;
 
@@ -682,7 +690,7 @@ class Client extends BaseEntity
     /**
      * Remove note
      *
-     * @param Note $note
+     * @param \AppBundle\Entity\Note $note
      */
     public function removeNote(Note $note)
     {
@@ -692,7 +700,7 @@ class Client extends BaseEntity
     /**
      * Get notes
      *
-     * @return Collection
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getNotes()
     {
@@ -702,11 +710,11 @@ class Client extends BaseEntity
     /**
      * Add contract
      *
-     * @param Contract $contract
+     * @param \AppBundle\Entity\Contract $contract
      *
      * @return Client
      */
-    public function addContract(Contract $contract): Client
+    public function addContract(Contract $contract)
     {
         $this->contracts[] = $contract;
 
@@ -716,7 +724,7 @@ class Client extends BaseEntity
     /**
      * Remove contract
      *
-     * @param Contract $contract
+     * @param \AppBundle\Entity\Contract $contract
      */
     public function removeContract(Contract $contract)
     {
@@ -726,7 +734,7 @@ class Client extends BaseEntity
     /**
      * Get contracts
      *
-     * @return Collection
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getContracts()
     {
@@ -736,11 +744,11 @@ class Client extends BaseEntity
     /**
      * Add document
      *
-     * @param Document $document
+     * @param \AppBundle\Entity\Document $document
      *
      * @return Client
      */
-    public function addDocument(Document $document): Client
+    public function addDocument(Document $document)
     {
         $this->documents[] = $document;
 
@@ -750,7 +758,7 @@ class Client extends BaseEntity
     /**
      * Remove document
      *
-     * @param Document $document
+     * @param \AppBundle\Entity\Document $document
      */
     public function removeDocument(Document $document)
     {
@@ -760,7 +768,7 @@ class Client extends BaseEntity
     /**
      * Get documents
      *
-     * @return Collection
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getDocuments()
     {
@@ -770,11 +778,11 @@ class Client extends BaseEntity
     /**
      * Add shelterHistory
      *
-     * @param ShelterHistory $shelterHistory
+     * @param \AppBundle\Entity\ShelterHistory $shelterHistory
      *
      * @return Client
      */
-    public function addShelterHistory(ShelterHistory $shelterHistory): Client
+    public function addShelterHistory(ShelterHistory $shelterHistory)
     {
         $this->shelterHistories[] = $shelterHistory;
 
@@ -784,7 +792,7 @@ class Client extends BaseEntity
     /**
      * Remove shelterHistory
      *
-     * @param ShelterHistory $shelterHistory
+     * @param \AppBundle\Entity\ShelterHistory $shelterHistory
      */
     public function removeShelterHistory(ShelterHistory $shelterHistory)
     {
@@ -794,7 +802,7 @@ class Client extends BaseEntity
     /**
      * Get shelterHistories
      *
-     * @return Collection
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getShelterHistories()
     {
@@ -804,11 +812,11 @@ class Client extends BaseEntity
     /**
      * Add documentFile
      *
-     * @param DocumentFile $documentFile
+     * @param \AppBundle\Entity\DocumentFile $documentFile
      *
      * @return Client
      */
-    public function addDocumentFile(DocumentFile $documentFile): Client
+    public function addDocumentFile(DocumentFile $documentFile)
     {
         $this->documentFiles[] = $documentFile;
 
@@ -818,7 +826,7 @@ class Client extends BaseEntity
     /**
      * Remove documentFile
      *
-     * @param DocumentFile $documentFile
+     * @param \AppBundle\Entity\DocumentFile $documentFile
      */
     public function removeDocumentFile(DocumentFile $documentFile)
     {
@@ -828,7 +836,7 @@ class Client extends BaseEntity
     /**
      * Get documentFiles
      *
-     * @return Collection
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getDocumentFiles()
     {
@@ -838,11 +846,11 @@ class Client extends BaseEntity
     /**
      * Add service
      *
-     * @param Service $service
+     * @param \AppBundle\Entity\Service $service
      *
      * @return Client
      */
-    public function addService(Service $service): Client
+    public function addService(Service $service)
     {
         $this->services[] = $service;
 
@@ -852,7 +860,7 @@ class Client extends BaseEntity
     /**
      * Remove service
      *
-     * @param Service $service
+     * @param \AppBundle\Entity\Service $service
      */
     public function removeService(Service $service)
     {
@@ -862,7 +870,7 @@ class Client extends BaseEntity
     /**
      * Get services
      *
-     * @return Collection
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getServices()
     {
@@ -870,13 +878,31 @@ class Client extends BaseEntity
     }
 
     /**
+     * @return mixed
+     */
+    public function getDeliveries()
+    {
+        return $this->deliveries;
+    }
+
+    /**
+     * @param mixed $deliveries
+     * @return Client
+     */
+    public function setDeliveries($deliveries)
+    {
+        $this->deliveries = $deliveries;
+        return $this;
+    }
+
+    /**
      * Add certificate
      *
-     * @param Certificate $certificate
+     * @param \AppBundle\Entity\Certificate $certificate
      *
      * @return Client
      */
-    public function addCertificate(Certificate $certificate): Client
+    public function addCertificate(Certificate $certificate)
     {
         $this->certificates[] = $certificate;
 
@@ -886,7 +912,7 @@ class Client extends BaseEntity
     /**
      * Remove certificate
      *
-     * @param Certificate $certificate
+     * @param \AppBundle\Entity\Certificate $certificate
      */
     public function removeCertificate(Certificate $certificate)
     {
@@ -896,9 +922,9 @@ class Client extends BaseEntity
     /**
      * Get certificates
      *
-     * @return Collection
+     * @return \Doctrine\Common\Collections\Collection
      */
-    public function getCertificates(): Collection
+    public function getCertificates()
     {
         return $this->certificates;
     }
@@ -906,11 +932,11 @@ class Client extends BaseEntity
     /**
      * Add generatedDocument
      *
-     * @param GeneratedDocument $generatedDocument
+     * @param \AppBundle\Entity\GeneratedDocument $generatedDocument
      *
      * @return Client
      */
-    public function addGeneratedDocument(GeneratedDocument $generatedDocument): Client
+    public function addGeneratedDocument(GeneratedDocument $generatedDocument)
     {
         $this->generatedDocuments[] = $generatedDocument;
 
@@ -920,7 +946,7 @@ class Client extends BaseEntity
     /**
      * Remove generatedDocument
      *
-     * @param GeneratedDocument $generatedDocument
+     * @param \AppBundle\Entity\GeneratedDocument $generatedDocument
      */
     public function removeGeneratedDocument(GeneratedDocument $generatedDocument)
     {
@@ -930,7 +956,7 @@ class Client extends BaseEntity
     /**
      * Get generatedDocuments
      *
-     * @return Collection
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getGeneratedDocuments()
     {
@@ -939,8 +965,10 @@ class Client extends BaseEntity
 
     /**
      * Get isHomeless
+     *
+     * @return mixed
      */
-    public function getisHomeless(): ?bool
+    public function getisHomeless()
     {
         return $this->isHomeless;
     }
@@ -948,10 +976,11 @@ class Client extends BaseEntity
     /**
      * Set isHomeless
      *
-     * @param bool|null $isHomeless
+     * @param mixed $isHomeless
+     *
      * @return Client
      */
-    public function setIsHomeless(?bool $isHomeless): Client
+    public function setIsHomeless($isHomeless)
     {
         $this->isHomeless = $isHomeless;
 
@@ -961,8 +990,9 @@ class Client extends BaseEntity
     /**
      * Get NotIsHomeless
      *
+     * @return mixed
      */
-    public function getNotIsHomeless(): ?bool
+    public function getNotIsHomeless()
     {
         return !$this->isHomeless;
     }
@@ -970,45 +1000,39 @@ class Client extends BaseEntity
     /**
      * Set notIsHomeless
      *
-     * @param bool|null $notIsHomeless
+     * @param mixed $notIsHomeless
+     *
      * @return Client
      */
-    public function setNotIsHomeless(?bool $notIsHomeless): Client
+    public function setNotIsHomeless($notIsHomeless)
     {
         $this->isHomeless = !$notIsHomeless;
 
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getClientViews()
+    public function getFormattedBirthDate()
     {
-        return $this->clientViews;
+        return $this->getbirthDate() instanceof \DateTime ? $this->getbirthDate()->format('d.m.Y') : $this->getbirthDate();
     }
 
-    /**
-     * @param mixed $clientViews
-     */
-    public function setClientViews($clientViews): void
+    public function getFormattedCreatedDate()
     {
-        $this->clientViews = $clientViews;
+        return $this->getCreatedAt() instanceof \DateTime ? $this->getCreatedAt()->format('d.m.Y') : $this->getCreatedAt();
     }
 
-    /**
-     * @return Collection
-     */
-    public function getHistoryDownloads(): Collection
+    public function getGenderAsString()
     {
-        return $this->historyDownloads;
+        return in_array($this->getGender(),array_keys(self::GENDER_LIST)) ? self::GENDER_LIST[$this->getGender()] : $this->getGender();
     }
 
-    /**
-     * @param Collection $historyDownloads
-     */
-    public function setHistoryDownloads(Collection $historyDownloads): void
-    {
-        $this->historyDownloads = $historyDownloads;
+    public function getContractsAsString() {
+        $contracts = [];
+        /** @var Contract $v */
+        foreach ($this->getContracts() AS $k => $v) {
+
+            $contracts[] = $v->__toString();
+        }
+        return join(' , \n', $contracts);
     }
 }

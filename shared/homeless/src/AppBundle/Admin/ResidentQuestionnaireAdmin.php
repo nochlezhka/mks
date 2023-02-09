@@ -19,6 +19,11 @@ class ResidentQuestionnaireAdmin extends BaseAdmin
 
     protected $translationDomain = 'AppBundle';
 
+    public function configure()
+    {
+        $this->parentAssociationMapping = 'client';
+    }
+
     /**
      * @param FormMapper $formMapper
      */
@@ -67,8 +72,9 @@ class ResidentQuestionnaireAdmin extends BaseAdmin
                 'multiple' => true,
                 'choices' => ResidentQuestionnaire::$reasonForPetition,
                 'required' => false,
-            ])
-        ;
+            ]);
+
+
     }
 
     /**

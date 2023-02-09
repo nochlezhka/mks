@@ -8,7 +8,7 @@
 
 У каждого сотрудника есть личный кабинет, в котором ведется учет всей рабочей активности. Удобная система поисковых фильтров позволяет найти любую информацию, когда-либо внесенную в базу.
 
-Раздел “Отчеты” позволяет отслеживать все выполненные работы по предоставлению разовых услуг и сопровождению - как по организации в целом, так и по конкретным работникам.
+Раздел “Отчеты” позволяет отслеживать все выполненные работы по предоставлению разовых услуг и сопровождению - как по организации в целом, так и по конкретным работникам..
 
 Подробнее об “МКС” можно узнать, посмотрев скринкаст - https://youtu.be/f07ObZ91q8k
 
@@ -18,7 +18,6 @@
 
 ## Шаги установки
 
-МКС устанавливается на ОС Linux (желательно использовать Ubuntu 18+).
 Перед началом установки МКС необходимо установить docker и docker-compose, если они не были установлены до этого.
 
 ``` shell
@@ -53,58 +52,74 @@ sudo apt-get install docker-ce
 
 # кроме того необходимо установаить docker-compose для запуска проектов
 # скачиваем его
-sudo curl -L https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
+sudo curl -L https://github.com/docker/compose/releases/download/1.21.2/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
 
 # делаем docker-compose исполняемым
 sudo chmod +x /usr/local/bin/docker-compose
 
 ```
 
-## Установка приложения
+1. Склонируем репозиторий проекта:
 
-Перед установкой прочитайте [рекомендации](06-dumps.md) по защите данных.
-
-1. Склонируйте репозиторий проекта:
-
-    > `git clone https://github.com/nochlezhka/mks.git`
+    > git clone https://github.com/nochlezhka/mks_private.git
 
 2. После клонирования перейдите в каталог проекта:
 
-    > `cd mks`
+    > cd mks_private
 
-3. Создайте локальную копию файла `.env.dist`, здесь хранятся настраиваемые параметры приложения:
+3. Создаем локальные копии файлов `docker-compose.yml.dist` и `.env.dist`:
 
-    > `cp .env.dist .env`
+    > cp docker-compose.yml.dist docker-compose.yml
+
+    > cp .env.dist .env
+
+    > cp shared/homeless/app/config/parameters.yml.dist shared/homeless/app/config/parameters.yml
 
     Обязательно нужно поменять параметры подключения к БД в .env:
 
-    > `MYSQL_PASSWORD =`
-    >
-    > `MYSQL_ROOT_PASSWORD =`
-    >
-    > `DB_PASSWORD =`
+    > MYSQL_PASSWORD =
+    > MYSQL_ROOT_PASSWORD =
 
-4. Запустите сборку контейнеров (опциональный шаг)
+    в файле shared/homeless/app/config/parameters.yml нужно указать тот же пароль, что и в MYSQL_PASSWORD:
 
-    > `cp -r shared/homeless docker/app/files`
-    >
-    > `cd docker/app`
-    >
-    > `docker build -t nochlezhka/mks-app .`
+    > database_password:
 
-5. Запустите МКС (в случае использования готовой версии измените `MKS_VERSION` с `latest` на предоставленную версию)
+4. Запускаем сборку контейнеров:
 
-    > `export MKS_VERSION=latest`
-    >
-    > `docker-compose --profile=local up -d --no-build`
+    > make humaid_build_prod # сборка приложения для пункта выдачи (./shared/humaid)
 
-6. Запустите миграцию для создания первоначальной структуры базы данных и заполнения данными:
+    > docker-compose build
 
-    > `docker-compose exec php ./app/console doctrine:migrations:migrate`
+5. После успешного окончания сборки, запускаем контейнеры:
 
-7. При желании можете поменять пароль для входа в систему
+    > docker-compose up -d
 
-    > `docker-compose exec php ./app/console fos:user:change-password admin`
+6. Для успешного запуска приложения устанавливаем права на директорию:
 
-8. Настройте хост для проекта, перейдите по адресу хоста,
-если пароль не был изменен на шаге 7 - залогиньтесь с доступом `admin/password`.
+    > docker-compose exec php chown -R www-data:www-data /var/www/symfony/
+
+7. Подсоединяемся к symfony-приложению, запустив:
+
+    > ./docker/docker/docker-symfony
+
+8. С помощью `composer` устанавливаем необходимые библиотеки, затем указываем параметры подключения к БД:
+
+    > composer install
+
+9.  Запускаем миграцию для создания первоначальной структуры базы данных и заполнения данными:
+
+    > ./app/console doctrine:migrations:migrate
+
+10. При желании меняем пароль для входа в систему
+
+    > ./app/console fos:user:change-password admin
+
+11. Сгенерируем необходимые assets:
+
+    > ./app/console fos:js-routing:dump
+
+    > ./app/console assets:install
+
+    > ./app/console assetic:dump --symlink
+
+12. Дальше можно настроить хост для проекта, перейти по адресу хоста, если пароль не был изменен на шаге 10 - залогинимся с доступом `admin/password`.

@@ -13,13 +13,17 @@ services:
               - { name: doctrine.event_listener, event: postPersist}
 
   app.shelter_history.listener:
-    class: AppBundle\EventListener\ShelterRoomListener
-    tags:
-      - { name: doctrine.event_listener, event: postPersist }
+        class: AppBundle\EventListener\ShelterRoomListener
+        tags:
+              - { name: doctrine.event_listener, event: postPersist }
   app.shelter_history_delete.listener:
-    class: AppBundle\EventListener\ShelterRoomListener
-    tags:
-      - { name: doctrine.event_listener, event: postRemove }
+        class: AppBundle\EventListener\ShelterRoomListener
+        tags:
+              - { name: doctrine.event_listener, event: postRemove }
+#   app.shelter_history_update.listener:
+#         class: AppBundle\EventListener\ShelterRoomListener
+#         tags:
+#               - { name: doctrine.event_listener, event: preUpdate }
 
   app.notice.listener:
         class: AppBundle\EventListener\NoticeListener
@@ -39,21 +43,31 @@ services:
           - { name: sonata.admin, manager_type: orm, label: 'Клиенты' }
       arguments: [null, AppBundle\Entity\Client, AppBundle:CRUD, show_in_dashboard: true]
       calls:
-          - [addChild, ['@app.note.admin', 'client']]
-          - [addChild, ['@app.service.admin', 'client']]
-          - [addChild, ['@app.document.admin', 'client']]
-          - [addChild, ['@app.document_file.admin', 'client']]
-          - [addChild, ['@app.contract.admin', 'client']]
-          - [addChild, ['@app.shelter_history.admin', 'client']]
-          - [addChild, ['@app.resident_questionnaire.admin', 'client']]
-          - [addChild, ['@app.certificate.admin', 'client']]
-          - [addChild, ['@app.contract.admin', 'client']]
-          - [addChild, ['@app.generated_document.admin', 'client']]
-          - [addChild, ['@app.notice.admin', 'client']]
-          - [addChild, ['@app.history_download.admin', 'client']]
-          - [addChild, ['@app.resident_form_response.admin', 'client']]
+          - [addChild, ['@app.note.admin']]
+          - [addChild, ['@app.service.admin']]
+          - [addChild, ['@app.delivery_item.admin']]
+          - [addChild, ['@app.delivery.admin']]
+          - [addChild, ['@app.document.admin']]
+          - [addChild, ['@app.document_file.admin']]
+          - [addChild, ['@app.contract.admin']]
+          - [addChild, ['@app.shelter_history.admin']]
+          - [addChild, ['@app.resident_questionnaire.admin']]
+          - [addChild, ['@app.certificate.admin']]
+          - [addChild, ['@app.contract.admin']]
+          - [addChild, ['@app.generated_document.admin']]
+          - [addChild, ['@app.notice.admin']]
+          - [addChild, ['@app.history_download.admin']]
+          - [addChild, ['@app.resident_form_response.admin']]
           - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
           - [ setTemplate, ['layout', 'admin/client_show.html.twig']]
+
+#   app.shelter_room.admin:
+#     class: AppBundle\Admin\ShelterRoomAdmin
+#     tags:
+#       - { name: sonata.admin, manager_type: orm, label: 'Комнаты' }
+#     arguments: [ ~, AppBundle\Entity\ShelterRoom, AppBundle:CRUD ]
+#     calls:
+#       - [ setTemplate, ['layout', 'admin/shelter_room.html.twig'] ]
 
   app.note.admin:
       class: AppBundle\Admin\NoteAdmin
@@ -82,10 +96,10 @@ services:
   app.client_field.admin:
       class: AppBundle\Admin\ClientFieldAdmin
       tags:
-          - { name: sonata.admin, manager_type: orm, label: 'Доп. поля клиентов' }
+          - { name: sonata.admin, manager_type: orm, label: 'Анкета клиента' }
       arguments: [null, AppBundle\Entity\ClientField, SonataAdminBundle:CRUD]
       calls:
-          - [addChild, ['@app.client_field_option.admin', 'field']]
+          - [addChild, ['@app.client_field_option.admin']]
           - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
 
   app.client_field_option.admin:
@@ -96,14 +110,14 @@ services:
       calls:
           - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
 
-  app.region.admin:
-      class: AppBundle\Admin\RegionAdmin
-      tags:
-          - { name: sonata.admin, manager_type: orm, label: 'Регионы' }
-      arguments: [null, AppBundle\Entity\Region, SonataAdminBundle:CRUD]
-      calls:
-          - [addChild, ['@app.district.admin', 'region']]
-          - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
+#   app.region.admin:
+#       class: AppBundle\Admin\RegionAdmin
+#       tags:
+#           - { name: sonata.admin, manager_type: orm, label: 'Регионы' }
+#       arguments: [null, AppBundle\Entity\Region, SonataAdminBundle:CRUD]
+#       calls:
+#           - [addChild, ['@app.district.admin']]
+#           - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
 
   app.district.admin:
       class: AppBundle\Admin\DistrictAdmin
@@ -161,6 +175,14 @@ services:
       calls:
           - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
 
+  app.shelter_leaving_reason.admin:
+    class: AppBundle\Admin\ShelterLeavingReasonAdmin
+    tags:
+      - { name: sonata.admin, manager_type: orm, label: 'Причины выбытия из приюта' }
+    arguments: [ null, AppBundle\Entity\ShelterLeavingReason, SonataAdminBundle:CRUD ]
+    calls:
+      - [ setLabelTranslatorStrategy, [ '@sonata.admin.label.strategy.underscore' ] ]
+
   app.certificate.admin:
       class: AppBundle\Admin\CertificateAdmin
       tags:
@@ -191,6 +213,22 @@ services:
       tags:
           - { name: sonata.admin, manager_type: orm, label: 'Типы услуг' }
       arguments: [null, AppBundle\Entity\ServiceType, SonataAdminBundle:CRUD]
+      calls:
+          - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
+
+  app.delivery_item.admin:
+      class: AppBundle\Admin\DeliveryItemAdmin
+      tags:
+          - { name: sonata.admin, manager_type: orm, label: 'Предметы выдачи' }
+      arguments: [null, AppBundle\Entity\DeliveryItem, SonataAdminBundle:CRUD]
+      calls:
+          - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
+
+  app.delivery.admin:
+      class: AppBundle\Admin\DeliveryAdmin
+      tags:
+          - { name: sonata.admin, manager_type: orm, label: 'Выдачи' }
+      arguments: [null, AppBundle\Entity\Delivery, SonataAdminBundle:CRUD]
       calls:
           - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
 
@@ -249,23 +287,31 @@ services:
       arguments: [null, AppBundle\Entity\Position, SonataAdminBundle:CRUD]
       calls:
           - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
+  app.branch.admin:
+      class: AppBundle\Admin\BranchAdmin
+      tags:
+        - { name: sonata.admin, manager_type: orm, label: 'Отделения' }
+      arguments: [null, AppBundle\Entity\Branch, SonataAdminBundle:CRUD, '@app.branch_service']
+      calls:
+        - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
+
 
   app.client_form.admin:
       class: AppBundle\Admin\ClientFormAdmin
       tags:
-          - { name: sonata.admin, manager_type: orm, label: 'Редактирование форм' }
+          - { name: sonata.admin, manager_type: orm, label: 'Анкета проживавшего' }
       arguments: [~, AppBundle\Entity\ClientForm, SonataAdminBundle:CRUD]
       calls:
           - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
           - [addChild, ['@app.client_form_field.admin', 'form']]
 
   app.shelter_room.admin:
-    class: AppBundle\Admin\ShelterRoomAdmin
-    tags:
-      - { name: sonata.admin, manager_type: orm, label: 'Приют' }
-    arguments: [ ~, AppBundle\Entity\ShelterRoom, AppBundle:CRUD ]
-    calls:
-      - [ setTemplate, [ 'layout', 'admin/shelter_room.html.twig' ] ]
+      class: AppBundle\Admin\ShelterRoomAdmin
+      tags:
+          - { name: sonata.admin, manager_type: orm, label: 'Приют' }
+      arguments: [ ~, AppBundle\Entity\ShelterRoom, AppBundle:CRUD ]
+      calls:
+          - [ setTemplate, ['layout', 'admin/shelter_room.html.twig'] ]
 
   app.client_form_field.admin:
     class: AppBundle\Admin\ClientFormFieldAdmin
@@ -281,7 +327,7 @@ services:
       - { name: sonata.admin, manager_type: orm, label: 'Анкета проживающего' }
     arguments: [~, AppBundle\Entity\ClientFormResponse, SonataAdminBundle:CRUD]
     calls:
-      - [setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
+      - [ setLabelTranslatorStrategy, ['@sonata.admin.label.strategy.underscore']]
 
   app.file_type:
       class: AppBundle\Form\Type\AppFileType
@@ -302,7 +348,7 @@ services:
 
   app.render_service:
     class: AppBundle\Service\RenderService
-    arguments: ['@templating', '@kernel', '@twig']
+    arguments: ['@templating', '@kernel', '@twig', '@app.branch_service']
 
   app.certificate_recreator_service:
     class: AppBundle\Service\CertificateRecreator
@@ -330,6 +376,16 @@ services:
     class: AppBundle\Repository\PositionRepository
     factory: ['@doctrine.orm.default_entity_manager', getRepository]
     arguments: ['AppBundle\Entity\Position']
+
+
+  app.branch_to_choice_field_mask_type.transformer:
+    class: AppBundle\Form\DataTransformer\BranchToChoiceFieldMaskTypeTransformer
+    arguments: ['@app.branch_option.repository']
+
+  app.branch_option.repository:
+      class: AppBundle\Repository\BranchRepository
+      factory: ['@doctrine.orm.default_entity_manager', getRepository]
+      arguments: ['AppBundle\Entity\Branch']
 
   app.client_field_option.repository:
     class: AppBundle\Repository\ClientFieldOptionRepository
@@ -375,3 +431,10 @@ services:
   app.meta_service:
     class: AppBundle\Service\MetaService
     arguments: ['@doctrine.orm.entity_manager']
+
+  app.branch_service:
+    class: AppBundle\Service\BranchService
+    arguments: ['@service_container']
+
+  app.security.api_authenticator:
+    class: AppBundle\Security\ApiAuthenticator

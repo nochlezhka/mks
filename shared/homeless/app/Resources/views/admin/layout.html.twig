@@ -3,15 +3,21 @@
 {% block stylesheets %}
     {{  parent() }}
 
-    <link rel="stylesheet" href="{{ asset('bundles/sonataadmin/vendor/jqueryui/themes/flick/jquery-ui.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('bundles/sonatatranslation/css/sonata-translation.css') }}" />
+    {% stylesheets '@SonataTranslationBundle/Resources/public/css/sonata-translation.css'
+        'bundles/sonataadmin/vendor/jqueryui/themes/flick/jquery-ui.min.css'
+    %}
+    <link rel="stylesheet" href="{{ asset_url }}" />
+    {% endstylesheets %}
 
-    {{ encore_entry_link_tags('app') }}
+    {% stylesheets 'bundles/app/css/*' %}
+    <link rel="stylesheet" href="{{ asset_url }}" />
+    {% endstylesheets %}
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
 
+    <script src="{{ asset('bundles/ivoryckeditor/ckeditor.js') }}" type="text/javascript"></script>
     <script src="{{ asset('bundles/sonataadmin/vendor/jquery.scrollTo/jquery.scrollTo.min.js') }}" type="text/javascript"></script>
     <script src="{{ asset('bundles/sonataformatter/vendor/markitup-markitup/markitup/jquery.markitup.js') }}" type="text/javascript"></script>
     <script src="{{ asset('bundles/sonataformatter/markitup/sets/markdown/set.js') }}" type="text/javascript"></script>
@@ -21,7 +27,13 @@
 
     <script src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
 
-    {{ encore_entry_script_tags('app') }}
+    {% javascripts '@jpeg_camera' %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+
+    {% javascripts 'bundles/app/js/*' %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
 
     {% if app.request.attributes.get('_route') == 'admin_app_client_certificate_list' %}
     <script>
@@ -43,7 +55,7 @@
         <a class="dropdown-toggle" data-toggle="dropdown" href="#">
             <i class="fa fa-user fa-fw" aria-hidden="true"></i>
             {% if admin.myClientsNoticeCount is defined and admin.myClientsNoticeCount > 0 %}
-                <span style="color: #d20808; font-weight: bold;">(<i class="fa fa-bell" aria-hidden="true"></i> &nbsp;{{ admin.myClientsNoticeCount }})</span>
+                <span style="color: #d20808; font-weight: bold; font-size: 17px">(<i class="fa fa-bell" aria-hidden="true"></i> &nbsp;{{ admin.myClientsNoticeCount }})</span>
             {% endif %}
             <i class="fa fa-caret-down" aria-hidden="true"></i>
         </a>
@@ -79,19 +91,38 @@
 {% block logo %}
     {% spaceless %}
         <a class="logo" href="{{ path('my_clients') }}">
-            <img src="{{ logo_path }}" style="max-width: 100%;"/>
+            {% image '@logo' %}
+            <img src="{{ asset_url }}" style="max-width: 100%;"/>
+            {% endimage %}
         </a>
     {% endspaceless %}
 {% endblock %}
 
-{% block side_bar_after_nav %}
-<p class="text-center small" style="border-top: 1px solid #444444; padding-top: 10px"><a href="https://github.com/nochlezhka/mks" rel="noreferrer" target="_blank">Версия приложения: {{ app.request.server.get('APP_VER') }}</a></p>
-{% endblock %}
+{% block side_bar_after_nav %}{% endblock %}
 
 {% block side_bar_nav %}
+    <ul class="sidebar-menu">
+        <li class="treeview">
+            <a href="{{ path('profile') }}">
+                <i class="fa fa-user"></i>
+                <span>Личный кабинет</span>
+                <span class="pull-right-container"></span>
+            </a>
+        </li>
+    </ul>
+    <ul class="sidebar-menu">
+        <li class="treeview">
+            <a href="{{ path('my_services') }}">
+                <i class="fa fa-paperclip"></i>
+                <span>Оказанные услуги</span>
+                <span class="pull-right-container"></span>
+            </a>
+        </li>
+    </ul>
     {{ block('side_bar_nav', 'SonataAdminBundle::standard_layout.html.twig') }}
 
     {%  if is_granted('ROLE_SUPER_ADMIN') or is_granted('ROLE_SONATA_USER_ADMIN_USER_EDIT') %}
+
     <ul class="sidebar-menu">
         <li class="treeview">
             <a href="{{ path('report') }}">

@@ -8,7 +8,6 @@ use Knp\Menu\ItemInterface as MenuItemInterface;
 use Sonata\AdminBundle\Admin\AdminInterface;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
-use Sonata\AdminBundle\Route\RouteCollection;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 class ClientFormAdmin extends BaseAdmin
@@ -69,11 +68,5 @@ class ClientFormAdmin extends BaseAdmin
                 'label' => 'Название',
             ])
         ;
-    }
-
-    protected function configureRoutes(RouteCollection $collection)
-    {
-        $collection->remove('create');
-        $collection->remove('delete');
     }
 }

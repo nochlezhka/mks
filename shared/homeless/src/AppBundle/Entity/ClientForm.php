@@ -5,7 +5,6 @@ namespace AppBundle\Entity;
 
 use AppBundle\Util\BaseEntityUtil;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping AS ORM;
 
 /**
@@ -26,14 +25,14 @@ class ClientForm extends BaseEntity
      * @var string
      * @ORM\Column(type="string")
      */
-    private string $name = "";
+    private $name;
 
     /**
      * Набор полей
-     * @var Collection
+     * @var ArrayCollection
      * @ORM\OneToMany(targetEntity="ClientFormField", mappedBy="form")
      */
-    private Collection $fields;
+    private $fields;
 
     /**
      * ClientForm constructor.
@@ -46,7 +45,7 @@ class ClientForm extends BaseEntity
     /**
      * @return string
      */
-    public function getName(): string
+    public function getName()
     {
         return $this->name;
     }
@@ -54,7 +53,7 @@ class ClientForm extends BaseEntity
     /**
      * @param string $name
      */
-    public function setName(string $name)
+    public function setName($name)
     {
         $this->name = $name;
     }
@@ -68,9 +67,9 @@ class ClientForm extends BaseEntity
     }
 
     /**
-     * @param Collection $fields
+     * @param ArrayCollection $fields
      */
-    public function setFields(Collection $fields)
+    public function setFields($fields)
     {
         $this->fields = $fields;
     }
@@ -82,7 +81,7 @@ class ClientForm extends BaseEntity
      */
     public function __toString()
     {
-        return $this->getName();
+        return '' . $this->getName();
     }
 
     /**
@@ -92,7 +91,7 @@ class ClientForm extends BaseEntity
      *
      * @return ClientFormField|null
      */
-    public function getFirstField(): ?ClientFormField
+    public function getFirstField()
     {
         $formFields = $this->getFields()->toArray();
         /**

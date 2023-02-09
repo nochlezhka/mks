@@ -14,27 +14,27 @@ class GeneratedDocumentType extends BaseEntity
      * Название
      * @ORM\Column(type="string", nullable=true)
      */
-    private ?string $name = null;
+    private $name;
 
     /**
      * Код
      * @ORM\Column(type="string", nullable=true)
      */
-    private ?string $code = null;
+    private $code;
 
     public function __toString()
     {
-        return $this->name;
+        return (string)$this->name;
     }
 
     /**
      * Set name
      *
-     * @param string|null $name
+     * @param string $name
      *
      * @return GeneratedDocumentType
      */
-    public function setName(?string $name): GeneratedDocumentType
+    public function setName($name)
     {
         $this->name = $name;
 
@@ -46,7 +46,7 @@ class GeneratedDocumentType extends BaseEntity
      *
      * @return string
      */
-    public function getName(): ?string
+    public function getName()
     {
         return $this->name;
     }
@@ -54,11 +54,11 @@ class GeneratedDocumentType extends BaseEntity
     /**
      * Set code
      *
-     * @param string|null $code
+     * @param string $code
      *
      * @return GeneratedDocumentType
      */
-    public function setCode(?string $code): GeneratedDocumentType
+    public function setCode($code)
     {
         $this->code = $code;
 
@@ -70,7 +70,7 @@ class GeneratedDocumentType extends BaseEntity
      *
      * @return string
      */
-    public function getCode(): ?string
+    public function getCode()
     {
         return $this->code;
     }

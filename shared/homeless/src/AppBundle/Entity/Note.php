@@ -14,33 +14,33 @@ class Note extends BaseEntity
      * Текст
      * @ORM\Column(type="text", nullable=true)
      */
-    private ?string $text = null;
+    private $text;
 
     /**
      * Клиент
      * @ORM\ManyToOne(targetEntity="Client", inversedBy="notes")
      */
-    private ?Client $client = null;
+    private $client;
 
     /**
      * Важное
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private ?bool $important = false;
+    private $important = false;
 
     public function __toString()
     {
-        return mb_substr(strip_tags($this->text), 0, 100);
+        return (string)mb_substr(strip_tags($this->text), 0, 100);
     }
 
     /**
      * Set text
      *
-     * @param string|null $text
+     * @param string $text
      *
      * @return Note
      */
-    public function setText(?string $text): Note
+    public function setText($text)
     {
         $this->text = $text;
 
@@ -52,7 +52,7 @@ class Note extends BaseEntity
      *
      * @return string
      */
-    public function getText(): ?string
+    public function getText()
     {
         return $this->text;
     }
@@ -64,7 +64,7 @@ class Note extends BaseEntity
      *
      * @return Note
      */
-    public function setImportant(?bool $important): Note
+    public function setImportant($important)
     {
         $this->important = $important;
 
@@ -76,7 +76,7 @@ class Note extends BaseEntity
      *
      * @return boolean
      */
-    public function getImportant(): ?bool
+    public function getImportant()
     {
         return $this->important;
     }
@@ -84,11 +84,11 @@ class Note extends BaseEntity
     /**
      * Set client
      *
-     * @param Client|null $client
+     * @param \AppBundle\Entity\Client $client
      *
      * @return Note
      */
-    public function setClient(Client $client): Note
+    public function setClient(Client $client = null)
     {
         $this->client = $client;
 
@@ -98,9 +98,9 @@ class Note extends BaseEntity
     /**
      * Get client
      *
-     * @return Client
+     * @return \AppBundle\Entity\Client
      */
-    public function getClient(): ?Client
+    public function getClient()
     {
         return $this->client;
     }

@@ -2,7 +2,6 @@
 
 namespace AppBundle\Entity;
 
-use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
@@ -17,25 +16,25 @@ class DocumentFile extends BaseEntity
      * Комментарий
      * @ORM\Column(type="text", nullable=true)
      */
-    private ?string $comment = null;
+    private $comment;
 
     /**
      * Клиент
      * @ORM\ManyToOne(targetEntity="Client", inversedBy="documentFiles")
      */
-    private ?Client $client = null;
+    private $client;
 
     /**
      * Тип
      * @ORM\ManyToOne(targetEntity="DocumentType")
      */
-    private ?DocumentType $type = null;
+    private $type;
 
     /**
      * Имя файла
      * @ORM\Column(type="string", nullable=true)
      */
-    private ?string $filename = null;
+    private $filename;
 
     /**
      * Файл
@@ -47,7 +46,11 @@ class DocumentFile extends BaseEntity
     {
         $type = $this->getType();
 
-        return $type ? $type->getName() : "UNKNOWN_TYPE";
+        if ($type instanceof DocumentType) {
+            return (string)$type->getName();
+        }
+
+        return '';
     }
 
     public function getFile()
@@ -55,12 +58,12 @@ class DocumentFile extends BaseEntity
         return $this->file;
     }
 
-    public function setFile($file = null): DocumentFile
+    public function setFile($file = null)
     {
         $this->file = $file;
 
         if ($file) {
-            $this->setUpdatedAt(new DateTime());
+            $this->setUpdatedAt(new \DateTime());
         }
 
         return $this;
@@ -69,11 +72,11 @@ class DocumentFile extends BaseEntity
     /**
      * Set filename
      *
-     * @param string|null $filename
+     * @param \DateTime $filename
      *
      * @return DocumentFile
      */
-    public function setFilename(?string $filename): DocumentFile
+    public function setFilename($filename)
     {
         $this->filename = $filename;
 
@@ -83,9 +86,9 @@ class DocumentFile extends BaseEntity
     /**
      * Get filename
      *
-     * @return string
+     * @return \DateTime
      */
-    public function getFilename(): ?string
+    public function getFilename()
     {
         return $this->filename;
     }
@@ -93,11 +96,11 @@ class DocumentFile extends BaseEntity
     /**
      * Set comment
      *
-     * @param string|null $comment
+     * @param string $comment
      *
      * @return DocumentFile
      */
-    public function setComment(?string $comment): DocumentFile
+    public function setComment($comment)
     {
         $this->comment = $comment;
 
@@ -109,7 +112,7 @@ class DocumentFile extends BaseEntity
      *
      * @return string
      */
-    public function getComment(): ?string
+    public function getComment()
     {
         return $this->comment;
     }
@@ -117,11 +120,11 @@ class DocumentFile extends BaseEntity
     /**
      * Set client
      *
-     * @param Client $client
+     * @param \AppBundle\Entity\Client $client
      *
      * @return DocumentFile
      */
-    public function setClient(Client $client): DocumentFile
+    public function setClient(Client $client = null)
     {
         $this->client = $client;
 
@@ -131,9 +134,9 @@ class DocumentFile extends BaseEntity
     /**
      * Get client
      *
-     * @return Client
+     * @return \AppBundle\Entity\Client
      */
-    public function getClient(): ?Client
+    public function getClient()
     {
         return $this->client;
     }
@@ -142,11 +145,11 @@ class DocumentFile extends BaseEntity
     /**
      * Set type
      *
-     * @param DocumentType $type
+     * @param \AppBundle\Entity\DocumentType $type
      *
      * @return DocumentFile
      */
-    public function setType(DocumentType $type): DocumentFile
+    public function setType(DocumentType $type = null)
     {
         $this->type = $type;
 
@@ -156,9 +159,9 @@ class DocumentFile extends BaseEntity
     /**
      * Get type
      *
-     * @return DocumentType
+     * @return \AppBundle\Entity\DocumentType
      */
-    public function getType(): ?DocumentType
+    public function getType()
     {
         return $this->type;
     }

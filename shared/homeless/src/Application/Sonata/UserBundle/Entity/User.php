@@ -4,6 +4,7 @@ namespace Application\Sonata\UserBundle\Entity;
 
 use AppBundle\Entity\BaseEntityInterface;
 use AppBundle\Entity\Position;
+use AppBundle\Entity\Branch;
 use Doctrine\Common\Collections\ArrayCollection;
 use Sonata\UserBundle\Entity\BaseUser as BaseUser;
 
@@ -57,10 +58,15 @@ class User extends BaseUser implements BaseEntityInterface
      */
     private $positionText;
 
-    private ?int $syncId = null;
-    private ?int $sort = null;
-    private ?User $createdBy = null;
-    private ?User $updatedBy = null;
+    /**
+     * Отделение
+     */
+    private $branch;
+
+    private $syncId;
+    private $sort;
+    private $createdBy;
+    private $updatedBy;
 
     public function __construct()
     {
@@ -152,11 +158,11 @@ class User extends BaseUser implements BaseEntityInterface
     /**
      * Set syncId
      *
-     * @param int|null $syncId
+     * @param integer $syncId
      *
      * @return User
      */
-    public function setSyncId(?int $syncId): User
+    public function setSyncId($syncId)
     {
         $this->syncId = $syncId;
 
@@ -168,7 +174,7 @@ class User extends BaseUser implements BaseEntityInterface
      *
      * @return integer
      */
-    public function getSyncId(): ?int
+    public function getSyncId()
     {
         return $this->syncId;
     }
@@ -176,11 +182,11 @@ class User extends BaseUser implements BaseEntityInterface
     /**
      * Set createdBy
      *
-     * @param User|null $createdBy
+     * @param User $createdBy
      *
      * @return User
      */
-    public function setCreatedBy(?User $createdBy = null): User
+    public function setCreatedBy(User $createdBy = null)
     {
         $this->createdBy = $createdBy;
 
@@ -192,7 +198,7 @@ class User extends BaseUser implements BaseEntityInterface
      *
      * @return User
      */
-    public function getCreatedBy(): ?User
+    public function getCreatedBy()
     {
         return $this->createdBy;
     }
@@ -200,11 +206,11 @@ class User extends BaseUser implements BaseEntityInterface
     /**
      * Set updatedBy
      *
-     * @param User|null $updatedBy
+     * @param User $updatedBy
      *
      * @return User
      */
-    public function setUpdatedBy(?User $updatedBy = null): User
+    public function setUpdatedBy(User $updatedBy = null)
     {
         $this->updatedBy = $updatedBy;
 
@@ -216,7 +222,7 @@ class User extends BaseUser implements BaseEntityInterface
      *
      * @return User
      */
-    public function getUpdatedBy(): ?User
+    public function getUpdatedBy()
     {
         return $this->updatedBy;
     }
@@ -320,11 +326,11 @@ class User extends BaseUser implements BaseEntityInterface
     /**
      * Set sort
      *
-     * @param int|null $sort
+     * @param integer $sort
      *
      * @return User
      */
-    public function setSort(?int $sort): User
+    public function setSort($sort)
     {
         $this->sort = $sort;
 
@@ -336,7 +342,7 @@ class User extends BaseUser implements BaseEntityInterface
      *
      * @return integer
      */
-    public function getSort(): ?int
+    public function getSort()
     {
         return $this->sort;
     }
@@ -437,5 +443,29 @@ class User extends BaseUser implements BaseEntityInterface
         $this->positionText = $positionText;
 
         return $this;
+    }
+
+    /**
+     * Set branch
+     *
+     * @param Branch $branch
+     *
+     * @return User
+     */
+    public function setBranch(Branch $branch = null)
+    {
+        $this->branch = $branch;
+
+        return $this;
+    }
+
+    /**
+     * Get branch
+     *
+     * @return \AppBundle\Entity\Branch
+     */
+    public function getBranch()
+    {
+        return $this->branch;
     }
 }

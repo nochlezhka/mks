@@ -18,7 +18,7 @@ class AppKernel extends Kernel
             new Symfony\Bundle\TwigBundle\TwigBundle(),
             new Symfony\Bundle\MonologBundle\MonologBundle(),
             new Symfony\Bundle\SwiftmailerBundle\SwiftmailerBundle(),
-            new Symfony\WebpackEncoreBundle\WebpackEncoreBundle(),
+            new Symfony\Bundle\AsseticBundle\AsseticBundle(),
             new Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
             new Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle(),
             new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
@@ -44,8 +44,7 @@ class AppKernel extends Kernel
             new Vich\UploaderBundle\VichUploaderBundle(),
             new Liip\ImagineBundle\LiipImagineBundle(),
             new Mopa\Bundle\BootstrapBundle\MopaBootstrapBundle(),
-            new FOS\CKEditorBundle\FOSCKEditorBundle(),
-
+            new Ivory\CKEditorBundle\IvoryCKEditorBundle(),
 
             new Application\Sonata\UserBundle\ApplicationSonataUserBundle(),
 

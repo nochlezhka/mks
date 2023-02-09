@@ -8,7 +8,6 @@ use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Form\Type\ChoiceFieldMaskType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 class ServiceAdmin extends BaseAdmin
 {
@@ -18,6 +17,11 @@ class ServiceAdmin extends BaseAdmin
     );
 
     protected $translationDomain = 'AppBundle';
+
+    public function configure()
+    {
+        $this->parentAssociationMapping = 'client';
+    }
 
     /**
      * @param FormMapper $formMapper
@@ -35,53 +39,27 @@ class ServiceAdmin extends BaseAdmin
             ->get('doctrine')
             ->getManager();
 
-        $availableCertTypes = $em
-            ->getRepository('AppBundle:ServiceType')
-            ->getAvailableForService($this->getSubject());
+        $availableServiceTypes = $em
+                               ->getRepository('AppBundle:ServiceType')
+                               ->getAvailable();
 
-        $hasTypeWithComment = false;
-        $hasTypeWithAmount = false;
-        foreach ($availableCertTypes as $availableCertType) {
-            $typeOptions['choices'][$availableCertType->getName()] = $availableCertType->getId();
-            $map = [];
-            if ($availableCertType->getComment()) {
-                $map[] = 'comment';
-                $hasTypeWithComment = true;
-            }
-            if ($availableCertType->getAmount()) {
-                $map[] = 'amount';
-                $hasTypeWithAmount = true;
-            }
-            if (!empty($map)) {
-                $typeOptions['map'][$availableCertType->getId()] = $map;
-            }
+        foreach ($availableServiceTypes as $availableServiceType) {
+            $typeOptions['choices'][$availableServiceType->getId()] = $availableServiceType->getName();
         }
+        $typeOptions['map'] = [
+            ServiceType::PAYMENT_TRAVEL => ['amount'],
+            ServiceType::DUTY_PAYMENT => ['amount'],
+            ServiceType::MEANS_HYGIENE => ['comment'],
+            ServiceType::SET_OF_CLOTHES => ['comment'],
+            ServiceType::CORRESPONDENCE_RECEIVED => ['comment'],
+        ];
         $typeOptions['multiple'] = false;
         $typeOptions['label'] = 'Тип';
         $typeOptions['attr'] = [
             'class' => 'service_type_select',
             'data-sonata-select2' => 'true',
         ];
-
-        if ($hasTypeWithComment || $hasTypeWithAmount) {
-            $formMapper->add('type', ChoiceFieldMaskType::class, $typeOptions);
-            if ($hasTypeWithComment) {
-                $formMapper->
-                add('comment', 'text', [
-                    'label' => 'Комментарий',
-                    'required' => false,
-                ]);
-            }
-            if ($hasTypeWithAmount) {
-                $formMapper->add('amount', 'text', [
-                    'label' => 'Сумма',
-                    'required' => false,
-                ]);
-            }
-        } else {
-            $formMapper->add('type', ChoiceType::class, $typeOptions);
-        }
-
+        $formMapper->add('type', ChoiceFieldMaskType::class, $typeOptions);
         $transformer = $this
             ->getConfigurationPool()
             ->getContainer()
@@ -90,7 +68,15 @@ class ServiceAdmin extends BaseAdmin
         $formMapper->getFormBuilder()->get('type')->addModelTransformer($transformer);
 
         $formMapper
-            ->add('createdAt', 'Sonata\Form\Type\DatePickerType', [
+            ->add('comment', 'text', [
+                'label' => 'Комментарий',
+                'required' => false,
+            ])
+            ->add('amount', 'text', [
+                'label' => 'Сумма',
+                'required' => false,
+            ])
+            ->add('createdAt', 'sonata_type_date_picker', [
                 'dp_default_date' => (new \DateTime())->format('Y-m-d'),
                 'format' => 'dd.MM.yyyy',
                 'label' => 'Когда добавлена',
@@ -118,9 +104,6 @@ class ServiceAdmin extends BaseAdmin
         $listMapper
             ->add('comment', null, [
                 'label' => 'Комментарий',
-            ])
-            ->add('amount', null, [
-                'label' => 'Сумма',
             ])
             ->add('createdAt', 'date', [
                 'label' => 'Когда добавлена',
@@ -167,11 +150,7 @@ class ServiceAdmin extends BaseAdmin
                     'class' => 'AppBundle\Entity\ServiceType',
                 ]
             ])
-            ->add(
-                'createdAt',
-                'doctrine_orm_date_range',
-                ['label' => 'Когда добавлена', 'advanced_filter' => false,],
-                'Sonata\Form\Type\DateRangePickerType',
+            ->add('createdAt', 'doctrine_orm_date_range', ['label' => 'Когда добавлена', 'advanced_filter' => false,], 'sonata_type_date_range_picker',
                 [
                     'field_options_start' => [
                         'label' => 'От',

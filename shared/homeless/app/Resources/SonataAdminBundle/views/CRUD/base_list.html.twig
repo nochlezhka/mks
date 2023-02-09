@@ -33,6 +33,13 @@ file that was distributed with this source code.
 {% endblock %}
 
 {% block list_table %}
+    {# {{dump(admin)}} #}
+    {% if admin.baseRouteName == 'admin_app_client_resident_form_response' %}
+    <div class="col-xs-12 col-md-12">
+        <h4>{{admin.shelterDates}}</h4>
+    </div>
+    {% endif %}
+
     <div class="col-xs-12 col-md-12">
         {% set batchactions = admin.batchactions %}
         {% if admin.hasRoute('batch') and batchactions|length %}
@@ -190,7 +197,29 @@ file that was distributed with this source code.
 
                                     {% set export_formats = export_formats|default(admin.exportFormats) %}
 
+
                                     <div class="pull-right">
+                                        {% if admin.hasRoute('export') and admin.hasAccess('export') and export_formats|length %}
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                                    <i class="fa fa-share-square-o" aria-hidden="true"></i>
+                                                    {{ "label_export_download"|trans({}, "SonataAdminBundle") }}
+                                                    <span class="caret"></span>
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    {% for format in export_formats %}
+                                                    <li>
+                                                        <a href="{{ admin.generateUrl('export', admin.modelmanager.paginationparameters(admin.datagrid, 0) + {'format' : format}) }}">
+                                                            <i class="fa fa-arrow-circle-o-down" aria-hidden="true"></i>
+                                                            {{ ("export_format_" ~ format)|trans({}, 'SonataAdminBundle') }}
+                                                        </a>
+                                                    <li>
+                                                        {% endfor %}
+                                                </ul>
+                                            </div>
+
+                                            &nbsp;-&nbsp;
+                                        {% endif %}
                                         {% block pager_results %}
                                             {% include admin.getTemplate('pager_results') %}
                                         {% endblock %}
@@ -225,7 +254,7 @@ file that was distributed with this source code.
                     {{ 'link_filters'|trans({}, 'SonataAdminBundle') }} <b class="caret"></b>
                 </a>
 
-                <ul class="dropdown-menu" role="menu">
+                <ul class="dropdown-menu" role="menu" style="max-height: 400px;overflow-y: auto;">
                     {% for filter in admin.datagrid.filters if (filter.options['show_filter'] is same as(true) or filter.options['show_filter'] is null) %}
                         {% set filterActive = ((filter.isActive() or filter.options['show_filter']) and not admin.isDefaultFilter(filter.formName)) %}
                         <li>

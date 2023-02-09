@@ -46,45 +46,33 @@ class ServiceType extends BaseEntity
      * Название
      * @ORM\Column(type="string", nullable=true)
      */
-    private ?string $name = null;
+    private $name;
 
     /**
      * Платная
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private ?bool $pay = null;
+    private $pay;
 
     /**
      * Документ
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private ?bool $document = null;
-
-    /**
-     * Сумма
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private ?bool $amount = null;
-
-    /**
-     * Комметарий
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private ?bool $comment = null;
+    private $document;
 
     public function __toString()
     {
-        return $this->getName();
+        return (string)$this->getName();
     }
 
     /**
      * Set name
      *
-     * @param string|null $name
+     * @param string $name
      *
      * @return ServiceType
      */
-    public function setName(?string $name): ServiceType
+    public function setName($name)
     {
         $this->name = $name;
 
@@ -96,7 +84,7 @@ class ServiceType extends BaseEntity
      *
      * @return string
      */
-    public function getName(): ?string
+    public function getName()
     {
         return $this->name;
     }
@@ -108,7 +96,7 @@ class ServiceType extends BaseEntity
      *
      * @return ServiceType
      */
-    public function setPay(?bool $pay): ServiceType
+    public function setPay($pay)
     {
         $this->pay = $pay;
 
@@ -120,7 +108,7 @@ class ServiceType extends BaseEntity
      *
      * @return boolean
      */
-    public function getPay(): ?bool
+    public function getPay()
     {
         return $this->pay;
     }
@@ -132,7 +120,7 @@ class ServiceType extends BaseEntity
      *
      * @return ServiceType
      */
-    public function setDocument(?bool $document): ServiceType
+    public function setDocument($document)
     {
         $this->document = $document;
 
@@ -144,56 +132,8 @@ class ServiceType extends BaseEntity
      *
      * @return boolean
      */
-    public function getDocument(): ?bool
+    public function getDocument()
     {
         return $this->document;
-    }
-
-    /**
-     * Get amount
-     *
-     * @return boolean
-     */
-    public function getAmount(): ?bool
-    {
-        return $this->amount;
-    }
-
-    /**
-     * Set amount
-     *
-     * @param boolean $amount
-     *
-     * @return ServiceType
-     */
-    public function setAmount(?bool $amount): ServiceType
-    {
-        $this->amount = $amount;
-
-        return $this;
-    }
-
-    /**
-     * Get comment
-     *
-     * @return boolean
-     */
-    public function getComment(): ?bool
-    {
-        return $this->comment;
-    }
-
-    /**
-     * Set comment
-     *
-     * @param boolean $comment
-     *
-     * @return ServiceType
-     */
-    public function setComment(?bool $comment): ServiceType
-    {
-        $this->comment = $comment;
-
-        return $this;
     }
 }

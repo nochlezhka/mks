@@ -15,61 +15,65 @@ class GeneratedDocument extends BaseEntity implements DownloadableInterface
      * Клиент
      * @ORM\ManyToOne(targetEntity="Client", inversedBy="generatedDocuments")
      */
-    private ?Client $client = null;
+    private $client;
 
     /**
      * Номер
      * @ORM\Column(type="string", nullable=true)
      */
-    private ?string $number = null;
+    private $number;
 
     /**
      * Тип
      * @ORM\ManyToOne(targetEntity="GeneratedDocumentType")
      */
-    private ?GeneratedDocumentType $type = null;
+    private $type;
 
     /**
      * Начальный текст
      * @ORM\ManyToOne(targetEntity="GeneratedDocumentStartText")
      */
-    private ?GeneratedDocumentStartText $startText = null;
+    private $startText;
 
     /**
      * Конечный текст
      * @ORM\ManyToOne(targetEntity="GeneratedDocumentEndText")
      */
-    private ?GeneratedDocumentEndText $endText = null;
+    private $endText;
 
     /**
      * Текст
      * @ORM\Column(type="text", nullable=true)
      */
-    private ?string $text = null;
+    private $text;
 
     /**
      * Для кого
      * @ORM\Column(type="text", nullable=true)
      */
-    private ?string $whom = null;
+    private $whom;
 
     /**
      * Подпись
      * @ORM\Column(type="text", nullable=true)
      */
-    private ?string $signature = null;
+    private $signature;
 
     /**
      * {@inheritdoc}
      */
-    public function getNamePrefix(): string
+    public function getNamePrefix()
     {
         return 'generated-document';
     }
 
     public function __toString()
     {
-        return $this->type->getName();
+        if ($this->type instanceof GeneratedDocumentType) {
+            return (string)$this->type->getName();
+        }
+
+        return '';
     }
 
     /**
@@ -79,7 +83,7 @@ class GeneratedDocument extends BaseEntity implements DownloadableInterface
      *
      * @return GeneratedDocument
      */
-    public function setNumber(?string $number): GeneratedDocument
+    public function setNumber($number)
     {
         $this->number = $number;
 
@@ -91,7 +95,7 @@ class GeneratedDocument extends BaseEntity implements DownloadableInterface
      *
      * @return string
      */
-    public function getNumber(): ?string
+    public function getNumber()
     {
         return $this->number;
     }
@@ -99,11 +103,11 @@ class GeneratedDocument extends BaseEntity implements DownloadableInterface
     /**
      * Set text
      *
-     * @param string|null $text
+     * @param string $text
      *
      * @return GeneratedDocument
      */
-    public function setText(?string $text): GeneratedDocument
+    public function setText($text)
     {
         $this->text = $text;
 
@@ -115,7 +119,7 @@ class GeneratedDocument extends BaseEntity implements DownloadableInterface
      *
      * @return string
      */
-    public function getText(): ?string
+    public function getText()
     {
         return $this->text;
     }
@@ -123,11 +127,11 @@ class GeneratedDocument extends BaseEntity implements DownloadableInterface
     /**
      * Set whom
      *
-     * @param string|null $whom
+     * @param string $whom
      *
      * @return GeneratedDocument
      */
-    public function setWhom(?string $whom): GeneratedDocument
+    public function setWhom($whom)
     {
         $this->whom = $whom;
 
@@ -139,7 +143,7 @@ class GeneratedDocument extends BaseEntity implements DownloadableInterface
      *
      * @return string
      */
-    public function getWhom(): ?string
+    public function getWhom()
     {
         return $this->whom;
     }
@@ -147,11 +151,11 @@ class GeneratedDocument extends BaseEntity implements DownloadableInterface
     /**
      * Set signature
      *
-     * @param string|null $signature
+     * @param string $signature
      *
      * @return GeneratedDocument
      */
-    public function setSignature(?string $signature): GeneratedDocument
+    public function setSignature($signature)
     {
         $this->signature = $signature;
 
@@ -163,7 +167,7 @@ class GeneratedDocument extends BaseEntity implements DownloadableInterface
      *
      * @return string
      */
-    public function getSignature(): ?string
+    public function getSignature()
     {
         return $this->signature;
     }
@@ -171,11 +175,11 @@ class GeneratedDocument extends BaseEntity implements DownloadableInterface
     /**
      * Set client
      *
-     * @param Client|null $client
+     * @param \AppBundle\Entity\Client $client
      *
      * @return GeneratedDocument
      */
-    public function setClient(Client $client): GeneratedDocument
+    public function setClient(Client $client = null)
     {
         $this->client = $client;
 
@@ -185,9 +189,9 @@ class GeneratedDocument extends BaseEntity implements DownloadableInterface
     /**
      * Get client
      *
-     * @return Client
+     * @return \AppBundle\Entity\Client
      */
-    public function getClient(): ?Client
+    public function getClient()
     {
         return $this->client;
     }
@@ -195,11 +199,11 @@ class GeneratedDocument extends BaseEntity implements DownloadableInterface
     /**
      * Set type
      *
-     * @param GeneratedDocumentType|null $type
+     * @param \AppBundle\Entity\GeneratedDocumentType $type
      *
      * @return GeneratedDocument
      */
-    public function setType(GeneratedDocumentType $type): GeneratedDocument
+    public function setType(GeneratedDocumentType $type = null)
     {
         $this->type = $type;
 
@@ -209,9 +213,9 @@ class GeneratedDocument extends BaseEntity implements DownloadableInterface
     /**
      * Get type
      *
-     * @return GeneratedDocumentType
+     * @return \AppBundle\Entity\GeneratedDocumentType
      */
-    public function getType(): ?GeneratedDocumentType
+    public function getType()
     {
         return $this->type;
     }
@@ -219,11 +223,11 @@ class GeneratedDocument extends BaseEntity implements DownloadableInterface
     /**
      * Set startText
      *
-     * @param GeneratedDocumentStartText|null $startText
+     * @param \AppBundle\Entity\GeneratedDocumentStartText $startText
      *
      * @return GeneratedDocument
      */
-    public function setStartText(GeneratedDocumentStartText $startText): GeneratedDocument
+    public function setStartText(GeneratedDocumentStartText $startText = null)
     {
         $this->startText = $startText;
 
@@ -233,9 +237,9 @@ class GeneratedDocument extends BaseEntity implements DownloadableInterface
     /**
      * Get startText
      *
-     * @return GeneratedDocumentStartText
+     * @return \AppBundle\Entity\GeneratedDocumentStartText
      */
-    public function getStartText(): ?GeneratedDocumentStartText
+    public function getStartText()
     {
         return $this->startText;
     }
@@ -243,11 +247,11 @@ class GeneratedDocument extends BaseEntity implements DownloadableInterface
     /**
      * Set endText
      *
-     * @param GeneratedDocumentEndText|null $endText
+     * @param \AppBundle\Entity\GeneratedDocumentEndText $endText
      *
      * @return GeneratedDocument
      */
-    public function setEndText(GeneratedDocumentEndText $endText): GeneratedDocument
+    public function setEndText(GeneratedDocumentEndText $endText = null)
     {
         $this->endText = $endText;
 
@@ -257,9 +261,9 @@ class GeneratedDocument extends BaseEntity implements DownloadableInterface
     /**
      * Get endText
      *
-     * @return GeneratedDocumentEndText
+     * @return \AppBundle\Entity\GeneratedDocumentEndText
      */
-    public function getEndText(): ?GeneratedDocumentEndText
+    public function getEndText()
     {
         return $this->endText;
     }

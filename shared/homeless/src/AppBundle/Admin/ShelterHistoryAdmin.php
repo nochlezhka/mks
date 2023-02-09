@@ -2,9 +2,11 @@
 
 namespace AppBundle\Admin;
 
+use AppBundle\Entity\ShelterHistory;
 use Doctrine\ORM\EntityRepository;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 
 class ShelterHistoryAdmin extends BaseAdmin
 {
@@ -14,6 +16,11 @@ class ShelterHistoryAdmin extends BaseAdmin
     );
 
     protected $translationDomain = 'AppBundle';
+
+    public function configure()
+    {
+        $this->parentAssociationMapping = 'client';
+    }
 
     /**
      * @param FormMapper $formMapper
@@ -25,6 +32,17 @@ class ShelterHistoryAdmin extends BaseAdmin
                 'label' => 'Статус',
                 'required' => true,
                 'class' => 'AppBundle\Entity\ShelterStatus',
+                'query_builder' => function (EntityRepository $er) {
+                    return $er->createQueryBuilder('s')
+                        ->orderBy('s.sort', 'ASC');
+                },
+            ])
+            ->add('leavingReason', 'entity', [
+                'label' => 'Итог проживания',
+                'required' => false,
+                'placeholder' => '',
+                'empty_data' => null,
+                'class' => 'AppBundle\Entity\ShelterLeavingReason',
                 'query_builder' => function (EntityRepository $er) {
                     return $er->createQueryBuilder('s')
                         ->orderBy('s.sort', 'ASC');
@@ -50,13 +68,13 @@ class ShelterHistoryAdmin extends BaseAdmin
                         ->orderBy('r.number', 'ASC');
                 },
             ])
-            ->add('dateFrom', 'Sonata\Form\Type\DatePickerType', [
+            ->add('dateFrom', 'sonata_type_date_picker', [
                 'dp_default_date' => (new \DateTime())->format('Y-m-d'),
                 'format' => 'dd.MM.yyyy',
                 'label' => 'Дата заселения',
                 'required' => false,
             ])
-            ->add('dateTo', 'Sonata\Form\Type\DatePickerType', [
+            ->add('dateTo', 'sonata_type_date_picker', [
                 'dp_default_date' => (new \DateTime())->format('Y-m-d'),
                 'format' => 'dd.MM.yyyy',
                 'label' => 'Дата выселения',
@@ -66,29 +84,33 @@ class ShelterHistoryAdmin extends BaseAdmin
                 'label' => 'Комментарий',
                 'required' => false,
             ])
-            ->add('fluorographyDate', 'Sonata\Form\Type\DatePickerType', [
+            ->add('fluorographyDate', 'sonata_type_date_picker', [
                 'dp_default_date' => (new \DateTime())->format('Y-m-d'),
                 'format' => 'dd.MM.yyyy',
                 'label' => 'Дата флюорографии',
                 'required' => false,
             ])
-            ->add('diphtheriaVaccinationDate', 'Sonata\Form\Type\DatePickerType', [
+            ->add('diphtheriaVaccinationDate', 'sonata_type_date_picker', [
                 'dp_default_date' => (new \DateTime())->format('Y-m-d'),
                 'format' => 'dd.MM.yyyy',
                 'label' => 'Дата прививки от дифтерии',
                 'required' => false,
             ])
-            ->add('hepatitisVaccinationDate', 'Sonata\Form\Type\DatePickerType', [
+            ->add('hepatitisVaccinationDate', 'sonata_type_date_picker', [
                 'dp_default_date' => (new \DateTime())->format('Y-m-d'),
                 'format' => 'dd.MM.yyyy',
                 'label' => 'Дата прививки от гепатита',
                 'required' => false,
             ])
-            ->add('typhusVaccinationDate', 'Sonata\Form\Type\DatePickerType', [
+            ->add('typhusVaccinationDate', 'sonata_type_date_picker', [
                 'dp_default_date' => (new \DateTime())->format('Y-m-d'),
                 'format' => 'dd.MM.yyyy',
                 'label' => 'Дата прививки от тифа',
                 'required' => false,
+            ])
+            ->add('contact_saved', CheckboxType::class, [
+                'label' => 'Контакт клиента записан',
+                'required' => true,
             ]);
     }
 
@@ -106,30 +128,33 @@ class ShelterHistoryAdmin extends BaseAdmin
             ])
             ->add('dateFrom', 'date', [
                 'label' => 'Дата заселения',
-                'pattern' => 'dd.MM.YYYY',
+                'pattern' => 'dd.MM.y',
             ])
             ->add('dateTo', 'date', [
                 'label' => 'Дата выселения',
-                'pattern' => 'dd.MM.YYYY',
+                'pattern' => 'dd.MM.y',
             ])
             ->add('comment', null, [
                 'label' => 'Комментарий',
             ])
+            ->add('leavingReason.leavingReasonAsString', null, [
+                'label' => 'Итог проживания',
+            ])
             ->add('fluorographyDate', 'date', [
                 'label' => 'Дата флюорографии',
-                'pattern' => 'dd.MM.YYYY',
+                'pattern' => 'dd.MM.y',
             ])
             ->add('diphtheriaVaccinationDate', 'date', [
                 'label' => 'Дата прививки от дифтерии',
-                'pattern' => 'dd.MM.YYYY',
+                'pattern' => 'dd.MM.y',
             ])
             ->add('hepatitisVaccinationDate', 'date', [
                 'label' => 'Дата прививки от гепатита',
-                'pattern' => 'dd.MM.YYYY',
+                'pattern' => 'dd.MM.y',
             ])
             ->add('typhusVaccinationDate', 'date', [
                 'label' => 'Дата прививки от тифа',
-                'pattern' => 'dd.MM.YYYY',
+                'pattern' => 'dd.MM.y',
             ])
             ->add('_action', null, [
                 'label' => 'Действие',

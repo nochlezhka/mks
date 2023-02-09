@@ -3,9 +3,7 @@
 namespace AppBundle\Entity;
 
 use AppBundle\Service\DownloadableInterface;
-use DateTime;
 use Doctrine\ORM\Mapping as ORM;
-use Exception;
 
 /**
  * Справка
@@ -17,54 +15,53 @@ class Certificate extends BaseEntity implements DownloadableInterface
      * Город следования
      * @ORM\Column(type="string", nullable=true)
      */
-    private ?string $city = null;
+    private $city;
 
     /**
      * Номер
      * @ORM\Column(type="string", nullable=true)
      */
-    private ?string $number = null;
+    private $number;
 
     /**
      * Дата начала действия
      * @ORM\Column(type="date", nullable=true)
      */
-    private ?DateTime $dateFrom = null;
+    private $dateFrom;
 
     /**
      * Дата окончания действия
      * @ORM\Column(type="date", nullable=true)
-     * @var DateTime|null
      */
-    private ?DateTime $dateTo = null;
+    private $dateTo;
 
     /**
      * Клиент
      * @ORM\ManyToOne(targetEntity="Client", inversedBy="certificates")
      */
-    private ?Client $client = null;
+    private $client;
 
     /**
      * Тип
      * @ORM\ManyToOne(targetEntity="CertificateType")
      */
-    private ?CertificateType $type = null;
+    private $type;
 
     /**
      * Документ
      * @ORM\ManyToOne(targetEntity="Document")
      */
-    private ?Document $document = null;
+    private $document;
 
     /**
      * {@inheritdoc}
      */
-    public function getNamePrefix(): string
+    public function getNamePrefix()
     {
         return 'contract';
     }
 
-    public function setCreatedAt(DateTime $createdAt = null)
+    public function setCreatedAt(\DateTime $createdAt = null)
     {
         $this->dateFrom = $createdAt;
         return parent::setCreatedAt($createdAt);
@@ -72,17 +69,21 @@ class Certificate extends BaseEntity implements DownloadableInterface
 
     public function __toString()
     {
-        return $this->type->getName();
+        if ($this->type instanceof CertificateType) {
+            return (string)$this->type->getName();
+        }
+
+        return '';
     }
 
     /**
      * Set city
      *
-     * @param string|null $city
+     * @param string $city
      *
      * @return Certificate
      */
-    public function setCity(?string $city): Certificate
+    public function setCity($city)
     {
         $this->city = $city;
 
@@ -94,7 +95,7 @@ class Certificate extends BaseEntity implements DownloadableInterface
      *
      * @return string
      */
-    public function getCity(): ?string
+    public function getCity()
     {
         return $this->city;
     }
@@ -102,11 +103,11 @@ class Certificate extends BaseEntity implements DownloadableInterface
     /**
      * Set number
      *
-     * @param string|null $number
+     * @param string $number
      *
      * @return Certificate
      */
-    public function setNumber(?string $number): Certificate
+    public function setNumber($number)
     {
         $this->number = $number;
 
@@ -118,7 +119,7 @@ class Certificate extends BaseEntity implements DownloadableInterface
      *
      * @return string
      */
-    public function getNumber(): ?string
+    public function getNumber()
     {
         return $this->number;
     }
@@ -126,11 +127,11 @@ class Certificate extends BaseEntity implements DownloadableInterface
     /**
      * Set dateFrom
      *
-     * @param DateTime|null $dateFrom
+     * @param \DateTime $dateFrom
      *
      * @return Certificate
      */
-    public function setDateFrom(?DateTime $dateFrom): Certificate
+    public function setDateFrom($dateFrom)
     {
         $this->dateFrom = $dateFrom;
 
@@ -140,12 +141,12 @@ class Certificate extends BaseEntity implements DownloadableInterface
     /**
      * Get dateFrom
      *
-     * @return DateTime
+     * @return \DateTime
      */
-    public function getDateFrom(): ?DateTime
+    public function getDateFrom()
     {
         if ($this->getType()->getSyncId() == CertificateType::TRAVEL || $this->getType()->getSyncId() == CertificateType::REGISTRATION) {
-            return new DateTime();
+            return new \DateTime();
         }
 
         return $this->dateFrom;
@@ -154,11 +155,11 @@ class Certificate extends BaseEntity implements DownloadableInterface
     /**
      * Set dateTo
      *
-     * @param DateTime|null $dateTo
+     * @param \DateTime $dateTo
      *
      * @return Certificate
      */
-    public function setDateTo(?DateTime $dateTo): Certificate
+    public function setDateTo($dateTo)
     {
         $this->dateTo = $dateTo;
 
@@ -168,13 +169,12 @@ class Certificate extends BaseEntity implements DownloadableInterface
     /**
      * Get dateTo
      *
-     * @return DateTime
-     * @throws Exception
+     * @return \DateTime
      */
-    public function getDateTo(): ?DateTime
+    public function getDateTo()
     {
         if ($this->getType()->getSyncId() == CertificateType::TRAVEL || $this->getType()->getSyncId() == CertificateType::REGISTRATION) {
-            return new DateTime(date('Y-m-d', strtotime('+ 1 year', time())));
+            return new \DateTime(date('Y-m-d', strtotime('+ 1 year', time())));
         }
 
         return $this->dateTo;
@@ -183,11 +183,11 @@ class Certificate extends BaseEntity implements DownloadableInterface
     /**
      * Set client
      *
-     * @param Client|null $client
+     * @param \AppBundle\Entity\Client $client
      *
      * @return Certificate
      */
-    public function setClient(Client $client): Certificate
+    public function setClient(Client $client = null)
     {
         $this->client = $client;
 
@@ -197,9 +197,9 @@ class Certificate extends BaseEntity implements DownloadableInterface
     /**
      * Get client
      *
-     * @return Client
+     * @return \AppBundle\Entity\Client
      */
-    public function getClient(): ?Client
+    public function getClient()
     {
         return $this->client;
     }
@@ -207,11 +207,11 @@ class Certificate extends BaseEntity implements DownloadableInterface
     /**
      * Set type
      *
-     * @param CertificateType|null $type
+     * @param \AppBundle\Entity\CertificateType $type
      *
      * @return Certificate
      */
-    public function setType(CertificateType $type): Certificate
+    public function setType(CertificateType $type = null)
     {
         $this->type = $type;
 
@@ -221,9 +221,9 @@ class Certificate extends BaseEntity implements DownloadableInterface
     /**
      * Get type
      *
-     * @return CertificateType
+     * @return \AppBundle\Entity\CertificateType
      */
-    public function getType(): ?CertificateType
+    public function getType()
     {
         return $this->type;
     }
@@ -231,11 +231,11 @@ class Certificate extends BaseEntity implements DownloadableInterface
     /**
      * Set document
      *
-     * @param Document|null $document
+     * @param \AppBundle\Entity\Document $document
      *
      * @return Certificate
      */
-    public function setDocument(Document $document): Certificate
+    public function setDocument(Document $document = null)
     {
         $this->document = $document;
 
@@ -245,9 +245,9 @@ class Certificate extends BaseEntity implements DownloadableInterface
     /**
      * Get document
      *
-     * @return Document
+     * @return \AppBundle\Entity\Document
      */
-    public function getDocument(): ?Document
+    public function getDocument()
     {
         return $this->document;
     }

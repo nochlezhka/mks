@@ -16,6 +16,11 @@ class DocumentAdmin extends BaseAdmin
 
     protected $translationDomain = 'AppBundle';
 
+    public function configure()
+    {
+        $this->parentAssociationMapping = 'client';
+    }
+
     /**
      * @param FormMapper $formMapper
      */
@@ -48,7 +53,7 @@ class DocumentAdmin extends BaseAdmin
             ->add('issued', null, [
                 'label' => 'Кем выдан',
             ])
-            ->add('date', 'Sonata\Form\Type\DatePickerType', [
+            ->add('date', 'sonata_type_date_picker', [
                 'dp_default_date' => (new \DateTime())->format('Y-m-d'),
                 'format' => 'dd.MM.yyyy',
                 'label' => 'Когда выдан',

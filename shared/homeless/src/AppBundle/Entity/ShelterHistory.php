@@ -2,7 +2,6 @@
 
 namespace AppBundle\Entity;
 
-use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -11,86 +10,149 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class ShelterHistory extends BaseEntity
 {
+
+    const REASON_FOR_LEAVING_SUPPORTED_ROOM = 1;
+    const REASON_FOR_LEAVING_RENT_ROOM = 2;
+    const REASON_FOR_LEAVING_VIOLATION = 3;
+    const REASON_FOR_LEAVING_HIMSELF = 4;
+    const REASON_FOR_LEAVING_DEATH = 5;
+    const REASON_FOR_LEAVING_WORK_APARTMENT = 6;
+    const REASON_FOR_LEAVING_OTHER_CITY = 7;
+    const REASON_FOR_LEAVING_PARENTS = 8;
+    const REASON_FOR_LEAVING_DNP_STATE_INSTITUTIONS = 9;
+    const REASON_FOR_LEAVING_OUR_SHELTER = 10;
+    const REASON_FOR_LEAVING_OTHER_SHELTER = 11;
+
+    public static $resultOfStay = [
+       self::REASON_FOR_LEAVING_SUPPORTED_ROOM => 'Съехал в съемную комнату (поддерживаемое проживание)',
+       self::REASON_FOR_LEAVING_RENT_ROOM =>  'Съехал в съемную комнату или хостел',
+       self::REASON_FOR_LEAVING_VIOLATION => 'Выселен за нарушение правил',
+       self::REASON_FOR_LEAVING_HIMSELF => 'Покинул приют по собственному желанию',
+       self::REASON_FOR_LEAVING_DEATH => 'Умер',
+       self::REASON_FOR_LEAVING_WORK_APARTMENT => 'Съехал на работу с проживанием',
+       self::REASON_FOR_LEAVING_OTHER_CITY => 'Уехал в другой город',
+       self::REASON_FOR_LEAVING_PARENTS => 'Съехал к родственникам друзьям',
+       self::REASON_FOR_LEAVING_DNP_STATE_INSTITUTIONS => 'Съехал в интернат или в гос.стационар для людей с инвалидностью',
+       self::REASON_FOR_LEAVING_OUR_SHELTER => 'Съехал в наш приют для пожилых',
+       self::REASON_FOR_LEAVING_OTHER_SHELTER => 'Съехал в ДНП или в другие приюты',
+    ];
+
     /**
      * Комментарий
      * @ORM\Column(type="text", nullable=true)
      */
-    private ?string $comment = null;
+    private $comment;
 
     /**
      * Дата прививки от дифтерии
      * @ORM\Column(type="date", nullable=true)
      */
-    private ?DateTime $diphtheriaVaccinationDate = null;
+    private $diphtheriaVaccinationDate;
 
     /**
      * Дата флюорографии
      * @ORM\Column(type="date", nullable=true)
      */
-    private ?DateTime $fluorographyDate = null;
+    private $fluorographyDate;
 
     /**
      * Дата прививки от гепатита
      * @ORM\Column(type="date", nullable=true)
      */
-    private ?DateTime $hepatitisVaccinationDate = null;
+    private $hepatitisVaccinationDate;
 
     /**
      * Дата прививки от тифа
      * @ORM\Column(type="date", nullable=true)
      */
-    private ?DateTime $typhusVaccinationDate = null;
+    private $typhusVaccinationDate;
+
+    /**
+     * Контакт клиента записан
+     * @ORM\Column(type="smallint")
+     */
+    private $contact_saved;
 
     /**
      * Дата заселения
      * @ORM\Column(type="date", nullable=true)
      */
-    private ?DateTime $dateFrom = null;
+    private $dateFrom;
 
     /**
      * Дата выселения
      * @ORM\Column(type="date", nullable=true)
      */
-    private ?DateTime $dateTo = null;
+    private $dateTo;
 
     /**
      * Комната
      * @ORM\ManyToOne(targetEntity="ShelterRoom")
      */
-    private ?ShelterRoom $room = null;
+    private $room;
 
     /**
      * Клиент
      * @ORM\ManyToOne(targetEntity="Client", inversedBy="shelterHistories")
      */
-    private ?Client $client = null;
+    private $client;
 
     /**
      * Статус
      * @ORM\ManyToOne(targetEntity="ShelterStatus")
      */
-    private ?ShelterStatus $status = null;
+    private $status;
 
     /**
      * Договор
      * @ORM\ManyToOne(targetEntity="Contract")
      */
-    private ?Contract $contract = null;
+    private $contract;
+
+    /**
+     * Причина отбытия
+     * @ORM\ManyToOne(targetEntity="ShelterLeavingReason")
+     */
+    private $leavingReason;
+
+    /**
+     * @return mixed
+     */
+    public function getLeavingReason()
+    {
+        return $this->leavingReason;
+    }
+
+    /**
+     * @param mixed $leavingReason
+     * @return ShelterHistory
+     */
+    public function setLeavingReason($leavingReason)
+    {
+        $this->leavingReason = $leavingReason;
+        return $this;
+    }
+
 
     public function __toString()
     {
         $status = $this->getStatus();
-        return $status->getName();
+
+        if ($status instanceof ShelterStatus) {
+            return (string)$status->getName();
+        }
+
+        return '';
     }
 
     /**
      * Set comment
      *
-     * @param string|null $comment
+     * @param string $comment
      *
      * @return ShelterHistory
      */
-    public function setComment(?string $comment): ShelterHistory
+    public function setComment($comment)
     {
         $this->comment = $comment;
 
@@ -102,7 +164,7 @@ class ShelterHistory extends BaseEntity
      *
      * @return string
      */
-    public function getComment(): ?string
+    public function getComment()
     {
         return $this->comment;
     }
@@ -110,11 +172,11 @@ class ShelterHistory extends BaseEntity
     /**
      * Set diphtheriaVaccinationDate
      *
-     * @param DateTime|null $diphtheriaVaccinationDate
+     * @param \DateTime $diphtheriaVaccinationDate
      *
      * @return ShelterHistory
      */
-    public function setDiphtheriaVaccinationDate(?DateTime $diphtheriaVaccinationDate): ShelterHistory
+    public function setDiphtheriaVaccinationDate($diphtheriaVaccinationDate)
     {
         $this->diphtheriaVaccinationDate = $diphtheriaVaccinationDate;
 
@@ -124,9 +186,9 @@ class ShelterHistory extends BaseEntity
     /**
      * Get diphtheriaVaccinationDate
      *
-     * @return DateTime
+     * @return \DateTime
      */
-    public function getDiphtheriaVaccinationDate(): ?DateTime
+    public function getDiphtheriaVaccinationDate()
     {
         return $this->diphtheriaVaccinationDate;
     }
@@ -134,11 +196,11 @@ class ShelterHistory extends BaseEntity
     /**
      * Set fluorographyDate
      *
-     * @param DateTime|null $fluorographyDate
+     * @param \DateTime $fluorographyDate
      *
      * @return ShelterHistory
      */
-    public function setFluorographyDate(?DateTime $fluorographyDate): ShelterHistory
+    public function setFluorographyDate($fluorographyDate)
     {
         $this->fluorographyDate = $fluorographyDate;
 
@@ -148,9 +210,9 @@ class ShelterHistory extends BaseEntity
     /**
      * Get fluorographyDate
      *
-     * @return DateTime
+     * @return \DateTime
      */
-    public function getFluorographyDate(): ?DateTime
+    public function getFluorographyDate()
     {
         return $this->fluorographyDate;
     }
@@ -158,11 +220,11 @@ class ShelterHistory extends BaseEntity
     /**
      * Set hepatitisVaccinationDate
      *
-     * @param DateTime|null $hepatitisVaccinationDate
+     * @param \DateTime $hepatitisVaccinationDate
      *
      * @return ShelterHistory
      */
-    public function setHepatitisVaccinationDate(?DateTime $hepatitisVaccinationDate): ShelterHistory
+    public function setHepatitisVaccinationDate($hepatitisVaccinationDate)
     {
         $this->hepatitisVaccinationDate = $hepatitisVaccinationDate;
 
@@ -172,9 +234,9 @@ class ShelterHistory extends BaseEntity
     /**
      * Get hepatitisVaccinationDate
      *
-     * @return DateTime
+     * @return \DateTime
      */
-    public function getHepatitisVaccinationDate(): ?DateTime
+    public function getHepatitisVaccinationDate()
     {
         return $this->hepatitisVaccinationDate;
     }
@@ -182,11 +244,11 @@ class ShelterHistory extends BaseEntity
     /**
      * Set typhusVaccinationDate
      *
-     * @param DateTime|null $typhusVaccinationDate
+     * @param \DateTime $typhusVaccinationDate
      *
      * @return ShelterHistory
      */
-    public function setTyphusVaccinationDate(?DateTime $typhusVaccinationDate): ShelterHistory
+    public function setTyphusVaccinationDate($typhusVaccinationDate)
     {
         $this->typhusVaccinationDate = $typhusVaccinationDate;
 
@@ -196,21 +258,43 @@ class ShelterHistory extends BaseEntity
     /**
      * Get typhusVaccinationDate
      *
-     * @return DateTime
+     * @return \DateTime
      */
-    public function getTyphusVaccinationDate(): ?DateTime
+    public function getTyphusVaccinationDate()
     {
         return $this->typhusVaccinationDate;
     }
 
     /**
-     * Set dateFrom
-     *
-     * @param DateTime|null $dateFrom
+     * Set contact_saved
      *
      * @return ShelterHistory
      */
-    public function setDateFrom(?DateTime $dateFrom): ShelterHistory
+    public function setContactSaved($contact_saved)
+    {
+        $this->contact_saved = $contact_saved;
+
+        return $this;
+    }
+
+    /**
+     * Get contact_saved flag
+     *
+     * @return Boolean
+     */
+    public function getContactSaved()
+    {
+        return boolval($this->contact_saved);
+    }
+
+    /**
+     * Set dateFrom
+     *
+     * @param \DateTime $dateFrom
+     *
+     * @return ShelterHistory
+     */
+    public function setDateFrom($dateFrom)
     {
         $this->dateFrom = $dateFrom;
 
@@ -220,9 +304,9 @@ class ShelterHistory extends BaseEntity
     /**
      * Get dateFrom
      *
-     * @return DateTime
+     * @return \DateTime
      */
-    public function getDateFrom(): ?DateTime
+    public function getDateFrom()
     {
         return $this->dateFrom;
     }
@@ -230,11 +314,11 @@ class ShelterHistory extends BaseEntity
     /**
      * Set dateTo
      *
-     * @param DateTime $dateTo
+     * @param \DateTime $dateTo
      *
      * @return ShelterHistory
      */
-    public function setDateTo(?DateTime $dateTo): ShelterHistory
+    public function setDateTo($dateTo)
     {
         $this->dateTo = $dateTo;
 
@@ -244,9 +328,9 @@ class ShelterHistory extends BaseEntity
     /**
      * Get dateTo
      *
-     * @return DateTime
+     * @return \DateTime
      */
-    public function getDateTo(): ?DateTime
+    public function getDateTo()
     {
         return $this->dateTo;
     }
@@ -254,11 +338,11 @@ class ShelterHistory extends BaseEntity
     /**
      * Set room
      *
-     * @param ShelterRoom|null $room
+     * @param \AppBundle\Entity\ShelterRoom $room
      *
      * @return ShelterHistory
      */
-    public function setRoom(ShelterRoom $room): ShelterHistory
+    public function setRoom(ShelterRoom $room = null)
     {
         $this->room = $room;
 
@@ -268,9 +352,9 @@ class ShelterHistory extends BaseEntity
     /**
      * Get room
      *
-     * @return ShelterRoom
+     * @return \AppBundle\Entity\ShelterRoom
      */
-    public function getRoom(): ?ShelterRoom
+    public function getRoom()
     {
         return $this->room;
     }
@@ -278,11 +362,11 @@ class ShelterHistory extends BaseEntity
     /**
      * Set client
      *
-     * @param Client|null $client
+     * @param \AppBundle\Entity\Client $client
      *
      * @return ShelterHistory
      */
-    public function setClient(Client $client): ShelterHistory
+    public function setClient(Client $client = null)
     {
         $this->client = $client;
 
@@ -292,9 +376,9 @@ class ShelterHistory extends BaseEntity
     /**
      * Get client
      *
-     * @return Client
+     * @return \AppBundle\Entity\Client
      */
-    public function getClient(): ?Client
+    public function getClient()
     {
         return $this->client;
     }
@@ -302,11 +386,11 @@ class ShelterHistory extends BaseEntity
     /**
      * Set status
      *
-     * @param ShelterStatus|null $status
+     * @param \AppBundle\Entity\ShelterStatus $status
      *
      * @return ShelterHistory
      */
-    public function setStatus(ShelterStatus $status): ShelterHistory
+    public function setStatus(ShelterStatus $status = null)
     {
         $this->status = $status;
 
@@ -316,9 +400,9 @@ class ShelterHistory extends BaseEntity
     /**
      * Get status
      *
-     * @return ShelterStatus
+     * @return \AppBundle\Entity\ShelterStatus
      */
-    public function getStatus(): ?ShelterStatus
+    public function getStatus()
     {
         return $this->status;
     }
@@ -326,11 +410,11 @@ class ShelterHistory extends BaseEntity
     /**
      * Set contract
      *
-     * @param Contract|null $contract
+     * @param \AppBundle\Entity\Contract $contract
      *
      * @return ShelterHistory
      */
-    public function setContract(Contract $contract): ShelterHistory
+    public function setContract(Contract $contract = null)
     {
         $this->contract = $contract;
 
@@ -340,9 +424,9 @@ class ShelterHistory extends BaseEntity
     /**
      * Get contract
      *
-     * @return Contract
+     * @return \AppBundle\Entity\Contract
      */
-    public function getContract(): ?Contract
+    public function getContract()
     {
         return $this->contract;
     }

@@ -14,6 +14,11 @@ class DistrictAdmin extends BaseAdmin
 
     protected $translationDomain = 'AppBundle';
 
+    public function configure()
+    {
+        $this->parentAssociationMapping = 'region';
+    }
+
     /**
      * @param FormMapper $formMapper
      */

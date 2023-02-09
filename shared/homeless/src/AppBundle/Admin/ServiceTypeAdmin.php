@@ -27,14 +27,6 @@ class ServiceTypeAdmin extends BaseAdmin
             ->add('sort', 'text', [
                 'label' => 'Сортировка',
                 'required' => true,
-            ])
-            ->add('comment', 'checkbox', [
-                'label' => 'Комментарий',
-                'required' => false,
-            ])
-            ->add('amount', 'checkbox', [
-                'label' => 'Сумма',
-                'required' => false,
             ]);
     }
 
@@ -49,12 +41,6 @@ class ServiceTypeAdmin extends BaseAdmin
             ])
             ->add('sort', 'text', [
                 'label' => 'Сортировка',
-            ])
-            ->add('comment', 'boolean', [
-                'label' => 'Комментарий',
-            ])
-            ->add('amount', 'boolean', [
-                'label' => 'Сумма',
             ])
             ->add('_action', null, [
                 'label' => 'Действие',

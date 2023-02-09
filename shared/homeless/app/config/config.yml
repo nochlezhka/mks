@@ -34,35 +34,38 @@ framework:
 
 # Twig Configuration
 twig:
+    date:
+        format: d.m.Y, H:i:s
     debug:            "%kernel.debug%"
     strict_variables: "%kernel.debug%"
     form_themes:
         - 'VichUploaderBundle:Form:fields.html.twig'
         - 'form/fields.html.twig'
-        - 'SonataFormatterBundle:Form:formatter.html.twig'
+    form:
+        resources:
+            - 'SonataFormatterBundle:Form:formatter.html.twig'
 #            - 'SonataMediaBundle:Form:media_widgets.html.twig'
-        - 'SonataCoreBundle:Form:datepicker.html.twig'
-        - 'VichUploaderBundle:Form:fields.html.twig'
+            - 'SonataCoreBundle:Form:datepicker.html.twig'
+            - 'VichUploaderBundle:Form:fields.html.twig'
+    exception_controller: 'FOS\RestBundle\Controller\ExceptionController::showAction'
     globals:
-        org_name_short: "%env(ORG_NAME_SHORT)%"
-        org_name: "%env(ORG_NAME)%"
-        org_description: "%env(ORG_DESCRIPTION)%"
-        org_description_short: "%env(ORG_DESCRIPTION_SHORT)%"
-        org_contacts_full: "%env(ORG_CONTACTS_FULL)%"
-        org_city: "%env(ORG_CITY)%"
-        dispensary_name: "%env(DISPENSARY_NAME)%"
-        dispensary_address: "%env(DISPENSARY_ADDRESS)%"
-        dispensary_phone: "%env(DISPENSARY_PHONE)%"
-        employment_name: "%env(EMPLOYMENT_NAME)%"
-        employment_address: "%env(EMPLOYMENT_ADDRESS)%"
-        employment_inspection: "%env(EMPLOYMENT_INSPECTION)%"
-        sanitation_name: "%env(SANITATION_NAME)%"
-        sanitation_address: "%env(SANITATION_ADDRESS)%"
-        sanitation_time: "%env(SANITATION_TIME)%"
-        logo_path: "%env(LOGO_PATH)%"
+        org_name_short: "%org_name_short%"
+        org_name: "%org_name%"
+        org_description: "%org_description%"
+        org_description_short: "%org_description_short%"
+        org_contacts_full: "%org_contacts_full%"
+        org_city: "%org_city%"
+        dispensary_name: "%dispensary_name%"
+        dispensary_address: "%dispensary_address%"
+        dispensary_phone: "%dispensary_phone%"
+        employment_name: "%employment_name%"
+        employment_address: "%employment_address%"
+        employment_inspection: "%employment_inspection%"
+        sanitation_name: "%sanitation_name%"
+        sanitation_address: "%sanitation_address%"
+        sanitation_time: "%sanitation_time%"
 
 sonata_formatter:
-    default_formatter: richhtml
     formatters:
 #        markdown:
 #            service: sonata.formatter.text.markdown
@@ -95,20 +98,18 @@ sonata_formatter:
 # Doctrine Configuration
 doctrine:
     dbal:
-        driver:   "pdo_mysql"
-        host:     "%env(DB_HOST)%"
-        port:     "%env(DB_PORT)%"
-        dbname:   "%env(DB_NAME)%"
-        user:     "%env(DB_USER)%"
-        password: "%env(DB_PASSWORD)%"
-        server_version: "8.0.29"
+        host:     "%database_host%"
+        port:     "%database_port%"
+        dbname:   "%database_name%"
+        user:     "%database_user%"
+        password: "%database_password%"
         charset:  UTF8
         types:
             json: Sonata\Doctrine\Types\JsonType
         # if using pdo_sqlite as your database driver:
         #   1. add the path in parameters.yml
         #     e.g. database_path: "%kernel.root_dir%/data/data.db3"
-        #   2. Uncomment database_path in parameters.yml
+        #   2. Uncomment database_path in parameters.yml.dist
         #   3. Uncomment next line:
         #     path:     "%database_path%"
 
@@ -138,9 +139,6 @@ fos_user:
     db_driver:      orm # can be orm or odm
     firewall_name:  main
     user_class:     Application\Sonata\UserBundle\Entity\User
-    from_email:
-        address:       webmaster@example.com
-        sender_name:   webmaster
 
     group:
         group_class:   Application\Sonata\UserBundle\Entity\Group
@@ -152,7 +150,7 @@ fos_user:
 
 sonata_admin:
     title:      ' '
-    title_logo: /render/logo.png
+    title_logo: /assetic/logo.png
     security:
         handler: sonata.admin.security.handler.role
     breadcrumbs:
@@ -176,19 +174,22 @@ sonata_admin:
             - bundles/sonataadmin/vendor/waypoints/lib/shortcuts/sticky.min.js
             - bundles/sonataadmin/Admin.js
             - bundles/sonataadmin/treeview.js
-            - bundles/fosckeditor/ckeditor.js
     templates:
         layout: admin/layout.html.twig
         tab_menu_template: admin/tab_menu_template.html.twig
         select: AppBundle:Admin:CRUD:list__select.html.twig
     dashboard:
+        # app.profile:
+        #     label: Личный кабинет
+        #     route: profile
+        #     icon: '<i class="fa fa-user"></i>'
          groups:
              app.clients:
                  label: Клиенты
                  icon: '<i class="fa fa-users"></i>'
                  items:
                       - route: my_clients
-                        label: 'Мои клиенты'
+                        label: 'Клиенты'
                         roles:
                           [ROLE_APP_CLIENT_ADMIN_LIST, ROLE_ADMIN]
                       - route: add_client
@@ -199,48 +200,64 @@ sonata_admin:
                         label: 'Мои бывшие клиенты'
                         roles:
                           [ROLE_APP_CLIENT_ADMIN_LIST, ROLE_ADMIN]
+
+            #  app.shelter_room:
+            #      label: Управление комнатами
+            #      icon: '<i class="fa fa-home" aria-hidden="true"></i>'
+            #      items:
+            #          - route: shelter_room
+            #            label: 'Все комнаты'
+            #            roles:
+            #             [ ROLE_ADMIN ]
+
+            #          - route: shelter_room_add
+            #            label: 'Добавить комнату'
+            #            roles:
+            #             [ ROLE_ADMIN ]
+
+
              app.profile:
                  label: Личный кабинет
                  icon: '<i class="fa fa-user"></i>'
-                 items:
-                      - route: my_services
-                        label: 'Оказанные мной услуги'
-                        roles:
-                          [ROLE_APP_SERVICE_ADMIN_ALL, ROLE_ADMIN]
-                      - route: profile
-                        label: 'Мой профиль'
-                        roles:
-                          [ROLE_SONATA_USER_ADMIN_USER_EDIT, ROLE_ADMIN]
+                #  items:
+                    #   - route: my_services
+                    #     label: 'Оказанные мной услуги'
+                    #     roles:
+                    #       [ROLE_APP_SERVICE_ADMIN_ALL, ROLE_ADMIN]
+                    #   - route: profile
+                    #     label: 'Мой профиль'
+                    #     roles:
+                    #       [ROLE_SONATA_USER_ADMIN_USER_EDIT, ROLE_ADMIN]
              app.settings:
                  label: Настройки
                  icon: '<i class="fa fa-wrench"></i>'
                  items:
                       - app.client_field.admin
-                      - app.region.admin
+                    #   - app.region.admin
                       - app.service_type.admin
                       - app.contract_item_type.admin
-                      - app.generated_document_type.admin
-                      - app.generated_document_start_text.admin
-                      - app.generated_document_end_text.admin
                       - app.certificate_type.admin
                       - app.menu_item.admin
                       - app.position.admin
+                      - app.branch.admin
                       - sonata.user.admin.user
                       - sonata.user.admin.group
                       - app.client_form.admin
                       - app.shelter_room.admin
+                      - app.shelter_leaving_reason.admin
+                      - app.delivery_item.admin
+                      - app.generated_document_type.admin
+                      - app.generated_document_start_text.admin
+                      - app.generated_document_end_text.admin
                  roles:
                       [ROLE_ADMIN]
 sonata_user:
     security_acl: false
     manager_type: orm # can be orm or mongodb
-    class:
-        user: Application\Sonata\UserBundle\Entity\User
-        group: Application\Sonata\UserBundle\Entity\Group
-#    profile:
-#        menu:
-#            - { route: 'sonata_user_profile_edit', label: 'link_edit_profile', domain: 'SonataUserBundle'}
-#            - { route: 'sonata_user_profile_edit_authentication', label: 'link_edit_authentication', domain: 'SonataUserBundle'}
+    profile:
+        menu:
+            - { route: 'sonata_user_profile_edit', label: 'link_edit_profile', domain: 'SonataUserBundle'}
+            - { route: 'sonata_user_profile_edit_authentication', label: 'link_edit_authentication', domain: 'SonataUserBundle'}
     admin:                  # Admin Classes
         user:
             class:          Application\Sonata\UserBundle\Admin\UserAdmin
@@ -253,7 +270,7 @@ sonata_user:
     impersonating:
         route: sonata_admin_dashboard
 
-fos_ck_editor:
+ivory_ck_editor:
     default_config: default
     configs:
         news:
@@ -281,8 +298,21 @@ fos_ck_editor:
         default:
             toolbar: [ [ "Source", "-", "Save" ], "/", [ "Anchor" ], "/", [ "Maximize" ] ]
 
-webpack_encore:
-    output_path: "%kernel.project_dir%/web/_assets/js"
+assetic:
+    debug:          "%kernel.debug%"
+    use_controller: false
+    bundles:        [ ]
+    filters:
+        cssrewrite: ~
+    assets:
+        jpeg_camera:
+            inputs:
+                - '%kernel.root_dir%/Resources/js/swfobject.min.js'
+                - '%kernel.root_dir%/Resources/js/canvas-to-blob.min.js'
+                - '%kernel.root_dir%/Resources/js/jpeg_camera.min.js'
+        logo:
+            inputs:
+                - '%kernel.root_dir%/Resources/img/logo.png'
 
 fos_rest:
     param_fetcher_listener: true
@@ -300,7 +330,7 @@ fos_rest:
 
 
 sensio_framework_extra:
-    view: { annotations: true }
+    view: { annotations: false }
     router:  { annotations: true }
     request: { converters: true }
 

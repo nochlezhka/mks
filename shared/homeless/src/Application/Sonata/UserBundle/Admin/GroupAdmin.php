@@ -22,7 +22,7 @@ class GroupAdmin extends BaseGroupAdmin
     /**
      * {@inheritdoc}
      */
-    protected function configureDatagridFilters(DatagridMapper $datagridMapper): void
+    protected function configureDatagridFilters(DatagridMapper $datagridMapper)
     {
         $datagridMapper
             ->add('name', null, ['advanced_filter' => false,]);

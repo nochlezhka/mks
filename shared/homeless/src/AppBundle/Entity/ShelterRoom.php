@@ -14,39 +14,39 @@ class ShelterRoom extends BaseEntity
      * Номер
      * @ORM\Column(type="string", nullable=true)
      */
-    private ?string $number = null;
+    private $number;
 
     /**
      * Максимальное количество жильцов
      * @ORM\Column(type="integer", nullable=true)
      */
-    private ?int $maxOccupants = null;
+    private $maxOccupants;
 
     /**
      * Текущее количество жильцов
      * @ORM\Column(type="integer", nullable=true)
      */
-    private ?int $currentOccupants = null;
+    private $currentOccupants;
 
     /**
      * Комментарий
      * @ORM\Column(type="text", nullable=true)
      */
-    private ?string $comment = null;
+    private $comment;
 
     public function __toString()
     {
-        return $this->number;
+        return (string)$this->number;
     }
 
     /**
      * Set number
      *
-     * @param string|null $number
+     * @param string $number
      *
      * @return ShelterRoom
      */
-    public function setNumber(?string $number): ShelterRoom
+    public function setNumber($number)
     {
         $this->number = $number;
 
@@ -54,11 +54,21 @@ class ShelterRoom extends BaseEntity
     }
 
     /**
+     * Get id
+     *
+     * @return integer
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
      * Get number
      *
      * @return string
      */
-    public function getNumber(): ?string
+    public function getNumber()
     {
         return $this->number;
     }
@@ -66,11 +76,11 @@ class ShelterRoom extends BaseEntity
     /**
      * Set maxOccupants
      *
-     * @param int|null $maxOccupants
+     * @param integer $maxOccupants
      *
      * @return ShelterRoom
      */
-    public function setMaxOccupants(?int $maxOccupants): ShelterRoom
+    public function setMaxOccupants($maxOccupants)
     {
         $this->maxOccupants = $maxOccupants;
 
@@ -82,7 +92,7 @@ class ShelterRoom extends BaseEntity
      *
      * @return integer
      */
-    public function getMaxOccupants(): ?int
+    public function getMaxOccupants()
     {
         return $this->maxOccupants;
     }
@@ -90,11 +100,11 @@ class ShelterRoom extends BaseEntity
     /**
      * Set currentOccupants
      *
-     * @param int|null $currentOccupants
+     * @param integer $currentOccupants
      *
      * @return ShelterRoom
      */
-    public function setCurrentOccupants(?int $currentOccupants): ShelterRoom
+    public function setCurrentOccupants($currentOccupants)
     {
         $this->currentOccupants = $currentOccupants;
 
@@ -106,7 +116,7 @@ class ShelterRoom extends BaseEntity
      *
      * @return integer
      */
-    public function getCurrentOccupants(): ?int
+    public function getCurrentOccupants()
     {
         return $this->currentOccupants;
     }
@@ -114,11 +124,11 @@ class ShelterRoom extends BaseEntity
     /**
      * Set comment
      *
-     * @param string|null $comment
+     * @param string $comment
      *
      * @return ShelterRoom
      */
-    public function setComment(?string $comment): ShelterRoom
+    public function setComment($comment)
     {
         $this->comment = $comment;
 
@@ -130,7 +140,7 @@ class ShelterRoom extends BaseEntity
      *
      * @return string
      */
-    public function getComment(): ?string
+    public function getComment()
     {
         return $this->comment;
     }

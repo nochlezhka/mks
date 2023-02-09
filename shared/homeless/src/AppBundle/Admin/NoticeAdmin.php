@@ -17,6 +17,11 @@ class NoticeAdmin extends BaseAdmin
 
     protected $translationDomain = 'AppBundle';
 
+    public function configure()
+    {
+        $this->parentAssociationMapping = 'client';
+    }
+
     /**
      * @param FormMapper $formMapper
      */
@@ -27,7 +32,7 @@ class NoticeAdmin extends BaseAdmin
                 'label' => 'Текст',
                 'required' => true,
             ])
-            ->add('date', 'Sonata\Form\Type\DatePickerType', [
+            ->add('date', 'sonata_type_date_picker', [
                 'view_timezone' => $this->getParameter('admin_view_timezone'),
                 'label' => 'Дата',
                 'format' => 'dd.MM.yyyy',
@@ -76,8 +81,7 @@ class NoticeAdmin extends BaseAdmin
     protected function configureDatagridFilters(DatagridMapper $datagridMapper)
     {
         $datagridMapper
-            ->add('date', 'doctrine_orm_date_range', ['label' => 'Дата', 'advanced_filter' => false,],
-                'Sonata\Form\Type\DateRangePickerType',
+            ->add('date', 'doctrine_orm_date_range', ['label' => 'Дата', 'advanced_filter' => false,], 'sonata_type_date_range_picker',
                 [
                     'field_options_start' => [
                         'label' => 'От',
@@ -96,8 +100,8 @@ class NoticeAdmin extends BaseAdmin
                     'field_options' => [
                         'label' => ' ',
                         'choices' => [
-                            'Да' => 1,
-                            'Нет' => 2,
+                            1 => 'Да',
+                            2 => 'Нет',
                         ],
                     ],
                     'advanced_filter' => false,
@@ -190,14 +194,14 @@ class NoticeAdmin extends BaseAdmin
         $this
             ->getConfigurationPool()
             ->getContainer()
-            ->get('security.token_storage')
+            ->get('security.context')
             ->getToken()
             ->getUser();
 
         $user = $this
             ->getConfigurationPool()
             ->getContainer()
-            ->get('security.token_storage')
+            ->get('security.context')
             ->getToken()
             ->getUser();
 

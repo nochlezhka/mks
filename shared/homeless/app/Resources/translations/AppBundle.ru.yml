@@ -63,6 +63,8 @@ breadcrumb:
       link_certificate_type_create: Создать
       link_certificate_type_delete: Удалить
       link_menu_item_list: Отображение разделов
+      link_branch_list: Отделения
+      link_position_list: Должности
       link_menu_item_create: Создать
       link_menu_item_delete: Удалить
       link_client_form_list: Редактирование форм
@@ -71,9 +73,7 @@ breadcrumb:
       link_client_form_field_create: Создание поля формы
       link_resident_form_response_list: Анкеты проживающего
       link_resident_form_response_create: Заполнение анкеты проживающего
-      link_shelter_room_list: Список комнат
-      link_shelter_room_delete: Удалить комнату
-      link_shelter_room_create: Добавить комнату
+      link_resident_form_response_delete: Удаление анкеты проживающего
 
 ClientFormField: Поле формы
 

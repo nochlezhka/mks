@@ -47,10 +47,10 @@ class ClientFieldAdmin extends BaseAdmin
             ->add('type', 'choice', [
                 'label' => 'Тип',
                 'choices' => [
-                    'Текст' => ClientField::TYPE_TEXT,
-                    'Выбор варианта' => ClientField::TYPE_OPTION,
-                    'Файл' => ClientField::TYPE_FILE,
-                    'Дата/время' => ClientField::TYPE_DATETIME,
+                    ClientField::TYPE_TEXT => 'Текст',
+                    ClientField::TYPE_OPTION => 'Выбор варианта',
+                    ClientField::TYPE_FILE => 'Файл',
+                    ClientField::TYPE_DATETIME => 'Дата/время',
                 ],
             ])
             ->add('multiple', null, [
@@ -74,10 +74,10 @@ class ClientFieldAdmin extends BaseAdmin
             ->add('type', 'choice', [
                 'label' => 'Тип',
                 'choices' => [
-                    'Текст' => ClientField::TYPE_TEXT,
-                    'Выбор варианта' => ClientField::TYPE_OPTION,
-                    'Файл' => ClientField::TYPE_FILE,
-                    'Дата/время' => ClientField::TYPE_DATETIME,
+                    ClientField::TYPE_TEXT => 'Текст',
+                    ClientField::TYPE_OPTION => 'Выбор варианта',
+                    ClientField::TYPE_FILE => 'Файл',
+                    ClientField::TYPE_DATETIME => 'Дата/время',
                 ],
             ])
             ->add('sort', 'number', [

@@ -32,6 +32,10 @@ class CertificateTypeAdmin extends BaseAdmin
                 'label' => 'Отображать фото клиента',
                 'required' => false,
             ])
+            ->add('showDate', null, [
+                'label' => 'Отображать дату рядом с ФИО сотрудника',
+                'required' => false,
+            ])
             ->add('contentHeaderLeft', null, [
                 'label' => 'Содержимое верхнего левого блока',
                 'required' => false,

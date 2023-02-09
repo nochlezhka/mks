@@ -26,6 +26,8 @@ class ClientFormFieldAdmin extends BaseAdmin
         '_sort_by' => 'sort',
     );
 
+    protected $parentAssociationMapping = 'form';
+
     protected $translationDomain = 'AppBundle';
 
     /**
@@ -41,9 +43,9 @@ class ClientFormFieldAdmin extends BaseAdmin
             ->add('type', ChoiceFieldMaskType::class, [
                 'label' => 'Тип поля',
                 'choices' => [
-                    'Текст' => ClientFormField::TYPE_TEXT,
-                    'Выбор варианта' => ClientFormField::TYPE_OPTION,
-                    'Чекбокс' => ClientFormField::TYPE_CHECKBOX,
+                    ClientFormField::TYPE_TEXT => 'Текст',
+                    ClientFormField::TYPE_OPTION => 'Выбор варианта',
+                    ClientFormField::TYPE_CHECKBOX => 'Чекбокс',
                 ],
                 'map' => [
                     ClientFormField::TYPE_TEXT => [],
@@ -88,9 +90,9 @@ class ClientFormFieldAdmin extends BaseAdmin
             ->add('type', 'choice', [
                 'label' => 'Тип поля',
                 'choices' => [
-                    'Текст' => ClientFormField::TYPE_TEXT,
-                    'Выбор варианта' => ClientFormField::TYPE_OPTION,
-                    'Чекбокс' => ClientFormField::TYPE_CHECKBOX,
+                    ClientFormField::TYPE_TEXT => 'Текст',
+                    ClientFormField::TYPE_OPTION => 'Выбор варианта',
+                    ClientFormField::TYPE_CHECKBOX => 'Чекбокс',
                 ],
             ])
             ->add('options', null, [

@@ -14,27 +14,27 @@ class ContractItemType extends BaseEntity
      * Название
      * @ORM\Column(type="string", nullable=true)
      */
-    private ?string $name = null;
+    private $name;
 
     /**
      * Сокращенное название
      * @ORM\Column(type="string", nullable=true)
      */
-    private ?string $shortName = null;
+    private $shortName;
 
     public function __toString()
     {
-        return $this->name;
+        return (string)$this->name;
     }
 
     /**
      * Set name
      *
-     * @param string|null $name
+     * @param string $name
      *
      * @return ContractItemType
      */
-    public function setName(?string $name): ContractItemType
+    public function setName($name)
     {
         $this->name = $name;
 
@@ -46,7 +46,7 @@ class ContractItemType extends BaseEntity
      *
      * @return string
      */
-    public function getName(): ?string
+    public function getName()
     {
         return $this->name;
     }
@@ -54,11 +54,11 @@ class ContractItemType extends BaseEntity
     /**
      * Set shortName
      *
-     * @param string|null $shortName
+     * @param string $shortName
      *
      * @return ContractItemType
      */
-    public function setShortName(?string $shortName): ContractItemType
+    public function setShortName($shortName)
     {
         $this->shortName = $shortName;
 
@@ -70,7 +70,7 @@ class ContractItemType extends BaseEntity
      *
      * @return string
      */
-    public function getShortName(): ?string
+    public function getShortName()
     {
         return $this->shortName;
     }

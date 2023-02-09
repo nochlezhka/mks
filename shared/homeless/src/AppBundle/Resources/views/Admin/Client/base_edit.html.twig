@@ -7,6 +7,76 @@
         $(document).ready(function () {
             var fieldDependencies = {{ admin.getDependantFields()|json_encode|raw }};
             var formId = '{{ admin.uniqid|e('js') }}';
+
+
+            $('form').on('change changeDate','#' + formId + '_firstname ,#' + formId + '_lastname, #' + formId + '_middlename, #dp_' + formId + '_birthDate',function () {
+
+                var $firstName = $('#' + formId + '_firstname');
+                var $lastName = $('#' + formId + '_lastname');
+                var $middleName = $('#' + formId + '_middlename');
+                var $birthDate = $('#' + formId + '_birthDate');
+
+                var $form = $(this).closest('form');
+
+                var data = {};
+
+                data[$firstName.attr('name')] = $firstName.val();
+                data[$lastName.attr('name')] = $lastName.val();
+                data[$middleName.attr('name')] = $middleName.val();
+                data[$birthDate.attr('name')] = $birthDate.val();
+
+                if ($birthDate.val() && !($firstName.val() || $lastName.val() || $middleName.val())) {
+                    return;
+                }
+
+                if (!$birthDate.val() && !($firstName.val() && $lastName.val() && $middleName.val())) {
+                    return;
+                }
+
+                $.ajax({
+                    url : '{{ admin.generateUrl('clientMatches', {'uniqid': admin.uniqid,'id': object.id}) }}',
+                    type: $form.attr('method'),
+                    data : data,
+                    success: function(response) {
+
+                        if(response.ok === 1) {
+                            var $container = $('<ul></ul>', {
+                                'class': 'results-list'
+                            });
+                            var $list = '';
+
+                            $.each(response.clients,function(k,v) {
+                                $list += '<li><a href="' + v.url + '" target="_blank">' + v.lastname + ' ' + v.firstname + ' ' + v.middlename + '('+ v.birthDate +')</a></li>';
+                            });
+
+                            $container.html($list);
+                            $('#clientMatches .modal-body').html($container);
+                            $('#clientMatches').modal('toggle');
+                        }
+
+                    }
+                });
+
+            });
+
+            $('form select').each(function(i){
+                this.addEventListener('invalid', function(e){
+                    var _s2Id = 's2id_'+e.target.id; //s2 autosuggest html ul li element id
+                    var _posS2 = $('#'+_s2Id).position();
+                    //get the current position of respective select2
+                    $('#'+_s2Id+' ul').addClass('_invalid'); //add this class with border:1px solid red;
+                    //this will reposition the hidden select2 just behind the actual select2 autosuggest field with z-index = -1
+                    $('#'+e.target.id).attr('style','display:block !important;position:absolute;z-index:-1;top:'+(_posS2.top-$('#'+_s2Id).outerHeight()-24)+'px;left:'+(_posS2.left-($('#'+_s2Id).width()/2))+'px;');
+                    /*
+                    //Adjust the left and top position accordingly
+                    */
+                    //remove invalid class after 3 seconds
+                    setTimeout(function(){
+                        $('#'+_s2Id+' ul').removeClass('_invalid');
+                    },3000);
+                    return true;
+                }, false);
+            });
             $('.changeSelectinsData, .changeSelectinsData .iCheck-helper').on('click', function (event) {
                 on_is_homeless_changed(
                     !$(event.currentTarget).parents('.form-group').find('[type="checkbox"]').prop('checked')
@@ -93,4 +163,24 @@
             }
         });
     </script>
+
+    <!-- Modal -->
+    <div class="modal fade" id="clientMatches" tabindex="-1" role="dialog" aria-labelledby="title" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="title">Совпадения</h4>
+                </div>
+                <div class="modal-body">
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

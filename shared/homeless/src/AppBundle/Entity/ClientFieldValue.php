@@ -2,7 +2,6 @@
 
 namespace AppBundle\Entity;
 
-use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -21,43 +20,43 @@ class ClientFieldValue extends BaseEntity
      * Поле
      * @ORM\ManyToOne(targetEntity="ClientField")
      */
-    private ?ClientField $field = null;
+    private $field;
 
     /**
      * Клиент
      * @ORM\ManyToOne(targetEntity="Client", inversedBy="fieldValues")
      */
-    private ?Client $client = null;
+    private $client;
 
     /**
      * Значение поля - текст
      * @ORM\Column(type="text", nullable=true)
      */
-    private ?string $text = null;
+    private $text;
 
     /**
      * Значение поля - дата/время
      * @ORM\Column(type="datetime", nullable=true)
      */
-    private ?DateTime $datetime = null;
+    private $datetime;
 
     /**
      * Вариант значения (если поле не multiple)
      * @ORM\ManyToOne(targetEntity="ClientFieldOption")
      */
-    private ?ClientFieldOption $option = null;
+    private $option;
 
     /**
      * Варианты значений (если поле multiple)
      * @ORM\ManyToMany(targetEntity="ClientFieldOption")
      */
-    private Collection $options;
+    private $options;
 
     /**
      * Имя файла для файлового поля
      * @ORM\Column(type="string", nullable=true)
      */
-    private ?DateTime $filename = null;
+    private $filename;
 
     /**
      * Значение поля - файл
@@ -70,12 +69,12 @@ class ClientFieldValue extends BaseEntity
         return $this->file;
     }
 
-    public function setFile($file = null): ClientFieldValue
+    public function setFile($file = null)
     {
         $this->file = $file;
 
         if ($file) {
-            $this->setUpdatedAt(new DateTime());
+            $this->setUpdatedAt(new \DateTime());
         }
 
         return $this;
@@ -83,10 +82,14 @@ class ClientFieldValue extends BaseEntity
 
     /**
      * Возвращает значение в зависимости от типа поля
-     * @return ClientFieldOption|DateTime|Collection|null|string
+     * @return ClientFieldOption|\DateTime|Collection|null|string
      */
     public function getValue()
     {
+        if (!$this->field instanceof ClientField) {
+            return null;
+        }
+
         $type = $this->field->getType();
 
         if ($type == ClientField::TYPE_TEXT) {
@@ -115,10 +118,14 @@ class ClientFieldValue extends BaseEntity
     /**
      * Устанавливает значение в зависимости от типа поля
      * @param $value
-     * @return ClientFieldValue
+     * @return ClientFieldOption|\DateTime|Collection|null|string
      */
-    public function setValue($value): ?ClientFieldValue
+    public function setValue($value)
     {
+        if (!$this->field instanceof ClientField) {
+            return null;
+        }
+
         $type = $this->field->getType();
 
         if ($type == ClientField::TYPE_TEXT) {
@@ -147,11 +154,11 @@ class ClientFieldValue extends BaseEntity
     /**
      * Set text
      *
-     * @param string|null $text
+     * @param string $text
      *
      * @return ClientFieldValue
      */
-    public function setText(?string $text): ClientFieldValue
+    public function setText($text)
     {
         $this->text = $text;
 
@@ -163,7 +170,7 @@ class ClientFieldValue extends BaseEntity
      *
      * @return string
      */
-    public function getText(): ?string
+    public function getText()
     {
         return $this->text;
     }
@@ -171,11 +178,11 @@ class ClientFieldValue extends BaseEntity
     /**
      * Set datetime
      *
-     * @param DateTime|null $datetime
+     * @param \DateTime $datetime
      *
      * @return ClientFieldValue
      */
-    public function setDatetime(?DateTime $datetime): ClientFieldValue
+    public function setDatetime($datetime)
     {
         $this->datetime = $datetime;
 
@@ -185,9 +192,9 @@ class ClientFieldValue extends BaseEntity
     /**
      * Get datetime
      *
-     * @return DateTime
+     * @return \DateTime
      */
-    public function getDatetime(): ?DateTime
+    public function getDatetime()
     {
         return $this->datetime;
     }
@@ -195,11 +202,11 @@ class ClientFieldValue extends BaseEntity
     /**
      * Set filename
      *
-     * @param DateTime|null $filename
+     * @param \DateTime $filename
      *
      * @return ClientFieldValue
      */
-    public function setFilename(?DateTime $filename): ClientFieldValue
+    public function setFilename($filename)
     {
         $this->filename = $filename;
 
@@ -209,9 +216,9 @@ class ClientFieldValue extends BaseEntity
     /**
      * Get filename
      *
-     * @return DateTime
+     * @return \DateTime
      */
-    public function getFilename(): ?DateTime
+    public function getFilename()
     {
         return $this->filename;
     }
@@ -219,11 +226,11 @@ class ClientFieldValue extends BaseEntity
     /**
      * Set field
      *
-     * @param ClientField|null $field
+     * @param \AppBundle\Entity\ClientField $field
      *
      * @return ClientFieldValue
      */
-    public function setField(ClientField $field): ClientFieldValue
+    public function setField(ClientField $field = null)
     {
         $this->field = $field;
 
@@ -233,9 +240,9 @@ class ClientFieldValue extends BaseEntity
     /**
      * Get field
      *
-     * @return ClientField
+     * @return \AppBundle\Entity\ClientField
      */
-    public function getField(): ?ClientField
+    public function getField()
     {
         return $this->field;
     }
@@ -243,11 +250,11 @@ class ClientFieldValue extends BaseEntity
     /**
      * Set client
      *
-     * @param Client|null $client
+     * @param \AppBundle\Entity\Client $client
      *
      * @return ClientFieldValue
      */
-    public function setClient(Client $client): ClientFieldValue
+    public function setClient(Client $client = null)
     {
         $this->client = $client;
 
@@ -257,9 +264,9 @@ class ClientFieldValue extends BaseEntity
     /**
      * Get client
      *
-     * @return Client
+     * @return \AppBundle\Entity\Client
      */
-    public function getClient(): ?Client
+    public function getClient()
     {
         return $this->client;
     }
@@ -267,11 +274,11 @@ class ClientFieldValue extends BaseEntity
     /**
      * Set option
      *
-     * @param ClientFieldOption|null $option
+     * @param \AppBundle\Entity\ClientFieldOption $option
      *
      * @return ClientFieldValue
      */
-    public function setOption(ClientFieldOption $option): ClientFieldValue
+    public function setOption(ClientFieldOption $option = null)
     {
         $this->option = $option;
 
@@ -281,9 +288,9 @@ class ClientFieldValue extends BaseEntity
     /**
      * Get option
      *
-     * @return ClientFieldOption
+     * @return \AppBundle\Entity\ClientFieldOption
      */
-    public function getOption(): ?ClientFieldOption
+    public function getOption()
     {
         return $this->option;
     }
@@ -299,11 +306,11 @@ class ClientFieldValue extends BaseEntity
     /**
      * Add option
      *
-     * @param ClientFieldOption $option
+     * @param \AppBundle\Entity\ClientFieldOption $option
      *
      * @return ClientFieldValue
      */
-    public function addOption(ClientFieldOption $option): ClientFieldValue
+    public function addOption(ClientFieldOption $option)
     {
         $this->options[] = $option;
 
@@ -313,7 +320,7 @@ class ClientFieldValue extends BaseEntity
     /**
      * Remove option
      *
-     * @param ClientFieldOption $option
+     * @param \AppBundle\Entity\ClientFieldOption $option
      */
     public function removeOption(ClientFieldOption $option)
     {
@@ -330,7 +337,7 @@ class ClientFieldValue extends BaseEntity
         return $this->options;
     }
 
-    public function hasOption(ClientFieldOption $option): bool
+    public function hasOption(ClientFieldOption $option)
     {
         return $this->options->contains($option);
     }
@@ -341,7 +348,7 @@ class ClientFieldValue extends BaseEntity
      * @param Collection $options
      * @return ClientFieldValue
      */
-    public function setOptions(Collection $options): ClientFieldValue
+    public function setOptions(Collection $options)
     {
         $this->options = $options;
 

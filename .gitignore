@@ -1,25 +1,10 @@
-# OS X files
-.history
-.DS_Store
-
-# IntelliJ files
-.idea_modules
-*.iml
-*.iws
-*.ipr
-.idea/
-build/
-*/build/
-out/
-
-# Project files
+.idea
 shared/logs/
 shared/mysql
 shared/homeless/web/images/
+.env
+docker-compose.yml
 backup/
 shared/homeless/.bash_history
 shared/homeless/.composer/
-.env
-/shared/homeless/nbproject
 
-docker/*/files/homeless

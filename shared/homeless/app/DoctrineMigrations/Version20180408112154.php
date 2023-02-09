@@ -2,8 +2,8 @@
 
 namespace Application\Migrations;
 
+use Doctrine\DBAL\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
-use Doctrine\Migrations\AbstractMigration;
 
 /**
  * Auto-generated Migration: Please modify to your needs!
@@ -13,7 +13,7 @@ class Version20180408112154 extends AbstractMigration
     /**
      * @param Schema $schema
      */
-    public function up(Schema $schema): void
+    public function up(Schema $schema)
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
@@ -202,7 +202,7 @@ class Version20180408112154 extends AbstractMigration
         $this->addSql('INSERT INTO `generated_document_type` VALUES (1,NULL,NULL,\'Заявление\',NULL,7,100,\'2017-09-11 20:22:38\',NULL),(2,NULL,NULL,\'Жалоба\',NULL,8,100,\'2017-09-11 20:22:38\',NULL),(3,NULL,NULL,\'Запрос\',NULL,9,100,\'2017-09-11 20:22:38\',NULL),(4,NULL,NULL,\'Благодарность\',NULL,10,100,\'2017-09-11 20:22:38\',NULL)');
 
         // Fill `menu_item`
-        $this->addSql('INSERT INTO `menu_item` VALUES (1,NULL,NULL,\'Проживание в приюте\',\'shelter_history\',0,NULL,100,\'2017-09-12 16:12:41\',NULL),(2,NULL,NULL,\'Выдача справок\',\'certificate\',0,NULL,100,\'2017-09-12 16:12:41\',NULL),(3,NULL,NULL,\'Построение документов\',\'generated_document\',0,NULL,100,\'2017-09-12 16:12:41\',NULL)');
+        $this->addSql('INSERT INTO `menu_item` VALUES (1,NULL,NULL,\'Проживание в приюте\',\'shelter_history\',1,NULL,100,\'2017-09-12 16:12:41\',NULL),(2,NULL,NULL,\'Выдача справок\',\'certificate\',1,NULL,100,\'2017-09-12 16:12:41\',NULL),(3,NULL,NULL,\'Построение документов\',\'generated_document\',1,NULL,100,\'2017-09-12 16:12:41\',NULL)');
 
         // Fill `position`
         $this->addSql('INSERT INTO `position` VALUES (1,NULL,NULL,\'Председатель\',1,100,\'2017-09-11 20:22:38\',NULL),(2,NULL,NULL,\'Социальный работник\',2,100,\'2017-09-11 20:22:38\',NULL),(3,NULL,NULL,\'Юрист\',3,100,\'2017-09-11 20:22:38\',NULL),(4,NULL,NULL,\'Помощник юриста\',4,100,\'2017-09-11 20:22:38\',NULL),(5,NULL,NULL,\'Правовой консультант\',5,100,\'2017-09-11 20:22:38\',NULL),(6,NULL,NULL,\'Менеджер\',6,100,\'2017-09-11 20:22:38\',NULL),(7,NULL,NULL,\'Руководитель консультационной службы\',7,100,\'2017-09-11 20:22:38\',NULL)');
@@ -225,7 +225,7 @@ class Version20180408112154 extends AbstractMigration
     /**
      * @param Schema $schema
      */
-    public function down(Schema $schema): void
+    public function down(Schema $schema)
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');

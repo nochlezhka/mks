@@ -30,6 +30,7 @@ class ClientFormResponseValue extends BaseEntity
     const RESIDENT_QUESTIONNAIRE_TYPE_6_MONTHS = "6 месяцев";
     const RESIDENT_QUESTIONNAIRE_TYPE_1_YEAR = "1 год";
     const RESIDENT_QUESTIONNAIRE_TYPE_2_YEARS = "2 года";
+    const RESIDENT_QUESTIONNAIRE_TYPE_WHEN_LEAVING = "на момент выезда";
 
     /**
      * Анкета
@@ -38,7 +39,7 @@ class ClientFormResponseValue extends BaseEntity
      * @ORM\ManyToOne(targetEntity="ClientFormResponse", inversedBy="values")
      * @ORM\JoinColumn(nullable=false)
      */
-    private ?ClientFormResponse $clientFormResponse = null;
+    private $clientFormResponse;
 
     /**
      * Поле формы
@@ -47,7 +48,7 @@ class ClientFormResponseValue extends BaseEntity
      * @ORM\ManyToOne(targetEntity="ClientFormField")
      * @ORM\JoinColumn(nullable=false)
      */
-    private ?ClientFormField $clientFormField = null;
+    private $clientFormField;
 
     /**
      * Клиент.
@@ -58,7 +59,7 @@ class ClientFormResponseValue extends BaseEntity
      * @ORM\ManyToOne(targetEntity="Client")
      * @ORM\JoinColumn(nullable=false)
      */
-    private ?Client $client = null;
+    private $client;
 
     /**
      * Значение поля
@@ -66,12 +67,12 @@ class ClientFormResponseValue extends BaseEntity
      * @var string
      * @ORM\Column(type="text", nullable=false)
      */
-    private string $value = "";
+    private $value;
 
     /**
      * @return ClientFormResponse
      */
-    public function getClientFormResponse(): ?ClientFormResponse
+    public function getClientFormResponse()
     {
         return $this->clientFormResponse;
     }
@@ -79,7 +80,7 @@ class ClientFormResponseValue extends BaseEntity
     /**
      * @param ClientFormResponse $clientFormResponse
      */
-    public function setClientFormResponse(ClientFormResponse $clientFormResponse)
+    public function setClientFormResponse($clientFormResponse)
     {
         $this->clientFormResponse = $clientFormResponse;
     }
@@ -87,7 +88,7 @@ class ClientFormResponseValue extends BaseEntity
     /**
      * @return ClientFormField
      */
-    public function getClientFormField(): ?ClientFormField
+    public function getClientFormField()
     {
         return $this->clientFormField;
     }
@@ -95,7 +96,7 @@ class ClientFormResponseValue extends BaseEntity
     /**
      * @param ClientFormField $clientFormField
      */
-    public function setClientFormField(ClientFormField $clientFormField)
+    public function setClientFormField($clientFormField)
     {
         $this->clientFormField = $clientFormField;
     }
@@ -103,7 +104,7 @@ class ClientFormResponseValue extends BaseEntity
     /**
      * @return Client
      */
-    public function getClient(): ?Client
+    public function getClient()
     {
         return $this->client;
     }
@@ -111,7 +112,7 @@ class ClientFormResponseValue extends BaseEntity
     /**
      * @param Client $client
      */
-    public function setClient(Client $client)
+    public function setClient($client)
     {
         $this->client = $client;
     }
@@ -119,7 +120,7 @@ class ClientFormResponseValue extends BaseEntity
     /**
      * @return string
      */
-    public function getValue(): string
+    public function getValue()
     {
         return $this->value;
     }
@@ -127,7 +128,7 @@ class ClientFormResponseValue extends BaseEntity
     /**
      * @param string $value
      */
-    public function setValue(string $value)
+    public function setValue($value)
     {
         $this->value = $value;
     }

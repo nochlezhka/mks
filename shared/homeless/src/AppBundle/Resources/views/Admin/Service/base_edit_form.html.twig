@@ -31,7 +31,6 @@
                 {% endblock %}
 
                 {% block sonata_tab_content %}
-                    {% import "SonataAdminBundle:CRUD:base_edit_form_macro.html.twig" as form_helper %}
                     {% set has_tab = ((admin.formtabs|length == 1 and admin.formtabs|keys[0] != 'default') or admin.formtabs|length > 1 ) %}
 
                     <div class="{% if isModal == TRUE %}col-md-9{% else %}col-md-12{% endif %}">
@@ -121,14 +120,14 @@
     {{ sonata_block_render_event('sonata.admin.edit.form.bottom', { 'admin': admin, 'object': object }) }}
 
     <script>
-        $(function () {
+        {# $(function () {
             setTimeout(function () {
                 $('.service_type_select').select2();
                 $('.service_type_select').select2('open');
                 $('#select2-drop-mask').hide();
             }, 400);
 
-        });
+        }); #}
     </script>
     <style>
         .modal-dialog.modal-lg .modal-content form > .row {
@@ -138,6 +137,9 @@
             position: absolute;
             bottom: 0;
             right: 0;
+            margin: 0 0 20px 0;
+            padding: 0;
+            width: auto;
         }
     </style>
 

@@ -3,7 +3,6 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Application\Sonata\UserBundle\Entity\User;
 
 /**
  * Просмотренная анкета клиента (для истории просмотров)
@@ -13,25 +12,25 @@ class ViewedClient extends BaseEntity
 {
     /**
      * Клиент
-     * @ORM\ManyToOne(targetEntity="Client", inversedBy="clientViews")
+     * @ORM\ManyToOne(targetEntity="Client", inversedBy="contracts")
+     * @ORM\JoinColumn(name="client_id", referencedColumnName="id", onDelete="CASCADE")
      */
-    private ?Client $client = null;
+    private $client;
 
     /**
      * Кем создано
      * @ORM\ManyToOne(targetEntity="Application\Sonata\UserBundle\Entity\User", inversedBy="viewedClients")
-     * @var User|null
      */
-    protected ?User $createdBy = null;
+    protected $createdBy;
 
     /**
      * Set client
      *
-     * @param Client|null $client
+     * @param \AppBundle\Entity\Client $client
      *
      * @return ViewedClient
      */
-    public function setClient(Client $client): ViewedClient
+    public function setClient(Client $client = null)
     {
         $this->client = $client;
 
@@ -41,9 +40,9 @@ class ViewedClient extends BaseEntity
     /**
      * Get client
      *
-     * @return Client
+     * @return \AppBundle\Entity\Client
      */
-    public function getClient(): ?Client
+    public function getClient()
     {
         return $this->client;
     }

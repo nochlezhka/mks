@@ -16,24 +16,24 @@ class Meta
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    private int $id = 0;
+    private $id;
 
     /**
      * @var string
      * @ORM\Column(type="string", length=32, unique=true, name="`key`")
      */
-    private string $key = "";
+    private $key;
 
     /**
      * @var string
      * @ORM\Column(type="text")
      */
-    private string $value = "";
+    private $value;
 
     /**
      * @return int
      */
-    public function getId(): int
+    public function getId()
     {
         return $this->id;
     }
@@ -41,7 +41,7 @@ class Meta
     /**
      * @param int $id
      */
-    public function setId(int $id)
+    public function setId($id)
     {
         $this->id = $id;
     }
@@ -49,7 +49,7 @@ class Meta
     /**
      * @return string
      */
-    public function getKey(): string
+    public function getKey()
     {
         return $this->key;
     }
@@ -57,7 +57,7 @@ class Meta
     /**
      * @param string $key
      */
-    public function setKey(string $key)
+    public function setKey($key)
     {
         $this->key = $key;
     }
@@ -65,7 +65,7 @@ class Meta
     /**
      * @return string
      */
-    public function getValue(): string
+    public function getValue()
     {
         return $this->value;
     }
@@ -73,7 +73,7 @@ class Meta
     /**
      * @param string $value
      */
-    public function setValue(string $value)
+    public function setValue($value)
     {
         $this->value = $value;
     }

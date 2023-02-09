@@ -89,9 +89,11 @@ class AppHomelessFromDateType extends AbstractType
             if ('choice' === $options['widget']) {
                 // Only pass a subset of the options to children
                 $yearOptions['choices'] = $this->formatTimestamps($formatter, '/y+/', $this->listYears($options['years']));
+                $yearOptions['choices_as_values'] = true;
                 $yearOptions['placeholder'] = $options['placeholder']['year'];
                 $yearOptions['choice_translation_domain'] = $options['choice_translation_domain']['year'];
                 $monthOptions['choices'] = $this->formatTimestamps($formatter, '/[M|L]+/', $this->listMonths($options['months']));
+                $monthOptions['choices_as_values'] = true;
                 $monthOptions['placeholder'] = $options['placeholder']['month'];
                 $monthOptions['choice_translation_domain'] = $options['choice_translation_domain']['month'];
             }
@@ -180,6 +182,12 @@ class AppHomelessFromDateType extends AbstractType
         };
 
         $placeholderNormalizer = function (Options $options, $placeholder) use ($placeholderDefault) {
+            if (ChoiceType::DEPRECATED_EMPTY_VALUE !== $options['empty_value']) {
+                @trigger_error('The form option "empty_value" is deprecated since version 2.6 and will be removed in 3.0. Use "placeholder" instead.', E_USER_DEPRECATED);
+
+                $placeholder = $options['empty_value'];
+            }
+
             if (is_array($placeholder)) {
                 $default = $placeholderDefault($options);
 
@@ -223,6 +231,7 @@ class AppHomelessFromDateType extends AbstractType
             'format' => $format,
             'model_timezone' => null,
             'view_timezone' => null,
+            'empty_value' => ChoiceType::DEPRECATED_EMPTY_VALUE,
             'placeholder' => $placeholder,
             'html5' => true,
             // Don't modify \DateTime classes by reference, we treat
