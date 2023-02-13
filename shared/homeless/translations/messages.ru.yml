@@ -86,6 +86,7 @@ shelter_history: Проживание в приюте
 media: Медиа
 gallery: Галерея
 gallery_item: Изображение в галерее
+render_menu_item: Отображение разделов
 
 
 list:
@@ -111,5 +112,6 @@ show:
   group_notes: Примечания
   group_client_fields: Доп. поля клиентов
   group_choice_field_options: Вариант выбора
+  group_render_menu_item: Отображение разделов
 
 client_fields: Доп. поля клиентов
