@@ -33,6 +33,7 @@ use Sonata\AdminBundle\Show\ShowMapper;
 use Sonata\DoctrineORMAdminBundle\Datagrid\ProxyQueryInterface;
 use Sonata\DoctrineORMAdminBundle\Filter\CallbackFilter;
 use Sonata\DoctrineORMAdminBundle\Filter\DateRangeFilter;
+use Sonata\Form\Type\DateRangePickerType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -651,14 +652,17 @@ class ClientAdmin extends BaseAdmin
                     'advanced_filter' => false,
                 ],
                 [
-                    'field_options_start' => [
-                        'label' => 'От',
-                        'format' => 'dd.MM.yyyy',
-                    ],
-                    'field_options_end' => [
-                        'label' => 'До',
-                        'format' => 'dd.MM.yyyy',
-                    ],
+                    'field_type' => DateRangePickerType::class,
+                    'field_options' => [
+                        'field_options_start' => [
+                            'label' => 'От',
+                            'format' => 'dd.MM.yyyy',
+                        ],
+                        'field_options_end' => [
+                            'label' => 'До',
+                            'format' => 'dd.MM.yyyy',
+                        ]
+                    ]
                 ]
             )
             ->add('contractCreatedBy', CallbackFilter::class, [
