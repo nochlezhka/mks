@@ -81,7 +81,7 @@ class RegionAdmin extends BaseAdmin
 
         $menu->addChild(
             'Районы',
-            ['uri' => $admin->generateUrl('app.district.admin.list', ['id' => $id])]
+            ['uri' => $admin->generateUrl(DistrictAdmin::class . '.list', ['id' => $id])]
         );
     }
 }

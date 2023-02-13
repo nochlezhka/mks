@@ -69,7 +69,7 @@ class ClientFormAdmin extends BaseAdmin
 
         if ($this->isGranted('EDIT')) {
             $menu->addChild('Список полей', [
-                'uri' => $admin->generateUrl('app.client_form_field.admin.list', ['id' => $id])
+                'uri' => $admin->generateUrl(ClientFormFieldAdmin::class . '.list', ['id' => $id])
             ]);
         }
     }
