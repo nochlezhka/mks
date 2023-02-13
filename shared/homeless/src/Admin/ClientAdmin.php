@@ -883,28 +883,28 @@ class ClientAdmin extends BaseAdmin
         if ($this->authorizationChecker->isGranted('ROLE_SUPER_ADMIN') || $this->authorizationChecker->isGranted('ROLE_APP_DOCUMENT_ADMIN_LIST') || $this->authorizationChecker->isGranted('ROLE_APP_DOCUMENT_ADMIN_ALL')) {
             $menu->addChild(
                 'Документы',
-                ['uri' => $admin->generateUrl('app.document.admin.list', ['id' => $id])]
+                ['uri' => $admin->generateUrl(DocumentAdmin::class.'.list', ['id' => $id])]
             );
         }
 
         if ($this->authorizationChecker->isGranted('ROLE_SUPER_ADMIN') || $this->authorizationChecker->isGranted('ROLE_APP_DOCUMENT_FILE_ADMIN_LIST') || $this->authorizationChecker->isGranted('ROLE_APP_DOCUMENT_FILE_ADMIN_ALL')) {
             $menu->addChild(
                 'Файлы',
-                ['uri' => $admin->generateUrl('app.document_file.admin.list', ['id' => $id])]
+                ['uri' => $admin->generateUrl(DocumentFileAdmin::class.'.list', ['id' => $id])]
             );
         }
 
         if ($this->authorizationChecker->isGranted('ROLE_SUPER_ADMIN') || $this->authorizationChecker->isGranted('ROLE_APP_CONTRACT_ADMIN_LIST') || $this->authorizationChecker->isGranted('ROLE_APP_CONTRACT_ADMIN_ALL')) {
             $menu->addChild(
                 'Сервисные планы',
-                ['uri' => $admin->generateUrl('app.contract.admin.list', ['id' => $id])]
+                ['uri' => $admin->generateUrl(ContractAdmin::class.'.list', ['id' => $id])]
             );
         }
         if ($this->isMenuItemEnabled(MenuItem::CODE_SHELTER_HISTORY) && $this->authorizationChecker->isGranted('ROLE_SUPER_ADMIN') || $this->authorizationChecker->isGranted('ROLE_APP_SHELTER_HISTORY_ADMIN_LIST') ||$this->authorizationChecker->isGranted('ROLE_APP_SHELTER_HISTORY_ADMIN_ALL')) {
             if ($this->isMenuItemEnabled(MenuItem::CODE_SHELTER_HISTORY) && $this->isMenuItemEnabledShelterHistory($id)) {
                 $menu->addChild(
                     'Проживание в приюте',
-                    ['uri' => $admin->generateUrl('app.shelter_history.admin.list', ['id' => $id])]
+                    ['uri' => $admin->generateUrl(ShelterHistoryAdmin::class.'.list', ['id' => $id])]
                 );
             }
         }
@@ -915,7 +915,7 @@ class ClientAdmin extends BaseAdmin
                 $name = $clientFormsEnabled ? 'Старая анкета' : 'Анкета';
                 $menu->addChild(
                     $name,
-                    ['uri' => $admin->generateUrl('app.resident_questionnaire.admin.list', ['id' => $id])]
+                    ['uri' => $admin->generateUrl(ResidentQuestionnaireAdmin::class.'.list', ['id' => $id])]
                 );
             }
         }
@@ -924,7 +924,7 @@ class ClientAdmin extends BaseAdmin
                 $name = $clientFormsEnabled ? 'Анкета' : 'Новая анкета';
                 $menu->addChild(
                     $name,
-                    ['uri' => $admin->generateUrl('app.resident_form_response.admin.list', ['id' => $id])]
+                    ['uri' => $admin->generateUrl(ResidentFormResponseAdmin::class.'.list', ['id' => $id])]
                 );
             }
         }
@@ -933,7 +933,7 @@ class ClientAdmin extends BaseAdmin
             if ($this->isMenuItemEnabled(MenuItem::CODE_CERTIFICATE)) {
                 $menu->addChild(
                     'Выдать справку',
-                    ['uri' => $admin->generateUrl('app.certificate.admin.list', ['id' => $id])]
+                    ['uri' => $admin->generateUrl(CertificateAdmin::class.'.list', ['id' => $id])]
                 );
             }
         }
@@ -942,7 +942,7 @@ class ClientAdmin extends BaseAdmin
             if ($this->isMenuItemEnabled(MenuItem::CODE_GENERATED_DOCUMENT)) {
                 $menu->addChild(
                     'Построить документ',
-                    ['uri' => $admin->generateUrl('app.generated_document.admin.list', ['id' => $id])]
+                    ['uri' => $admin->generateUrl(GeneratedDocumentAdmin::class.'.list', ['id' => $id])]
                 );
             }
         }
@@ -961,7 +961,7 @@ class ClientAdmin extends BaseAdmin
 
             $menu->addChild(
                 'Напоминания' . ($noticesCount > 0 ? " ($noticesCount)" : ''),
-                ['uri' => $admin->generateUrl('app.notice.admin.list', ['id' => $id, 'filter' => ['date' => ['value' => ['end' => date('d.m.Y')]], 'viewed' => ['value' => 2]]])]
+                ['uri' => $admin->generateUrl(NoticeAdmin::class.'.list', ['id' => $id, 'filter' => ['date' => ['value' => ['end' => date('d.m.Y')]], 'viewed' => ['value' => 2]]])]
             );
         }
     }
