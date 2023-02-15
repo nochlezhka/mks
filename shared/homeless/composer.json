@@ -38,7 +38,6 @@
         "knplabs/knp-snappy-bundle": "^1.4",
         "knplabs/knp-paginator-bundle": "^6.0",
         "h4cc/wkhtmltopdf-amd64": "^0.12.3",
-        "bongrun/lowrapper": "1.0.5",
         "laminas/laminas-zendframework-bridge": "^1.5",
         "symfony/webpack-encore-bundle": "^1.8",
         "phpoffice/phpspreadsheet": "^1.23",
@@ -47,7 +46,8 @@
         "sonata-project/exporter": "^2.0",
         "twig/extra-bundle": "^2.12|^3.0",
         "twig/twig": "^2.12|^3.0",
-        "mnvx/lowrapper": "^1.0"
+        "mnvx/lowrapper": "^1.0",
+        "twig/intl-extra": "^3.5"
     },
     "autoload": {
         "psr-4": {

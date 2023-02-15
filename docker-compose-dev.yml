@@ -35,6 +35,7 @@ services:
     environment:
       APP_ENV: dev
       LOGO_PATH: '/render/logo.png'
+      BIG_LOGO_PATH: '/render/logo_big.png'
       DB_HOST: db
       DB_NAME: $MYSQL_DATABASE
       DB_PORT: $MYSQL_PORT

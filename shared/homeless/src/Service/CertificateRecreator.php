@@ -25,7 +25,7 @@ class CertificateRecreator
      * Пересоздание всех справок для пользователя
      *
      */
-    public function recreateFor(Client $client): void
+    public function recreateFor(?Client $client): void
     {
         $em = $this->managerRegistry->getManager();
         /** @var Certificate $certificate */

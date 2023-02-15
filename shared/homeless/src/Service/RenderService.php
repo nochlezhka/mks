@@ -10,7 +10,6 @@ use App\Entity\GeneratedDocument;
 use App\Entity\User;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\KernelInterface;
-use Symfony\Component\Templating\EngineInterface;
 use Twig\Environment;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
@@ -62,9 +61,9 @@ class RenderService
             'contentBodyRight' => empty($type->getContentBodyRight()) ? '' : $this->twig->createTemplate($type->getContentBodyRight())->render(['certificate' => $certificate]),
             'contentFooter' => empty($type->getContentFooter()) ? '' : $this->twig->createTemplate($type->getContentFooter())->render(['certificate' => $certificate]),
             'certificate' => $certificate,
-            'rootDir' => $this->kernel->getRootDir(),
-            'webDir' => $this->kernel->getRootDir() . '/../web',
-            'logo' => 'data:image/png;base64,' . base64_encode(file_get_contents(dirname($this->kernel->getRootDir()) . "/public/" . getenv('BIG_LOGO_PATH'))),
+            'rootDir' => $this->kernel->getProjectDir(),
+            'webDir' => $this->kernel->getProjectDir() . '/public',
+            'logo' => 'data:image/png;base64,' . base64_encode(file_get_contents($this->kernel->getProjectDir() . "/public/" . getenv('BIG_LOGO_PATH'))),
             'image' => $image,
             'height' => $height,
             'width' => $width,
@@ -83,9 +82,9 @@ class RenderService
     {
         return $this->twig->render('/pdf/generated_document.html.twig', [
             'document' => $document,
-            'rootDir' => $this->kernel->getRootDir(),
-            'webDir' => $this->kernel->getRootDir() . '/../web',
-            'logo' => 'data:image/png;base64,' . base64_encode(file_get_contents(dirname($this->kernel->getRootDir()) . "/public/" . getenv('BIG_LOGO_PATH'))),
+            'rootDir' => $this->kernel->getProjectDir(),
+            'webDir' => $this->kernel->getProjectDir() . '/public',
+            'logo' => 'data:image/png;base64,' . base64_encode(file_get_contents($this->kernel->getProjectDir() . "/public/" . getenv('BIG_LOGO_PATH'))),
         ]);
     }
 
@@ -112,7 +111,7 @@ class RenderService
             'client' => $client,
             'user' => $user,
             'specialty' => ($user->getPositionText() ?: ($user->getPosition() ? $user->getPosition()->getName() : 'Специалист по социальной работе')),
-            'webDir' => $this->kernel->getRootDir() . '/../web',
+            'webDir' => $this->kernel->getProjectDir() . '/public',
             'image' => $image,
             'height' => $height,
             'width' => $width,
