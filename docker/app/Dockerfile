@@ -1,4 +1,4 @@
-FROM php:7.4.29-fpm-alpine
+FROM php:7.4.29-fpm-alpine3.16
 
 #
 # Setup Moscow time
@@ -24,7 +24,7 @@ RUN addgroup -S --gid 1000 nochlezhka \
 RUN apk update \
  && apk upgrade \
  && apk add --no-cache \
-      nodejs=~16.17 \
+      nodejs=~16.19 \
       yarn=~1.22.19 \
       curl=~7.83 \
       icu-dev=~71.1 \
