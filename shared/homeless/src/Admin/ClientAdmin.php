@@ -284,7 +284,7 @@ class ClientAdmin extends BaseAdmin
 
             $showMapperAdditionalInfoSort = [];
             foreach ($showMapperAdditionalInfo as $key => $item) {
-                $showMapperAdditionalInfoSort[$key % ceil(count($showMapperAdditionalInfo) / 3)][$key / ceil(count($showMapperAdditionalInfo) / 3)] = $item;
+                $showMapperAdditionalInfoSort[$key % ceil(count($showMapperAdditionalInfo) / 3)][(int) ($key / ceil(count($showMapperAdditionalInfo) / 3))] = $item;
             }
 
             foreach ($showMapperAdditionalInfoSort as $showMapperAdditionalInfoSortItems) {
