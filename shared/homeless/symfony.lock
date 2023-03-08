@@ -105,18 +105,6 @@
     "mopa/bootstrap-bundle": {
         "version": "v3.3.1"
     },
-    "nyholm/psr7": {
-        "version": "1.5",
-        "recipe": {
-            "repo": "github.com/symfony/recipes",
-            "branch": "main",
-            "version": "1.0",
-            "ref": "0cd4d2d0e7f646fda75f9944f747a56e6ed13d4c"
-        },
-        "files": [
-            "config/packages/nyholm_psr7.yaml"
-        ]
-    },
     "sensio/distribution-bundle": {
         "version": "v5.0.25"
     },
@@ -208,20 +196,6 @@
     },
     "sonata-project/intl-bundle": {
         "version": "2.7.0"
-    },
-    "sonata-project/media-bundle": {
-        "version": "3.23",
-        "recipe": {
-            "repo": "github.com/symfony/recipes-contrib",
-            "branch": "main",
-            "version": "3.13",
-            "ref": "e25412e53b20827db07abb6f2aa0b8e4d26c284c"
-        },
-        "files": [
-            "config/packages/sonata_media.yaml",
-            "config/routes/sonata_media.yaml",
-            "public/upload/media/.gitignore"
-        ]
     },
     "sonata-project/notification-bundle": {
         "version": "3.6",
