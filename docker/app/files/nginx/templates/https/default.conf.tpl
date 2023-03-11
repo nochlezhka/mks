@@ -6,11 +6,13 @@ server {
     listen 80;
     listen [::]:80;
 
-    server_name ${DOMAIN} www.${DOMAIN};
+    server_name ${DOMAIN};
     server_tokens off;
 
-    location /.well-known/acme-challenge/ {
-        root /var/www/certbot;
+    location ^~ /.well-known/acme-challenge/ {
+        allow all;
+    	default_type "text/plain";
+    	root /var/www/certbot;
     }
 
     location / {
