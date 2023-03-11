@@ -81,17 +81,17 @@ jobs:
         run: |
           echo '### Image version: ' >> $GITHUB_STEP_SUMMARY
           echo '${{ steps.set_version.outputs.safe_version }}${{ env.VERSION_PR }}' >> $GITHUB_STEP_SUMMARY
-      -
-        name: Telegram success notification
-        uses: appleboy/telegram-action@master
-        if: success()
-        with:
-          format: markdown
-          to: ${{ secrets.TELEGRAM_TO }}
-          token: ${{ secrets.TELEGRAM_TOKEN }}
-          message: |
-            *[mks]*
-            ✅ Version *${{ steps.set_version.outputs.safe_version }}${{ env.VERSION_PR }}* has been built successfully from *${{ github.ref }}* branch
+#      -
+#        name: Telegram success notification
+#        uses: appleboy/telegram-action@master
+#        if: success()
+#        with:
+#          format: markdown
+#          to: ${{ secrets.TELEGRAM_TO }}
+#          token: ${{ secrets.TELEGRAM_TOKEN }}
+#          message: |
+#            *[mks]*
+#            ✅ Version *${{ steps.set_version.outputs.safe_version }}${{ env.VERSION_PR }}* has been built successfully from *${{ github.ref }}* branch
       -
         name: Telegram failure notification
         uses: appleboy/telegram-action@master

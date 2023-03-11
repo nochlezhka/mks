@@ -1,0 +1,54 @@
+version: '3.9'
+services:
+  nginx:
+    container_name: nginx
+    image: nochlezhka/mks-app:${MKS_VERSION}
+    entrypoint: ["/etc/nginx/entrypoint.sh"]
+    links:
+      - php
+    ports:
+      - 8080:80
+      - 8443:443
+    restart: always
+    volumes:
+      - "./storage/data/uploads:/var/www/symfony/web/uploads"
+      - "./storage/data/letsencrypt:/etc/letsencrypt:ro"
+      - "./storage/data/certbot:/var/www/certbot:ro"
+    environment:
+      - DOMAIN=${MKS_DOMAIN}
+      - MODE=${NGINX_MODE}
+  certbot:
+    container_name: certbot
+    image: certbot/certbot:v2.4.0
+    depends_on:
+      - nginx
+    profiles:
+      - certbot
+    entrypoint: "/bin/sh -c 'while :; do certbot certonly --reinstall --webroot --webroot-path=/var/www/certbot --email ${MKS_SUPPORT_EMAIL} --agree-tos --no-eff-email -d ${MKS_DOMAIN}; sleep 12h; done'"
+    volumes:
+      - "./storage/data/letsencrypt:/etc/letsencrypt"
+      - "./storage/data/certbot:/var/www/certbot"
+  php:
+    container_name: mks-app
+    image: nochlezhka/mks-app:${MKS_VERSION}
+    links:
+      - db
+    restart: always
+    volumes:
+      - "./storage/data/uploads:/var/www/symfony/web/uploads"
+    env_file:
+      - .env
+  db:
+    container_name: db
+    image: mysql:8.0.30
+    profiles:
+      - local
+    cap_add:
+      - SYS_NICE
+    ports:
+        - 3306:3306
+    restart: always
+    volumes:
+      - "./storage/mysql_data:/var/lib/mysql"
+    env_file:
+      - .env
