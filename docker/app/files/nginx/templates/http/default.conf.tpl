@@ -4,9 +4,7 @@ upstream php-upstream {
 
 server {
     listen 80;
-    server_name _;
-    
-    ${return} 
+    server_name ${DOMAIN};
 
     root /var/www/symfony/web;
 
@@ -36,7 +34,6 @@ server {
         fastcgi_pass php-upstream;
         fastcgi_split_path_info ^(.+\.php)(/.*)$;
         include fastcgi_params;
-        include conf.d/opts.conf;
         fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
         fastcgi_param DOCUMENT_ROOT $realpath_root;
         internal;
