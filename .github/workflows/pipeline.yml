@@ -52,7 +52,7 @@ jobs:
         name: Set application version
         if: github.event_name == 'push'
         id: set_version
-        uses: kvendingoldo/semver-action@v1.11
+        uses: kvendingoldo/semver-action@v1.15
         with:
           primary_branch: master
       -
