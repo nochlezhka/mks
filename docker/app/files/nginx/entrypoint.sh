@@ -31,7 +31,3 @@ do
     /usr/sbin/nginx -s reload
 done &
 /usr/sbin/nginx
-
-
-
-

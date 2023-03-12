@@ -9,7 +9,7 @@ services:
     ports:
       - 8080:80
       - 8443:443
-    restart: always
+    restart: unless-stopped
     volumes:
       - "./storage/data/uploads:/var/www/symfony/web/uploads"
       - "./storage/data/letsencrypt:/etc/letsencrypt:ro"
@@ -31,7 +31,7 @@ services:
   php:
     container_name: mks-app
     image: nochlezhka/mks-app:${MKS_VERSION}
-    restart: always
+    restart: unless-stopped
     volumes:
       - "./storage/data/uploads:/var/www/symfony/web/uploads"
     env_file:
@@ -45,8 +45,8 @@ services:
       - SYS_NICE
     ports:
         - 3306:3306
-    restart: always
+    restart: unless-stopped
     volumes:
-      - "./storage/mysql_data:/var/lib/mysql"
+      - "./storage/mysql/data:/var/lib/mysql"
     env_file:
       - .env
