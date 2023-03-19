@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\Entity;
 
@@ -11,256 +12,133 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity]
 class GeneratedDocument extends BaseEntity implements DownloadableInterface
 {
-    /**
-     * Клиент
-     */
-    #[ORM\ManyToOne(targetEntity: Client::class, inversedBy: "generatedDocuments")]
+    #[ORM\ManyToOne(targetEntity: Client::class, inversedBy: 'generatedDocuments')]
     private ?Client $client = null;
 
-    /**
-     * Номер
-     */
-    #[ORM\Column(type: "string", nullable: true)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $number = null;
 
-    /**
-     * Тип
-     */
     #[ORM\ManyToOne(targetEntity: GeneratedDocumentType::class)]
     private ?GeneratedDocumentType $type = null;
 
-    /**
-     * Начальный текст
-     */
     #[ORM\ManyToOne(targetEntity: GeneratedDocumentStartText::class)]
     private ?GeneratedDocumentStartText $startText = null;
 
-    /**
-     * Конечный текст
-     */
     #[ORM\ManyToOne(targetEntity: GeneratedDocumentEndText::class)]
     private ?GeneratedDocumentEndText $endText = null;
 
-    /**
-     * Текст
-     */
-    #[ORM\Column(type: "text", nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true)]
     private ?string $text = null;
 
-    /**
-     * Для кого
-     */
-    #[ORM\Column(type: "text", nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true)]
     private ?string $whom = null;
 
-    /**
-     * Подпись
-     */
-    #[ORM\Column(type: "text", nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true)]
     private ?string $signature = null;
 
-    /**
-     * {@inheritdoc}
-     */
+    public function __toString(): string
+    {
+        return $this->type->getName() ?? '';
+    }
+
     public function getNamePrefix(): string
     {
         return 'generated-document';
     }
 
-    public function __toString()
+    public function getNumber(): ?string
     {
-        return $this->type->getName();
+        return $this->number;
     }
 
-    /**
-     * Set number
-     *
-     * @param string $number
-     *
-     * @return GeneratedDocument
-     */
-    public function setNumber(?string $number): GeneratedDocument
+    public function setNumber(?string $number): self
     {
         $this->number = $number;
 
         return $this;
     }
 
-    /**
-     * Get number
-     *
-     * @return string
-     */
-    public function getNumber(): ?string
+    public function getText(): ?string
     {
-        return $this->number;
+        return $this->text;
     }
 
-    /**
-     * Set text
-     *
-     * @param string|null $text
-     *
-     * @return GeneratedDocument
-     */
-    public function setText(?string $text): GeneratedDocument
+    public function setText(?string $text): self
     {
         $this->text = $text;
 
         return $this;
     }
 
-    /**
-     * Get text
-     *
-     * @return string
-     */
-    public function getText(): ?string
+    public function getWhom(): ?string
     {
-        return $this->text;
+        return $this->whom;
     }
 
-    /**
-     * Set whom
-     *
-     * @param string|null $whom
-     *
-     * @return GeneratedDocument
-     */
-    public function setWhom(?string $whom): GeneratedDocument
+    public function setWhom(?string $whom): self
     {
         $this->whom = $whom;
 
         return $this;
     }
 
-    /**
-     * Get whom
-     *
-     * @return string
-     */
-    public function getWhom(): ?string
+    public function getSignature(): ?string
     {
-        return $this->whom;
+        return $this->signature;
     }
 
-    /**
-     * Set signature
-     *
-     * @param string|null $signature
-     *
-     * @return GeneratedDocument
-     */
-    public function setSignature(?string $signature): GeneratedDocument
+    public function setSignature(?string $signature): self
     {
         $this->signature = $signature;
 
         return $this;
     }
 
-    /**
-     * Get signature
-     *
-     * @return string
-     */
-    public function getSignature(): ?string
-    {
-        return $this->signature;
-    }
-
-    /**
-     * Set client
-     *
-     * @param Client|null $client
-     *
-     * @return GeneratedDocument
-     */
-    public function setClient(Client $client): GeneratedDocument
+    public function setClient(Client $client): self
     {
         $this->client = $client;
 
         return $this;
     }
 
-    /**
-     * Get client
-     *
-     * @return Client
-     */
     public function getClient(): ?Client
     {
         return $this->client;
     }
 
-    /**
-     * Set type
-     *
-     * @param GeneratedDocumentType|null $type
-     *
-     * @return GeneratedDocument
-     */
-    public function setType(GeneratedDocumentType $type): GeneratedDocument
+    public function getType(): ?GeneratedDocumentType
+    {
+        return $this->type;
+    }
+
+    public function setType(GeneratedDocumentType $type): self
     {
         $this->type = $type;
 
         return $this;
     }
 
-    /**
-     * Get type
-     *
-     * @return GeneratedDocumentType
-     */
-    public function getType(): ?GeneratedDocumentType
+    public function getStartText(): ?GeneratedDocumentStartText
     {
-        return $this->type;
+        return $this->startText;
     }
 
-    /**
-     * Set startText
-     *
-     * @param GeneratedDocumentStartText|null $startText
-     *
-     * @return GeneratedDocument
-     */
-    public function setStartText(GeneratedDocumentStartText $startText): GeneratedDocument
+    public function setStartText(GeneratedDocumentStartText $startText): self
     {
         $this->startText = $startText;
 
         return $this;
     }
 
-    /**
-     * Get startText
-     *
-     * @return GeneratedDocumentStartText
-     */
-    public function getStartText(): ?GeneratedDocumentStartText
+    public function getEndText(): ?GeneratedDocumentEndText
     {
-        return $this->startText;
+        return $this->endText;
     }
 
-    /**
-     * Set endText
-     *
-     * @param GeneratedDocumentEndText|null $endText
-     *
-     * @return GeneratedDocument
-     */
-    public function setEndText(GeneratedDocumentEndText $endText): GeneratedDocument
+    public function setEndText(GeneratedDocumentEndText $endText): self
     {
         $this->endText = $endText;
 
         return $this;
-    }
-
-    /**
-     * Get endText
-     *
-     * @return GeneratedDocumentEndText
-     */
-    public function getEndText(): ?GeneratedDocumentEndText
-    {
-        return $this->endText;
     }
 }

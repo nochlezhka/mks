@@ -108,18 +108,6 @@
     "sensio/distribution-bundle": {
         "version": "v5.0.25"
     },
-    "sensio/framework-extra-bundle": {
-        "version": "5.4",
-        "recipe": {
-            "repo": "github.com/symfony/recipes",
-            "branch": "main",
-            "version": "5.2",
-            "ref": "fb7e19da7f013d0d422fa9bce16f5c510e27609b"
-        },
-        "files": [
-            "config/packages/sensio_framework_extra.yaml"
-        ]
-    },
     "sensio/generator-bundle": {
         "version": "v3.1.7"
     },

@@ -1,10 +1,10 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\EventSubscriber;
 
 use App\Entity\BaseEntityInterface;
 use App\Entity\User;
-use DateTime;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Events;
@@ -19,60 +19,59 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
  * когда создано, кем создано, когда изменено, кем изменено
  */
 #[AutoconfigureTag(name: 'doctrine.event_subscriber', attributes: ['connection' => 'default'])]
-class BaseEntitySubscriber implements EventSubscriber
+readonly class BaseEntitySubscriber implements EventSubscriber
 {
-    private TokenStorageInterface $tokenStorage;
-
-    public function __construct(TokenStorageInterface $tokenStorage)
-    {
-        $this->tokenStorage = $tokenStorage;
-    }
+    public function __construct(
+        private TokenStorageInterface $tokenStorage,
+    ) {}
 
     public function getSubscribedEvents(): array
     {
-        return array(
+        return [
             Events::prePersist,
             Events::preUpdate,
-        );
+        ];
     }
 
-    public function prePersist(LifecycleEventArgs $args)
+    public function prePersist(LifecycleEventArgs $args): void
     {
         $entity = $args->getObject();
         $user = $this->getUser();
 
-        if ($entity instanceof BaseEntityInterface) {
-            if (empty($entity->getCreatedAt())) {
-                $entity->setCreatedAt(new DateTime());
-            }
+        if (!($entity instanceof BaseEntityInterface)) {
+            return;
+        }
 
-            if (empty($entity->getCreatedBy())) {
-                $entity->setCreatedBy($user);
-            }
+        if (empty($entity->getCreatedAt())) {
+            $entity->setCreatedAt(new \DateTimeImmutable());
+        }
+
+        if (empty($entity->getCreatedBy())) {
+            $entity->setCreatedBy($user);
         }
     }
 
-    public function preUpdate(PreUpdateEventArgs $args)
+    public function preUpdate(PreUpdateEventArgs $args): void
     {
         $entity = $args->getObject();
         $user = $this->getUser();
 
-        if ($entity instanceof BaseEntityInterface) {
-            $entity->setUpdatedAt(new DateTime());
-            $entity->setUpdatedBy($user);
+        if (!($entity instanceof BaseEntityInterface)) {
+            return;
         }
+
+        $entity->setUpdatedAt(new \DateTimeImmutable());
+        $entity->setUpdatedBy($user);
     }
 
     public function getUser(): ?User
     {
         $token = $this->tokenStorage->getToken();
-
         if (!$token instanceof TokenInterface) {
             return null;
         }
 
         $user = $token->getUser();
-
         if (!$user instanceof User) {
             return null;
         }

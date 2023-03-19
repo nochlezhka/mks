@@ -1,9 +1,8 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\Admin;
 
-use App\Controller\ClientController;
-use App\Entity\Client;
 use App\Entity\GeneratedDocumentStartText;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
@@ -11,34 +10,27 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
 #[AutoconfigureTag(name: 'sonata.admin', attributes: [
     'manager_type' => 'orm',
-    'label' => 'Преамбулы постр. док-тов',
+    'label' => 'generated_document_start_texts',
     'model_class' => GeneratedDocumentStartText::class,
-    'label_translator_strategy' => 'sonata.admin.label.strategy.underscore'
+    'label_translator_strategy' => 'sonata.admin.label.strategy.underscore',
 ])]
-class GeneratedDocumentStartTextAdmin extends BaseAdmin
+class GeneratedDocumentStartTextAdmin extends AbstractAdmin
 {
-    protected array $datagridValues = array(
+    protected array $datagridValues = [
         '_sort_order' => 'ASC',
         '_sort_by' => 'name',
-    );
+    ];
 
-    protected string $translationDomain = 'App';
-
-    /**
-     * @param FormMapper $form
-     */
     protected function configureFormFields(FormMapper $form): void
     {
         $form
             ->add('name', null, [
                 'label' => 'Текст',
                 'required' => true,
-            ]);
+            ])
+        ;
     }
 
-    /**
-     * @param ListMapper $list
-     */
     protected function configureListFields(ListMapper $list): void
     {
         $list
@@ -50,7 +42,8 @@ class GeneratedDocumentStartTextAdmin extends BaseAdmin
                 'actions' => [
                     'edit' => [],
                     'delete' => [],
-                ]
-            ]);
+                ],
+            ])
+        ;
     }
 }

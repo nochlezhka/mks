@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\Entity;
 
@@ -13,40 +14,25 @@ class ContractStatus extends BaseEntity
     /**
      * SyncId статуса "В процессе выполнения"
      */
-    const IN_PROCESS = 1;
+    public const IN_PROCESS = 1;
 
-    /**
-     * Название
-     */
-    #[ORM\Column(type: "string", nullable: true)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $name = null;
 
-    public function __toString()
+    public function __toString(): string
+    {
+        return $this->name ?? '';
+    }
+
+    public function getName(): ?string
     {
         return $this->name;
     }
 
-    /**
-     * Set name
-     *
-     * @param string|null $name
-     *
-     * @return ContractStatus
-     */
-    public function setName(?string $name): ContractStatus
+    public function setName(?string $name): self
     {
         $this->name = $name;
 
         return $this;
-    }
-
-    /**
-     * Get name
-     *
-     * @return string
-     */
-    public function getName(): ?string
-    {
-        return $this->name;
     }
 }

@@ -1,11 +1,12 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\Entity;
 
-use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
@@ -15,147 +16,124 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 #[Vich\Uploadable]
 class Client extends BaseEntity
 {
-    /**
-     * Мужской пол
-     */
-    const GENDER_MALE = 1;
+    public const GENDER_MALE = 1;
+    public const GENDER_FEMALE = 2;
 
     /**
-     * Женский пол
+     * Значения дополнительных полей клиента, установленных при сохранении
+     * для обработки в методах prePersist и preUpdate админки App\Admin\ClientAdmin
      */
-    const GENDER_FEMALE = 2;
+    public array $additionalFieldValues = [];
+
+    /**
+     * Коды полей, для которых необходимо удалить объекты значений
+     * для обработки в методах prePersist и preUpdate админки App\Admin\ClientAdmin
+     *
+     * @var array<string>
+     */
+    public array $additionalFieldValuesToRemove = [];
 
     /**
      * Название файла с фотографией (хранится с помощью VichUploaderBundle)
      */
-    #[ORM\Column(type: "string", nullable: true)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $photoName = null;
 
-    /**
-     * Дата рождения
-     */
-    #[ORM\Column(type: "date", nullable: true)]
-    private ?DateTime $birthDate = null;
+    #[ORM\Column(type: 'date_immutable', nullable: true)]
+    private ?\DateTimeImmutable $birthDate = null;
 
-    /**
-     * Место рождения
-     */
-    #[ORM\Column(type: "string", nullable: true)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $birthPlace = null;
 
-    /**
-     * Пол
-     */
-    #[ORM\Column(type: "integer", nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $gender = null;
 
-    /**
-     * Имя
-     */
-    #[ORM\Column(type: "string", nullable: true)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $firstname = null;
 
-    /**
-     * Отчество
-     */
-    #[ORM\Column(type: "string", nullable: true)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $middlename = null;
 
-    /**
-     * Фамилия
-     */
-    #[ORM\Column(type: "string", nullable: true)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $lastname = null;
 
-    /**
-     * Фамилия
-     */
-    #[ORM\Column(type: "boolean", nullable: true)]
-    private ?bool $isHomeless = true;
+    #[ORM\Column(type: 'boolean', nullable: true)]
+    private bool $isHomeless = true;
 
     /**
      * Место последнего проживания
      */
     #[ORM\ManyToOne(targetEntity: District::class)]
-    #[ORM\JoinColumn(name: "last_residence_district_id", referencedColumnName: "id")]
+    #[ORM\JoinColumn(name: 'last_residence_district_id', referencedColumnName: 'id')]
     private ?District $lastResidenceDistrict = null;
 
     /**
      * Место последней регистрации
      */
     #[ORM\ManyToOne(targetEntity: District::class)]
-    #[ORM\JoinColumn(name: "last_registration_district_id", referencedColumnName: "id")]
+    #[ORM\JoinColumn(name: 'last_registration_district_id', referencedColumnName: 'id')]
     private ?District $lastRegistrationDistrict = null;
 
     /**
      * Значения дополнительных полей
      */
-    #[ORM\OneToMany(mappedBy: "client", targetEntity: ClientFieldValue::class, cascade: ["remove"])]
+    #[ORM\OneToMany(mappedBy: 'client', targetEntity: ClientFieldValue::class, cascade: ['remove'])]
     private Collection $fieldValues;
 
-    /**
-     * Примечания
-     */
-    #[ORM\OneToMany(mappedBy: "client", targetEntity: Note::class, cascade: ["remove"])]
-    #[ORM\OrderBy(["createdAt" => "DESC", "id" => "DESC"])]
+    #[ORM\OneToMany(mappedBy: 'client', targetEntity: Note::class, cascade: ['remove'])]
+    #[ORM\OrderBy(['createdAt' => 'DESC', 'id' => 'DESC'])]
     private Collection $notes;
 
     /**
      * Договоры
      */
-    #[ORM\OneToMany(mappedBy: "client", targetEntity: Contract::class, cascade: ["remove"])]
-    #[ORM\OrderBy(["dateFrom" => "DESC"])]
+    #[ORM\OneToMany(mappedBy: 'client', targetEntity: Contract::class, cascade: ['remove'])]
+    #[ORM\OrderBy(['dateFrom' => 'DESC'])]
     private Collection $contracts;
 
-    /**
-     * Документы
-     */
-    #[ORM\OneToMany(mappedBy: "client", targetEntity: Document::class, cascade: ["remove"])]
+    #[ORM\OneToMany(mappedBy: 'client', targetEntity: Document::class, cascade: ['remove'])]
     private Collection $documents;
 
     /**
      * Данные о проживаниях в приюте (договоры о заселении)
      */
-    #[ORM\OneToMany(mappedBy: "client", targetEntity: ShelterHistory::class, cascade: ["remove"])]
+    #[ORM\OneToMany(mappedBy: 'client', targetEntity: ShelterHistory::class, cascade: ['remove'])]
     private Collection $shelterHistories;
 
     /**
      * Загруженные файлы документов
      */
-    #[ORM\OneToMany(mappedBy: "client", targetEntity: DocumentFile::class, cascade: ["remove"])]
+    #[ORM\OneToMany(mappedBy: 'client', targetEntity: DocumentFile::class, cascade: ['remove'])]
     private Collection $documentFiles;
 
     /**
      * Полученные услуги
      */
-    #[ORM\OneToMany(mappedBy: "client", targetEntity: Service::class, cascade: ["remove"])]
-    #[ORM\OrderBy(["createdAt" => "DESC", "id" => "DESC"])]
+    #[ORM\OneToMany(mappedBy: 'client', targetEntity: Service::class, cascade: ['remove'])]
+    #[ORM\OrderBy(['createdAt' => 'DESC', 'id' => 'DESC'])]
     private Collection $services;
 
     /**
      * Справки
      */
-    #[ORM\OneToMany(mappedBy: "client", targetEntity: Certificate::class, cascade: ["remove"])]
+    #[ORM\OneToMany(mappedBy: 'client', targetEntity: Certificate::class, cascade: ['remove'])]
     private Collection $certificates;
 
     /**
      * Построенные документы
      */
-    #[ORM\OneToMany(mappedBy: "client", targetEntity: GeneratedDocument::class, cascade: ["remove"])]
+    #[ORM\OneToMany(mappedBy: 'client', targetEntity: GeneratedDocument::class, cascade: ['remove'])]
     private Collection $generatedDocuments;
 
-    #[ORM\OneToMany(mappedBy: "client", targetEntity: ViewedClient::class, cascade: ["remove"])]
+    #[ORM\OneToMany(mappedBy: 'client', targetEntity: ViewedClient::class, cascade: ['remove'])]
     private Collection $clientViews;
 
-    #[ORM\OneToMany(mappedBy: "client", targetEntity: HistoryDownload::class, cascade: ["remove"])]
+    #[ORM\OneToMany(mappedBy: 'client', targetEntity: HistoryDownload::class, cascade: ['remove'])]
     private Collection $historyDownloads;
 
-    #[Vich\UploadableField(mapping: "client_photo", fileNameProperty: "photoName")]
-    private $photo;
+    #[Vich\UploadableField(mapping: 'client_photo', fileNameProperty: 'photoName')]
+    private ?File $photo = null;
 
-    /**
-     * Constructor
-     */
     public function __construct()
     {
         $this->fieldValues = new ArrayCollection();
@@ -165,31 +143,73 @@ class Client extends BaseEntity
         $this->shelterHistories = new ArrayCollection();
         $this->documentFiles = new ArrayCollection();
         $this->services = new ArrayCollection();
+        $this->certificates = new ArrayCollection();
         $this->generatedDocuments = new ArrayCollection();
     }
 
-    public function getPhoto()
+    public function __toString(): string
+    {
+        return $this->getFullname();
+    }
+
+    public function __get($name): mixed
+    {
+        if (str_starts_with($name, 'additionalField')) {
+            return $this->{$name}();
+        }
+
+        return null;
+    }
+
+    public function __call($name, $arguments): mixed
+    {
+        if (str_starts_with($name, 'additionalField')) {
+            return $this->getAdditionalFieldValue(substr($name, 15));
+        }
+
+        return null;
+    }
+
+    public function __set($name, $value): void
+    {
+        if (str_starts_with($name, 'additionalField')) {
+            $this->setAdditionalFieldValue(substr($name, 15), $value);
+        }
+    }
+
+    public function getPhoto(): ?File
     {
         return $this->photo;
     }
 
+    public function setPhoto(?File $photo = null): self
+    {
+        $this->photo = $photo;
+
+        if ($photo) {
+            $this->setUpdatedAt(new \DateTimeImmutable());
+        }
+
+        return $this;
+    }
+
     public function getPhotoPathWeb(): string
     {
-        return 'uploads/images/client/photo/' . substr($this->getPhotoName(), 0, 2) . '/' . $this->getPhotoName();
+        return 'uploads/images/client/photo/'.substr($this->getPhotoName(), 0, 2).'/'.$this->getPhotoName();
     }
 
     public function getPhotoPath(): string
     {
-        return __DIR__ . '/../../../web/' . $this->getPhotoPathWeb();
+        return __DIR__.'/../../../web/'.$this->getPhotoPathWeb();
     }
 
-    public function getPhotoSize($width, $height): array
+    public function getPhotoSize(int $width, int $height): array
     {
         if (!$this->isImage()) {
             return [$width, $height];
         }
 
-        list($width_orig, $height_orig) = getimagesize($this->getPhotoPath());
+        [$width_orig, $height_orig] = getimagesize($this->getPhotoPath());
         if ($width < $width_orig || $height < $height_orig) {
             if ($width_orig > $height_orig) {
                 $height = $height_orig / ($width_orig / $width);
@@ -210,28 +230,9 @@ class Client extends BaseEntity
             return null;
         }
 
-        return 'data:image/png;base64,' . base64_encode(file_get_contents($this->getPhotoPath()));
+        return 'data:image/png;base64,'.base64_encode(file_get_contents($this->getPhotoPath()));
     }
 
-    private function isImage(): bool
-    {
-        return file_exists($this->getPhotoPath()) && @is_array(getimagesize($this->getPhotoPath()));
-    }
-
-    public function setPhoto($photo = null): Client
-    {
-        $this->photo = $photo;
-
-        if ($photo) {
-            $this->setUpdatedAt(new DateTime());
-        }
-
-        return $this;
-    }
-
-    /**
-     * ФИО
-     */
     public function getFullname(): string
     {
         $fullname = [];
@@ -254,51 +255,23 @@ class Client extends BaseEntity
         return implode(' ', $fullname);
     }
 
-    public function __toString()
-    {
-        return $this->getFullname();
-    }
-
     /**
      * Последний договор
      */
-    public function getLastContract()
+    public function getLastContract(): Contract|false
     {
         return $this->contracts->first();
     }
 
-    public function __get($name)
-    {
-        if (substr($name, 0, 15) === 'additionalField') {
-            return $this->$name();
-        }
-    }
-
-    public function __call($name, $arguments)
-    {
-        if (substr($name, 0, 15) === 'additionalField') {
-            return $this->getAdditionalFieldValue(substr($name, 15));
-        }
-    }
-
-    public function __set($name, $value)
-    {
-        if (substr($name, 0, 15) === 'additionalField') {
-            $this->setAdditionalFieldValue(substr($name, 15), $value);
-        }
-    }
-
     /**
      * Возвращает объект значения дополнительного поля клиента по коду поля
-     * @param $fieldCode
-     * @return mixed|null
      */
-    public function getAdditionalFieldValueObject($fieldCode)
+    public function getAdditionalFieldValueObject(string $fieldCode): ?ClientFieldValue
     {
         foreach ($this->fieldValues as $fieldValue) {
             $field = $fieldValue->getField();
 
-            if ($field->getCode() == $fieldCode) {
+            if ($field->getCode() === $fieldCode) {
                 return $fieldValue;
             }
         }
@@ -308,10 +281,8 @@ class Client extends BaseEntity
 
     /**
      * Возвращает значение дополнительного поля клиента по коду поля
-     * @param $fieldCode
-     * @return ClientFieldOption|DateTime|Collection|null|string
      */
-    public function getAdditionalFieldValue($fieldCode)
+    public function getAdditionalFieldValue(string $fieldCode): ClientFieldOption|\DateTimeImmutable|Collection|string|null
     {
         $fieldValue = $this->getAdditionalFieldValueObject($fieldCode);
 
@@ -323,29 +294,14 @@ class Client extends BaseEntity
     }
 
     /**
-     * Значения дополнительных полей клиента, установленных при сохранении
-     * для обработки в методах prePersist и preUpdate админки App\Admin\ClientAdmin
-     * @var array
-     */
-    public array $additionalFieldValues = [];
-
-    /**
-     * Коды полей, для которых необходимо удалить объекты значений
-     * для обработки в методах prePersist и preUpdate админки App\Admin\ClientAdmin
-     * @var array
-     */
-    public array $additionalFieldValuesToRemove = [];
-
-    /**
      * Подготавливает массивы $additionalFieldValues и $additionalFieldValuesToRemove
      * для обработки в методах prePersist и preUpdate админки App\Admin\ClientAdmin
-     * @param $fieldCode
-     * @param $value
      */
-    public function setAdditionalFieldValue($fieldCode, $value)
+    public function setAdditionalFieldValue(string $fieldCode, mixed $value): void
     {
         if (empty($value) || ($value instanceof Collection && $value->isEmpty())) {
             $this->additionalFieldValuesToRemove[] = $fieldCode;
+
             return;
         }
 
@@ -354,7 +310,6 @@ class Client extends BaseEntity
 
     /**
      * Есть ли у клиента документ для постановки на учет
-     * @return bool
      */
     public function hasRegistrationDocument(): bool
     {
@@ -365,28 +320,24 @@ class Client extends BaseEntity
                 continue;
             }
 
-            if ($type->getType() == DocumentType::TYPE_REGISTRATION) {
+            if ($type->getType() === DocumentType::TYPE_REGISTRATION) {
                 return true;
             }
-
         }
 
         return false;
     }
 
-    /**
-     * Иницииалы
-     */
     public function getInitials(): string
     {
         $initials = '';
 
         if (!empty($this->firstname)) {
-            $initials = $initials . mb_substr($this->firstname, 0, 1) . '.';
+            $initials = $initials.mb_substr($this->firstname, 0, 1).'.';
         }
 
         if (!empty($this->middlename)) {
-            $initials = $initials . mb_substr($this->middlename, 0, 1) . '.';
+            $initials = $initials.mb_substr($this->middlename, 0, 1).'.';
         }
 
         return $initials;
@@ -394,7 +345,6 @@ class Client extends BaseEntity
 
     /**
      * Фамилия и инициалы
-     * @return string
      */
     public function getLastnameAndInitials(): string
     {
@@ -406,603 +356,315 @@ class Client extends BaseEntity
             return $this->lastname;
         }
 
-        return $this->lastname . ' ' . $this->getInitials();
+        return $this->lastname.' '.$this->getInitials();
     }
 
-    /**
-     * Set photoName
-     *
-     * @param string|null $photoName
-     *
-     * @return Client
-     */
-    public function setPhotoName(?string $photoName): Client
+    public function getPhotoName(): ?string
+    {
+        return $this->photoName;
+    }
+
+    public function setPhotoName(?string $photoName): self
     {
         $this->photoName = $photoName;
 
         return $this;
     }
 
-    /**
-     * Get photoName
-     *
-     * @return string
-     */
-    public function getPhotoName(): ?string
+    public function getBirthDate(): ?\DateTimeImmutable
     {
-        return $this->photoName;
+        return $this->birthDate;
     }
 
-    /**
-     * Set birthDate
-     *
-     * @param DateTime|null $birthDate
-     *
-     * @return Client
-     */
-    public function setBirthDate(?DateTime $birthDate): Client
+    public function setBirthDate(?\DateTimeImmutable $birthDate): self
     {
         $this->birthDate = $birthDate;
 
         return $this;
     }
 
-    /**
-     * Get birthDate
-     *
-     * @return DateTime
-     */
-    public function getBirthDate(): ?DateTime
+    public function getBirthPlace(): ?string
     {
-        return $this->birthDate;
+        return $this->birthPlace;
     }
 
-    /**
-     * Set birthPlace
-     *
-     * @param string|null $birthPlace
-     *
-     * @return Client
-     */
-    public function setBirthPlace(?string $birthPlace): Client
+    public function setBirthPlace(?string $birthPlace): self
     {
         $this->birthPlace = $birthPlace;
 
         return $this;
     }
 
-    /**
-     * Get birthPlace
-     *
-     * @return string
-     */
-    public function getBirthPlace(): ?string
+    public function getGender(): ?int
     {
-        return $this->birthPlace;
+        return $this->gender;
     }
 
-    /**
-     * Set gender
-     *
-     * @param int|null $gender
-     *
-     * @return Client
-     */
-    public function setGender(?int $gender): Client
+    public function setGender(?int $gender): self
     {
         $this->gender = $gender;
 
         return $this;
     }
 
-    /**
-     * Get gender
-     *
-     * @return integer
-     */
-    public function getGender(): ?int
+    public function getFirstname(): ?string
     {
-        return $this->gender;
+        return $this->firstname;
     }
 
-    /**
-     * Set firstname
-     *
-     * @param string|null $firstname
-     *
-     * @return Client
-     */
-    public function setFirstname(?string $firstname): Client
+    public function setFirstname(?string $firstname): self
     {
         $this->firstname = $firstname;
 
         return $this;
     }
 
-    /**
-     * Get firstname
-     *
-     * @return string|null
-     */
-    public function getFirstname(): ?string
+    public function getMiddlename(): ?string
     {
-        return $this->firstname;
+        return $this->middlename;
     }
 
-    /**
-     * Set middlename
-     *
-     * @param string|null $middlename
-     *
-     * @return Client
-     */
-    public function setMiddlename(?string $middlename): Client
+    public function setMiddlename(?string $middlename): self
     {
         $this->middlename = $middlename;
 
         return $this;
     }
 
-    /**
-     * Get middlename
-     *
-     * @return string
-     */
-    public function getMiddlename(): ?string
+    public function getLastname(): ?string
     {
-        return $this->middlename;
+        return $this->lastname;
     }
 
-    /**
-     * Set lastname
-     *
-     * @param string|null $lastname
-     *
-     * @return Client
-     */
-    public function setLastname(?string $lastname): Client
+    public function setLastname(?string $lastname): self
     {
         $this->lastname = $lastname;
 
         return $this;
     }
 
-    /**
-     * Get lastname
-     *
-     * @return string
-     */
-    public function getLastname(): ?string
+    public function getLastResidenceDistrict(): ?District
     {
-        return $this->lastname;
+        return $this->lastResidenceDistrict;
     }
 
-    /**
-     * Set lastResidenceDistrict
-     *
-     * @param District|null $lastResidenceDistrict
-     *
-     * @return Client
-     */
-    public function setLastResidenceDistrict(District $lastResidenceDistrict): Client
+    public function setLastResidenceDistrict(?District $lastResidenceDistrict): self
     {
         $this->lastResidenceDistrict = $lastResidenceDistrict;
 
         return $this;
     }
 
-    /**
-     * Get lastResidenceDistrict
-     *
-     * @return District
-     */
-    public function getLastResidenceDistrict(): ?District
+    public function getLastRegistrationDistrict(): ?District
     {
-        return $this->lastResidenceDistrict;
+        return $this->lastRegistrationDistrict;
     }
 
-    /**
-     * Set lastRegistrationDistrict
-     *
-     * @param District|null $lastRegistrationDistrict
-     *
-     * @return Client
-     */
-    public function setLastRegistrationDistrict(District $lastRegistrationDistrict): Client
+    public function setLastRegistrationDistrict(?District $lastRegistrationDistrict): self
     {
         $this->lastRegistrationDistrict = $lastRegistrationDistrict;
 
         return $this;
     }
 
-    /**
-     * Get lastRegistrationDistrict
-     *
-     * @return District
-     */
-    public function getLastRegistrationDistrict(): ?District
-    {
-        return $this->lastRegistrationDistrict;
-    }
-
-    /**
-     * Add fieldValue
-     *
-     * @param ClientFieldValue $fieldValue
-     *
-     * @return Client
-     */
-    public function addFieldValue(ClientFieldValue $fieldValue): Client
-    {
-        $this->fieldValues[] = $fieldValue;
-
-        return $this;
-    }
-
-    /**
-     * Remove fieldValue
-     *
-     * @param ClientFieldValue $fieldValue
-     */
-    public function removeFieldValue(ClientFieldValue $fieldValue)
-    {
-        $this->fieldValues->removeElement($fieldValue);
-    }
-
-    /**
-     * Get fieldValues
-     *
-     * @return Collection
-     */
-    public function getFieldValues()
+    public function getFieldValues(): Collection
     {
         return $this->fieldValues;
     }
 
-    /**
-     * Add note
-     *
-     * @param Note $note
-     *
-     * @return Client
-     */
-    public function addNote(Note $note): Client
+    public function addFieldValue(ClientFieldValue $fieldValue): self
     {
-        $this->notes[] = $note;
+        $this->fieldValues->add($fieldValue);
 
         return $this;
     }
 
-    /**
-     * Remove note
-     *
-     * @param Note $note
-     */
-    public function removeNote(Note $note)
+    public function removeFieldValue(ClientFieldValue $fieldValue): void
     {
-        $this->notes->removeElement($note);
+        $this->fieldValues->removeElement($fieldValue);
     }
 
-    /**
-     * Get notes
-     *
-     * @return Collection
-     */
-    public function getNotes()
+    public function getNotes(): Collection
     {
         return $this->notes;
     }
 
-    /**
-     * Add contract
-     *
-     * @param Contract $contract
-     *
-     * @return Client
-     */
-    public function addContract(Contract $contract): Client
+    public function addNote(Note $note): self
     {
-        $this->contracts[] = $contract;
+        $this->notes->add($note);
 
         return $this;
     }
 
-    /**
-     * Remove contract
-     *
-     * @param Contract $contract
-     */
-    public function removeContract(Contract $contract)
+    public function removeNote(Note $note): void
     {
-        $this->contracts->removeElement($contract);
+        $this->notes->removeElement($note);
     }
 
-    /**
-     * Get contracts
-     *
-     * @return Collection
-     */
-    public function getContracts()
+    public function getContracts(): Collection
     {
         return $this->contracts;
     }
 
-    /**
-     * Add document
-     *
-     * @param Document $document
-     *
-     * @return Client
-     */
-    public function addDocument(Document $document): Client
+    public function addContract(Contract $contract): self
     {
-        $this->documents[] = $document;
+        $this->contracts->add($contract);
 
         return $this;
     }
 
-    /**
-     * Remove document
-     *
-     * @param Document $document
-     */
-    public function removeDocument(Document $document)
+    public function removeContract(Contract $contract): void
     {
-        $this->documents->removeElement($document);
+        $this->contracts->removeElement($contract);
     }
 
-    /**
-     * Get documents
-     *
-     * @return Collection
-     */
-    public function getDocuments()
+    public function getDocuments(): Collection
     {
         return $this->documents;
     }
 
-    /**
-     * Add shelterHistory
-     *
-     * @param ShelterHistory $shelterHistory
-     *
-     * @return Client
-     */
-    public function addShelterHistory(ShelterHistory $shelterHistory): Client
+    public function addDocument(Document $document): self
     {
-        $this->shelterHistories[] = $shelterHistory;
+        $this->documents->add($document);
 
         return $this;
     }
 
-    /**
-     * Remove shelterHistory
-     *
-     * @param ShelterHistory $shelterHistory
-     */
-    public function removeShelterHistory(ShelterHistory $shelterHistory)
+    public function removeDocument(Document $document): void
     {
-        $this->shelterHistories->removeElement($shelterHistory);
+        $this->documents->removeElement($document);
     }
 
-    /**
-     * Get shelterHistories
-     *
-     * @return Collection
-     */
-    public function getShelterHistories()
+    public function getShelterHistories(): Collection
     {
         return $this->shelterHistories;
     }
 
-    /**
-     * Add documentFile
-     *
-     * @param DocumentFile $documentFile
-     *
-     * @return Client
-     */
-    public function addDocumentFile(DocumentFile $documentFile): Client
+    public function addShelterHistory(ShelterHistory $shelterHistory): self
     {
-        $this->documentFiles[] = $documentFile;
+        $this->shelterHistories->add($shelterHistory);
 
         return $this;
     }
 
-    /**
-     * Remove documentFile
-     *
-     * @param DocumentFile $documentFile
-     */
-    public function removeDocumentFile(DocumentFile $documentFile)
+    public function removeShelterHistory(ShelterHistory $shelterHistory): void
     {
-        $this->documentFiles->removeElement($documentFile);
+        $this->shelterHistories->removeElement($shelterHistory);
     }
 
-    /**
-     * Get documentFiles
-     *
-     * @return Collection
-     */
-    public function getDocumentFiles()
+    public function getDocumentFiles(): Collection
     {
         return $this->documentFiles;
     }
 
-    /**
-     * Add service
-     *
-     * @param Service $service
-     *
-     * @return Client
-     */
-    public function addService(Service $service): Client
+    public function addDocumentFile(DocumentFile $documentFile): self
     {
-        $this->services[] = $service;
+        $this->documentFiles->add($documentFile);
 
         return $this;
     }
 
-    /**
-     * Remove service
-     *
-     * @param Service $service
-     */
-    public function removeService(Service $service)
+    public function removeDocumentFile(DocumentFile $documentFile): void
     {
-        $this->services->removeElement($service);
+        $this->documentFiles->removeElement($documentFile);
     }
 
-    /**
-     * Get services
-     *
-     * @return Collection
-     */
-    public function getServices()
+    public function getServices(): Collection
     {
         return $this->services;
     }
 
-    /**
-     * Add certificate
-     *
-     * @param Certificate $certificate
-     *
-     * @return Client
-     */
-    public function addCertificate(Certificate $certificate): Client
+    public function addService(Service $service): self
     {
-        $this->certificates[] = $certificate;
+        $this->services->add($service);
 
         return $this;
     }
 
-    /**
-     * Remove certificate
-     *
-     * @param Certificate $certificate
-     */
-    public function removeCertificate(Certificate $certificate)
+    public function removeService(Service $service): void
     {
-        $this->certificates->removeElement($certificate);
+        $this->services->removeElement($service);
     }
 
-    /**
-     * Get certificates
-     *
-     * @return Collection
-     */
     public function getCertificates(): Collection
     {
         return $this->certificates;
     }
 
-    /**
-     * Add generatedDocument
-     *
-     * @param GeneratedDocument $generatedDocument
-     *
-     * @return Client
-     */
-    public function addGeneratedDocument(GeneratedDocument $generatedDocument): Client
+    public function addCertificate(Certificate $certificate): self
     {
-        $this->generatedDocuments[] = $generatedDocument;
+        $this->certificates->add($certificate);
 
         return $this;
     }
 
-    /**
-     * Remove generatedDocument
-     *
-     * @param GeneratedDocument $generatedDocument
-     */
-    public function removeGeneratedDocument(GeneratedDocument $generatedDocument)
+    public function removeCertificate(Certificate $certificate): void
     {
-        $this->generatedDocuments->removeElement($generatedDocument);
+        $this->certificates->removeElement($certificate);
     }
 
-    /**
-     * Get generatedDocuments
-     *
-     * @return Collection
-     */
-    public function getGeneratedDocuments()
+    public function getGeneratedDocuments(): Collection
     {
         return $this->generatedDocuments;
     }
 
-    /**
-     * Get isHomeless
-     */
-    public function getisHomeless(): ?bool
+    public function addGeneratedDocument(GeneratedDocument $generatedDocument): self
+    {
+        $this->generatedDocuments->add($generatedDocument);
+
+        return $this;
+    }
+
+    public function removeGeneratedDocument(GeneratedDocument $generatedDocument): void
+    {
+        $this->generatedDocuments->removeElement($generatedDocument);
+    }
+
+    public function isHomeless(): bool
     {
         return $this->isHomeless;
     }
 
-    /**
-     * Set isHomeless
-     *
-     * @param bool|null $isHomeless
-     * @return Client
-     */
-    public function setIsHomeless(?bool $isHomeless): Client
+    public function setIsHomeless(bool $isHomeless): self
     {
         $this->isHomeless = $isHomeless;
 
         return $this;
     }
 
-    /**
-     * Get NotIsHomeless
-     *
-     */
-    public function getNotIsHomeless(): ?bool
-    {
-        return !$this->isHomeless;
-    }
-
-    /**
-     * Set notIsHomeless
-     *
-     * @param bool|null $notIsHomeless
-     * @return Client
-     */
-    public function setNotIsHomeless(?bool $notIsHomeless): Client
+    public function setNotIsHomeless(bool $notIsHomeless): self
     {
         $this->isHomeless = !$notIsHomeless;
 
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getClientViews()
+    public function getClientViews(): Collection
     {
         return $this->clientViews;
     }
 
-    /**
-     * @param mixed $clientViews
-     */
-    public function setClientViews($clientViews): void
+    public function setClientViews(Collection $clientViews): self
     {
         $this->clientViews = $clientViews;
+
+        return $this;
     }
 
-    /**
-     * @return Collection
-     */
     public function getHistoryDownloads(): Collection
     {
         return $this->historyDownloads;
     }
 
-    /**
-     * @param Collection $historyDownloads
-     */
-    public function setHistoryDownloads(Collection $historyDownloads): void
+    public function setHistoryDownloads(Collection $historyDownloads): self
     {
         $this->historyDownloads = $historyDownloads;
+
+        return $this;
+    }
+
+    private function isImage(): bool
+    {
+        return file_exists($this->getPhotoPath()) && @\is_array(getimagesize($this->getPhotoPath()));
     }
 }

@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\EventListener;
 
@@ -15,16 +16,13 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
  * при загрузке сущности
  */
 #[AsEntityListener(event: Events::postLoad, method: 'postLoad', entity: Notice::class)]
-class NoticeListener
+readonly class NoticeListener
 {
-    private TokenStorageInterface $tokenStorage;
+    public function __construct(
+        private TokenStorageInterface $tokenStorage,
+    ) {}
 
-    public function __construct(TokenStorageInterface $tokenStorage)
-    {
-        $this->tokenStorage = $tokenStorage;
-    }
-
-    public function postLoad(Notice $notice, LifecycleEventArgs $args)
+    public function postLoad(Notice $notice, LifecycleEventArgs $args): void
     {
         $user = $this->getUser();
         if ($notice->getViewedBy()->contains($user)) {
@@ -37,13 +35,11 @@ class NoticeListener
     public function getUser(): ?User
     {
         $token = $this->tokenStorage->getToken();
-
         if (!$token instanceof TokenInterface) {
             return null;
         }
 
         $user = $token->getUser();
-
         if (!$user instanceof User) {
             return null;
         }

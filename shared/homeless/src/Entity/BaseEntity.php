@@ -1,205 +1,109 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\Entity;
 
-use DateTime;
 use Doctrine\ORM\Mapping as ORM;
-use PhpOffice\PhpSpreadsheet\Shared\Date;
 
 abstract class BaseEntity implements BaseEntityInterface
 {
     #[ORM\Column(type: 'integer')]
     #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: "AUTO")]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
     protected ?int $id = null;
 
-    /**
-     * Sync id
-     */
-    #[ORM\Column(type: "integer", nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true)]
     protected ?int $syncId = null;
 
-    /**
-     * Сортировка
-     */
-    #[ORM\Column(type: "integer", nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true)]
     protected ?int $sort = 100;
 
-    /**
-     * Когда создано
-     */
-    #[ORM\Column(type: "datetime", nullable: true)]
-    protected ?DateTime $createdAt = null;
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    protected ?\DateTimeImmutable $createdAt = null;
 
-    /**
-     * Кем создано
-     */
     #[ORM\ManyToOne(targetEntity: User::class)]
     protected ?User $createdBy = null;
 
-    /**
-     * Когда изменено
-     */
-    #[ORM\Column(type: "datetime", nullable: true)]
-    protected ?DateTime $updatedAt = null;
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    protected ?\DateTimeImmutable $updatedAt = null;
 
-    /**
-     * Кем изменено
-     */
     #[ORM\ManyToOne(targetEntity: User::class)]
     protected ?User $updatedBy = null;
 
-    /**
-     * Get id
-     *
-     * @return integer
-     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * Set syncId
-     *
-     * @param int|null $syncId
-     *
-     * @return BaseEntity
-     */
-    public function setSyncId(?int $syncId): BaseEntity
+    public function getSyncId(): ?int
+    {
+        return $this->syncId;
+    }
+
+    public function setSyncId(?int $syncId): static
     {
         $this->syncId = $syncId;
 
         return $this;
     }
 
-    /**
-     * Get syncId
-     *
-     * @return integer
-     */
-    public function getSyncId(): ?int
+    public function getSort(): ?int
     {
-        return $this->syncId;
+        return $this->sort;
     }
 
-    /**
-     * Set sort
-     *
-     * @param int|null $sort
-     *
-     * @return BaseEntity
-     */
-    public function setSort(?int $sort): BaseEntity
+    public function setSort(?int $sort): static
     {
         $this->sort = $sort;
 
         return $this;
     }
 
-    /**
-     * Get sort
-     *
-     * @return integer
-     */
-    public function getSort(): ?int
+    public function getCreatedAt(): ?\DateTimeInterface
     {
-        return $this->sort;
+        return $this->createdAt;
     }
 
-    /**
-     * Set the creation date.
-     *
-     * @param DateTime|null $createdAt
-     *
-     * @return BaseEntity
-     */
-    public function setCreatedAt(DateTime $createdAt = null)
+    public function setCreatedAt(?\DateTimeInterface $createdAt = null): static
     {
         $this->createdAt = $createdAt;
 
         return $this;
     }
 
-    /**
-     * Get the creation date.
-     *
-     * @return DateTime|null
-     */
-    public function getCreatedAt()
+    public function getUpdatedAt(): ?\DateTimeInterface
     {
-        return $this->createdAt;
+        return $this->updatedAt;
     }
 
-    /**
-     * Set the last update date.
-     *
-     * @param DateTime|null $updatedAt
-     *
-     * @return BaseEntity
-     */
-    public function setUpdatedAt(DateTime $updatedAt = null)
+    public function setUpdatedAt(?\DateTimeInterface $updatedAt = null): static
     {
         $this->updatedAt = $updatedAt;
 
         return $this;
     }
 
-    /**
-     * Get the last update date.
-     *
-     * @return DateTime|null
-     */
-    public function getUpdatedAt()
+    public function getCreatedBy(): ?User
     {
-        return $this->updatedAt;
+        return $this->createdBy;
     }
 
-    /**
-     * Set createdBy
-     *
-     * @param User|null $createdBy
-     *
-     * @return BaseEntity
-     */
-    public function setCreatedBy(?User $createdBy = null): BaseEntity
+    public function setCreatedBy(?User $createdBy = null): static
     {
         $this->createdBy = $createdBy;
 
         return $this;
     }
 
-    /**
-     * Get createdBy
-     *
-     * @return User|null
-     */
-    public function getCreatedBy(): ?User
+    public function getUpdatedBy(): ?User
     {
-        return $this->createdBy;
+        return $this->updatedBy;
     }
 
-    /**
-     * Set updatedBy
-     *
-     * @param User|null $updatedBy
-     *
-     * @return BaseEntity
-     */
-    public function setUpdatedBy(?User $updatedBy = null): BaseEntity
+    public function setUpdatedBy(?User $updatedBy = null): static
     {
         $this->updatedBy = $updatedBy;
 
         return $this;
-    }
-
-    /**
-     * Get updatedBy
-     *
-     * @return User
-     */
-    public function getUpdatedBy(): ?User
-    {
-        return $this->updatedBy;
     }
 }

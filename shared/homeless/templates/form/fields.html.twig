@@ -59,11 +59,11 @@
                     {{ form_row(form.delete) }}
                 {% endif %}
 
-                {% if download_uri is defined and download_uri %}
+                {% if download_uri %}
                     <p><img src="{{ download_uri }}" alt="" style="max-height: 300px; max-width: 250px;"/></p>
                 {% endif %}
 
-                {% if show_download_link and download_uri is defined and download_uri %}
+                {% if download_uri %}
                     <a href="{{ download_uri }}">{{ 'download'|trans({}, 'VichUploaderBundle') }}</a>
                 {% endif %}
             </div>
@@ -81,12 +81,11 @@
                     {{ form_row(form.delete) }}
                 {% endif %}
 
-                {% if download_uri is defined and download_uri %}
-                    <p>
-                        <a href="{{ download_uri }}" data-lightbox="download_uri" ><img width="100px"   src="{{ download_uri }}" alt="" style="max-height: 300px; max-width: 250px;"/></a></p>
+                {% if download_uri %}
+                    <p><a href="{{ download_uri }}" data-lightbox="download_uri" ><img width="100px" src="{{ download_uri }}" alt="" style="max-height: 300px; max-width: 250px;"/></a></p>
                 {% endif %}
 
-                {% if show_download_link and download_uri is defined and download_uri %}
+                {% if download_uri %}
                     <a download  href="{{ download_uri }}">{{ 'download'|trans({}, 'VichUploaderBundle') }}</a>
                 {% endif %}
             </div>

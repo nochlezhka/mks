@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\Entity;
 
@@ -10,98 +11,53 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity]
 class GeneratedDocumentStartText extends BaseEntity
 {
-    /**
-     * Название
-     */
-    #[ORM\Column(type: "string", nullable: true)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $name = null;
 
-    /**
-     * Код
-     */
-    #[ORM\Column(type: "string", nullable: true)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $code = null;
 
-    /**
-     * Текст
-     */
-    #[ORM\Column(type: "text", nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true)]
     private ?string $text = null;
 
-    public function __toString()
+    public function __toString(): string
+    {
+        return $this->name ?? '';
+    }
+
+    public function getName(): ?string
     {
         return $this->name;
     }
 
-    /**
-     * Set name
-     *
-     * @param string|null $name
-     *
-     * @return GeneratedDocumentStartText
-     */
-    public function setName(?string $name): GeneratedDocumentStartText
+    public function setName(?string $name): self
     {
         $this->name = $name;
 
         return $this;
     }
 
-    /**
-     * Get name
-     *
-     * @return string
-     */
-    public function getName(): ?string
+    public function getCode(): ?string
     {
-        return $this->name;
+        return $this->code;
     }
 
-    /**
-     * Set code
-     *
-     * @param string|null $code
-     *
-     * @return GeneratedDocumentStartText
-     */
-    public function setCode(?string $code): GeneratedDocumentStartText
+    public function setCode(?string $code): self
     {
         $this->code = $code;
 
         return $this;
     }
 
-    /**
-     * Get code
-     *
-     * @return string
-     */
-    public function getCode(): ?string
+    public function getText(): ?string
     {
-        return $this->code;
+        return $this->text;
     }
 
-    /**
-     * Set text
-     *
-     * @param string|null $text
-     *
-     * @return GeneratedDocumentStartText
-     */
-    public function setText(?string $text): GeneratedDocumentStartText
+    public function setText(?string $text): self
     {
         $this->text = $text;
 
         return $this;
-    }
-
-    /**
-     * Get text
-     *
-     * @return string
-     */
-    public function getText(): ?string
-    {
-        return $this->text;
     }
 }

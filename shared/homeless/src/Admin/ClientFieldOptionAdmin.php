@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\Admin;
 
@@ -11,20 +12,15 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
     'manager_type' => 'orm',
     'label' => 'choice_field_options',
     'model_class' => ClientFieldOption::class,
-    'label_translator_strategy' => 'sonata.admin.label.strategy.underscore'
+    'label_translator_strategy' => 'sonata.admin.label.strategy.underscore',
 ])]
-class ClientFieldOptionAdmin extends BaseAdmin
+class ClientFieldOptionAdmin extends AbstractAdmin
 {
-    protected array $datagridValues = array(
+    protected array $datagridValues = [
         '_sort_order' => 'ASC',
         '_sort_by' => 'sort',
-    );
+    ];
 
-    protected string $translationDomain = 'App';
-
-    /**
-     * @param FormMapper $form
-     */
     protected function configureFormFields(FormMapper $form): void
     {
         $form
@@ -38,12 +34,10 @@ class ClientFieldOptionAdmin extends BaseAdmin
             ->add('sort', null, [
                 'label' => 'Порядок сортировки',
                 'required' => true,
-            ]);
+            ])
+        ;
     }
 
-    /**
-     * @param ListMapper $list
-     */
     protected function configureListFields(ListMapper $list): void
     {
         if (!$list->getAdmin()->isChild()) {
@@ -66,7 +60,8 @@ class ClientFieldOptionAdmin extends BaseAdmin
                 'actions' => [
                     'edit' => [],
                     'delete' => [],
-                ]
-            ]);
+                ],
+            ])
+        ;
     }
 }

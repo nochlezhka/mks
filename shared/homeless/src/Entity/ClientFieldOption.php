@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\Entity;
 
@@ -10,99 +11,57 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity]
 class ClientFieldOption extends BaseEntity
 {
-    /**
-     * Название
-     */
-    #[ORM\Column(type: "string", nullable: true)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $name = null;
 
     /**
      * Если - true, то при заполнении не может быть выбрано только
      * одно это значение, необходимо указать еще какое-нибудь
      */
-    #[ORM\Column(type: "boolean", nullable: true)]
-    private ?bool $notSingle = false;
+    #[ORM\Column(type: 'boolean', nullable: true)]
+    private bool $notSingle = false;
 
-    /**
-     * Поле
-     */
-    #[ORM\ManyToOne(targetEntity: ClientField::class, inversedBy: "options")]
+    #[ORM\ManyToOne(targetEntity: ClientField::class, inversedBy: 'options')]
     private ?ClientField $field = null;
 
-    public function __toString()
+    public function __toString(): string
+    {
+        return $this->name ?? '';
+    }
+
+    public function getName(): ?string
     {
         return $this->name;
     }
 
-    /**
-     * Set name
-     *
-     * @param string|null $name
-     *
-     * @return ClientFieldOption
-     */
-    public function setName(?string $name): ClientFieldOption
+    public function setName(?string $name): self
     {
         $this->name = $name;
 
         return $this;
     }
 
-    /**
-     * Get name
-     *
-     * @return string
-     */
-    public function getName(): ?string
+    public function isNotSingle(): bool
     {
-        return $this->name;
+        return $this->notSingle;
     }
 
-    /**
-     * Set notSingle
-     *
-     * @param boolean $notSingle
-     *
-     * @return ClientFieldOption
-     */
-    public function setNotSingle(?bool $notSingle): ClientFieldOption
+    public function setNotSingle(bool $notSingle): self
     {
         $this->notSingle = $notSingle;
 
         return $this;
     }
 
-    /**
-     * Get notSingle
-     *
-     * @return boolean
-     */
-    public function getNotSingle(): ?bool
+    public function getField(): ?ClientField
     {
-        return $this->notSingle;
+        return $this->field;
     }
 
-    /**
-     * Set field
-     *
-     * @param ClientField|null $field
-     *
-     * @return ClientFieldOption
-     */
-    public function setField(ClientField $field): ClientFieldOption
+    public function setField(?ClientField $field): self
     {
         $this->field = $field;
 
         return $this;
-    }
-
-    /**
-     * Get field
-     *
-     * @return ClientField
-     */
-    public function getField(): ?ClientField
-    {
-        return $this->field;
     }
 }

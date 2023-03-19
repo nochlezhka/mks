@@ -1,5 +1,5 @@
-<?php
-
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\Admin;
 
@@ -8,229 +8,86 @@ use App\Entity\ClientFormField;
 use App\Entity\ClientFormResponse;
 use App\Form\DataTransformer\ClientFormCheckboxTransformer;
 use App\Form\DataTransformer\ClientFormMultiselectTransformer;
-use App\Repository\ClientFormResponseRepository;
 use App\Util\BaseEntityUtil;
 use App\Util\ClientFormUtil;
-use Doctrine\ORM\EntityManager;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
+use Sonata\AdminBundle\FieldDescription\FieldDescriptionInterface;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Form\Type\ModelHiddenType;
-use Sonata\CoreBundle\Form\Type\EqualType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-class ClientFormResponseAdmin extends BaseAdmin
+class ClientFormResponseAdmin extends AbstractAdmin
 {
-    protected $datagridValues = array(
+    protected array $datagridValues = [
         '_sort_order' => 'ASC',
         '_sort_by' => 'sort',
-    );
-
-    protected $translationDomain = 'App';
+    ];
 
     /**
      * ID формы. Дочерний класс-админка может выставить ID здесь, тогда
      * все методы админки будут понимать, из какой формы составлять анкету.
      *
      * @see ResidentFormResponseAdmin
-     * @var integer|null
      */
-    protected $formId = null;
+    protected ?int $formId;
 
     protected function configureDefaultFilterValues(array &$filterValues): void
     {
         // если дочерняя админка хардкодит ID формы, добавляем его в качестве неявного фильтра по-умолчанию
-        if ($this->formId != null) {
+        if ($this->formId !== null) {
             $filterValues['form'] = [
-                'type' => EqualType::TYPE_IS_EQUAL,
                 'value' => $this->formId,
             ];
         }
     }
 
-
     protected function configureDatagridFilters(DatagridMapper $filter): void
     {
         // если дочерняя админка хардкодит ID формы, добавляем его в качестве скрытого фильтра
-        if ($this->formId != null) {
-            $filter
-                ->add('form', null, array(
-                    'show_filter' => false,
-                    'label' => false,
-                    'field_type' => ModelHiddenType::class,
-                    'field_options' => array(
-                        'model_manager' => $this->getModelManager(),
-                    ),
-                    'operator_type' => HiddenType::class,
-                ));
+        if ($this->formId !== null) {
+            $filter->add('form', null, [
+                'show_filter' => false,
+                'label' => false,
+                'field_type' => ModelHiddenType::class,
+                'field_options' => [
+                    'model_manager' => $this->getModelManager(),
+                ],
+                'operator_type' => HiddenType::class,
+            ]);
         }
     }
 
-    /**
-     * Возвращает объект формы, из которой будет составлена анкета.
-     * ID формы берётся либо из `$this->formId`, либо из GET параметра `form_id`.
-     * Или из текущей редактируемой анкеты.
-     *
-     * @return ClientForm
-     */
-    private function getCurrentForm()
-    {
-        $formId = null;
-        $subject = $this->getSubject();
-        if ($this->formId != null) {
-            $formId = $this->formId;
-        } elseif ($subject !== null && $subject->getForm() !== null) {
-            /**
-             * @var $subject ClientFormResponse
-             */
-            return $subject->getForm();
-        } else {
-            $formId = $this->getRequest()->get("form_id");
-            if (!$formId) {
-                throw new BadRequestHttpException("form_id must be set");
-            }
-        }
-        /**
-         * @var $currentForm ClientForm
-         */
-        $currentForm = $this->getModelManager()->find(ClientForm::class, $formId);
-        if (!$currentForm) {
-            throw new BadRequestHttpException("ClientForm $formId was not found");
-        }
-        return $currentForm;
-    }
-
-    /**
-     * @param FormMapper $form
-     */
     protected function configureFormFields(FormMapper $form): void
     {
         // из полей текущей формы составляем фейковые поля админки
         // значения этих полей будут читаться и сохраняться в объекте ClientFormResponse через магические методы
+        /** @var array<ClientFormField> $formFields */
         $formFields = $this->getCurrentForm()->getFields()->toArray();
-        /**
-         * @var $formFields ClientFormField[]
-         */
         BaseEntityUtil::sortEntities($formFields);
+
+        /** @var ClientFormResponse $subject */
         $subject = $this->getSubject();
+        $formBuilder = $form->getFormBuilder();
+
         foreach ($formFields as $field) {
-            $fieldName = "field_" . $field->getId();
+            $fieldName = 'field_'.$field->getId();
             $fieldDesc = $this->getFieldDescription($field, $fieldName, $subject);
-            $form
-                ->add($fieldName, $fieldDesc['type'], $fieldDesc['options']);
-            if ($fieldDesc['type'] == CheckboxType::class) {
+            $form->add($fieldName, $fieldDesc['type'], $fieldDesc['options']);
+            if ($fieldDesc['type'] === CheckboxType::class) {
                 // для полей-чекбоксов ещё навешиваем преобразователь типов, т.к. у всех полей значения строкового типа.
-                $form->getFormBuilder()->get($fieldName)
-                    ->addModelTransformer(
-                        new ClientFormCheckboxTransformer(
-                            $subject !== null && $subject->getId() !== null ? $subject->getId() : null,
-                            $field->getId()
-                        )
-                    );
-            } elseif ($fieldDesc['type'] == ChoiceType::class && isset($fieldDesc['options']['multiple'])
-                && $fieldDesc['options']['multiple']
-            ) {
-                // для селектов со множественным выбором навешиваем преобразователь типов из строк в массив строк
-                // и обратно
-                $form->getFormBuilder()->get($fieldName)
-                    ->addModelTransformer(
-                        new ClientFormMultiselectTransformer(
-                            $subject !== null && $subject->getId() !== null ? $subject->getId() : null,
-                            $field->getId()
-                        )
-                    );
+                $formBuilder->get($fieldName)->addModelTransformer(new ClientFormCheckboxTransformer($subject->getId(), $field->getId()));
+            } elseif ($fieldDesc['type'] === ChoiceType::class && ($fieldDesc['options']['multiple'] ?? false)) {
+                // для селектов со множественным выбором навешиваем преобразователь типов из строк в массив строк и обратно
+                $formBuilder->get($fieldName)->addModelTransformer(new ClientFormMultiselectTransformer($subject->getId(), $field->getId()));
             }
         }
     }
 
-    /**
-     * По объекту поля формы определяет, какие параметры нужно передать в `FormMapper` админки.
-     * Возвращает массив с полями `type` и `options` для метода `$formMapper->add()`
-     *
-     * @param ClientFormField $field
-     * @param string $fieldName
-     * @param ClientFormResponse $subject
-     * @return array
-     */
-    private function getFieldDescription(ClientFormField $field, $fieldName, ClientFormResponse $subject)
-    {
-        $type = null;
-        $options = [
-            'label' => $field->getName(),
-            'required' => $field->isRequired(),
-        ];
-        switch ($field->getType()) {
-            case ClientFormField::TYPE_TEXT:
-                $type = TextType::class;
-                break;
-            case ClientFormField::TYPE_OPTION:
-                $type = ChoiceType::class;
-                $optionsText = $field->getOptions();
-                $choiceList = ClientFormUtil::optionsTextToArray($optionsText);
-                $options['choices'] = array_combine($choiceList, $choiceList);
-                // если в редактируемой анкете у этого поля выставлено значение, которого нет в списке для выбора,
-                // пишем об этом в лог и добавляем значение в список
-                if ($subject !== null && $subject->getId() !== null) {
-                    $value = $subject->__get($fieldName);
-                    $fieldValues = [];
-                    if ($value !== null) {
-                        if ($field->isMultiselect()) {
-                            $fieldValues = ClientFormUtil::optionsTextToArray($value);
-                        } else {
-                            $fieldValues = [$value];
-                        }
-                    }
-                    foreach ($fieldValues as $fieldValue) {
-                        if (!array_key_exists($fieldValue, $options['choices'])) {
-                            error_log("Missing choice " . ($fieldValue === null ? 'null' : "'$fieldValue'") .
-                                " in field $fieldName of client form response " . $subject->getId()
-                            );
-                            $options['choices'][$fieldValue] = $fieldValue;
-                        }
-                    }
-                }
-                if ($field->isMultiselect()) {
-                    $options['multiple'] = true;
-                }
-                break;
-            case ClientFormField::TYPE_CHECKBOX:
-                $type = CheckboxType::class;
-                break;
-            default:
-                error_log("Unknown client form field type " . $field->getType());
-                $type = TextType::class;
-                break;
-        }
-
-        return [
-            'type' => $type,
-            'options' => $options,
-        ];
-    }
-
-    /**
-     * @return EntityManager
-     */
-    private function getEntityManager()
-    {
-        return $this->getConfigurationPool()->getContainer()->get('doctrine.orm.entity_manager');
-    }
-
-    /**
-     * @return ClientFormResponseRepository
-     */
-    private function getClientFormResponseRepository()
-    {
-        return $this->getEntityManager()->getRepository(ClientFormResponse::class);
-    }
-
-    /**
-     * @param ListMapper $list
-     */
     protected function configureListFields(ListMapper $list): void
     {
         $firstField = $this->getCurrentForm()->getFirstField();
@@ -240,16 +97,103 @@ class ClientFormResponseAdmin extends BaseAdmin
         $list
             ->addIdentifier('firstFieldValue', null, [
                 'label' => $firstField->getName(),
-            ])->add('isFull', 'boolean', [
+            ])
+            ->add('isFull', FieldDescriptionInterface::TYPE_BOOLEAN, [
                 'label' => 'Заполнено',
-            ]);
-        $list
+            ])
             ->add('_action', null, [
                 'label' => 'Действие',
                 'actions' => [
                     'edit' => [],
                     'delete' => [],
-                ]
-            ]);
+                ],
+            ])
+        ;
+    }
+
+    /**
+     * Возвращает объект формы, из которой будет составлена анкета.
+     * ID формы берётся либо из `$this->formId`, либо из GET параметра `form_id`.
+     * Или из текущей редактируемой анкеты.
+     */
+    private function getCurrentForm(): ClientForm
+    {
+        /** @var ClientFormResponse $subject */
+        $subject = $this->getSubject();
+        if ($this->formId !== null) {
+            $formId = $this->formId;
+        } elseif ($subject->getForm() !== null) {
+            return $subject->getForm();
+        } else {
+            $formId = $this->getRequest()->get('form_id');
+            if (!$formId) {
+                throw new BadRequestHttpException('form_id must be set');
+            }
+        }
+        /** @var ClientForm $currentForm */
+        $currentForm = $this->getModelManager()->find(ClientForm::class, $formId);
+        if (!$currentForm) {
+            throw new BadRequestHttpException("ClientForm {$formId} was not found");
+        }
+
+        return $currentForm;
+    }
+
+    /**
+     * По объекту поля формы определяет, какие параметры нужно передать в `FormMapper` админки.
+     * Возвращает массив с полями `type` и `options` для метода `$formMapper->add()`
+     *
+     * @param string $fieldName
+     */
+    private function getFieldDescription(ClientFormField $field, $fieldName, ClientFormResponse $subject): array
+    {
+        $options = [
+            'label' => $field->getName(),
+            'required' => $field->isRequired(),
+        ];
+        switch ($field->getType()) {
+            case ClientFormField::TYPE_TEXT:
+                $type = TextType::class;
+                break;
+
+            case ClientFormField::TYPE_OPTION:
+                $type = ChoiceType::class;
+                $optionsText = $field->getOptions();
+                $choiceList = ClientFormUtil::optionsTextToArray($optionsText);
+                $options['choices'] = array_combine($choiceList, $choiceList);
+                // если в редактируемой анкете у этого поля выставлено значение, которого нет в списке для выбора,
+                // пишем об этом в лог и добавляем значение в список
+                if ($subject?->getId() !== null) {
+                    $value = $subject->__get($fieldName);
+                    $fieldValues = [];
+                    if ($value !== null) {
+                        $fieldValues = $field->isMultiselect() ? ClientFormUtil::optionsTextToArray($value) : [$value];
+                    }
+                    foreach ($fieldValues as $fieldValue) {
+                        if (!\array_key_exists($fieldValue, $options['choices'])) {
+                            error_log('Missing choice '.($fieldValue === null ? 'null' : "'{$fieldValue}'").' in field '.$fieldName.' of client form response '.$subject->getId());
+                            $options['choices'][$fieldValue] = $fieldValue;
+                        }
+                    }
+                }
+                if ($field->isMultiselect()) {
+                    $options['multiple'] = true;
+                }
+                break;
+
+            case ClientFormField::TYPE_CHECKBOX:
+                $type = CheckboxType::class;
+                break;
+
+            default:
+                error_log('Unknown client form field type '.$field->getType());
+                $type = TextType::class;
+                break;
+        }
+
+        return [
+            'type' => $type,
+            'options' => $options,
+        ];
     }
 }

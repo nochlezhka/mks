@@ -1,9 +1,10 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\Entity;
 
-use DateTime;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
@@ -13,153 +14,87 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 #[Vich\Uploadable]
 class DocumentFile extends BaseEntity
 {
-    /**
-     * Комментарий
-     */
-    #[ORM\Column(type: "text", nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true)]
     private ?string $comment = null;
 
-    /**
-     * Клиент
-     */
-    #[ORM\ManyToOne(targetEntity: Client::class, inversedBy: "documentFiles")]
+    #[ORM\ManyToOne(targetEntity: Client::class, inversedBy: 'documentFiles')]
     private ?Client $client = null;
 
-    /**
-     * Тип
-     */
     #[ORM\ManyToOne(targetEntity: DocumentType::class)]
     private ?DocumentType $type = null;
 
-    /**
-     * Имя файла
-     */
-    #[ORM\Column(type: "string", nullable: true)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $filename = null;
 
-    /**
-     * Файл
-     */
-    #[Vich\UploadableField(mapping: "document_file", fileNameProperty: "filename")]
-    private $file;
+    #[Vich\UploadableField(mapping: 'document_file', fileNameProperty: 'filename')]
+    private ?File $file = null;
 
-    public function __toString()
+    public function __toString(): string
     {
-        $type = $this->getType();
-
-        return $type ? $type->getName() : "UNKNOWN_TYPE";
+        return $this->getType()?->getName() ?? 'UNKNOWN_TYPE';
     }
 
-    public function getFile()
+    public function getFile(): ?File
     {
         return $this->file;
     }
 
-    public function setFile($file = null): DocumentFile
+    public function setFile($file = null): self
     {
         $this->file = $file;
 
         if ($file) {
-            $this->setUpdatedAt(new DateTime());
+            $this->setUpdatedAt(new \DateTimeImmutable());
         }
 
         return $this;
     }
 
-    /**
-     * Set filename
-     *
-     * @param string|null $filename
-     *
-     * @return DocumentFile
-     */
-    public function setFilename(?string $filename): DocumentFile
+    public function getFilename(): ?string
+    {
+        return $this->filename;
+    }
+
+    public function setFilename(?string $filename): self
     {
         $this->filename = $filename;
 
         return $this;
     }
 
-    /**
-     * Get filename
-     *
-     * @return string
-     */
-    public function getFilename(): ?string
+    public function getComment(): ?string
     {
-        return $this->filename;
+        return $this->comment;
     }
 
-    /**
-     * Set comment
-     *
-     * @param string|null $comment
-     *
-     * @return DocumentFile
-     */
-    public function setComment(?string $comment): DocumentFile
+    public function setComment(?string $comment): self
     {
         $this->comment = $comment;
 
         return $this;
     }
 
-    /**
-     * Get comment
-     *
-     * @return string
-     */
-    public function getComment(): ?string
+    public function getClient(): ?Client
     {
-        return $this->comment;
+        return $this->client;
     }
 
-    /**
-     * Set client
-     *
-     * @param Client $client
-     *
-     * @return DocumentFile
-     */
-    public function setClient(Client $client): DocumentFile
+    public function setClient(Client $client): self
     {
         $this->client = $client;
 
         return $this;
     }
 
-    /**
-     * Get client
-     *
-     * @return Client
-     */
-    public function getClient(): ?Client
+    public function getType(): ?DocumentType
     {
-        return $this->client;
+        return $this->type;
     }
 
-
-    /**
-     * Set type
-     *
-     * @param DocumentType $type
-     *
-     * @return DocumentFile
-     */
-    public function setType(DocumentType $type): DocumentFile
+    public function setType(DocumentType $type): self
     {
         $this->type = $type;
 
         return $this;
-    }
-
-    /**
-     * Get type
-     *
-     * @return DocumentType
-     */
-    public function getType(): ?DocumentType
-    {
-        return $this->type;
     }
 }

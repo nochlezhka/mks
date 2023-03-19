@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\Repository;
 
@@ -6,21 +7,36 @@ use App\Entity\Client;
 use App\Entity\ClientFormField;
 use App\Entity\ClientFormResponseValue;
 use App\Entity\MenuItem;
-use App\Entity\ShelterHistory;
+use App\Entity\Notice;
 use App\Entity\User;
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\ResultSetMappingBuilder;
+use Doctrine\Persistence\ManagerRegistry;
 
-
-class NoticeRepository extends EntityRepository
+/**
+ * @method Notice|null   find($id, $lockMode = null, $lockVersion = null)
+ * @method Notice|null   findOneBy(array $criteria, array $orderBy = null)
+ * @method array<Notice> findAll()
+ * @method array<Notice> findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ */
+class NoticeRepository extends ServiceEntityRepository
 {
+    public function __construct(
+        private readonly ContractRepository $contractRepository,
+        private readonly MenuItemRepository $menuItemRepository,
+        ManagerRegistry $registry,
+    ) {
+        parent::__construct($registry, Notice::class);
+    }
+
     /**
      * Количество непросмотренных пользователем напоминаний по данному клиенту
-     * @param Client $client
-     * @param User $user
-     * @return mixed
+     *
+     * @throws NonUniqueResultException
      */
-    public function getUnviewedCount(Client $client, User $user)
+    public function getUnviewedCount(Client $client, User $user): mixed
     {
         $result = $this
             ->createQueryBuilder('n')
@@ -28,43 +44,43 @@ class NoticeRepository extends EntityRepository
             ->where('n.client = :client')
             ->andWhere(':user NOT MEMBER OF n.viewedBy')
             ->andWhere('n.date <= :now')
-            ->setParameters(['client' => $client, 'user' => $user, 'now' => new \DateTime()])
+            ->setParameters([
+                'client' => $client,
+                'user' => $user,
+                'now' => new \DateTimeImmutable(),
+            ])
             ->getQuery()
-            ->getOneOrNullResult();
+            ->getOneOrNullResult()
+        ;
 
-        return $result['cnt'];
+        return $result['cnt'] ?? 0;
     }
 
     /**
-     * @param Client $client
-     * @param User $user
-     * @return mixed
+     * @throws NonUniqueResultException
      */
-    public function getAllUserClientsNotice(Client $client, User $user)
+    public function getAllUserClientsNotice(Client $client, User $user): ?array
     {
-        $result = $this
+        return $this
             ->createQueryBuilder('n')
             ->select('n.id, n.text')
             ->where('n.client = :client')
             ->andWhere(':user NOT MEMBER OF n.viewedBy')
             ->andWhere('n.date <= :now')
-            ->setParameters(['client' => $client, 'user' => $user, 'now' => new \DateTime()])
+            ->setParameters([
+                'client' => $client,
+                'user' => $user,
+                'now' => new \DateTimeImmutable(),
+            ])
             ->setMaxResults(1)
             ->getQuery()
-            ->getOneOrNullResult();
-
-        return $result;
+            ->getOneOrNullResult()
+        ;
     }
 
-    /**
-     * @param array $filter
-     * @return \Doctrine\ORM\Query
-     */
-    public function getAllActiveContracts(array $filter)
+    public function getAllActiveContracts(array $filter): Query
     {
-        $result = $this
-            ->getEntityManager()
-            ->getRepository('App\Entity\Contract')
+        return $this->contractRepository
             ->createQueryBuilder('cont')
             ->where('cont.createdBy=:contractCreatedBy')
             ->andWhere('cont.status=:contractStatus')
@@ -72,55 +88,38 @@ class NoticeRepository extends EntityRepository
                 'contractCreatedBy' => $filter['contractCreatedBy'],
                 'contractStatus' => $filter['contractStatus'],
             ])
-            ->getQuery();
-
-        return $result;
+            ->getQuery()
+        ;
     }
 
-    /**
-     * @param array $filter
-     * @return \Doctrine\ORM\Query
-     */
-    public function getAllContractsResidentQuestionnaire(array $filter)
+    public function getAllContractsResidentQuestionnaire(array $filter): Query
     {
-        $result = $this
-            ->getEntityManager()
-            ->getRepository('App\Entity\Contract')
+        return $this->contractRepository
             ->createQueryBuilder('cont')
             ->where('cont.createdBy=:contractCreatedBy')
             ->setParameters([
                 'contractCreatedBy' => $filter['contractCreatedBy'],
             ])
-            ->getQuery();
-
-        return $result;
+            ->getQuery()
+        ;
     }
 
     /**
-     * @param $filter
-     * @param User $user
-     * @param $clientFormsEnabled
-     * @return int
+     * @throws NonUniqueResultException
      */
-    public function getMyClientsNoticeHeaderCount($filter, User $user, $clientFormsEnabled): int
+    public function getMyClientsNoticeHeaderCount(mixed $filter, User $user, mixed $clientFormsEnabled): int
     {
-        return count($this->getMyClientsNoticeHeader($filter, $user, $clientFormsEnabled));
+        return \count($this->getMyClientsNoticeHeader($filter, $user, $clientFormsEnabled));
     }
 
     /**
-     * @param $filter
-     * @param User $user
-     * @param $clientFormsEnabled
-     * @return array
+     * @throws NonUniqueResultException
      */
-    public function getMyClientsNoticeHeader($filter, User $user, $clientFormsEnabled)
+    public function getMyClientsNoticeHeader(mixed $filter, User $user, mixed $clientFormsEnabled): array
     {
-        $isNotification = $this
-            ->getEntityManager()
-            ->getRepository(MenuItem::class)
-            ->isEnableCode(MenuItem::CODE_NOTIFICATIONS);
+        $isNotification = $this->menuItemRepository->isEnableCode(MenuItem::CODE_NOTIFICATIONS);
         if (!$isNotification) {
-            return  [];
+            return [];
         }
         $result = [];
 
@@ -128,19 +127,15 @@ class NoticeRepository extends EntityRepository
 
         foreach ($arContracts->getResult() as $itm) {
             $arAllUserClientsNotice = $this->getAllUserClientsNotice($itm->getClient(), $user);
-            if (null === $arAllUserClientsNotice) {
+            if ($arAllUserClientsNotice === null) {
                 continue;
             }
             $result[$arAllUserClientsNotice['id']] = $arAllUserClientsNotice;
             $result[$arAllUserClientsNotice['id']]['client'] = $itm->getClient();
         }
 
-        $isQuestionnaireLiving = $this
-            ->getEntityManager()
-            ->getRepository(MenuItem::class)
-            ->isEnableCode(MenuItem::CODE_QUESTIONNAIRE_LIVING);
+        $isQuestionnaireLiving = $this->menuItemRepository->isEnableCode(MenuItem::CODE_QUESTIONNAIRE_LIVING);
         if ($isQuestionnaireLiving) {
-            $sql = null;
             $qnrTypeFieldId = ClientFormField::RESIDENT_QUESTIONNAIRE_TYPE_FIELD_ID;
             $qnrType3Mon = ClientFormResponseValue::RESIDENT_QUESTIONNAIRE_TYPE_3_MONTHS;
             $qnrType6Mon = ClientFormResponseValue::RESIDENT_QUESTIONNAIRE_TYPE_6_MONTHS;
@@ -148,48 +143,64 @@ class NoticeRepository extends EntityRepository
             $qnrType2Years = ClientFormResponseValue::RESIDENT_QUESTIONNAIRE_TYPE_2_YEARS;
             $maxResFormTTL = 9999;
             if (!$clientFormsEnabled) {
-                $sql = "SELECT cl.*
-                FROM client cl
-                JOIN (SELECT MAX(id) id, client_id FROM contract GROUP BY client_id) ct ON ct.client_id= cl.id
-                JOIN contract c on c.id = ct.id
-                JOIN (SELECT MAX(id) id, client_id, MAX(date_to) date_to, MAX(date_from) date_from FROM shelter_history WHERE date_to IS NOT NULL GROUP BY client_id) sh ON sh.client_id= c.client_id
-                LEFT JOIN resident_questionnaire rq3 ON rq3.client_id = c.client_id AND rq3.type_id = 1
-                LEFT JOIN resident_questionnaire rq6 ON rq6.client_id = c.client_id AND rq6.type_id = 2
-                LEFT JOIN resident_questionnaire rq12 ON rq12.client_id = c.client_id AND rq12.type_id = 3
-                WHERE c.created_by_id = ? AND (
-                        (rq3.id IS NULL AND rq6.id IS NULL AND rq12.id IS NULL AND DATE_ADD(sh.date_to, INTERVAL 3 MONTH) < NOW()) OR
-                        (rq6.id IS NULL AND rq12.id IS NULL AND DATE_ADD(sh.date_to, INTERVAL 6 MONTH) < NOW()) OR
-                        (rq12.id IS NULL AND DATE_ADD(sh.date_to, INTERVAL 12 MONTH) < NOW())
-                    ) AND sh.date_to >= '2019-01-01';";
+                $sql = "
+                    SELECT cl.*
+                    FROM client cl
+                        JOIN (SELECT MAX(id) id, client_id FROM contract GROUP BY client_id) ct
+                            ON ct.client_id= cl.id
+                        JOIN contract c
+                            ON c.id = ct.id
+                        JOIN (SELECT MAX(id) id, client_id, MAX(date_to) date_to, MAX(date_from) date_from FROM shelter_history WHERE date_to IS NOT NULL GROUP BY client_id) sh
+                            ON sh.client_id= c.client_id
+                        LEFT JOIN resident_questionnaire rq3
+                            ON rq3.client_id = c.client_id AND rq3.type_id = 1
+                        LEFT JOIN resident_questionnaire rq6
+                            ON rq6.client_id = c.client_id AND rq6.type_id = 2
+                        LEFT JOIN resident_questionnaire rq12
+                            ON rq12.client_id = c.client_id AND rq12.type_id = 3
+                    WHERE c.created_by_id = ?
+                      AND (
+                          (rq3.id IS NULL AND rq6.id IS NULL AND rq12.id IS NULL AND DATE_ADD(sh.date_to, INTERVAL 3 MONTH) < NOW())
+                              OR (rq6.id IS NULL AND rq12.id IS NULL AND DATE_ADD(sh.date_to, INTERVAL 6 MONTH) < NOW())
+                              OR (rq12.id IS NULL AND DATE_ADD(sh.date_to, INTERVAL 12 MONTH) < NOW())
+                          )
+                      AND sh.date_to >= '2019-01-01';
+                ";
             } else {
                 $residentFormsSubquery = "
                     SELECT frv.client_id,
                         MAX(CASE frv.value
                             -- для каждого типа анкеты указано, когда нужно напомнить о заполнении следующей
-                            WHEN '$qnrType3Mon' THEN 6
-                            WHEN '$qnrType6Mon' THEN 12
-                            WHEN '$qnrType1Year' THEN 24
-                            -- если возвращается $maxResFormTTL, то больше не будет напоминаний
-                            WHEN '$qnrType2Years' THEN $maxResFormTTL
+                            WHEN '{$qnrType3Mon}' THEN 6
+                            WHEN '{$qnrType6Mon}' THEN 12
+                            WHEN '{$qnrType1Year}' THEN 24
+                            -- если возвращается {$maxResFormTTL}, то больше не будет напоминаний
+                            WHEN '{$qnrType2Years}' THEN {$maxResFormTTL}
                             ELSE 0
                             END
                         ) max_ttl_months
                     FROM client_form_response_value frv
-                    WHERE frv.client_form_field_id = $qnrTypeFieldId
+                    WHERE frv.client_form_field_id = {$qnrTypeFieldId}
                     GROUP BY frv.client_id
                 ";
-                $sql = "SELECT cl.*
+                $sql = "
+                    SELECT cl.*
                     FROM client cl
-                    JOIN (SELECT MAX(id) id, client_id FROM contract GROUP BY client_id) ct ON ct.client_id= cl.id
-                    JOIN contract c on c.id = ct.id
-                    JOIN (SELECT MAX(id) id, client_id, MAX(date_to) date_to, MAX(date_from) date_from FROM shelter_history WHERE date_to IS NOT NULL GROUP BY client_id) sh ON sh.client_id= c.client_id
-                    LEFT JOIN ($residentFormsSubquery) res_forms ON res_forms.client_id = c.client_id
+                        JOIN (SELECT MAX(id) id, client_id FROM contract GROUP BY client_id) ct
+                            ON ct.client_id= cl.id
+                        JOIN contract c
+                            ON c.id = ct.id
+                        JOIN (SELECT MAX(id) id, client_id, MAX(date_to) date_to, MAX(date_from) date_from FROM shelter_history WHERE date_to IS NOT NULL GROUP BY client_id) sh
+                            ON sh.client_id= c.client_id
+                        LEFT JOIN ({$residentFormsSubquery}) res_forms
+                            ON res_forms.client_id = c.client_id
                     WHERE c.created_by_id = ?
                         -- у клиента нет ни одной заполненной анкеты, или есть, но не с максимально возможным типом
-                        AND (res_forms.max_ttl_months IS NULL OR res_forms.max_ttl_months != $maxResFormTTL)
+                        AND (res_forms.max_ttl_months IS NULL OR res_forms.max_ttl_months != {$maxResFormTTL})
                         -- по максимальному сроку анкеты понятно, что уже пора заполнять за следующий период
                         AND DATE_ADD(sh.date_to, INTERVAL IFNULL(res_forms.max_ttl_months, 3) MONTH) < NOW()
-                        AND sh.date_to >= '2019-01-01';";
+                        AND sh.date_to >= '2019-01-01';
+                ";
             }
 
             $rsm = new ResultSetMappingBuilder($this->getEntityManager());
@@ -198,7 +209,7 @@ class NoticeRepository extends EntityRepository
             $query = $this->getEntityManager()->createNativeQuery($sql, $rsm);
             $query->setParameter(1, $user->getId());
 
-            /** @var Client[] $clients */
+            /** @var array<Client> $clients */
             $clients = $query->getResult();
             foreach ($clients as $client) {
                 $isSearch = false;
@@ -217,6 +228,7 @@ class NoticeRepository extends EntityRepository
                 }
             }
         }
+
         return $result;
     }
 }

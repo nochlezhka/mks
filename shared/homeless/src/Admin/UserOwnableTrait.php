@@ -1,21 +1,18 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\Admin;
 
 use App\Entity\Client;
 
-/**
- * Trait UserOwnableTrait
- * @package App\Admin
- */
 trait UserOwnableTrait
 {
-    public function getClient(): ?Client{
+    public function getClient(): ?Client {
         $result = null;
+
         try {
             $result = $this->getParent()->getSubject();
-        } catch (\Exception $exception) {
-
+        } catch (\Throwable) {
         } finally {
             return $result;
         }

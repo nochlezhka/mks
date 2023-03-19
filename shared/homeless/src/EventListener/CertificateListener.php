@@ -1,9 +1,9 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\EventListener;
 
 use App\Entity\Certificate;
-use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsEntityListener;
 use Doctrine\ORM\Events;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
@@ -16,8 +16,8 @@ class CertificateListener
      */
     public function postPersist(Certificate $certificate, LifecycleEventArgs $args): void
     {
-        $certificate->setDateFrom(new DateTime());
-        $certificate->setDateTo((new DateTime())->modify('+1 year'));
+        $certificate->setDateFrom(new \DateTimeImmutable());
+        $certificate->setDateTo((new \DateTimeImmutable())->modify('+1 year'));
         $em = $args->getObjectManager();
         $em->persist($certificate);
         $em->flush($certificate);

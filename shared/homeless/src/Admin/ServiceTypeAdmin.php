@@ -1,31 +1,29 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\Admin;
 
 use App\Entity\ServiceType;
 use Sonata\AdminBundle\Datagrid\ListMapper;
+use Sonata\AdminBundle\FieldDescription\FieldDescriptionInterface;
 use Sonata\AdminBundle\Form\FormMapper;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 #[AutoconfigureTag(name: 'sonata.admin', attributes: [
     'manager_type' => 'orm',
-    'label' => 'Типы услуг',
+    'label' => 'service_types',
     'model_class' => ServiceType::class,
-    'label_translator_strategy' => 'sonata.admin.label.strategy.underscore'
+    'label_translator_strategy' => 'sonata.admin.label.strategy.underscore',
 ])]
-class ServiceTypeAdmin extends BaseAdmin
+class ServiceTypeAdmin extends AbstractAdmin
 {
-    protected array $datagridValues = array(
+    protected array $datagridValues = [
         '_sort_order' => 'ASC',
         '_sort_by' => 'sort',
-    );
+    ];
 
-    protected string $translationDomain = 'App';
-
-    /**
-     * @param FormMapper $form
-     */
     protected function configureFormFields(FormMapper $form): void
     {
         $form
@@ -37,19 +35,17 @@ class ServiceTypeAdmin extends BaseAdmin
                 'label' => 'Сортировка',
                 'required' => true,
             ])
-            ->add('comment', 'checkbox', [
+            ->add('comment', CheckboxType::class, [
                 'label' => 'Комментарий',
                 'required' => false,
             ])
-            ->add('amount', 'checkbox', [
+            ->add('amount', CheckboxType::class, [
                 'label' => 'Сумма',
                 'required' => false,
-            ]);
+            ])
+        ;
     }
 
-    /**
-     * @param ListMapper $list
-     */
     protected function configureListFields(ListMapper $list): void
     {
         $list
@@ -59,10 +55,10 @@ class ServiceTypeAdmin extends BaseAdmin
             ->add('sort', TextType::class, [
                 'label' => 'Сортировка',
             ])
-            ->add('comment', 'boolean', [
+            ->add('comment', FieldDescriptionInterface::TYPE_BOOLEAN, [
                 'label' => 'Комментарий',
             ])
-            ->add('amount', 'boolean', [
+            ->add('amount', FieldDescriptionInterface::TYPE_BOOLEAN, [
                 'label' => 'Сумма',
             ])
             ->add(ListMapper::NAME_ACTIONS, ListMapper::TYPE_ACTIONS, [
@@ -70,7 +66,8 @@ class ServiceTypeAdmin extends BaseAdmin
                 'actions' => [
                     'edit' => [],
                     'delete' => [],
-                ]
-            ]);
+                ],
+            ])
+        ;
     }
 }

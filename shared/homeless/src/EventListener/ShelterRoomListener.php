@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\EventListener;
 
@@ -20,25 +21,29 @@ class ShelterRoomListener
     public function postPersist(ShelterHistory $shelterHistory, LifecycleEventArgs $args): void
     {
         $room = $shelterHistory->getRoom();
-        if (!empty($room)) {
-            $currentOccupants = $room->getCurrentOccupants();
-            $em = $args->getObjectManager();
-            $room->setCurrentOccupants($currentOccupants + 1);
-            $em->persist($room);
-            $em->flush();
+        if (empty($room)) {
+            return;
         }
+
+        $currentOccupants = $room->getCurrentOccupants();
+        $em = $args->getObjectManager();
+        $room->setCurrentOccupants($currentOccupants + 1);
+        $em->persist($room);
+        $em->flush();
     }
 
     public function postRemove(ShelterHistory $shelterHistory, LifecycleEventArgs $args): void
     {
         $room = $shelterHistory->getRoom();
-        if (!empty($room)) {
-            $currentOccupants = $room->getCurrentOccupants();
-            $em = $args->getObjectManager();
-            $room->setCurrentOccupants(($currentOccupants == 0 ) ? 0 : $currentOccupants - 1);
-            $em->persist($room);
-            $em->flush();
+        if (empty($room)) {
+            return;
         }
+
+        $currentOccupants = $room->getCurrentOccupants();
+        $em = $args->getObjectManager();
+        $room->setCurrentOccupants(($currentOccupants === 0) ? 0 : $currentOccupants - 1);
+        $em->persist($room);
+        $em->flush();
     }
 
     public function preUpdate(ShelterHistory $shelterHistory, PreUpdateEventArgs $args): void
@@ -49,7 +54,7 @@ class ShelterRoomListener
         if ($args->hasChangedField('room')) {
             $changeSetId = $updatedEntities['room'][0]->getId();
             $oldRoom = $em->getRepository(ShelterRoom::class)->find($changeSetId);
-            $oldRoom->setCurrentOccupants(($oldRoom->getCurrentOccupants() == 0) ? 0 : $oldRoom->getCurrentOccupants() - 1);
+            $oldRoom->setCurrentOccupants(($oldRoom->getCurrentOccupants() === 0) ? 0 : $oldRoom->getCurrentOccupants() - 1);
             $em->persist($oldRoom);
             $newRoom = $shelterHistory->getRoom();
             $newRoom->setCurrentOccupants($newRoom->getCurrentOccupants() + 1);

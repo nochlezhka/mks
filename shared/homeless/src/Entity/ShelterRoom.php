@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\Entity;
 
@@ -10,128 +11,74 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity]
 class ShelterRoom extends BaseEntity
 {
-    /**
-     * Номер
-     */
-    #[ORM\Column(type: "string", nullable: true)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $number = null;
 
     /**
      * Максимальное количество жильцов
      */
-    #[ORM\Column(type: "integer", nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $maxOccupants = null;
 
     /**
      * Текущее количество жильцов
      */
-    #[ORM\Column(type: "integer", nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $currentOccupants = null;
 
-    /**
-     * Комментарий
-     */
-    #[ORM\Column(type: "text", nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true)]
     private ?string $comment = null;
 
-    public function __toString()
+    public function __toString(): string
+    {
+        return $this->number ?? '';
+    }
+
+    public function getNumber(): ?string
     {
         return $this->number;
     }
 
-    /**
-     * Set number
-     *
-     * @param string|null $number
-     *
-     * @return ShelterRoom
-     */
-    public function setNumber(?string $number): ShelterRoom
+    public function setNumber(?string $number): self
     {
         $this->number = $number;
 
         return $this;
     }
 
-    /**
-     * Get number
-     *
-     * @return string
-     */
-    public function getNumber(): ?string
+    public function getMaxOccupants(): ?int
     {
-        return $this->number;
+        return $this->maxOccupants;
     }
 
-    /**
-     * Set maxOccupants
-     *
-     * @param int|null $maxOccupants
-     *
-     * @return ShelterRoom
-     */
-    public function setMaxOccupants(?int $maxOccupants): ShelterRoom
+    public function setMaxOccupants(?int $maxOccupants): self
     {
         $this->maxOccupants = $maxOccupants;
 
         return $this;
     }
 
-    /**
-     * Get maxOccupants
-     *
-     * @return integer
-     */
-    public function getMaxOccupants(): ?int
+    public function getCurrentOccupants(): ?int
     {
-        return $this->maxOccupants;
+        return $this->currentOccupants;
     }
 
-    /**
-     * Set currentOccupants
-     *
-     * @param int|null $currentOccupants
-     *
-     * @return ShelterRoom
-     */
-    public function setCurrentOccupants(?int $currentOccupants): ShelterRoom
+    public function setCurrentOccupants(?int $currentOccupants): self
     {
         $this->currentOccupants = $currentOccupants;
 
         return $this;
     }
 
-    /**
-     * Get currentOccupants
-     *
-     * @return integer
-     */
-    public function getCurrentOccupants(): ?int
+    public function getComment(): ?string
     {
-        return $this->currentOccupants;
+        return $this->comment;
     }
 
-    /**
-     * Set comment
-     *
-     * @param string|null $comment
-     *
-     * @return ShelterRoom
-     */
-    public function setComment(?string $comment): ShelterRoom
+    public function setComment(?string $comment): self
     {
         $this->comment = $comment;
 
         return $this;
-    }
-
-    /**
-     * Get comment
-     *
-     * @return string
-     */
-    public function getComment(): ?string
-    {
-        return $this->comment;
     }
 }

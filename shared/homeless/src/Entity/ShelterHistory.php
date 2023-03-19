@@ -1,8 +1,8 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\Entity;
 
-use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -11,339 +11,191 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity]
 class ShelterHistory extends BaseEntity
 {
-    /**
-     * Комментарий
-     */
-    #[ORM\Column(type: "text", nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true)]
     private ?string $comment = null;
 
     /**
      * Дата прививки от дифтерии
      */
-    #[ORM\Column(type: "date", nullable: true)]
-    private ?DateTime $diphtheriaVaccinationDate = null;
+    #[ORM\Column(type: 'date_immutable', nullable: true)]
+    private ?\DateTimeImmutable $diphtheriaVaccinationDate = null;
 
     /**
      * Дата флюорографии
      */
-    #[ORM\Column(type: "date", nullable: true)]
-    private ?DateTime $fluorographyDate = null;
+    #[ORM\Column(type: 'date_immutable', nullable: true)]
+    private ?\DateTimeImmutable $fluorographyDate = null;
 
     /**
      * Дата прививки от гепатита
      */
-    #[ORM\Column(type: "date", nullable: true)]
-    private ?DateTime $hepatitisVaccinationDate = null;
+    #[ORM\Column(type: 'date_immutable', nullable: true)]
+    private ?\DateTimeImmutable $hepatitisVaccinationDate = null;
 
     /**
      * Дата прививки от тифа
      */
-    #[ORM\Column(type: "date", nullable: true)]
-    private ?DateTime $typhusVaccinationDate = null;
+    #[ORM\Column(type: 'date_immutable', nullable: true)]
+    private ?\DateTimeImmutable $typhusVaccinationDate = null;
 
     /**
      * Дата заселения
      */
-    #[ORM\Column(type: "date", nullable: true)]
-    private ?DateTime $dateFrom = null;
+    #[ORM\Column(type: 'date_immutable', nullable: true)]
+    private ?\DateTimeImmutable $dateFrom = null;
 
     /**
      * Дата выселения
      */
-    #[ORM\Column(type: "date", nullable: true)]
-    private ?DateTime $dateTo = null;
+    #[ORM\Column(type: 'date_immutable', nullable: true)]
+    private ?\DateTimeImmutable $dateTo = null;
 
-    /**
-     * Комната
-     */
     #[ORM\ManyToOne(targetEntity: ShelterRoom::class)]
     private ?ShelterRoom $room = null;
 
-    /**
-     * Клиент
-     */
-    #[ORM\ManyToOne(targetEntity: Client::class, inversedBy: "shelterHistories")]
+    #[ORM\ManyToOne(targetEntity: Client::class, inversedBy: 'shelterHistories')]
     private ?Client $client = null;
 
-    /**
-     * Статус
-     */
     #[ORM\ManyToOne(targetEntity: ShelterStatus::class)]
     private ?ShelterStatus $status = null;
 
-    /**
-     * Договор
-     */
     #[ORM\ManyToOne(targetEntity: Contract::class)]
     private ?Contract $contract = null;
 
-    public function __toString()
+    public function __toString(): string
     {
-        $status = $this->getStatus();
-        return $status->getName();
+        return $this->status?->getName() ?? '';
     }
 
-    /**
-     * Set comment
-     *
-     * @param string|null $comment
-     *
-     * @return ShelterHistory
-     */
-    public function setComment(?string $comment): ShelterHistory
+    public function getComment(): ?string
+    {
+        return $this->comment;
+    }
+
+    public function setComment(?string $comment): self
     {
         $this->comment = $comment;
 
         return $this;
     }
 
-    /**
-     * Get comment
-     *
-     * @return string
-     */
-    public function getComment(): ?string
+    public function getDiphtheriaVaccinationDate(): ?\DateTimeImmutable
     {
-        return $this->comment;
+        return $this->diphtheriaVaccinationDate;
     }
 
-    /**
-     * Set diphtheriaVaccinationDate
-     *
-     * @param DateTime|null $diphtheriaVaccinationDate
-     *
-     * @return ShelterHistory
-     */
-    public function setDiphtheriaVaccinationDate(?DateTime $diphtheriaVaccinationDate): ShelterHistory
+    public function setDiphtheriaVaccinationDate(?\DateTimeImmutable $diphtheriaVaccinationDate): self
     {
         $this->diphtheriaVaccinationDate = $diphtheriaVaccinationDate;
 
         return $this;
     }
 
-    /**
-     * Get diphtheriaVaccinationDate
-     *
-     * @return DateTime
-     */
-    public function getDiphtheriaVaccinationDate(): ?DateTime
+    public function getFluorographyDate(): ?\DateTimeImmutable
     {
-        return $this->diphtheriaVaccinationDate;
+        return $this->fluorographyDate;
     }
 
-    /**
-     * Set fluorographyDate
-     *
-     * @param DateTime|null $fluorographyDate
-     *
-     * @return ShelterHistory
-     */
-    public function setFluorographyDate(?DateTime $fluorographyDate): ShelterHistory
+    public function setFluorographyDate(?\DateTimeImmutable $fluorographyDate): self
     {
         $this->fluorographyDate = $fluorographyDate;
 
         return $this;
     }
 
-    /**
-     * Get fluorographyDate
-     *
-     * @return DateTime
-     */
-    public function getFluorographyDate(): ?DateTime
+    public function getHepatitisVaccinationDate(): ?\DateTimeImmutable
     {
-        return $this->fluorographyDate;
+        return $this->hepatitisVaccinationDate;
     }
 
-    /**
-     * Set hepatitisVaccinationDate
-     *
-     * @param DateTime|null $hepatitisVaccinationDate
-     *
-     * @return ShelterHistory
-     */
-    public function setHepatitisVaccinationDate(?DateTime $hepatitisVaccinationDate): ShelterHistory
+    public function setHepatitisVaccinationDate(?\DateTimeImmutable $hepatitisVaccinationDate): self
     {
         $this->hepatitisVaccinationDate = $hepatitisVaccinationDate;
 
         return $this;
     }
 
-    /**
-     * Get hepatitisVaccinationDate
-     *
-     * @return DateTime
-     */
-    public function getHepatitisVaccinationDate(): ?DateTime
+    public function getTyphusVaccinationDate(): ?\DateTimeImmutable
     {
-        return $this->hepatitisVaccinationDate;
+        return $this->typhusVaccinationDate;
     }
 
-    /**
-     * Set typhusVaccinationDate
-     *
-     * @param DateTime|null $typhusVaccinationDate
-     *
-     * @return ShelterHistory
-     */
-    public function setTyphusVaccinationDate(?DateTime $typhusVaccinationDate): ShelterHistory
+    public function setTyphusVaccinationDate(?\DateTimeImmutable $typhusVaccinationDate): self
     {
         $this->typhusVaccinationDate = $typhusVaccinationDate;
 
         return $this;
     }
 
-    /**
-     * Get typhusVaccinationDate
-     *
-     * @return DateTime
-     */
-    public function getTyphusVaccinationDate(): ?DateTime
+    public function getDateFrom(): ?\DateTimeImmutable
     {
-        return $this->typhusVaccinationDate;
+        return $this->dateFrom;
     }
 
-    /**
-     * Set dateFrom
-     *
-     * @param DateTime|null $dateFrom
-     *
-     * @return ShelterHistory
-     */
-    public function setDateFrom(?DateTime $dateFrom): ShelterHistory
+    public function setDateFrom(?\DateTimeImmutable $dateFrom): self
     {
         $this->dateFrom = $dateFrom;
 
         return $this;
     }
 
-    /**
-     * Get dateFrom
-     *
-     * @return DateTime
-     */
-    public function getDateFrom(): ?DateTime
+    public function getDateTo(): ?\DateTimeImmutable
     {
-        return $this->dateFrom;
+        return $this->dateTo;
     }
 
-    /**
-     * Set dateTo
-     *
-     * @param DateTime $dateTo
-     *
-     * @return ShelterHistory
-     */
-    public function setDateTo(?DateTime $dateTo): ShelterHistory
+    public function setDateTo(?\DateTimeImmutable $dateTo): self
     {
         $this->dateTo = $dateTo;
 
         return $this;
     }
 
-    /**
-     * Get dateTo
-     *
-     * @return DateTime
-     */
-    public function getDateTo(): ?DateTime
+    public function getRoom(): ?ShelterRoom
     {
-        return $this->dateTo;
+        return $this->room;
     }
 
-    /**
-     * Set room
-     *
-     * @param ShelterRoom|null $room
-     *
-     * @return ShelterHistory
-     */
-    public function setRoom(ShelterRoom $room): ShelterHistory
+    public function setRoom(ShelterRoom $room): self
     {
         $this->room = $room;
 
         return $this;
     }
 
-    /**
-     * Get room
-     *
-     * @return ShelterRoom
-     */
-    public function getRoom(): ?ShelterRoom
+    public function getClient(): ?Client
     {
-        return $this->room;
+        return $this->client;
     }
 
-    /**
-     * Set client
-     *
-     * @param Client|null $client
-     *
-     * @return ShelterHistory
-     */
-    public function setClient(Client $client): ShelterHistory
+    public function setClient(Client $client): self
     {
         $this->client = $client;
 
         return $this;
     }
 
-    /**
-     * Get client
-     *
-     * @return Client
-     */
-    public function getClient(): ?Client
+    public function getStatus(): ?ShelterStatus
     {
-        return $this->client;
+        return $this->status;
     }
 
-    /**
-     * Set status
-     *
-     * @param ShelterStatus|null $status
-     *
-     * @return ShelterHistory
-     */
-    public function setStatus(ShelterStatus $status): ShelterHistory
+    public function setStatus(ShelterStatus $status): self
     {
         $this->status = $status;
 
         return $this;
     }
 
-    /**
-     * Get status
-     *
-     * @return ShelterStatus
-     */
-    public function getStatus(): ?ShelterStatus
+    public function getContract(): ?Contract
     {
-        return $this->status;
+        return $this->contract;
     }
 
-    /**
-     * Set contract
-     *
-     * @param Contract|null $contract
-     *
-     * @return ShelterHistory
-     */
-    public function setContract(Contract $contract): ShelterHistory
+    public function setContract(Contract $contract): self
     {
         $this->contract = $contract;
 
         return $this;
-    }
-
-    /**
-     * Get contract
-     *
-     * @return Contract
-     */
-    public function getContract(): ?Contract
-    {
-        return $this->contract;
     }
 }

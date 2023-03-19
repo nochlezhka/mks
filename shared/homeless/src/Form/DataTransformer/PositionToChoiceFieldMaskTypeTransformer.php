@@ -1,31 +1,28 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\Form\DataTransformer;
 
-use App\Entity\Position;
-use Doctrine\Persistence\ManagerRegistry;
+use App\Repository\PositionRepository;
 use Symfony\Component\Form\DataTransformerInterface;
 
-class PositionToChoiceFieldMaskTypeTransformer implements DataTransformerInterface
+readonly class PositionToChoiceFieldMaskTypeTransformer implements DataTransformerInterface
 {
-    private ManagerRegistry $managerRegistry;
+    public function __construct(
+        private PositionRepository $positionRepository,
+    ) {}
 
-    public function __construct(ManagerRegistry $managerRegistry)
-    {
-        $this->managerRegistry = $managerRegistry;
-    }
-
-    public function transform(mixed $value)
+    public function transform(mixed $value): mixed
     {
         return $value?->getId();
-
     }
 
-    public function reverseTransform(mixed $value)
+    public function reverseTransform(mixed $value): ?object
     {
-        if (null === $value) {
+        if ($value === null) {
             return null;
         }
-        return $this->managerRegistry->getRepository(Position::class)->find($value);
+
+        return $this->positionRepository->find($value);
     }
 }

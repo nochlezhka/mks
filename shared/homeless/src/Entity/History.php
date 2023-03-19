@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\Entity;
 
@@ -10,33 +11,18 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity]
 class History extends BaseEntity
 {
-    /**
-     * Клиент
-     */
     #[ORM\ManyToOne(targetEntity: Client::class)]
     private ?Client $client = null;
 
-    /**
-     * Set client
-     *
-     * @param Client|null $client
-     *
-     * @return History
-     */
-    public function setClient(Client $client = null): History
+    public function getClient(): ?Client
+    {
+        return $this->client;
+    }
+
+    public function setClient(?Client $client = null): self
     {
         $this->client = $client;
 
         return $this;
-    }
-
-    /**
-     * Get client
-     *
-     * @return Client
-     */
-    public function getClient(): ?Client
-    {
-        return $this->client;
     }
 }

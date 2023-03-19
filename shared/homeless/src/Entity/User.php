@@ -1,14 +1,14 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\Entity;
 
 use App\Repository\UserRepository;
-use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Sonata\IntlBundle\Timezone\TimezoneAwareInterface;
-use Sonata\UserBundle\Entity\BaseUser as BaseUser;
+use Sonata\UserBundle\Entity\BaseUser;
 use Symfony\Component\Security\Core\User\LegacyPasswordAuthenticatedUserInterface;
 
 /**
@@ -16,89 +16,86 @@ use Symfony\Component\Security\Core\User\LegacyPasswordAuthenticatedUserInterfac
  * Таблица в старой БД: Worker
  */
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ORM\Table(name: "fos_user_user")]
+#[ORM\Table(name: 'fos_user_user')]
 class User extends BaseUser implements BaseEntityInterface, TimezoneAwareInterface, LegacyPasswordAuthenticatedUserInterface
 {
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column(type: 'integer')]
     #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: "AUTO")]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
     protected $id;
 
     /**
      * Должность
      * Поле в старой БД: rules
      */
-    #[ORM\ManyToOne(targetEntity: Position::class, inversedBy: "users")]
+    #[ORM\ManyToOne(targetEntity: Position::class, inversedBy: 'users')]
     private ?Position $position;
 
-    #[ORM\Column(type: "string", nullable: true)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $lastname = null;
 
-    #[ORM\Column(type: "string", nullable: true)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $firstname = null;
 
     /**
      * Отчество
      * Поле в старой БД: middlename
      */
-    #[ORM\Column(type: "string", nullable: true)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $middlename;
 
     /**
      * Дата доверенности
      * Поле в старой БД: warrantDate
      */
-    #[ORM\Column(type: "date", nullable: true)]
-    private ?DateTime $proxyDate;
+    #[ORM\Column(type: 'date_immutable', nullable: true)]
+    private ?\DateTimeImmutable $proxyDate;
 
     /**
      * Номер доверенности
      * Поле в старой БД: warrantNum
      */
-    #[ORM\Column(type: "string", nullable: true)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $proxyNum;
 
     /**
      * Паспортные данные
      */
-    #[ORM\Column(type: "text", nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true)]
     private ?string $passport;
 
     /**
      * Просмотренные уведомления
      */
-    #[ORM\ManyToMany(targetEntity: Notice::class, inversedBy: "viewedBy")]
-    #[ORM\JoinTable(name: "notice_user")]
-    #[ORM\JoinColumn(name: "user_id", referencedColumnName: "id")]
-    #[ORM\InverseJoinColumn(name: "notice_id", referencedColumnName: "id", unique: true)]
+    #[ORM\ManyToMany(targetEntity: Notice::class, inversedBy: 'viewedBy')]
+    #[ORM\JoinTable(name: 'notice_user')]
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')]
+    #[ORM\InverseJoinColumn(name: 'notice_id', referencedColumnName: 'id', unique: true)]
     private Collection $viewedNotices;
 
     /**
      * Просмотренные анкеты клиентов
      */
-    #[ORM\OneToMany(mappedBy: "createdBy", targetEntity: ViewedClient::class)]
-    #[ORM\OrderBy(["createdAt" => "DESC"])]
+    #[ORM\OneToMany(mappedBy: 'createdBy', targetEntity: ViewedClient::class)]
+    #[ORM\OrderBy(['createdAt' => 'DESC'])]
     private Collection $viewedClients;
 
     /**
      * Должность текстом
      */
-    #[ORM\Column(type: "text", nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true)]
     private ?string $positionText;
 
-    /**
-     * Таймзона
-     */
-    #[ORM\Column(type: "string", nullable: true)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $timezone;
 
-    #[ORM\Column(type: "integer", nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $syncId = null;
-    #[ORM\Column(type: "integer", nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $sort = null;
-    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\ManyToOne(targetEntity: self::class)]
     private ?User $createdBy = null;
-    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\ManyToOne(targetEntity: self::class)]
     private ?User $updatedBy = null;
 
     public function __construct()
@@ -110,19 +107,16 @@ class User extends BaseUser implements BaseEntityInterface, TimezoneAwareInterfa
     public function __toString(): string
     {
         if (empty($this->lastname)) {
-            return (string)$this->firstname;
+            return $this->firstname ?? '';
         }
 
         if (empty($this->firstname)) {
-            return (string)$this->lastname;
+            return $this->lastname;
         }
 
-        return $this->lastname . ' ' . $this->getInitials();
+        return $this->lastname.' '.$this->getInitials();
     }
 
-    /**
-     * ФИО
-     */
     public function getFullname(): string
     {
         $fullname = [];
@@ -145,342 +139,202 @@ class User extends BaseUser implements BaseEntityInterface, TimezoneAwareInterfa
         return implode(' ', $fullname);
     }
 
-    /**
-     * Иницииалы
-     */
     public function getInitials(): string
     {
         $initials = '';
 
         if (!empty($this->firstname)) {
-            $initials = $initials . mb_substr($this->firstname, 0, 1) . '.';
+            $initials = $initials.mb_substr($this->firstname, 0, 1).'.';
         }
 
         if (!empty($this->middlename)) {
-            $initials = $initials . mb_substr($this->middlename, 0, 1) . '.';
+            $initials = $initials.mb_substr($this->middlename, 0, 1).'.';
         }
 
         return $initials;
     }
 
-    /**
-     * Set position
-     *
-     * @param Position|null $position
-     *
-     * @return User
-     */
-    public function setPosition(?Position $position = null): User
+    public function getPosition(): ?Position
+    {
+        return $this->position;
+    }
+
+    public function setPosition(?Position $position = null): self
     {
         $this->position = $position;
 
         return $this;
     }
 
-    /**
-     * Get position
-     *
-     * @return Position
-     */
-    public function getPosition(): ?Position
+    public function getSyncId(): ?int
     {
-        return $this->position;
+        return $this->syncId;
     }
 
-    /**
-     * Set syncId
-     *
-     * @param int|null $syncId
-     *
-     * @return User
-     */
-    public function setSyncId(?int $syncId): User
+    public function setSyncId(?int $syncId): static
     {
         $this->syncId = $syncId;
 
         return $this;
     }
 
-    /**
-     * Get syncId
-     *
-     * @return integer
-     */
-    public function getSyncId(): ?int
+    public function getCreatedBy(): ?self
     {
-        return $this->syncId;
+        return $this->createdBy;
     }
 
-    /**
-     * Set createdBy
-     *
-     * @param User|null $createdBy
-     *
-     * @return User
-     */
-    public function setCreatedBy(?User $createdBy = null): User
+    public function setCreatedBy(?self $createdBy = null): static
     {
         $this->createdBy = $createdBy;
 
         return $this;
     }
 
-    /**
-     * Get createdBy
-     *
-     * @return User
-     */
-    public function getCreatedBy(): ?User
+    public function getUpdatedBy(): ?self
     {
-        return $this->createdBy;
+        return $this->updatedBy;
     }
 
-    /**
-     * Set updatedBy
-     *
-     * @param User|null $updatedBy
-     *
-     * @return User
-     */
-    public function setUpdatedBy(?User $updatedBy = null): User
+    public function setUpdatedBy(?self $updatedBy = null): static
     {
         $this->updatedBy = $updatedBy;
 
         return $this;
     }
 
-    /**
-     * Get updatedBy
-     *
-     * @return User
-     */
-    public function getUpdatedBy(): ?User
+    public function getMiddlename(): ?string
     {
-        return $this->updatedBy;
+        return $this->middlename;
     }
 
-    /**
-     * Set middlename
-     *
-     */
-    public function setMiddlename(?string $middlename): User
+    public function setMiddlename(?string $middlename): self
     {
         $this->middlename = $middlename;
 
         return $this;
     }
 
-    /**
-     * Get middlename
-     *
-     * @return string
-     */
-    public function getMiddlename(): ?string
+    public function getProxyDate(): ?\DateTimeImmutable
     {
-        return $this->middlename;
+        return $this->proxyDate;
     }
 
-    /**
-     * Set proxyDate
-     *
-     */
-    public function setProxyDate(?DateTime $proxyDate): User
+    public function setProxyDate(?\DateTimeImmutable $proxyDate): self
     {
         $this->proxyDate = $proxyDate;
 
         return $this;
     }
 
-    /**
-     * Get proxyDate
-     *
-     * @return DateTime
-     */
-    public function getProxyDate(): ?DateTime
+    public function getProxyNum(): ?string
     {
-        return $this->proxyDate;
+        return $this->proxyNum;
     }
 
-    /**
-     * Set proxyNum
-     *
-     */
-    public function setProxyNum(?string $proxyNum): User
+    public function setProxyNum(?string $proxyNum): self
     {
         $this->proxyNum = $proxyNum;
 
         return $this;
     }
 
-    /**
-     * Get proxyNum
-     *
-     * @return string
-     */
-    public function getProxyNum(): ?string
+    public function getPassport(): ?string
     {
-        return $this->proxyNum;
+        return $this->passport;
     }
 
-    /**
-     * Set passport
-     *
-     */
-    public function setPassport(?string $passport): User
+    public function setPassport(?string $passport): self
     {
         $this->passport = $passport;
 
         return $this;
     }
 
-    /**
-     * Get passport
-     *
-     */
-    public function getPassport(): ?string
+    public function getSort(): ?int
     {
-        return $this->passport;
+        return $this->sort;
     }
 
-    /**
-     * Set sort
-     *
-     * @param int|null $sort
-     *
-     * @return User
-     */
-    public function setSort(?int $sort): User
+    public function setSort(?int $sort): static
     {
         $this->sort = $sort;
 
         return $this;
     }
 
-    /**
-     * Get sort
-     *
-     * @return integer
-     */
-    public function getSort(): ?int
-    {
-        return $this->sort;
-    }
-
-
-    /**
-     * Add viewedNotice
-     */
-    public function addViewedNotice(Notice $viewedNotice): User
-    {
-        $this->viewedNotices[] = $viewedNotice;
-
-        return $this;
-    }
-
-    /**
-     * Remove viewedNotice
-     */
-    public function removeViewedNotice(Notice $viewedNotice)
-    {
-        $this->viewedNotices->removeElement($viewedNotice);
-    }
-
-    /**
-     * Get viewedNotices
-     *
-     * @return Collection
-     */
-    public function getViewedNotices()
+    public function getViewedNotices(): Collection
     {
         return $this->viewedNotices;
     }
 
-    /**
-     * Add viewedClient
-     */
-    public function addViewedClient(ViewedClient $viewedClient): User
+    public function addViewedNotice(Notice $viewedNotice): self
     {
-        $this->viewedClients[] = $viewedClient;
+        $this->viewedNotices->add($viewedNotice);
 
         return $this;
     }
 
-    /**
-     * Remove viewedClient
-     */
-    public function removeViewedClient(ViewedClient $viewedClient)
+    public function removeViewedNotice(Notice $viewedNotice): void
     {
-        $this->viewedClients->removeElement($viewedClient);
+        $this->viewedNotices->removeElement($viewedNotice);
     }
 
-    /**
-     * Get viewedClients
-     *
-     * @return Collection
-     */
-    public function getViewedClients()
+    public function getViewedClients(): Collection
     {
         return $this->viewedClients;
     }
 
-    public function isGranted($role): bool
+    public function addViewedClient(ViewedClient $viewedClient): self
     {
-        return in_array($role, $this->getRoles());
+        $this->viewedClients->add($viewedClient);
+
+        return $this;
     }
 
-    /**
-     * Get positionText
-     *
-     */
+    public function removeViewedClient(ViewedClient $viewedClient): void
+    {
+        $this->viewedClients->removeElement($viewedClient);
+    }
+
+    public function isGranted(string $role): bool
+    {
+        return \in_array($role, $this->getRoles(), true);
+    }
+
     public function getPositionText(): ?string
     {
         return $this->positionText;
     }
 
-    /**
-     * Set positionText
-     *
-     * @param mixed $positionText
-     *
-     * @return User
-     */
-    public function setPositionText($positionText): User
+    public function setPositionText(?string $positionText): self
     {
         $this->positionText = $positionText;
 
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getLastname(): ?string
     {
         return $this->lastname;
     }
 
-    /**
-     * @param string|null $lastname
-     */
-    public function setLastname(?string $lastname): void
+    public function setLastname(?string $lastname): self
     {
         $this->lastname = $lastname;
+
+        return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getFirstname(): ?string
     {
         return $this->firstname;
     }
 
-    /**
-     * @param string|null $firstname
-     */
-    public function setFirstname(?string $firstname): void
+    public function setFirstname(?string $firstname): self
     {
         $this->firstname = $firstname;
+
+        return $this;
     }
 
     public function getTimezone(): ?string
@@ -488,8 +342,10 @@ class User extends BaseUser implements BaseEntityInterface, TimezoneAwareInterfa
         return $this->timezone;
     }
 
-    public function setTimezone(?string $timezone): void
+    public function setTimezone(?string $timezone): self
     {
         $this->timezone = $timezone;
+
+        return $this;
     }
 }

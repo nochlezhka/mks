@@ -1,8 +1,8 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\Entity;
 
-use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -11,142 +11,82 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity]
 class Service extends BaseEntity
 {
-    /**
-     * Комментарий
-     */
-    #[ORM\Column(type: "text", nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true)]
     private ?string $comment = null;
 
     /**
      * Сумма денег
      */
-    #[ORM\Column(type: "integer", nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $amount = null;
 
-    /**
-     * Клиент
-     */
-    #[ORM\ManyToOne(targetEntity: Client::class, inversedBy: "services")]
+    #[ORM\ManyToOne(targetEntity: Client::class, inversedBy: 'services')]
     private ?Client $client = null;
 
-    /**
-     * Тип
-     */
     #[ORM\ManyToOne(targetEntity: ServiceType::class)]
     private ?ServiceType $type = null;
 
-    public function __toString()
+    public function __toString(): string
     {
-        if ($this->getType() instanceof ServiceType) {
-            return $this->getType()->getName();
+        $type = $this->getType();
+
+        if ($type instanceof ServiceType) {
+            return $type->getName() ?? '';
         }
 
         return '';
     }
 
-    /**
-     * Set comment
-     *
-     * @param string|null $comment
-     *
-     * @return Service
-     */
-    public function setComment(?string $comment): Service
+    public function getComment(): ?string
+    {
+        return $this->comment;
+    }
+
+    public function setComment(?string $comment): self
     {
         $this->comment = $comment;
 
         return $this;
     }
 
-    /**
-     * Get comment
-     *
-     * @return string
-     */
-    public function getComment(): ?string
+    public function getAmount(): ?int
     {
-        return $this->comment;
+        return $this->amount;
     }
 
-    /**
-     * Set amount
-     *
-     * @param int|null $amount
-     *
-     * @return Service
-     */
-    public function setAmount(?int $amount): Service
+    public function setAmount(?int $amount): self
     {
         $this->amount = $amount;
 
         return $this;
     }
 
-    /**
-     * Get amount
-     *
-     * @return integer
-     */
-    public function getAmount(): ?int
+    public function getClient(): ?Client
     {
-        return $this->amount;
+        return $this->client;
     }
 
-    /**
-     * Set client
-     *
-     * @param Client|null $client
-     *
-     * @return Service
-     */
-    public function setClient(Client $client): Service
+    public function setClient(Client $client): self
     {
         $this->client = $client;
 
         return $this;
     }
 
-    /**
-     * Get client
-     *
-     * @return Client
-     */
-    public function getClient(): ?Client
+    public function getType(): ?ServiceType
     {
-        return $this->client;
+        return $this->type;
     }
 
-    /**
-     * Set type
-     *
-     * @param ServiceType|null $type
-     *
-     * @return Service
-     */
-    public function setType(ServiceType $type): Service
+    public function setType(ServiceType $type): self
     {
         $this->type = $type;
 
         return $this;
     }
 
-    /**
-     * Get type
-     *
-     * @return ServiceType
-     */
-    public function getType(): ?ServiceType
+    public function getCreatedAt(): ?\DateTimeInterface
     {
-        return $this->type;
-    }
-
-    /**
-     * Returns the creation date.
-     *
-     * @return DateTime
-     */
-    public function getCreatedAt()
-    {
-        return $this->createdAt ?: new DateTime();
+        return $this->createdAt;
     }
 }

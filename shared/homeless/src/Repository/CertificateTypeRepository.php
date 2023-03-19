@@ -1,37 +1,52 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\Repository;
 
 use App\Entity\Certificate;
 use App\Entity\CertificateType;
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 
-class CertificateTypeRepository extends EntityRepository
+/**
+ * @method CertificateType|null   find($id, $lockMode = null, $lockVersion = null)
+ * @method CertificateType|null   findOneBy(array $criteria, array $orderBy = null)
+ * @method array<CertificateType> findAll()
+ * @method array<CertificateType> findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ */
+class CertificateTypeRepository extends ServiceEntityRepository
 {
+    public function __construct(
+        ManagerRegistry $registry,
+    ) {
+        parent::__construct($registry, CertificateType::class);
+    }
+
     /**
      * Получение доступных типов для сертификата
      *
-     * @param Certificate $certificate
-     * @return CertificateType[]
+     * @return array<CertificateType>
      */
-    public function getAvailableForCertificate(Certificate $certificate)
+    public function getAvailableForCertificate(Certificate $certificate): array
     {
-        $qb = $this->createQueryBuilder('t');
-        $qb->orderBy('t.sort', 'ASC')
+        $queryBuilder = $this->createQueryBuilder('t');
+        $queryBuilder->orderBy('t.sort', 'ASC')
             ->where('t.syncId IN (:types)')
             ->setParameter('types', array_values([
                 CertificateType::REGISTRATION,
                 CertificateType::TRAVEL,
-            ]));
+            ]))
+        ;
 
         if (!$certificate->getClient()->hasRegistrationDocument()) {
-            $qb
+            $queryBuilder
                 ->andWhere('t.syncId != :regType')
-                ->setParameter('regType', CertificateType::REGISTRATION);
+                ->setParameter('regType', CertificateType::REGISTRATION)
+            ;
         }
 
-        $result = $qb->getQuery()->execute();
+        $result = $queryBuilder->getQuery()->execute();
 
-        return null === $result ? [] : $result;
+        return $result === null ? [] : $result;
     }
 }

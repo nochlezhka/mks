@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\Entity;
 
@@ -10,68 +11,38 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity]
 class District extends BaseEntity
 {
-    /**
-     * Название
-     */
-    #[ORM\Column(type: "string", nullable: true)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $name = null;
 
-    /**
-     * Регион
-     */
-    #[ORM\ManyToOne(targetEntity: Region::class, inversedBy: "districts")]
+    #[ORM\ManyToOne(targetEntity: Region::class, inversedBy: 'districts')]
     private ?Region $region = null;
 
-    public function __toString()
+    public function __toString(): string
+    {
+        return $this->name ?? '';
+    }
+
+    public function getName(): ?string
     {
         return $this->name;
     }
 
-    /**
-     * Set name
-     *
-     * @param string|null $name
-     *
-     * @return District
-     */
-    public function setName(?string $name): District
+    public function setName(?string $name): self
     {
         $this->name = $name;
 
         return $this;
     }
 
-    /**
-     * Get name
-     *
-     * @return string
-     */
-    public function getName(): ?string
+    public function getRegion(): ?Region
     {
-        return $this->name;
+        return $this->region;
     }
 
-    /**
-     * Set region
-     *
-     * @param Region|null $region
-     *
-     * @return District
-     */
-    public function setRegion(Region $region): District
+    public function setRegion(Region $region): self
     {
         $this->region = $region;
 
         return $this;
-    }
-
-    /**
-     * Get region
-     *
-     * @return Region
-     */
-    public function getRegion(): ?Region
-    {
-        return $this->region;
     }
 }

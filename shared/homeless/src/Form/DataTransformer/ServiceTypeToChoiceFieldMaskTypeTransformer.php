@@ -1,30 +1,28 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\Form\DataTransformer;
 
 use App\Repository\ServiceTypeRepository;
 use Symfony\Component\Form\DataTransformerInterface;
 
-class ServiceTypeToChoiceFieldMaskTypeTransformer implements DataTransformerInterface
+readonly class ServiceTypeToChoiceFieldMaskTypeTransformer implements DataTransformerInterface
 {
-    private ServiceTypeRepository $serviceTypeRepository;
+    public function __construct(
+        private ServiceTypeRepository $serviceTypeRepository,
+    ) {}
 
-    public function __construct(ServiceTypeRepository $serviceTypeRepository)
-    {
-        $this->serviceTypeRepository = $serviceTypeRepository;
-    }
-
-    public function transform(mixed $value)
+    public function transform(mixed $value): mixed
     {
         return $value?->getId();
     }
 
-    public function reverseTransform(mixed $value)
+    public function reverseTransform(mixed $value): ?object
     {
-        if (null === $value) {
+        if ($value === null) {
             return null;
-        } else {
-            return $this->serviceTypeRepository->find($value);
         }
+
+        return $this->serviceTypeRepository->find($value);
     }
 }

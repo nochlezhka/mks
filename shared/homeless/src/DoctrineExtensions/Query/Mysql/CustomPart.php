@@ -1,19 +1,24 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\DoctrineExtensions\Query\Mysql;
 
+use Doctrine\ORM\Query\AST\ASTException;
 use Doctrine\ORM\Query\AST\Functions\FunctionNode;
 use Doctrine\ORM\Query\AST\GeneralCaseExpression;
 use Doctrine\ORM\Query\Lexer;
 use Doctrine\ORM\Query\Parser;
+use Doctrine\ORM\Query\QueryException;
 use Doctrine\ORM\Query\SqlWalker;
 
 class CustomPart extends FunctionNode
 {
-    /** @var GeneralCaseExpression */
-    public $sqlPart = null;
+    public GeneralCaseExpression $sqlPart;
 
-    public function parse(Parser $parser)
+    /**
+     * @throws QueryException
+     */
+    public function parse(Parser $parser): void
     {
         $parser->match(Lexer::T_IDENTIFIER);
         $parser->match(Lexer::T_OPEN_PARENTHESIS);
@@ -21,7 +26,10 @@ class CustomPart extends FunctionNode
         $parser->match(Lexer::T_CLOSE_PARENTHESIS);
     }
 
-    public function getSql(SqlWalker $sqlWalker)
+    /**
+     * @throws ASTException
+     */
+    public function getSql(SqlWalker $sqlWalker): string
     {
         return $this->sqlPart->dispatch($sqlWalker);
     }

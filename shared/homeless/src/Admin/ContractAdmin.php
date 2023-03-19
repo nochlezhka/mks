@@ -1,14 +1,16 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\Admin;
 
 use App\Controller\CRUDController;
 use App\Entity\Contract;
+use App\Entity\ContractStatus;
 use App\Entity\User;
 use App\Form\Type\AppContractDurationType;
-use DateTime;
+use App\Security\User\Role;
 use Doctrine\ORM\EntityRepository;
-use InvalidArgumentException;
+use Doctrine\ORM\QueryBuilder;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Route\RouteCollectionInterface;
@@ -21,23 +23,19 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
     'manager_type' => 'orm',
     'label' => 'Сервисные планы',
     'model_class' => Contract::class,
-    'controller'=> CRUDController::class,
-    'label_translator_strategy' => 'sonata.admin.label.strategy.underscore'
+    'controller' => CRUDController::class,
+    'label_translator_strategy' => 'sonata.admin.label.strategy.underscore',
 ])]
-
-class ContractAdmin extends BaseAdmin
+class ContractAdmin extends AbstractAdmin
 {
-    protected array $datagridValues = array(
+    protected array $datagridValues = [
         '_sort_order' => 'DESC',
         '_sort_by' => 'dateFrom',
-    );
-
-    protected string $translationDomain = 'App';
+    ];
 
     public function configureRoutes(RouteCollectionInterface $collection): void
     {
-        $collection
-            ->add('download', $this->getRouterIdParameter() . '/download');
+        $collection->add('download', $this->getRouterIdParameter().'/download');
     }
 
     protected function configureFormFields(FormMapper $form): void
@@ -46,60 +44,65 @@ class ContractAdmin extends BaseAdmin
 
         if ($this->getSubject()->getId() > 0) {
             $form
-                ->add('duration', AppContractDurationType::class, ['label' => 'Долгосрочность', 'required' => false,])
+                ->add('duration', AppContractDurationType::class, [
+                    'label' => 'Долгосрочность',
+                    'required' => false,
+                ])
                 ->add('number', null, [
                     'label' => 'Номер',
                     'disabled' => true,
-                    'attr' => array(
+                    'attr' => [
                         'readonly' => true,
-                    )
-                ]);
+                    ],
+                ])
+            ;
         }
 
         $form
             ->add('status', EntityType::class, [
                 'label' => 'Статус',
                 'required' => true,
-                'class' => 'App\Entity\ContractStatus',
-                'query_builder' => function (EntityRepository $er) {
-                    return $er->createQueryBuilder('s')
-                        ->orderBy('s.name', 'ASC');
-                },
+                'class' => ContractStatus::class,
+                'query_builder' => static fn (EntityRepository $repository): QueryBuilder => $repository->createQueryBuilder('s')
+                    ->orderBy('s.name', 'ASC'),
             ])
             ->add('dateFrom', DatePickerType::class, [
-                'dp_default_date' => (new DateTime())->format('Y-m-d'),
+                'dp_default_date' => (new \DateTimeImmutable())->format('Y-m-d'),
                 'format' => 'dd.MM.yyyy',
                 'label' => 'Дата начала',
                 'required' => true,
+                'input' => 'datetime_immutable',
             ])
             ->add('dateTo', DatePickerType::class, [
-                'dp_default_date' => (new DateTime())->format('Y-m-d'),
+                'dp_default_date' => (new \DateTimeImmutable())->format('Y-m-d'),
                 'format' => 'dd.MM.yyyy',
                 'label' => 'Дата окончания',
                 'required' => false,
+                'input' => 'datetime_immutable',
             ])
             ->add('comment', null, [
                 'label' => 'Комментарий',
             ])
-            ->end()
-            ->with('contract_items')
+        ;
+        $form->end();
+
+        $form->with('contract_items');
+        $form
             ->add('items', CollectionType::class, [
                 'label' => false,
                 'required' => true,
                 'by_reference' => false,
                 'type_options' => [
                     'delete' => true,
-                ]
+                ],
             ], [
                 'edit' => 'inline',
                 'inline' => 'table',
             ])
-            ->end();
+        ;
+        $form->end();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function configureListFields(ListMapper $list): void
     {
         $list
@@ -124,26 +127,25 @@ class ContractAdmin extends BaseAdmin
             ])
             ->add('createdBy', null, [
                 'label' => 'Кем добавлен',
-            ]);
+                'admin_code' => UserAdmin::class,
+            ])
+        ;
 
         $actions = [
             'edit' => [],
         ];
-        $user = $this
-            ->tokenStorage
-            ->getToken()
-            ->getUser();
 
-        if(!($user instanceof User)) {
-            throw new InvalidArgumentException("Unexpected User type");
+        $user = $this->getUser();
+        if (!($user instanceof User)) {
+            throw new \InvalidArgumentException('Unexpected User type');
         }
 
-        if ($user->hasRole('ROLE_ADMIN') || $user->isSuperAdmin()) {
+        if ($user->hasRole(Role::ADMIN) || $user->hasRole(Role::SUPER_ADMIN)) {
             $actions['delete'] = [];
         }
 
         $actions['download'] = [
-            'template' => '/CRUD/list_contract_action_download.html.twig'
+            'template' => '/CRUD/list_contract_action_download.html.twig',
         ];
 
         $list->add(ListMapper::NAME_ACTIONS, ListMapper::TYPE_ACTIONS, [

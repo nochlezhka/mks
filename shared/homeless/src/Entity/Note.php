@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\Entity;
 
@@ -10,98 +11,53 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity]
 class Note extends BaseEntity
 {
-    /**
-     * Текст
-     */
-    #[ORM\Column(type: "text", nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true)]
     private ?string $text = null;
 
-    /**
-     * Клиент
-     */
-    #[ORM\ManyToOne(targetEntity: Client::class, inversedBy: "notes")]
+    #[ORM\ManyToOne(targetEntity: Client::class, inversedBy: 'notes')]
     private ?Client $client = null;
 
-    /**
-     * Важное
-     */
-    #[ORM\Column(type: "boolean", nullable: true)]
+    #[ORM\Column(type: 'boolean', nullable: true)]
     private ?bool $important = false;
 
-    public function __toString()
+    public function __toString(): string
     {
-        return mb_substr(strip_tags($this->text), 0, 100);
+        return mb_substr(strip_tags($this->text ?? ''), 0, 100);
     }
 
-    /**
-     * Set text
-     *
-     * @param string|null $text
-     *
-     * @return Note
-     */
-    public function setText(?string $text): Note
+    public function getText(): ?string
+    {
+        return $this->text;
+    }
+
+    public function setText(?string $text): self
     {
         $this->text = $text;
 
         return $this;
     }
 
-    /**
-     * Get text
-     *
-     * @return string
-     */
-    public function getText(): ?string
+    public function isImportant(): ?bool
     {
-        return $this->text;
+        return $this->important;
     }
 
-    /**
-     * Set important
-     *
-     * @param boolean $important
-     *
-     * @return Note
-     */
-    public function setImportant(?bool $important): Note
+    public function setImportant(?bool $important): self
     {
         $this->important = $important;
 
         return $this;
     }
 
-    /**
-     * Get important
-     *
-     * @return boolean
-     */
-    public function getImportant(): ?bool
+    public function getClient(): ?Client
     {
-        return $this->important;
+        return $this->client;
     }
 
-    /**
-     * Set client
-     *
-     * @param Client|null $client
-     *
-     * @return Note
-     */
-    public function setClient(Client $client): Note
+    public function setClient(Client $client): self
     {
         $this->client = $client;
 
         return $this;
-    }
-
-    /**
-     * Get client
-     *
-     * @return Client
-     */
-    public function getClient(): ?Client
-    {
-        return $this->client;
     }
 }

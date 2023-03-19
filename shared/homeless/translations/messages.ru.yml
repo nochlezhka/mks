@@ -65,6 +65,9 @@ breadcrumb:
   link_menu_item_list: Отображение разделов
   link_menu_item_create: Создать
   link_menu_item_delete: Удалить
+  link_position_list: Должности
+  link_position_create: Создать
+  link_position_delete: Удалить
   link_client_form_list: Редактирование форм
   link_client_form_create: Создание формы
   link_client_form_field_list: Список полей формы
@@ -74,6 +77,56 @@ breadcrumb:
   link_shelter_room_list: Список комнат
   link_shelter_room_delete: Удалить комнату
   link_shelter_room_create: Добавить комнату
+
+list:
+  label_id: ID
+
+form:
+  group_base_info: Основная информация
+  group_additional_info: Дополнительная информация
+  group_services: Услуги
+  group_contract: Сервисный план
+  group_contract_items: Пункты
+  group_shelter_history: Проживание в приюте
+  group_notes: Примечания
+  group_render_menu_item: Отображение разделов
+  group_client_fields: Доп. поля клиентов
+  group_choice_field_options: Вариант выбора
+  group_regions: Регионы
+  group_certificates: Справки
+  group_certificate_types: Типы справок
+  group_document_files: Загруженные файлы
+  group_documents: Документы
+  group_notices: Напоминания
+  group_service_types: Типы услуг
+  group_contract_item_types: Типы пунктов договоров
+  group_generated_document_types: Типы построенных документов
+  group_generated_document_start_texts: Преамбулы построенных документов
+  group_generated_document_end_texts: Заключения построенных документов
+  group_positions: Должности
+  group_shelter_rooms: Приют
+  group_client_form_field: Поля формы
+
+show:
+  group_last_services: Последние услуги
+  group_last_notes: Последние примечания
+  group_photo: Фото
+  group_base_info: Основная информация
+  group_additional_info: Дополнительная информация
+  group_client_fields: Доп. поля клиентов
+  group_regions: Регионы
+  group_service_types: Типы услуг
+  group_contract_item_types: Типы пунктов договоров
+  group_generated_document_types: Типы построенных документов
+  group_generated_document_start_texts: Преамбулы построенных документов
+  group_generated_document_end_texts: Заключения построенных документов
+  group_certificate_types: Типы справок
+  group_render_menu_item: Отображение разделов
+  group_positions: Должности
+  group_shelter_rooms: Приют
+  group_client_forms: Редактирование форм
+  group_client_form_field: Поля формы
+
 
 ClientFormField: Поле формы
 choice_field_options: Вариант выбора
@@ -87,31 +140,18 @@ media: Медиа
 gallery: Галерея
 gallery_item: Изображение в галерее
 render_menu_item: Отображение разделов
-
-
-list:
-  label_id: ID
-
-form:
-  group_base_info: Основная информация
-  group_additional_info: Дополнительная информация
-  group_services: Услуги
-  group_contract: Сервисный план
-  group_contract_items: Пункты
-  group_shelter_history: Проживание в приюте
-  group_notes: Примечания
-  group_client_fields: Доп. поля клиентов
-  group_choice_field_options: Вариант выбора
-
-show:
-  group_last_services: Последние услуги
-  group_last_notes: Последние примечания
-  group_photo: Фото
-  group_base_info: Основная информация
-  group_additional_info: Дополнительная информация
-  group_notes: Примечания
-  group_client_fields: Доп. поля клиентов
-  group_choice_field_options: Вариант выбора
-  group_render_menu_item: Отображение разделов
-
 client_fields: Доп. поля клиентов
+regions: Регионы
+certificates: Справки
+certificate_types: Типы справок
+document_files: Загруженные файлы
+documents: Документы
+notices: Напоминания
+service_types: Типы услуг
+contract_item_types: Типы пунктов договоров
+generated_document_types: Типы постр. док-тов
+generated_document_start_texts: Преамбулы постр. док-тов
+generated_document_end_texts: Заключения постр. док-тов
+positions: Должности
+shelter_rooms: Приют
+client_forms: Редактирование форм

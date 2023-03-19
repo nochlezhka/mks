@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\Entity;
 
@@ -10,68 +11,38 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity]
 class ContractItemType extends BaseEntity
 {
-    /**
-     * Название
-     */
-    #[ORM\Column(type: "string", nullable: true)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $name = null;
 
-    /**
-     * Сокращенное название
-     */
-    #[ORM\Column(type: "string", nullable: true)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $shortName = null;
 
-    public function __toString()
+    public function __toString(): string
+    {
+        return $this->name ?? '';
+    }
+
+    public function getName(): ?string
     {
         return $this->name;
     }
 
-    /**
-     * Set name
-     *
-     * @param string|null $name
-     *
-     * @return ContractItemType
-     */
-    public function setName(?string $name): ContractItemType
+    public function setName(?string $name): self
     {
         $this->name = $name;
 
         return $this;
     }
 
-    /**
-     * Get name
-     *
-     * @return string
-     */
-    public function getName(): ?string
+    public function getShortName(): ?string
     {
-        return $this->name;
+        return $this->shortName;
     }
 
-    /**
-     * Set shortName
-     *
-     * @param string|null $shortName
-     *
-     * @return ContractItemType
-     */
-    public function setShortName(?string $shortName): ContractItemType
+    public function setShortName(?string $shortName): self
     {
         $this->shortName = $shortName;
 
         return $this;
-    }
-
-    /**
-     * Get shortName
-     *
-     * @return string
-     */
-    public function getShortName(): ?string
-    {
-        return $this->shortName;
     }
 }

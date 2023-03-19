@@ -1,112 +1,84 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\Entity;
 
 use App\Form\Type\AppFileType;
 use App\Repository\ClientFieldRepository;
-use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Form\Extension\Core\Type\BirthdayType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Дополнительное поле клиента
  */
 #[ORM\Entity(repositoryClass: ClientFieldRepository::class)]
+#[UniqueEntity(
+    fields: ['code'],
+    message: 'code.unique',
+    errorPath: 'code',
+)]
 class ClientField extends BaseEntity
 {
-    /**
-     * Текст
-     */
-    const TYPE_TEXT = 1;
+    public const TYPE_TEXT = 1;
+    public const TYPE_OPTION = 2; // Выбор значения(-ий) из списка
+    public const TYPE_FILE = 3;
+    public const TYPE_DATETIME = 4;
 
-    /**
-     * Выбор значения(-ий) из списка
-     */
-    const TYPE_OPTION = 2;
-
-    /**
-     * Файл
-     */
-    const TYPE_FILE = 3;
-
-    /**
-     * Дата и время
-     */
-    const TYPE_DATETIME = 4;
-
-    /**
-     * Название
-     */
-    #[ORM\Column(type: "string", nullable: true)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $name = null;
 
-    /**
-     * Символьный код
-     */
-    #[ORM\Column(type: "string", nullable: true)]
+    #[ORM\Column(type: 'string', nullable: true)]
+    #[Assert\NotBlank(message: 'code.not_blank')]
+    #[Assert\Regex(
+        pattern: '/(.*)additionalField(.*)/i',
+        message: 'code.regex',
+        match: false,
+    )]
     private ?string $code = null;
 
-    /**
-     * Включено
-     */
-    #[ORM\Column(type: "boolean", nullable: true)]
-    private ?bool $enabled = true;
+    #[ORM\Column(type: 'boolean', nullable: true)]
+    private bool $enabled = true;
 
-    /**
-     * Включено для бездомных
-     */
-    #[ORM\Column(type: "boolean", nullable: true)]
-    private ?bool $enabledForHomeless = true;
+    #[ORM\Column(type: 'boolean', nullable: true)]
+    private bool $enabledForHomeless = true;
 
-    /**
-     * Тип
-     */
-    #[ORM\Column(type: "integer", nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $type = null;
 
-    /**
-     * Обязательное
-     */
-    #[ORM\Column(type: "boolean", nullable: true)]
-    private ?bool $required = false;
+    #[ORM\Column(type: 'boolean', nullable: true)]
+    private bool $required = false;
 
-    /**
-     * Обязательное для бездомных
-     */
-    #[ORM\Column(type: "boolean", nullable: true)]
-    private ?bool $mandatoryForHomeless = false;
+    #[ORM\Column(type: 'boolean', nullable: true)]
+    private bool $mandatoryForHomeless = false;
 
-    /**
-     * Допускается выбор нескольких вариантов одновременно
-     */
-    #[ORM\Column(type: "boolean", nullable: true)]
-    private ?bool $multiple = false;
+    #[ORM\Column(type: 'boolean', nullable: true)]
+    private bool $multiple = false;
 
-    /**
-     * Подсказка
-     */
-    #[ORM\Column(type: "string", nullable: true)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $description = null;
 
-    /**
-     * Поле
-     */
-    #[ORM\OneToMany(mappedBy: "field", targetEntity: ClientFieldOption::class)]
+    #[ORM\OneToMany(mappedBy: 'field', targetEntity: ClientFieldOption::class)]
     private Collection $options;
 
-    public function __toString()
+    public function __construct()
     {
-        return $this->name;
+        $this->options = new ArrayCollection();
+    }
+
+    public function __toString(): string
+    {
+        return $this->name ?? '';
     }
 
     /**
      * Массив вариантов значений
-     * @return array
      */
     public function getOptionsArray(): array
     {
@@ -121,31 +93,18 @@ class ClientField extends BaseEntity
 
     /**
      * Тип поля для отображения в анкете
-     * @return ClientFieldOption|DateTime|Collection|null|string
      */
-    public function getShowFieldType()
+    public function getShowFieldType(): ClientFieldOption|\DateTimeImmutable|Collection|string|null
     {
-        if ($this->type == self::TYPE_TEXT) {
-            return TextareaType::class;
-        }
-
-        if ($this->type == self::TYPE_DATETIME) {
-            return 'datetime';
-        }
-
-        if ($this->type == self::TYPE_FILE) {
-            return 'text';
-        }
-
-        if ($this->type == self::TYPE_OPTION) {
-            if ($this->multiple) {
-                return 'array';
-            }
-
-            return ChoiceType::class;
-        }
-
-        return null;
+        return match ($this->type) {
+            self::TYPE_TEXT => TextareaType::class,
+            self::TYPE_DATETIME => 'datetime',
+            self::TYPE_FILE => 'text',
+            self::TYPE_OPTION => $this->multiple
+                ? 'array'
+                : ChoiceType::class,
+            default => null,
+        };
     }
 
     /**
@@ -153,270 +112,134 @@ class ClientField extends BaseEntity
      */
     public function getFormFieldType(): ?string
     {
-        if ($this->type == self::TYPE_TEXT) {
-            return TextareaType::class;
-        }
-
-        if ($this->type == self::TYPE_DATETIME) {
-            return BirthdayType::class;
-        }
-
-        if ($this->type == self::TYPE_FILE) {
-            return AppFileType::class;
-        }
-
-        if ($this->type == self::TYPE_OPTION) {
-            return EntityType::class;
-        }
-
-        return null;
+        return match ($this->type) {
+            self::TYPE_TEXT => TextareaType::class,
+            self::TYPE_DATETIME => BirthdayType::class,
+            self::TYPE_FILE => AppFileType::class,
+            self::TYPE_OPTION => EntityType::class,
+            default => null,
+        };
     }
 
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
 
-    /**
-     * Set name
-     *
-     * @param string|null $name
-     *
-     * @return ClientField
-     */
-    public function setName(?string $name): ClientField
+    public function setName(?string $name): self
     {
         $this->name = $name;
 
         return $this;
     }
 
-    /**
-     * Get name
-     *
-     * @return string
-     */
-    public function getName(): ?string
+    public function getCode(): ?string
     {
-        return $this->name;
+        return $this->code;
     }
 
-    /**
-     * Set code
-     *
-     * @param string|null $code
-     *
-     * @return ClientField
-     */
-    public function setCode(?string $code): ClientField
+    public function setCode(?string $code): self
     {
         $this->code = $code;
 
         return $this;
     }
 
-    /**
-     * Get code
-     *
-     * @return string
-     */
-    public function getCode(): ?string
+    public function isEnabled(): bool
     {
-        return $this->code;
+        return $this->enabled;
     }
 
-    /**
-     * Set enabled
-     *
-     * @param boolean $enabled
-     *
-     * @return ClientField
-     */
-    public function setEnabled(?bool $enabled): ClientField
+    public function setEnabled(bool $enabled): self
     {
         $this->enabled = $enabled;
 
         return $this;
     }
 
-    /**
-     * Get enabled
-     *
-     * @return boolean
-     */
-    public function getEnabled(): ?bool
+    public function getType(): ?int
     {
-        return $this->enabled;
+        return $this->type;
     }
 
-    /**
-     * Set type
-     *
-     * @param int|null $type
-     *
-     * @return ClientField
-     */
-    public function setType(?int $type): ClientField
+    public function setType(?int $type): self
     {
         $this->type = $type;
 
         return $this;
     }
 
-    /**
-     * Get type
-     *
-     * @return integer
-     */
-    public function getType(): ?int
+    public function isRequired(): bool
     {
-        return $this->type;
+        return $this->required;
     }
 
-    /**
-     * Set required
-     *
-     * @param boolean $required
-     *
-     * @return ClientField
-     */
-    public function setRequired(?bool $required): ClientField
+    public function setRequired(bool $required): self
     {
         $this->required = $required;
 
         return $this;
     }
 
-    /**
-     * Get required
-     *
-     * @return boolean
-     */
-    public function getRequired(): ?bool
+    public function isMultiple(): bool
     {
-        return $this->required;
+        return $this->multiple;
     }
 
-    /**
-     * Set multiple
-     *
-     * @param boolean $multiple
-     *
-     * @return ClientField
-     */
-    public function setMultiple(?bool $multiple): ClientField
+    public function setMultiple(bool $multiple): self
     {
         $this->multiple = $multiple;
 
         return $this;
     }
 
-    /**
-     * Get multiple
-     *
-     * @return boolean
-     */
-    public function getMultiple(): ?bool
-    {
-        return $this->multiple;
-    }
-
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->options = new ArrayCollection();
-    }
-
-    /**
-     * Add option
-     *
-     * @param ClientFieldOption $option
-     *
-     * @return ClientField
-     */
-    public function addOption(ClientFieldOption $option): ClientField
-    {
-        $this->options[] = $option;
-
-        return $this;
-    }
-
-    /**
-     * Remove option
-     *
-     * @param ClientFieldOption $option
-     */
-    public function removeOption(ClientFieldOption $option)
-    {
-        $this->options->removeElement($option);
-    }
-
-    /**
-     * Get options
-     *
-     * @return Collection
-     */
-    public function getOptions()
+    public function getOptions(): Collection
     {
         return $this->options;
     }
 
-    /**
-     * Set description
-     *
-     * @param string|null $description
-     *
-     * @return ClientField
-     */
-    public function setDescription(?string $description): ClientField
+    public function addOption(ClientFieldOption $option): self
+    {
+        $this->options->add($option);
+
+        return $this;
+    }
+
+    public function removeOption(ClientFieldOption $option): void
+    {
+        $this->options->removeElement($option);
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): self
     {
         $this->description = $description;
 
         return $this;
     }
 
-    /**
-     * Get description
-     *
-     * @return string
-     */
-    public function getDescription(): ?string
-    {
-        return $this->description;
-    }
-
-    /**
-     * @return bool
-     */
-    public function getMandatoryForHomeless(): ?bool
+    public function isMandatoryForHomeless(): bool
     {
         return $this->mandatoryForHomeless || $this->required;
     }
 
-    /**
-     * @param bool $mandatoryForHomeless
-     * @return ClientField
-     */
-    public function setMandatoryForHomeless(?bool $mandatoryForHomeless): ClientField
+    public function setMandatoryForHomeless(bool $mandatoryForHomeless): self
     {
         $this->mandatoryForHomeless = $mandatoryForHomeless;
 
         return $this;
     }
 
-    /**
-     * Get enabledForHomeless
-     */
-    public function getEnabledForHomeless(): ?bool
+    public function isEnabledForHomeless(): bool
     {
         return $this->enabledForHomeless || $this->enabled;
     }
 
-    /**
-     * Set enabledForHomeless
-     *
-     * @param bool|null $enabledForHomeless
-     * @return ClientField
-     */
-    public function setEnabledForHomeless(?bool $enabledForHomeless): ClientField
+    public function setEnabledForHomeless(bool $enabledForHomeless): self
     {
         $this->enabledForHomeless = $enabledForHomeless;
 
