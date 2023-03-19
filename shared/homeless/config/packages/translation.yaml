@@ -1,6 +1,0 @@
-framework:
-  default_locale: "ru"
-  translator:
-    default_path: '%kernel.project_dir%/translations'
-    fallbacks:
-      - "ru"

@@ -1,4 +1,0 @@
-app:
-  resource: ../src/Controller/App/
-  type: attribute
-  prefix: /app
