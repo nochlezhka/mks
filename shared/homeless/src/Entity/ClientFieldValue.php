@@ -20,6 +20,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 class ClientFieldValue extends BaseEntity
 {
     #[ORM\ManyToOne(targetEntity: ClientField::class)]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?ClientField $field = null;
 
     #[ORM\ManyToOne(targetEntity: Client::class, inversedBy: 'fieldValues')]

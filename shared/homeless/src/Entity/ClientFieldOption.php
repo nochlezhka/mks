@@ -22,6 +22,7 @@ class ClientFieldOption extends BaseEntity
     private bool $notSingle = false;
 
     #[ORM\ManyToOne(targetEntity: ClientField::class, inversedBy: 'options')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?ClientField $field = null;
 
     public function __toString(): string

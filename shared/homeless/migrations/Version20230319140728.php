@@ -14,28 +14,18 @@ final class Version20230319140728 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Removed fos_user_groups and use immutable dates and datetimes';
+        return 'Use immutable dates and datetimes';
     }
 
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE fos_user_group DROP FOREIGN KEY FK_583D1F3E896DBBDE');
-        $this->addSql('ALTER TABLE fos_user_group DROP FOREIGN KEY FK_583D1F3EB03A8386');
-        $this->addSql('ALTER TABLE fos_user_user_group DROP FOREIGN KEY FK_B3C77447A76ED395');
-        $this->addSql('ALTER TABLE fos_user_user_group DROP FOREIGN KEY FK_B3C77447FE54D947');
-        $this->addSql('DROP TABLE fos_user_group');
-        $this->addSql('DROP TABLE fos_user_user_group');
         $this->addSql('ALTER TABLE certificate CHANGE date_from date_from DATE DEFAULT NULL COMMENT \'(DC2Type:date_immutable)\', CHANGE date_to date_to DATE DEFAULT NULL COMMENT \'(DC2Type:date_immutable)\', CHANGE created_at created_at DATETIME DEFAULT NULL COMMENT \'(DC2Type:datetime_immutable)\', CHANGE updated_at updated_at DATETIME DEFAULT NULL COMMENT \'(DC2Type:datetime_immutable)\'');
         $this->addSql('ALTER TABLE certificate_type CHANGE created_at created_at DATETIME DEFAULT NULL COMMENT \'(DC2Type:datetime_immutable)\', CHANGE updated_at updated_at DATETIME DEFAULT NULL COMMENT \'(DC2Type:datetime_immutable)\'');
         $this->addSql('ALTER TABLE client CHANGE birth_date birth_date DATE DEFAULT NULL COMMENT \'(DC2Type:date_immutable)\', CHANGE created_at created_at DATETIME DEFAULT NULL COMMENT \'(DC2Type:datetime_immutable)\', CHANGE updated_at updated_at DATETIME DEFAULT NULL COMMENT \'(DC2Type:datetime_immutable)\', CHANGE is_homeless is_homeless TINYINT(1) DEFAULT NULL');
         $this->addSql('ALTER TABLE client_field CHANGE created_at created_at DATETIME DEFAULT NULL COMMENT \'(DC2Type:datetime_immutable)\', CHANGE updated_at updated_at DATETIME DEFAULT NULL COMMENT \'(DC2Type:datetime_immutable)\', CHANGE mandatory_for_homeless mandatory_for_homeless TINYINT(1) DEFAULT NULL, CHANGE enabled_for_homeless enabled_for_homeless TINYINT(1) DEFAULT NULL');
-        $this->addSql('ALTER TABLE client_field_option DROP FOREIGN KEY FK_C1C82EB3443707B0');
         $this->addSql('ALTER TABLE client_field_option CHANGE created_at created_at DATETIME DEFAULT NULL COMMENT \'(DC2Type:datetime_immutable)\', CHANGE updated_at updated_at DATETIME DEFAULT NULL COMMENT \'(DC2Type:datetime_immutable)\'');
-        $this->addSql('ALTER TABLE client_field_option ADD CONSTRAINT FK_C1C82EB3443707B0 FOREIGN KEY (field_id) REFERENCES client_field (id)');
-        $this->addSql('ALTER TABLE client_field_value DROP FOREIGN KEY FK_379BEBF4443707B0');
         $this->addSql('ALTER TABLE client_field_value CHANGE datetime datetime DATETIME DEFAULT NULL COMMENT \'(DC2Type:datetime_immutable)\', CHANGE created_at created_at DATETIME DEFAULT NULL COMMENT \'(DC2Type:datetime_immutable)\', CHANGE updated_at updated_at DATETIME DEFAULT NULL COMMENT \'(DC2Type:datetime_immutable)\'');
-        $this->addSql('ALTER TABLE client_field_value ADD CONSTRAINT FK_379BEBF4443707B0 FOREIGN KEY (field_id) REFERENCES client_field (id)');
         $this->addSql('ALTER TABLE client_form CHANGE created_at created_at DATETIME DEFAULT NULL COMMENT \'(DC2Type:datetime_immutable)\', CHANGE updated_at updated_at DATETIME DEFAULT NULL COMMENT \'(DC2Type:datetime_immutable)\'');
         $this->addSql('ALTER TABLE client_form_field CHANGE created_at created_at DATETIME DEFAULT NULL COMMENT \'(DC2Type:datetime_immutable)\', CHANGE updated_at updated_at DATETIME DEFAULT NULL COMMENT \'(DC2Type:datetime_immutable)\'');
         $this->addSql('ALTER TABLE client_form_response CHANGE created_at created_at DATETIME DEFAULT NULL COMMENT \'(DC2Type:datetime_immutable)\', CHANGE updated_at updated_at DATETIME DEFAULT NULL COMMENT \'(DC2Type:datetime_immutable)\'');
@@ -79,22 +69,12 @@ final class Version20230319140728 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('CREATE TABLE fos_user_group (id INT AUTO_INCREMENT NOT NULL, created_by_id INT DEFAULT NULL, updated_by_id INT DEFAULT NULL, name VARCHAR(255) CHARACTER SET utf8mb3 NOT NULL COLLATE `utf8mb3_unicode_ci`, roles LONGTEXT CHARACTER SET utf8mb3 NOT NULL COLLATE `utf8mb3_unicode_ci` COMMENT \'(DC2Type:array)\', sync_id INT DEFAULT NULL, sort INT DEFAULT NULL, created_at DATETIME DEFAULT NULL, updated_at DATETIME DEFAULT NULL, code VARCHAR(255) CHARACTER SET utf8mb3 DEFAULT NULL COLLATE `utf8mb3_unicode_ci`, UNIQUE INDEX UNIQ_583D1F3E5E237E06 (name), INDEX IDX_583D1F3EB03A8386 (created_by_id), INDEX IDX_583D1F3E896DBBDE (updated_by_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb3 COLLATE `utf8mb3_unicode_ci` ENGINE = InnoDB COMMENT = \'\' ');
-        $this->addSql('CREATE TABLE fos_user_user_group (user_id INT NOT NULL, group_id INT NOT NULL, INDEX IDX_B3C77447A76ED395 (user_id), INDEX IDX_B3C77447FE54D947 (group_id), PRIMARY KEY(user_id, group_id)) DEFAULT CHARACTER SET utf8mb3 COLLATE `utf8mb3_unicode_ci` ENGINE = InnoDB COMMENT = \'\' ');
-        $this->addSql('ALTER TABLE fos_user_group ADD CONSTRAINT FK_583D1F3E896DBBDE FOREIGN KEY (updated_by_id) REFERENCES fos_user_user (id) ON UPDATE NO ACTION ON DELETE NO ACTION');
-        $this->addSql('ALTER TABLE fos_user_group ADD CONSTRAINT FK_583D1F3EB03A8386 FOREIGN KEY (created_by_id) REFERENCES fos_user_user (id) ON UPDATE NO ACTION ON DELETE NO ACTION');
-        $this->addSql('ALTER TABLE fos_user_user_group ADD CONSTRAINT FK_B3C77447A76ED395 FOREIGN KEY (user_id) REFERENCES fos_user_user (id) ON UPDATE NO ACTION ON DELETE CASCADE');
-        $this->addSql('ALTER TABLE fos_user_user_group ADD CONSTRAINT FK_B3C77447FE54D947 FOREIGN KEY (group_id) REFERENCES fos_user_group (id) ON UPDATE NO ACTION ON DELETE CASCADE');
         $this->addSql('ALTER TABLE certificate CHANGE date_from date_from DATE DEFAULT NULL, CHANGE date_to date_to DATE DEFAULT NULL, CHANGE created_at created_at DATETIME DEFAULT NULL, CHANGE updated_at updated_at DATETIME DEFAULT NULL');
         $this->addSql('ALTER TABLE certificate_type CHANGE created_at created_at DATETIME DEFAULT NULL, CHANGE updated_at updated_at DATETIME DEFAULT NULL');
         $this->addSql('ALTER TABLE client CHANGE birth_date birth_date DATE DEFAULT NULL, CHANGE is_homeless is_homeless INT DEFAULT 1 NOT NULL, CHANGE created_at created_at DATETIME DEFAULT NULL, CHANGE updated_at updated_at DATETIME DEFAULT NULL');
         $this->addSql('ALTER TABLE client_field CHANGE enabled_for_homeless enabled_for_homeless TINYINT(1) DEFAULT 0, CHANGE mandatory_for_homeless mandatory_for_homeless INT DEFAULT 0 NOT NULL, CHANGE created_at created_at DATETIME DEFAULT NULL, CHANGE updated_at updated_at DATETIME DEFAULT NULL');
-        $this->addSql('ALTER TABLE client_field_option DROP FOREIGN KEY FK_C1C82EB3443707B0');
         $this->addSql('ALTER TABLE client_field_option CHANGE created_at created_at DATETIME DEFAULT NULL, CHANGE updated_at updated_at DATETIME DEFAULT NULL');
-        $this->addSql('ALTER TABLE client_field_option ADD CONSTRAINT FK_C1C82EB3443707B0 FOREIGN KEY (field_id) REFERENCES client_field (id) ON UPDATE NO ACTION ON DELETE CASCADE');
-        $this->addSql('ALTER TABLE client_field_value DROP FOREIGN KEY FK_379BEBF4443707B0');
         $this->addSql('ALTER TABLE client_field_value CHANGE datetime datetime DATETIME DEFAULT NULL, CHANGE created_at created_at DATETIME DEFAULT NULL, CHANGE updated_at updated_at DATETIME DEFAULT NULL');
-        $this->addSql('ALTER TABLE client_field_value ADD CONSTRAINT FK_379BEBF4443707B0 FOREIGN KEY (field_id) REFERENCES client_field (id) ON UPDATE NO ACTION ON DELETE CASCADE');
         $this->addSql('ALTER TABLE client_form CHANGE created_at created_at DATETIME DEFAULT NULL, CHANGE updated_at updated_at DATETIME DEFAULT NULL');
         $this->addSql('ALTER TABLE client_form_field CHANGE created_at created_at DATETIME DEFAULT NULL, CHANGE updated_at updated_at DATETIME DEFAULT NULL');
         $this->addSql('ALTER TABLE client_form_response CHANGE created_at created_at DATETIME DEFAULT NULL, CHANGE updated_at updated_at DATETIME DEFAULT NULL');
