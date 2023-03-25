@@ -18,7 +18,7 @@ class ClientFieldOption extends BaseEntity
      * Если - true, то при заполнении не может быть выбрано только
      * одно это значение, необходимо указать еще какое-нибудь
      */
-    #[ORM\Column(type: 'boolean', nullable: true)]
+    #[ORM\Column(type: 'boolean')]
     private bool $notSingle = false;
 
     #[ORM\ManyToOne(targetEntity: ClientField::class, inversedBy: 'options')]

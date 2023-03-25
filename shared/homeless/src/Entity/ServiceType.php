@@ -50,20 +50,20 @@ class ServiceType extends BaseEntity
     /**
      * Платная
      */
-    #[ORM\Column(type: 'boolean', nullable: true)]
-    private ?bool $pay = null;
+    #[ORM\Column(type: 'boolean')]
+    private bool $pay = false;
 
-    #[ORM\Column(type: 'boolean', nullable: true)]
-    private ?bool $document = null;
+    #[ORM\Column(type: 'boolean')]
+    private bool $document = false;
 
     /**
      * Сумма
      */
-    #[ORM\Column(type: 'boolean', nullable: true)]
-    private ?bool $amount = null;
+    #[ORM\Column(type: 'boolean')]
+    private bool $amount = false;
 
-    #[ORM\Column(type: 'boolean', nullable: true)]
-    private ?bool $comment = null;
+    #[ORM\Column(type: 'boolean')]
+    private bool $comment = false;
 
     public function __toString(): string
     {
@@ -82,48 +82,48 @@ class ServiceType extends BaseEntity
         return $this;
     }
 
-    public function isPay(): ?bool
+    public function isPay(): bool
     {
         return $this->pay;
     }
 
-    public function setPay(?bool $pay): self
+    public function setPay(bool $pay): self
     {
         $this->pay = $pay;
 
         return $this;
     }
 
-    public function isDocument(): ?bool
+    public function isDocument(): bool
     {
         return $this->document;
     }
 
-    public function setDocument(?bool $document): self
+    public function setDocument(bool $document): self
     {
         $this->document = $document;
 
         return $this;
     }
 
-    public function isAmount(): ?bool
+    public function isAmount(): bool
     {
         return $this->amount;
     }
 
-    public function setAmount(?bool $amount): self
+    public function setAmount(bool $amount): self
     {
         $this->amount = $amount;
 
         return $this;
     }
 
-    public function isComment(): ?bool
+    public function isComment(): bool
     {
         return $this->comment;
     }
 
-    public function setComment(?bool $comment): self
+    public function setComment(bool $comment): self
     {
         $this->comment = $comment;
 

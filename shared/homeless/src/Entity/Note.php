@@ -17,8 +17,8 @@ class Note extends BaseEntity
     #[ORM\ManyToOne(targetEntity: Client::class, inversedBy: 'notes')]
     private ?Client $client = null;
 
-    #[ORM\Column(type: 'boolean', nullable: true)]
-    private ?bool $important = false;
+    #[ORM\Column(type: 'boolean')]
+    private bool $important = false;
 
     public function __toString(): string
     {
@@ -37,12 +37,12 @@ class Note extends BaseEntity
         return $this;
     }
 
-    public function isImportant(): ?bool
+    public function isImportant(): bool
     {
         return $this->important;
     }
 
-    public function setImportant(?bool $important): self
+    public function setImportant(bool $important): self
     {
         $this->important = $important;
 

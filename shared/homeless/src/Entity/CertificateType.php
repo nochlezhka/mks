@@ -41,19 +41,19 @@ class CertificateType extends BaseEntity
     /**
      * Доступен для скачивания
      */
-    #[ORM\Column(type: 'boolean', nullable: true)]
+    #[ORM\Column(type: 'boolean')]
     private bool $downloadable = false;
 
     /**
      * Отображать фото клиента
      */
-    #[ORM\Column(type: 'boolean', nullable: true)]
+    #[ORM\Column(type: 'boolean')]
     private bool $showPhoto = false;
 
     /**
      * Отображать дату ниже ФИО сотрудника
      */
-    #[ORM\Column(type: 'boolean', nullable: true)]
+    #[ORM\Column(type: 'boolean')]
     private bool $showDate = false;
 
     /**

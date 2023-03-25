@@ -27,8 +27,8 @@ class MenuItem extends BaseEntity
     #[ORM\Column(type: 'string', unique: true, nullable: true)]
     private ?string $code = null;
 
-    #[ORM\Column(type: 'boolean', nullable: true)]
-    private ?bool $enabled = true;
+    #[ORM\Column(type: 'boolean', options: ['default' => true])]
+    private bool $enabled = true;
 
     public function __toString(): string
     {
@@ -59,12 +59,12 @@ class MenuItem extends BaseEntity
         return $this;
     }
 
-    public function isEnabled(): ?bool
+    public function isEnabled(): bool
     {
         return $this->enabled;
     }
 
-    public function setEnabled(?bool $enabled): self
+    public function setEnabled(bool $enabled): self
     {
         $this->enabled = $enabled;
 

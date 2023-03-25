@@ -98,8 +98,8 @@ class ResidentQuestionnaire
     /**
      * Проживает в жилом помещении?
      */
-    #[ORM\Column(type: 'boolean', nullable: true)]
-    private ?bool $isDwelling = null;
+    #[ORM\Column(type: 'boolean')]
+    private bool $isDwelling = false;
 
     /**
      * Тип жилья
@@ -110,20 +110,20 @@ class ResidentQuestionnaire
     /**
      * Работает?
      */
-    #[ORM\Column(type: 'boolean', nullable: true)]
-    private ?bool $isWork = null;
+    #[ORM\Column(type: 'boolean')]
+    private bool $isWork = false;
 
     /**
      * Официальная работа?
      */
-    #[ORM\Column(type: 'boolean', nullable: true)]
-    private ?bool $isWorkOfficial = null;
+    #[ORM\Column(type: 'boolean')]
+    private bool $isWorkOfficial = false;
 
     /**
      * Постоянная работа?
      */
-    #[ORM\Column(type: 'boolean', nullable: true)]
-    private ?bool $isWorkConstant = null;
+    #[ORM\Column(type: 'boolean')]
+    private bool $isWorkConstant = false;
 
     /**
      * Сколько сменил работ
@@ -144,6 +144,7 @@ class ResidentQuestionnaire
     private ?string $reasonForPetitionIds = null;
 
     #[ORM\ManyToOne(targetEntity: Client::class, inversedBy: 'documents')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?Client $client = null;
 
     public function getId(): ?int
@@ -178,12 +179,12 @@ class ResidentQuestionnaire
         $this->typeId = $typeId;
     }
 
-    public function isDwelling(): ?bool
+    public function isDwelling(): bool
     {
         return $this->isDwelling;
     }
 
-    public function setIsDwelling(?bool $isDwelling): void
+    public function setIsDwelling(bool $isDwelling): void
     {
         $this->isDwelling = $isDwelling;
     }
@@ -198,32 +199,32 @@ class ResidentQuestionnaire
         $this->roomTypeId = $roomTypeId;
     }
 
-    public function isWork(): ?bool
+    public function isWork(): bool
     {
         return $this->isWork;
     }
 
-    public function setIsWork(?bool $isWork): void
+    public function setIsWork(bool $isWork): void
     {
         $this->isWork = $isWork;
     }
 
-    public function isWorkOfficial(): ?bool
+    public function isWorkOfficial(): bool
     {
         return $this->isWorkOfficial;
     }
 
-    public function setIsWorkOfficial(?bool $isWorkOfficial): void
+    public function setIsWorkOfficial(bool $isWorkOfficial): void
     {
         $this->isWorkOfficial = $isWorkOfficial;
     }
 
-    public function isWorkConstant(): ?bool
+    public function isWorkConstant(): bool
     {
         return $this->isWorkConstant;
     }
 
-    public function setIsWorkConstant(?bool $isWorkConstant): void
+    public function setIsWorkConstant(bool $isWorkConstant): void
     {
         $this->isWorkConstant = $isWorkConstant;
     }

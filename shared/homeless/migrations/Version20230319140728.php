@@ -56,7 +56,7 @@ final class Version20230319140728 extends AbstractMigration
         $this->addSql('ALTER TABLE resident_questionnaire DROP FOREIGN KEY resident_questionnaire_client_id_fk');
         $this->addSql('DROP INDEX resident_questionnaire_client_id_fk ON resident_questionnaire');
         $this->addSql('ALTER TABLE resident_questionnaire CHANGE client_id client_id INT DEFAULT NULL, CHANGE type_id type_id INT DEFAULT NULL, CHANGE is_dwelling is_dwelling TINYINT(1) DEFAULT NULL, CHANGE is_work is_work TINYINT(1) DEFAULT NULL, CHANGE is_work_official is_work_official TINYINT(1) DEFAULT NULL, CHANGE is_work_constant is_work_constant TINYINT(1) DEFAULT NULL, CHANGE reason_for_transition_ids reason_for_transition_ids LONGTEXT DEFAULT NULL, CHANGE reason_for_petition_ids reason_for_petition_ids LONGTEXT DEFAULT NULL');
-        $this->addSql('ALTER TABLE resident_questionnaire ADD CONSTRAINT FK_D177694B19EB6921 FOREIGN KEY (client_id) REFERENCES client (id)');
+        $this->addSql('ALTER TABLE resident_questionnaire ADD CONSTRAINT FK_D177694B19EB6921 FOREIGN KEY (client_id) REFERENCES client (id) ON DELETE CASCADE');
         $this->addSql('CREATE INDEX IDX_D177694B19EB6921 ON resident_questionnaire (client_id)');
         $this->addSql('ALTER TABLE service CHANGE created_at created_at DATETIME DEFAULT NULL COMMENT \'(DC2Type:datetime_immutable)\', CHANGE updated_at updated_at DATETIME DEFAULT NULL COMMENT \'(DC2Type:datetime_immutable)\'');
         $this->addSql('ALTER TABLE service_type CHANGE created_at created_at DATETIME DEFAULT NULL COMMENT \'(DC2Type:datetime_immutable)\', CHANGE updated_at updated_at DATETIME DEFAULT NULL COMMENT \'(DC2Type:datetime_immutable)\'');
