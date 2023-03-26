@@ -119,6 +119,7 @@
 
     <rule ref="SlevomatCodingStandard.ControlStructures.AssignmentInCondition" />
     <rule ref="SlevomatCodingStandard.ControlStructures.DisallowContinueWithoutIntegerOperandInSwitch" />
+    <rule ref="SlevomatCodingStandard.ControlStructures.DisallowTrailingMultiLineTernaryOperator" />
     <rule ref="SlevomatCodingStandard.ControlStructures.DisallowYodaComparison" />
     <rule ref="SlevomatCodingStandard.ControlStructures.EarlyExit">
         <properties>

@@ -16,7 +16,6 @@ use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Route\RouteCollectionInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 #[AutoconfigureTag(name: 'sonata.admin', attributes: [
     'manager_type' => 'orm',
