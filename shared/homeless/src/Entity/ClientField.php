@@ -43,10 +43,10 @@ class ClientField extends BaseEntity
     )]
     private ?string $code = null;
 
-    #[ORM\Column(type: 'boolean', options: ['default' => true])]
+    #[ORM\Column(type: 'boolean')]
     private bool $enabled = true;
 
-    #[ORM\Column(type: 'boolean', options: ['default' => true])]
+    #[ORM\Column(type: 'boolean')]
     private bool $enabledForHomeless = true;
 
     #[ORM\Column(type: 'integer', nullable: true)]

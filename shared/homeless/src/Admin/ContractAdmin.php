@@ -128,7 +128,7 @@ class ContractAdmin extends AbstractAdmin
             ])
             ->add('createdBy', null, [
                 'label' => 'Кем добавлен',
-                'admin_code' => UserAdmin::class,
+                'admin_code' => 'sonata.user.admin.user',
             ])
         ;
 

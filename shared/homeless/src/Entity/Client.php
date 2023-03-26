@@ -57,7 +57,7 @@ class Client extends BaseEntity
     #[ORM\Column(type: 'string', nullable: true)]
     private ?string $lastname = null;
 
-    #[ORM\Column(type: 'boolean', options: ['default' => true])]
+    #[ORM\Column(type: 'boolean')]
     private bool $isHomeless = true;
 
     /**

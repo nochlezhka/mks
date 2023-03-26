@@ -138,7 +138,7 @@ class ServiceAdmin extends AbstractAdmin
             ])
             ->add('createdBy', null, [
                 'label' => 'Кем добавлена',
-                'admin_code' => UserAdmin::class,
+                'admin_code' => 'sonata.user.admin.user',
                 'route' => ['Fullname' => 'show'],
             ])
             ->add(ListMapper::NAME_ACTIONS, ListMapper::TYPE_ACTIONS, [
@@ -156,7 +156,7 @@ class ServiceAdmin extends AbstractAdmin
         $filter
             ->add('createdBy', null, [
                 'label' => 'Кем добавлена',
-                'admin_code' => UserAdmin::class,
+                'admin_code' => 'sonata.user.admin.user',
                 'advanced_filter' => false,
                 'field_options' => [
                     'class' => User::class,

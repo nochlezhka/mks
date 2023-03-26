@@ -1,7 +1,6 @@
 <?php declare(strict_types=1);
 // SPDX-License-Identifier: BSD-3-Clause
 
-use App\Admin;
 use App\Security\User\Role;
 use Symfony\Config\SonataAdminConfig;
 

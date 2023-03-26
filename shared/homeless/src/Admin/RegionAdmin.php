@@ -24,13 +24,6 @@ class RegionAdmin extends AbstractAdmin
         '_sort_by' => 'name',
     ];
 
-    public function __construct(
-        DistrictAdmin $districtAdmin,
-    ) {
-        $this->addChild($districtAdmin, 'region');
-        parent::__construct();
-    }
-
     protected function configureFormFields(FormMapper $form): void
     {
         $form
@@ -76,7 +69,7 @@ class RegionAdmin extends AbstractAdmin
 
         $menu->addChild(
             'Районы',
-            ['uri' => $admin->generateUrl(DistrictAdmin::class.'.list', ['id' => $id])],
+            ['uri' => $admin->generateUrl('app.district.admin.list', ['id' => $id])],
         );
     }
 }

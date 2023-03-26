@@ -25,13 +25,6 @@ class ClientFieldAdmin extends AbstractAdmin
         '_sort_by' => 'sort',
     ];
 
-    public function __construct(
-        ClientFieldOptionAdmin $clientFieldOptionAdmin,
-    ) {
-        $this->addChild($clientFieldOptionAdmin, 'field');
-        parent::__construct();
-    }
-
     protected function configureFormFields(FormMapper $form): void
     {
         $form
@@ -131,7 +124,7 @@ class ClientFieldAdmin extends AbstractAdmin
         if ($admin->getSubject() instanceof ClientField && $admin->getSubject()->getType() === ClientField::TYPE_OPTION) {
             $menu->addChild(
                 'Варианты выбора',
-                ['uri' => $admin->generateUrl(ClientFieldOptionAdmin::class.'.list', ['id' => $id])],
+                ['uri' => $admin->generateUrl('app.client_field_option.admin.list', ['id' => $id])],
             );
         }
     }

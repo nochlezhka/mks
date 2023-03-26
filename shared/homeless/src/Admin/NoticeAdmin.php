@@ -164,7 +164,7 @@ class NoticeAdmin extends AbstractAdmin
             ])
             ->add('createdBy', null, [
                 'label' => 'Кем добавлено',
-                'admin_code' => UserAdmin::class,
+                'admin_code' => 'sonata.user.admin.user',
             ])
             ->add(ListMapper::NAME_ACTIONS, ListMapper::TYPE_ACTIONS, [
                 'label' => 'Действие',
@@ -210,7 +210,7 @@ class NoticeAdmin extends AbstractAdmin
             ])
             ->add('createdBy', null, [
                 'label' => 'Кем добавлено',
-                'admin_code' => UserAdmin::class,
+                'admin_code' => 'sonata.user.admin.user',
                 'advanced_filter' => false,
             ])
             ->add('id', CallbackFilter::class, [

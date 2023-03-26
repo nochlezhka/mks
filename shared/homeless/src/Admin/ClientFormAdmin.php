@@ -26,12 +26,6 @@ class ClientFormAdmin extends AbstractAdmin
         '_sort_by' => 'sort',
     ];
 
-    public function __construct(ClientFormFieldAdmin $clientFormFieldAdmin)
-    {
-        $this->addChild($clientFormFieldAdmin, 'form');
-        parent::__construct();
-    }
-
     protected function configureFormFields(FormMapper $form): void
     {
         $form
@@ -64,7 +58,7 @@ class ClientFormAdmin extends AbstractAdmin
                     'uri' => $admin->generateUrl('edit', ['id' => $id]),
                 ])
                 ->addChild('Список полей', [
-                    'uri' => $admin->generateUrl(ClientFormFieldAdmin::class.'.list', ['id' => $id]),
+                    'uri' => $admin->generateUrl('app.client_form_field.admin.list', ['id' => $id]),
                 ])
             ;
         }

@@ -47,7 +47,7 @@ class NoteAdmin extends AbstractAdmin
         $list
             ->add('createdBy', null, [
                 'label' => 'Кем добавлено',
-                'admin_code' => UserAdmin::class,
+                'admin_code' => 'sonata.user.admin.user',
             ])
             ->add('createdAt', FieldDescriptionInterface::TYPE_DATE, [
                 'label' => 'Когда добавлено',

@@ -25,8 +25,6 @@ class ResidentFormResponseAdmin extends ClientFormResponseAdmin
     protected ?int $formId = ClientForm::RESIDENT_QUESTIONNAIRE_FORM_ID;
 
     // переопределения для роутов и breadcrumbs
-    protected $baseRouteName = 'resident_form_response';
-    protected $baseRoutePattern = 'resident_form_response';
     protected $classnameLabel = 'resident_form_response';
 
     public function __construct(MetaService $metaService)
@@ -48,5 +46,15 @@ class ResidentFormResponseAdmin extends ClientFormResponseAdmin
         }
 
         parent::preValidate($object);
+    }
+
+    protected function generateBaseRouteName(bool $isChildAdmin = false): string
+    {
+        return 'resident_form_response';
+    }
+
+    protected function generateBaseRoutePattern(bool $isChildAdmin = false): string
+    {
+        return 'resident_form_response';
     }
 }
