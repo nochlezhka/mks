@@ -13,6 +13,7 @@ return static function (SonataAdminConfig $sonataAdmin): void {
     ;
 
     $sonataAdmin->options()
+        ->defaultAdminRoute('edit')
         ->useIcheck(false)
     ;
 
