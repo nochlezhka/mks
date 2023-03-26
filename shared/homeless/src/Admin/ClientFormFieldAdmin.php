@@ -21,10 +21,11 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
  * Админка для редактирования поля формы
  */
 #[AutoconfigureTag(name: 'sonata.admin', attributes: [
-    'manager_type' => 'orm',
+    'code' => 'app.client_form_field.admin',
     'label' => 'ClientFormField',
-    'model_class' => ClientFormField::class,
     'label_translator_strategy' => 'sonata.admin.label.strategy.underscore',
+    'manager_type' => 'orm',
+    'model_class' => ClientFormField::class,
 ])]
 class ClientFormFieldAdmin extends AbstractAdmin
 {

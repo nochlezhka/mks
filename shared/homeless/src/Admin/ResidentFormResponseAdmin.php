@@ -14,10 +14,11 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
  * ID формы анкеты захардкожен в `$this->formId`
  */
 #[AutoconfigureTag(name: 'sonata.admin', attributes: [
-    'manager_type' => 'orm',
+    'code' => 'app.resident_form_response.admin',
     'label' => 'resident_form_response',
-    'model_class' => ClientFormResponse::class,
     'label_translator_strategy' => 'sonata.admin.label.strategy.underscore',
+    'manager_type' => 'orm',
+    'model_class' => ClientFormResponse::class,
 ])]
 class ResidentFormResponseAdmin extends ClientFormResponseAdmin
 {

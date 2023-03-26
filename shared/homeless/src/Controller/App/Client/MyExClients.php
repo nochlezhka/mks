@@ -3,7 +3,6 @@
 
 namespace App\Controller\App\Client;
 
-use App\Admin\ClientAdmin;
 use App\Entity\ContractStatus;
 use App\Repository\ContractStatusRepository;
 use App\Security\User\Role;
@@ -37,7 +36,7 @@ class MyExClients extends AbstractController
         }
 
         return $this->forward('sonata.admin.controller.crud::listAction', [], [
-            '_sonata_admin' => ClientAdmin::class,
+            '_sonata_admin' => 'app.client.admin',
             'filter' => $filter,
         ]);
     }

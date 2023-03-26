@@ -9,11 +9,12 @@ use Sonata\AdminBundle\Datagrid\ListMapper;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
 #[AutoconfigureTag(name: 'sonata.admin', attributes: [
-    'manager_type' => 'orm',
-    'label' => 'История скачиваний',
-    'model_class' => HistoryDownload::class,
+    'code' => 'app.history_download.admin',
     'controller' => CRUDController::class,
+    'label' => 'История скачиваний',
     'label_translator_strategy' => 'sonata.admin.label.strategy.underscore',
+    'manager_type' => 'orm',
+    'model_class' => HistoryDownload::class,
 ])]
 
 class HistoryDownloadAdmin extends AbstractAdmin

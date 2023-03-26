@@ -49,11 +49,12 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 #[AutoconfigureTag(name: 'sonata.admin', attributes: [
-    'manager_type' => 'orm',
-    'label' => 'Клиенты',
-    'model_class' => Client::class,
+    'code' => 'app.client.admin',
     'controller' => ClientController::class,
+    'label' => 'Клиенты',
     'label_translator_strategy' => 'sonata.admin.label.strategy.underscore',
+    'manager_type' => 'orm',
+    'model_class' => Client::class,
 ])]
 class ClientAdmin extends AbstractAdmin
 {

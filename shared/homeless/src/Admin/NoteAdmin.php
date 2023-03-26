@@ -12,11 +12,12 @@ use Sonata\FormatterBundle\Form\Type\SimpleFormatterType;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
 #[AutoconfigureTag(name: 'sonata.admin', attributes: [
-    'manager_type' => 'orm',
-    'label' => 'notes',
-    'model_class' => Note::class,
+    'code' => 'app.note.admin',
     'controller' => CRUDController::class,
+    'label' => 'notes',
     'label_translator_strategy' => 'sonata.admin.label.strategy.underscore',
+    'manager_type' => 'orm',
+    'model_class' => Note::class,
 ])]
 class NoteAdmin extends AbstractAdmin
 {

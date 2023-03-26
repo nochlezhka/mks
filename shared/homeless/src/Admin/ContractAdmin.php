@@ -20,11 +20,12 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
 #[AutoconfigureTag(name: 'sonata.admin', attributes: [
-    'manager_type' => 'orm',
-    'label' => 'Сервисные планы',
-    'model_class' => Contract::class,
+    'code' => 'app.contract.admin',
     'controller' => CRUDController::class,
+    'label' => 'Сервисные планы',
     'label_translator_strategy' => 'sonata.admin.label.strategy.underscore',
+    'manager_type' => 'orm',
+    'model_class' => Contract::class,
 ])]
 class ContractAdmin extends AbstractAdmin
 {

@@ -12,10 +12,11 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 #[AutoconfigureTag(name: 'sonata.admin', attributes: [
-    'manager_type' => 'orm',
+    'code' => 'app.client_field.admin',
     'label' => 'client_fields',
-    'model_class' => ClientField::class,
     'label_translator_strategy' => 'sonata.admin.label.strategy.underscore',
+    'manager_type' => 'orm',
+    'model_class' => ClientField::class,
 ])]
 class ClientFieldAdmin extends AbstractAdmin
 {

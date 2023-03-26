@@ -96,18 +96,18 @@ return static function (SonataAdminConfig $sonataAdmin): void {
         ->label('Настройки')
         ->icon('<i class="fa fa-wrench"></i>')
     ;
-    $settingsDashboard->item()->admin(Admin\ClientFieldAdmin::class);
-    $settingsDashboard->item()->admin(Admin\RegionAdmin::class);
-    $settingsDashboard->item()->admin(Admin\ServiceTypeAdmin::class);
-    $settingsDashboard->item()->admin(Admin\ContractItemTypeAdmin::class);
-    $settingsDashboard->item()->admin(Admin\GeneratedDocumentTypeAdmin::class);
-    $settingsDashboard->item()->admin(Admin\GeneratedDocumentStartTextAdmin::class);
-    $settingsDashboard->item()->admin(Admin\GeneratedDocumentEndTextAdmin::class);
-    $settingsDashboard->item()->admin(Admin\CertificateTypeAdmin::class);
-    $settingsDashboard->item()->admin(Admin\MenuItemAdmin::class);
-    $settingsDashboard->item()->admin(Admin\PositionAdmin::class);
-    $settingsDashboard->item()->admin(Admin\UserAdmin::class);
-    $settingsDashboard->item()->admin(Admin\ClientFormAdmin::class);
-    $settingsDashboard->item()->admin(Admin\ShelterRoomAdmin::class);
+    $settingsDashboard->item()->admin('app.client_field.admin');
+    $settingsDashboard->item()->admin('app.region.admin');
+    $settingsDashboard->item()->admin('app.service_type.admin');
+    $settingsDashboard->item()->admin('app.contract_item_type.admin');
+    $settingsDashboard->item()->admin('app.generated_document_type.admin');
+    $settingsDashboard->item()->admin('app.generated_document_start_text.admin');
+    $settingsDashboard->item()->admin('app.generated_document_end_text.admin');
+    $settingsDashboard->item()->admin('app.certificate_type.admin');
+    $settingsDashboard->item()->admin('app.menu_item.admin');
+    $settingsDashboard->item()->admin('app.position.admin');
+    $settingsDashboard->item()->admin('sonata.user.admin.user');
+    $settingsDashboard->item()->admin('app.client_form.admin');
+    $settingsDashboard->item()->admin('app.shelter_room.admin');
     $settingsDashboard->roles([Role::ADMIN]);
 };

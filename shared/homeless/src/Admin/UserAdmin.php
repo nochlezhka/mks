@@ -20,10 +20,11 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 #[AutoconfigureTag(name: 'sonata.admin', attributes: [
-    'manager_type' => 'orm',
+    'code' => 'sonata.user.admin.user',
     'label' => 'users',
-    'model_class' => User::class,
     'label_translator_strategy' => 'sonata.admin.label.strategy.underscore',
+    'manager_type' => 'orm',
+    'model_class' => User::class,
     'translation_domain' => 'SonataUserBundle',
 ])]
 class UserAdmin extends SonataUserAdmin

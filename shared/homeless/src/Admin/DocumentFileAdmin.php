@@ -11,10 +11,11 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Vich\UploaderBundle\Form\Type\VichFileType;
 
 #[AutoconfigureTag(name: 'sonata.admin', attributes: [
-    'manager_type' => 'orm',
+    'code' => 'app.document_file.admin',
     'label' => 'document_files',
-    'model_class' => DocumentFile::class,
     'label_translator_strategy' => 'sonata.admin.label.strategy.underscore',
+    'manager_type' => 'orm',
+    'model_class' => DocumentFile::class,
 ])]
 class DocumentFileAdmin extends AbstractAdmin
 {

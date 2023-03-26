@@ -11,11 +11,12 @@ use Sonata\AdminBundle\Route\RouteCollectionInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
 #[AutoconfigureTag(name: 'sonata.admin', attributes: [
-    'manager_type' => 'orm',
-    'label' => 'shelter_rooms',
-    'model_class' => ShelterRoom::class,
+    'code' => 'app.shelter_room.admin',
     'controller' => ShelterRoomController::class,
+    'label' => 'shelter_rooms',
     'label_translator_strategy' => 'sonata.admin.label.strategy.underscore',
+    'manager_type' => 'orm',
+    'model_class' => ShelterRoom::class,
 ])]
 class ShelterRoomAdmin extends AbstractAdmin
 {
