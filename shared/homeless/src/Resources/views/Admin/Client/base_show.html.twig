@@ -83,7 +83,7 @@
 {% endblock %}
 
 {% block title %}
-    {{ "title_show"|trans({'%name%': admin.toString(object)|truncate(15) }, 'SonataAdminBundle') }}
+    {{ "title_show"|trans({'%name%': admin.toString(object)|u.truncate(15, '...') }, 'SonataAdminBundle') }}
     <script>
         $(document).ready(function () {
             if ($('.changeSelectinsData').parents('.form-group').find('[type="checkbox"]').prop('checked')) {

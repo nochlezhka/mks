@@ -1,14 +1,12 @@
-<?php
-
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\Admin;
 
-
-use App\Controller\ClientController;
-use App\Entity\Client;
 use App\Entity\ClientFormField;
 use App\Util\ClientFormUtil;
 use Sonata\AdminBundle\Datagrid\ListMapper;
+use Sonata\AdminBundle\FieldDescription\FieldDescriptionInterface;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Form\Type\ChoiceFieldMaskType;
 use Sonata\AdminBundle\Show\ShowMapper;
@@ -21,27 +19,34 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * Админка для редактирования поля формы
- *
- * @package App\Admin
  */
 #[AutoconfigureTag(name: 'sonata.admin', attributes: [
     'manager_type' => 'orm',
     'label' => 'ClientFormField',
     'model_class' => ClientFormField::class,
-    'label_translator_strategy' => 'sonata.admin.label.strategy.underscore'
+    'label_translator_strategy' => 'sonata.admin.label.strategy.underscore',
 ])]
-class ClientFormFieldAdmin extends BaseAdmin
+class ClientFormFieldAdmin extends AbstractAdmin
 {
-    protected array $datagridValues = array(
+    protected array $datagridValues = [
         '_sort_order' => 'ASC',
         '_sort_by' => 'sort',
-    );
+    ];
 
-    protected string $translationDomain = 'App';
+    public function preValidate(object $object): void
+    {
+        if (!$object instanceof ClientFormField) {
+            return;
+        }
 
-    /**
-     * @inheritDoc
-     */
+        if ($object->isFixed()) {
+            throw new AccessDeniedException(sprintf(
+                'Изменение поля %s запрещено.', $object->getName(),
+            ));
+        }
+        parent::preValidate($object);
+    }
+
     protected function configureFormFields(FormMapper $form): void
     {
         $form
@@ -61,17 +66,18 @@ class ClientFormFieldAdmin extends BaseAdmin
                     ClientFormField::TYPE_OPTION => ['options', 'multiselect'],
                     ClientFormField::TYPE_CHECKBOX => [],
                 ],
-            ]);
+            ])
+        ;
         $optionsAttrs = [];
         if ($this->getSubject() !== null) {
             $optionsText = $this->getSubject()->getOptions();
             $choiceList = ClientFormUtil::optionsTextToArray($optionsText);
-            $optionsAttrs['rows'] = count($choiceList);
+            $optionsAttrs['rows'] = \count($choiceList);
         }
         $form
             ->add('options', TextareaType::class, [
                 'label' => 'Варианты',
-                'help' => 'Каждый вариант в своей строке. ' .
+                'help' => 'Каждый вариант в своей строке. '.
                     '<br>Удаление или изменение варианта не приведёт к изменению полей в уже заполненных анкетах!',
                 'required' => false,
                 'attr' => $optionsAttrs,
@@ -87,15 +93,16 @@ class ClientFormFieldAdmin extends BaseAdmin
             ->add('sort', TextType::class, [
                 'label' => 'Сортировка',
                 'required' => true,
-            ]);
+            ])
+        ;
     }
 
-    /**
-     * @inheritDoc
-     */
     protected function configureShowFields(ShowMapper $show): void
     {
-        $show->add('name', null, ['label' => 'Название'])
+        $show
+            ->add('name', null, [
+                'label' => 'Название',
+            ])
             ->add('type', ChoiceType::class, [
                 'label' => 'Тип поля',
                 'choices' => [
@@ -107,47 +114,31 @@ class ClientFormFieldAdmin extends BaseAdmin
             ->add('options', null, [
                 'label' => 'Варианты',
             ])
-            ->add('required', 'boolean', [
+            ->add('required', FieldDescriptionInterface::TYPE_BOOLEAN, [
                 'label' => 'Обязательное',
             ])
-            ->add('multiselect', 'boolean', [
+            ->add('multiselect', FieldDescriptionInterface::TYPE_BOOLEAN, [
                 'label' => 'Множественный выбор',
             ])
             ->add('sort', null, [
                 'label' => 'Сортировка',
-            ]);
+            ])
+        ;
     }
 
-    /**
-     * @inheritDoc
-     */
     protected function configureListFields(ListMapper $list): void
     {
         $list
             ->addIdentifier('name', null, [
                 'label' => 'Название',
             ])
-            ->add('sort', TextType::class, [
+            ->add('sort', FieldDescriptionInterface::TYPE_STRING, [
                 'label' => 'Сортировка',
-            ]);
-
-        $list->add(ListMapper::NAME_ACTIONS, ListMapper::TYPE_ACTIONS, [
-            'label' => 'Действие',
-            'actions' => ['show' => [], 'edit' => []],
-        ]);
-    }
-
-    /**
-     * @inheritDoc
-     * @param ClientFormField $object
-     */
-    public function preValidate(object $object): void
-    {
-        if ($object->isFixed()) {
-            throw new AccessDeniedException(sprintf(
-                "Изменение поля %s запрещено.", $object->getName()
-            ));
-        }
-        parent::preValidate($object);
+            ])
+            ->add(ListMapper::NAME_ACTIONS, ListMapper::TYPE_ACTIONS, [
+                'label' => 'Действие',
+                'actions' => ['show' => [], 'edit' => []],
+            ])
+        ;
     }
 }

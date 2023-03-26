@@ -1,184 +1,160 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\Admin;
 
 use App\Entity\Position;
 use App\Entity\User;
 use App\Form\DataTransformer\PositionToChoiceFieldMaskTypeTransformer;
-use JsonException;
-use Sonata\AdminBundle\Datagrid\DatagridMapper;
-use Sonata\AdminBundle\Datagrid\ListMapper;
+use App\Security\User\Role;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Form\Type\ChoiceFieldMaskType;
-use Sonata\AdminBundle\Form\Type\ModelType;
 use Sonata\Form\Type\DatePickerType;
-use Sonata\UserBundle\Admin\Model\UserAdmin as BaseUserAdmin;
+use Sonata\UserBundle\Admin\Model\UserAdmin as SonataUserAdmin;
+use Sonata\UserBundle\Form\Type\RolesMatrixType;
 use Sonata\UserBundle\Model\UserManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 #[AutoconfigureTag(name: 'sonata.admin', attributes: [
     'manager_type' => 'orm',
+    'label' => 'users',
     'model_class' => User::class,
+    'label_translator_strategy' => 'sonata.admin.label.strategy.underscore',
+    'translation_domain' => 'SonataUserBundle',
 ])]
-class UserAdmin extends BaseUserAdmin
+class UserAdmin extends SonataUserAdmin
 {
-    use BaseAdminTrait;
-
-    private AuthorizationCheckerInterface $authorizationChecker;
-
-    private PositionToChoiceFieldMaskTypeTransformer $transformer;
+    use AdminTrait;
 
     public function __construct(
-        AuthorizationCheckerInterface $authorizationChecker,
-        PositionToChoiceFieldMaskTypeTransformer $transformer,
-        #[Autowire(service: "sonata.user.manager.user")]
-        UserManagerInterface $manager
-    )
-    {
-        $this->authorizationChecker = $authorizationChecker;
-        $this->transformer = $transformer;
+        private readonly PositionToChoiceFieldMaskTypeTransformer $transformer,
+        #[Autowire(service: 'sonata.user.manager.user')]
+        UserManagerInterface $manager,
+    ) {
         parent::__construct($manager);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function configureFormFields(FormMapper $form): void
     {
-        $user = $this->tokenStorage->getToken()->getUser();
-        $isSuperAdmin = $this->authorizationChecker->isGranted('ROLE_SUPER_ADMIN');
+        $user = $this->getUser();
+        if (!$user instanceof User) {
+            throw new AccessDeniedException();
+        }
 
-        if (!$user instanceof User || (!$isSuperAdmin && $user != $this->getSubject())) {
+        $isSuperAdmin = $user->hasRole(Role::SUPER_ADMIN);
+        if (!$isSuperAdmin && $user !== $this->getSubject()) {
             throw new AccessDeniedException();
         }
 
         if ($isSuperAdmin) {
-            $form
-                ->tab('User');
+            $form->tab('user');
         }
 
         $form
-            ->with('Profile', array('class' => 'col-md-6'))->end()
-            ->with('General', array('class' => 'col-md-6'))->end();
+            ->with('profile', ['class' => 'col-md-6'])->end()
+            ->with('general', ['class' => 'col-md-6'])->end()
+        ;
 
         if ($isSuperAdmin) {
-            $form
-                ->end();
+            $form->end();
         }
 
         if ($isSuperAdmin) {
+            $form->tab('roles');
             $form
-                ->tab('Security')
-                ->with('Status', array('class' => 'col-md-4'))->end()
-                ->with('Groups', array('class' => 'col-md-4'))->end()
-                ->end();
+                ->with('roles', ['class' => 'col-md-12'])->end()
+            ;
+            $form->end();
         }
 
         if ($isSuperAdmin) {
-            $form
-                ->tab('User');
+            $form->tab('user');
         }
-        $positions = [
-            'Другая должность' => ''
-        ];
-        foreach ($this->manager->getRepository(Position::class)->findAll() as $item) {
+
+        $positions = ['Другая должность' => ''];
+        foreach ($this->entityManager->getRepository(Position::class)->findAll() as $item) {
             $positions[$item->getName()] = $item->getId();
         }
 
+        $form->with('profile');
         $form
-            ->with('General')
-            ->add('username')
-            ->add('email')
-            ->add('plainPassword', TextType::class, array(
-                'required' => (!$this->getSubject() || is_null($this->getSubject()->getId())),
-            ))
-            ->end()
-            ->with('Profile')
-            ->add('lastname', null, array('required' => false))
-            ->add('firstname', null, array('required' => false))
-            ->add('middlename', null, array('required' => false, 'label' => 'Отчество'))
-            ->add('position', ChoiceFieldMaskType::class, array(
+            ->add('lastname', null, [
+                'required' => false,
+            ])
+            ->add('firstname', null, [
+                'required' => false,
+            ])
+            ->add('middlename', null, [
+                'required' => false,
+                'label' => 'Отчество',
+            ])
+            ->add('position', ChoiceFieldMaskType::class, [
                 'required' => false,
                 'label' => 'Должность',
                 'choices' => $positions,
                 'multiple' => false,
                 'map' => [
-                    '' => ['positionText']
+                    '' => ['positionText'],
                 ],
-            ))
+            ])
             ->add('positionText', TextType::class, [
                 'required' => false,
                 'label' => 'Другая должность',
             ])
-            ->add('proxyDate', DatePickerType::class, array(
+            ->add('proxyDate', DatePickerType::class, [
                 'required' => false,
                 'format' => 'dd.MM.yyyy',
                 'label' => 'Дата доверенности',
-            ))
-            ->add('proxyNum', null, array('required' => false, 'label' => 'Номер доверенности'))
-            ->add('passport', TextareaType::class, array('required' => false, 'label' => 'Паспортные данные'))
-            ->end();
+                'input' => 'datetime_immutable',
+            ])
+            ->add('proxyNum', null, [
+                'required' => false,
+                'label' => 'Номер доверенности',
+            ])
+            ->add('passport', TextareaType::class, [
+                'required' => false,
+                'label' => 'Паспортные данные',
+            ])
+        ;
+        $form->end();
 
         $form->getFormBuilder()->get('position')->addModelTransformer($this->transformer);
-        if ($isSuperAdmin) {
-            $form
-                ->end();
-        }
 
-        if ($isSuperAdmin) {
-            $form
-                ->tab('Security')
-                ->with('Status')
-                ->add('enabled', null, array('required' => false))
-                ->end()
-                ->with('Groups')
-                ->add('groups', ModelType::class, array(
-                    'required' => false,
-                    'expanded' => true,
-                    'multiple' => true,
-                ))
-                ->end()
-                ->end();
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function configureDatagridFilters(DatagridMapper $filter): void
-    {
-        $filter
-            ->add('id', null, ['advanced_filter' => false])
-            ->add('username', null, ['advanced_filter' => false])
-            ->add('email', null, ['advanced_filter' => false])
-            ->add('groups', null, ['advanced_filter' => false]);
-    }
-
-    /**
-     * Переопределяем метод, чтобы использовать кастомный impersonating.html.twig, в котором есть дополнительные
-     * ограничения на то, можно перевоплощаться в данного пользователя или нет
-     *
-     * @throws JsonException
-     */
-    protected function configureListFields(ListMapper $list): void
-    {
-        $list
-            ->addIdentifier('username')
+        $form->with('general');
+        $form
+            ->add('username')
             ->add('email')
-            ->add('groups')
-            ->add('enabled', null, ['editable' => true])
-            ->add('createdAt')
+            ->add('plainPassword', TextType::class, [
+                'required' => $this->getSubject()?->getId() === null,
+            ])
+            ->add('enabled')
         ;
+        $form->end();
 
-        if ($this->isGranted('ROLE_ALLOWED_TO_SWITCH')) {
-            $list
-                ->add('impersonating', 'string', ['template' => '/admin/fields/impersonating.html.twig'])
-            ;
+        if ($isSuperAdmin) {
+            $form->end();
         }
+
+        if (!$isSuperAdmin) {
+            return;
+        }
+
+        $form->tab('roles');
+
+        $form->with('roles');
+        $form
+            ->add('realRoles', RolesMatrixType::class, [
+                'label' => false,
+                'multiple' => true,
+                'required' => false,
+            ])
+        ;
+        $form->end();
+
+        $form->end();
     }
 }

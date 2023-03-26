@@ -1,11 +1,10 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\Entity;
 
 use App\Service\DownloadableInterface;
-use DateTime;
 use Doctrine\ORM\Mapping as ORM;
-use Exception;
 
 /**
  * Справка
@@ -16,121 +15,78 @@ class Certificate extends BaseEntity implements DownloadableInterface
     /**
      * Город следования
      */
-    #[ORM\Column(type: "string", nullable: true)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $city = null;
 
-    /**
-     * Номер
-     */
-    #[ORM\Column(type: "string", nullable:true)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $number = null;
 
-    /**
-     * Дата начала действия
-     */
-    #[ORM\Column(type: "date", nullable: true)]
-    private ?DateTime $dateFrom = null;
+    #[ORM\Column(type: 'date_immutable', nullable: true)]
+    private ?\DateTimeImmutable $dateFrom = null;
 
-    /**
-     * Дата окончания действия
-     * @var DateTime|null
-     */
-    #[ORM\Column(type: "date", nullable: true)]
-    private ?DateTime $dateTo = null;
+    #[ORM\Column(type: 'date_immutable', nullable: true)]
+    private ?\DateTimeImmutable $dateTo = null;
 
-    /**
-     * Клиент
-     */
-    #[ORM\ManyToOne(targetEntity: Client::class, inversedBy: "certificates")]
+    #[ORM\ManyToOne(targetEntity: Client::class, inversedBy: 'certificates')]
     private ?Client $client = null;
 
-    /**
-     * Тип
-     */
     #[ORM\ManyToOne(targetEntity: CertificateType::class)]
     private ?CertificateType $type = null;
 
-    /**
-     * Документ
-     */
     #[ORM\ManyToOne(targetEntity: Document::class)]
     private ?Document $document = null;
 
-    /**
-     * {@inheritdoc}
-     */
+    public function __toString(): string
+    {
+        return $this->type?->getName() ?? '';
+    }
+
     public function getNamePrefix(): string
     {
         return 'contract';
     }
 
-    public function setCreatedAt(DateTime $createdAt = null)
+    public function setCreatedAt(?\DateTimeInterface $createdAt = null): static
     {
         $this->dateFrom = $createdAt;
+
         return parent::setCreatedAt($createdAt);
     }
 
-    public function __toString()
+    public function getCity(): ?string
     {
-        return $this->type->getName();
+        return $this->city;
     }
 
-    /**
-     * Set city
-     *
-     * @param string|null $city
-     *
-     * @return Certificate
-     */
-    public function setCity(?string $city): Certificate
+    public function setCity(?string $city): self
     {
         $this->city = $city;
 
         return $this;
     }
 
-    /**
-     * Get city
-     *
-     * @return string
-     */
-    public function getCity(): ?string
+    public function getNumber(): ?string
     {
-        return $this->city;
+        return $this->number;
     }
 
-    /**
-     * Set number
-     *
-     * @param string|null $number
-     *
-     * @return Certificate
-     */
-    public function setNumber(?string $number): Certificate
+    public function setNumber(?string $number): self
     {
         $this->number = $number;
 
         return $this;
     }
 
-    /**
-     * Get number
-     *
-     * @return string
-     */
-    public function getNumber(): ?string
+    public function getDateFrom(): ?\DateTimeImmutable
     {
-        return $this->number;
+        if ($this->getType()->getSyncId() === CertificateType::TRAVEL || $this->getType()->getSyncId() === CertificateType::REGISTRATION) {
+            return new \DateTimeImmutable();
+        }
+
+        return $this->dateFrom;
     }
 
-    /**
-     * Set dateFrom
-     *
-     * @param DateTime|null $dateFrom
-     *
-     * @return Certificate
-     */
-    public function setDateFrom(?DateTime $dateFrom): Certificate
+    public function setDateFrom(?\DateTimeImmutable $dateFrom): self
     {
         $this->dateFrom = $dateFrom;
 
@@ -138,117 +94,57 @@ class Certificate extends BaseEntity implements DownloadableInterface
     }
 
     /**
-     * Get dateFrom
-     *
-     * @return DateTime
+     * @throws \Exception
      */
-    public function getDateFrom(): ?DateTime
+    public function getDateTo(): ?\DateTimeImmutable
     {
-        if ($this->getType()->getSyncId() == CertificateType::TRAVEL || $this->getType()->getSyncId() == CertificateType::REGISTRATION) {
-            return new DateTime();
+        if ($this->getType()->getSyncId() === CertificateType::TRAVEL || $this->getType()->getSyncId() === CertificateType::REGISTRATION) {
+            return new \DateTimeImmutable(date('Y-m-d', strtotime('+ 1 year', time())));
         }
 
-        return $this->dateFrom;
+        return $this->dateTo;
     }
 
-    /**
-     * Set dateTo
-     *
-     * @param DateTime|null $dateTo
-     *
-     * @return Certificate
-     */
-    public function setDateTo(?DateTime $dateTo): Certificate
+    public function setDateTo(?\DateTimeImmutable $dateTo): self
     {
         $this->dateTo = $dateTo;
 
         return $this;
     }
 
-    /**
-     * Get dateTo
-     *
-     * @return DateTime
-     * @throws Exception
-     */
-    public function getDateTo(): ?DateTime
+    public function getClient(): ?Client
     {
-        if ($this->getType()->getSyncId() == CertificateType::TRAVEL || $this->getType()->getSyncId() == CertificateType::REGISTRATION) {
-            return new DateTime(date('Y-m-d', strtotime('+ 1 year', time())));
-        }
-
-        return $this->dateTo;
+        return $this->client;
     }
 
-    /**
-     * Set client
-     *
-     * @param Client|null $client
-     *
-     * @return Certificate
-     */
-    public function setClient(Client $client): Certificate
+    public function setClient(Client $client): self
     {
         $this->client = $client;
 
         return $this;
     }
 
-    /**
-     * Get client
-     *
-     * @return Client
-     */
-    public function getClient(): ?Client
+    public function getType(): ?CertificateType
     {
-        return $this->client;
+        return $this->type;
     }
 
-    /**
-     * Set type
-     *
-     * @param CertificateType|null $type
-     *
-     * @return Certificate
-     */
-    public function setType(CertificateType $type): Certificate
+    public function setType(?CertificateType $type): self
     {
         $this->type = $type;
 
         return $this;
     }
 
-    /**
-     * Get type
-     *
-     * @return CertificateType
-     */
-    public function getType(): ?CertificateType
+    public function getDocument(): ?Document
     {
-        return $this->type;
+        return $this->document;
     }
 
-    /**
-     * Set document
-     *
-     * @param Document|null $document
-     *
-     * @return Certificate
-     */
-    public function setDocument(Document $document): Certificate
+    public function setDocument(?Document $document): self
     {
         $this->document = $document;
 
         return $this;
-    }
-
-    /**
-     * Get document
-     *
-     * @return Document
-     */
-    public function getDocument(): ?Document
-    {
-        return $this->document;
     }
 }

@@ -4,8 +4,8 @@ fos_ck_editor:
     news:
       # default toolbar plus Format button
       toolbar:
-        - [Bold, Italic, Underline, -, Cut, Copy, Paste, PasteText, PasteFromWord, -, Undo, Redo, -, NumberedList, BulletedList, -, Outdent, Indent, -, Blockquote, -, Image, Link, Unlink, Table]
-        - [Format, Maximize, Source]
+        - [ Bold, Italic, Underline, -, Cut, Copy, Paste, PasteText, PasteFromWord, -, Undo, Redo, -, NumberedList, BulletedList, -, Outdent, Indent, -, Blockquote, -, Image, Link, Unlink, Table ]
+        - [ Format, Maximize, Source ]
       filebrowserBrowseRoute: admin_sonata_media_media_ckeditor_browser
       filebrowserImageBrowseRoute: admin_sonata_media_media_ckeditor_browser
       # Display images by default when clicking the image dialog browse button
@@ -22,6 +22,6 @@ fos_ck_editor:
     homeless:
       # default toolbar plus Format button
       allowedContent: true
-      toolbar: [ [ "Bold", "Italic", "Underline", '-', 'NumberedList', 'BulletedList', '-', 'Source', 'TextColor'] ]
+      toolbar: [ [ "Bold", "Italic", "Underline", '-', 'NumberedList', 'BulletedList', '-', 'Source', 'TextColor' ] ]
     default:
       toolbar: [ [ "Source", "-", "Save" ], "/", [ "Anchor" ], "/", [ "Maximize" ] ]

@@ -1,45 +1,28 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\Form\DataTransformer;
 
 use App\Repository\CertificateTypeRepository;
 use Symfony\Component\Form\DataTransformerInterface;
 
-class CertificateTypeToChoiceFieldMaskTypeTransformer implements DataTransformerInterface
+readonly class CertificateTypeToChoiceFieldMaskTypeTransformer implements DataTransformerInterface
 {
-    private CertificateTypeRepository $certificateTypeRepository;
+    public function __construct(
+        private CertificateTypeRepository $certificateTypeRepository,
+    ) {}
 
-    public function __construct(CertificateTypeRepository $certificateTypeRepository)
+    public function transform(mixed $value): mixed
     {
-        $this->certificateTypeRepository = $certificateTypeRepository;
+        return $value?->getId();
     }
 
-    /**
-     * @param mixed $value
-     * @return null
-     */
-    public function transform($value)
+    public function reverseTransform(mixed $value): ?object
     {
-        if (null === $value) {
-            return $value;
+        if ($value === null) {
+            return null;
         }
 
-        return $value->getId();
-    }
-
-    /**
-     * @param mixed $value
-     * @return null|object
-     */
-    public function reverseTransform($value)
-    {
-        $result = null;
-
-        if (null === $value) {
-            return $result;
-        } else {
-            $result = $this->certificateTypeRepository->find($value);
-            return $result;
-        }
+        return $this->certificateTypeRepository->find($value);
     }
 }

@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\Admin;
 
@@ -11,62 +12,53 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
 #[AutoconfigureTag(name: 'sonata.admin', attributes: [
     'manager_type' => 'orm',
-    'label' => 'Приют',
+    'label' => 'shelter_rooms',
     'model_class' => ShelterRoom::class,
-    'controller'=> ShelterRoomController::class,
-    'label_translator_strategy' => 'sonata.admin.label.strategy.underscore'
+    'controller' => ShelterRoomController::class,
+    'label_translator_strategy' => 'sonata.admin.label.strategy.underscore',
 ])]
-
-class ShelterRoomAdmin extends BaseAdmin
+class ShelterRoomAdmin extends AbstractAdmin
 {
-    protected array $datagridValues = array(
+    protected array $datagridValues = [
         '_sort_order' => 'DESC',
         '_sort_by' => 'dateFrom',
-    );
-
-    protected string $translationDomain = 'App';
+    ];
 
     protected function configureRoutes(RouteCollectionInterface $collection): void
     {
         $collection
             ->remove('export')
             ->add('save', 'save')
-            ->add('post_edit', 'edit');
+            ->add('post_edit', 'edit')
+        ;
     }
 
-    /**
-     * @param FormMapper $form
-     */
     protected function configureFormFields(FormMapper $form): void
     {
         $form
             ->add('number', null, [
-                'label' => 'Номер комнаты'
+                'label' => 'Номер комнаты',
             ])
             ->add('maxOccupants', null, [
-                'label' => 'Максимальное кол-во жильцов'
+                'label' => 'Максимальное кол-во жильцов',
             ])
             ->add('currentOccupants', null, [
                 'label' => 'Текущее кол-во жильцов',
-                'required' => false
+                'required' => false,
             ])
             ->add('comment', null, [
                 'label' => 'Комментарий',
-                'required' => false
-            ]);
+                'required' => false,
+            ])
+        ;
 
         $form->end();
     }
 
-    /**
-     * @param ListMapper $list
-     */
     protected function configureListFields(ListMapper $list): void
     {
-        $list
-            ->addIdentifier('number', null, [
-                'label' => 'Название',
-            ])
-        ;
+        $list->addIdentifier('number', null, [
+            'label' => 'Название',
+        ]);
     }
 }

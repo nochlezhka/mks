@@ -1,32 +1,33 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\Repository;
 
-use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\NonUniqueResultException;
+use App\Entity\MenuItem;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 
-class MenuItemRepository extends EntityRepository
+/**
+ * @method MenuItem|null   find($id, $lockMode = null, $lockVersion = null)
+ * @method MenuItem|null   findOneBy(array $criteria, array $orderBy = null)
+ * @method array<MenuItem> findAll()
+ * @method array<MenuItem> findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ */
+class MenuItemRepository extends ServiceEntityRepository
 {
+    public function __construct(
+        ManagerRegistry $registry,
+    ) {
+        parent::__construct($registry, MenuItem::class);
+    }
+
     /**
      * Активность раздела по его коду
-     *
-     * @param string $code
-     * @return bool
      */
-    public function isEnableCode($code)
+    public function isEnableCode(string $code): bool
     {
-        try {
-            $menuItem = $this->createQueryBuilder('mi')
-                ->andWhere('mi.code = :code')
-                ->setParameter('code', $code)
-                ->getQuery()
-                ->getOneOrNullResult();
-            if (!$menuItem) {
-                return false;
-            }
-            return $menuItem->getEnabled();
-        } catch (NonUniqueResultException $e) {
-            return false;
-        }
+        $menuItem = $this->findOneBy(['code' => $code]);
+
+        return $menuItem?->isEnabled() ?? false;
     }
 }

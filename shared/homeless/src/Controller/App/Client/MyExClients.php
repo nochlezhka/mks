@@ -1,0 +1,44 @@
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
+
+namespace App\Controller\App\Client;
+
+use App\Admin\ClientAdmin;
+use App\Entity\ContractStatus;
+use App\Repository\ContractStatusRepository;
+use App\Security\User\Role;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+
+/**
+ * Мои бывшие клиенты
+ */
+#[Route('/my-ex-clients', name: 'my_ex_clients')]
+#[IsGranted(Role::SONATA_ADMIN)]
+class MyExClients extends AbstractController
+{
+    public function __invoke(ContractStatusRepository $contractStatusRepository): Response
+    {
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+        $filter = [
+            'contractCreatedBy' => ['value' => $user->getId()],
+            'contractStatus' => ['value' => []],
+        ];
+
+        foreach ($contractStatusRepository->findAll() as $status) {
+            $statusId = $status->getId();
+
+            if ($statusId !== ContractStatus::IN_PROCESS) {
+                $filter['contractStatus']['value'][] = (string) $statusId;
+            }
+        }
+
+        return $this->forward('sonata.admin.controller.crud::listAction', [], [
+            '_sonata_admin' => ClientAdmin::class,
+            'filter' => $filter,
+        ]);
+    }
+}

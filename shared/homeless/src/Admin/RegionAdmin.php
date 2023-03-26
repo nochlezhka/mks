@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\Admin;
 
@@ -11,30 +12,24 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
 #[AutoconfigureTag(name: 'sonata.admin', attributes: [
     'manager_type' => 'orm',
-    'label' => 'Регионы',
+    'label' => 'regions',
     'model_class' => Region::class,
-    'label_translator_strategy' => 'sonata.admin.label.strategy.underscore'
+    'label_translator_strategy' => 'sonata.admin.label.strategy.underscore',
 ])]
-class RegionAdmin extends BaseAdmin
+class RegionAdmin extends AbstractAdmin
 {
-    protected array $datagridValues = array(
+    protected array $datagridValues = [
         '_sort_order' => 'ASC',
         '_sort_by' => 'name',
-    );
-
-    protected string $translationDomain = 'App';
+    ];
 
     public function __construct(
-        DistrictAdmin $districtAdmin
-    )
-    {
+        DistrictAdmin $districtAdmin,
+    ) {
         $this->addChild($districtAdmin, 'region');
         parent::__construct();
     }
 
-    /**
-     * @param FormMapper $form
-     */
     protected function configureFormFields(FormMapper $form): void
     {
         $form
@@ -45,12 +40,10 @@ class RegionAdmin extends BaseAdmin
             ->add('shortName', null, [
                 'label' => 'Сокращение',
                 'required' => true,
-            ]);
+            ])
+        ;
     }
 
-    /**
-     * @param ListMapper $list
-     */
     protected function configureListFields(ListMapper $list): void
     {
         $list
@@ -65,13 +58,14 @@ class RegionAdmin extends BaseAdmin
                 'actions' => [
                     'edit' => [],
                     'delete' => [],
-                ]
-            ]);
+                ],
+            ])
+        ;
     }
 
-    protected function configureTabMenu(ItemInterface $menu, string $action, AdminInterface $childAdmin = null): void
+    protected function configureTabMenu(ItemInterface $menu, string $action, ?AdminInterface $childAdmin = null): void
     {
-        if (!$childAdmin && $action != 'edit') {
+        if (!$childAdmin && $action !== 'edit') {
             return;
         }
 
@@ -81,7 +75,7 @@ class RegionAdmin extends BaseAdmin
 
         $menu->addChild(
             'Районы',
-            ['uri' => $admin->generateUrl(DistrictAdmin::class . '.list', ['id' => $id])]
+            ['uri' => $admin->generateUrl(DistrictAdmin::class.'.list', ['id' => $id])],
         );
     }
 }

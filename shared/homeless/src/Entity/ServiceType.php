@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\Entity;
 
@@ -12,186 +13,117 @@ use Doctrine\ORM\Mapping as ORM;
 class ServiceType extends BaseEntity
 {
     // SyncId различных типов
-    //Консультация
-    const CONSULTATION = 1;
-    //Продукты
-    const PRODUCTS = 2;
-    //Комплект одежды
-    const SET_OF_CLOTHES = 3;
-    //Получена корреспонденция
-    const CORRESPONDENCE_RECEIVED = 4;
-    //Передана корреспонденция
-    const CORRESPONDENCE_TRANSMITTED = 5;
-    //Содействие в получении медпомощи
-    const ASSISTANCE_IN_OBTAINING_MEDICAL_CARE = 6;
-    //Направление в диспансер
-    const REFERRAL_DISPENSARY = 10;
-    //Изготовление фотографий
-    const MAKING_PHOTOS = 12;
-    //Написание заявлений/запросов
-    const WRITING_REQUESTS = 13;
-    //Оплата проезда
-    const PAYMENT_TRAVEL = 14;
-    //Консультация психолога первичная
-    const PRIMARY_PSYCHOLOGICAL_COUNSELING = 15;
-    //Оплата пошлины
-    const DUTY_PAYMENT = 16;
-    //Средства гигиены
-    const MEANS_HYGIENE = 17;
-    //Консультация психолога повторная
-    const REPEATED_COUNSELING_PSYCHOLOGIST = 20;
-    //письмо вручено
-    const LETTER_WAS_GIVEN = 21;
+    // Консультация
+    public const CONSULTATION = 1;
+    // Продукты
+    public const PRODUCTS = 2;
+    // Комплект одежды
+    public const SET_OF_CLOTHES = 3;
+    // Получена корреспонденция
+    public const CORRESPONDENCE_RECEIVED = 4;
+    // Передана корреспонденция
+    public const CORRESPONDENCE_TRANSMITTED = 5;
+    // Содействие в получении медпомощи
+    public const ASSISTANCE_IN_OBTAINING_MEDICAL_CARE = 6;
+    // Направление в диспансер
+    public const REFERRAL_DISPENSARY = 10;
+    // Изготовление фотографий
+    public const MAKING_PHOTOS = 12;
+    // Написание заявлений/запросов
+    public const WRITING_REQUESTS = 13;
+    // Оплата проезда
+    public const PAYMENT_TRAVEL = 14;
+    // Консультация психолога первичная
+    public const PRIMARY_PSYCHOLOGICAL_COUNSELING = 15;
+    // Оплата пошлины
+    public const DUTY_PAYMENT = 16;
+    // Средства гигиены
+    public const MEANS_HYGIENE = 17;
+    // Консультация психолога повторная
+    public const REPEATED_COUNSELING_PSYCHOLOGIST = 20;
+    // письмо вручено
+    public const LETTER_WAS_GIVEN = 21;
 
-    /**
-     * Название
-     */
-    #[ORM\Column(type: "string", nullable: true)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $name = null;
 
     /**
      * Платная
      */
-    #[ORM\Column(type: "boolean", nullable: true)]
-    private ?bool $pay = null;
+    #[ORM\Column(type: 'boolean')]
+    private bool $pay = false;
 
-    /**
-     * Документ
-     */
-    #[ORM\Column(type: "boolean", nullable: true)]
-    private ?bool $document = null;
+    #[ORM\Column(type: 'boolean')]
+    private bool $document = false;
 
     /**
      * Сумма
      */
-    #[ORM\Column(type: "boolean", nullable: true)]
-    private ?bool $amount = null;
+    #[ORM\Column(type: 'boolean')]
+    private bool $amount = false;
 
-    /**
-     * Комметарий
-     */
-    #[ORM\Column(type: "boolean", nullable: true)]
-    private ?bool $comment = null;
+    #[ORM\Column(type: 'boolean')]
+    private bool $comment = false;
 
-    public function __toString()
+    public function __toString(): string
     {
-        return $this->getName();
+        return $this->name ?? '';
     }
 
-    /**
-     * Set name
-     *
-     * @param string|null $name
-     *
-     * @return ServiceType
-     */
-    public function setName(?string $name): ServiceType
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(?string $name): self
     {
         $this->name = $name;
 
         return $this;
     }
 
-    /**
-     * Get name
-     *
-     * @return string
-     */
-    public function getName(): ?string
+    public function isPay(): bool
     {
-        return $this->name;
+        return $this->pay;
     }
 
-    /**
-     * Set pay
-     *
-     * @param boolean $pay
-     *
-     * @return ServiceType
-     */
-    public function setPay(?bool $pay): ServiceType
+    public function setPay(bool $pay): self
     {
         $this->pay = $pay;
 
         return $this;
     }
 
-    /**
-     * Get pay
-     *
-     * @return boolean
-     */
-    public function getPay(): ?bool
+    public function isDocument(): bool
     {
-        return $this->pay;
+        return $this->document;
     }
 
-    /**
-     * Set document
-     *
-     * @param boolean $document
-     *
-     * @return ServiceType
-     */
-    public function setDocument(?bool $document): ServiceType
+    public function setDocument(bool $document): self
     {
         $this->document = $document;
 
         return $this;
     }
 
-    /**
-     * Get document
-     *
-     * @return boolean
-     */
-    public function getDocument(): ?bool
-    {
-        return $this->document;
-    }
-
-    /**
-     * Get amount
-     *
-     * @return boolean
-     */
-    public function getAmount(): ?bool
+    public function isAmount(): bool
     {
         return $this->amount;
     }
 
-    /**
-     * Set amount
-     *
-     * @param boolean $amount
-     *
-     * @return ServiceType
-     */
-    public function setAmount(?bool $amount): ServiceType
+    public function setAmount(bool $amount): self
     {
         $this->amount = $amount;
 
         return $this;
     }
 
-    /**
-     * Get comment
-     *
-     * @return boolean
-     */
-    public function getComment(): ?bool
+    public function isComment(): bool
     {
         return $this->comment;
     }
 
-    /**
-     * Set comment
-     *
-     * @param boolean $comment
-     *
-     * @return ServiceType
-     */
-    public function setComment(?bool $comment): ServiceType
+    public function setComment(bool $comment): self
     {
         $this->comment = $comment;
 

@@ -1,3 +1,4 @@
 app:
-  resource: App\Controller\AppController
-  type:     annotation
+  resource: ../src/Controller/App/
+  type: attribute
+  prefix: /app

@@ -1,6 +1,5 @@
 web_profiler:
     toolbar: true
-    intercept_redirects: false
 
 framework:
-    profiler: { only_exceptions: false }
+    profiler: { collect_serializer_data: true }

@@ -1,106 +1,34 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\Entity;
 
-use DateTime;
-
+// phpcs:disable SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint
 interface BaseEntityInterface
 {
     public function getId();
 
-    /**
-     * Set syncId
-     *
-     * @param int|null $syncId
-     *
-     * @return BaseEntityInterface
-     */
-    public function setSyncId(?int $syncId): BaseEntityInterface;
-
-    /**
-     * Get syncId
-     *
-     * @return integer
-     */
     public function getSyncId(): ?int;
 
-    /**
-     * Set sort
-     *
-     * @param int|null $sort
-     *
-     * @return BaseEntityInterface
-     */
-    public function setSort(?int $sort): BaseEntityInterface;
+    public function setSyncId(?int $syncId): static;
 
-    /**
-     * Get sort
-     *
-     * @return integer
-     */
     public function getSort(): ?int;
 
-    /**
-     * Set createdAt
-     *
-     * @param DateTime|null $createdAt
-     *
-     * @return BaseEntityInterface
-     */
-    public function setCreatedAt(DateTime $createdAt = null);
+    public function setSort(?int $sort): static;
 
-    /**
-     * Get createdAt
-     *
-     * @return DateTime
-     */
-    public function getCreatedAt();
+    public function getCreatedAt(): ?\DateTimeInterface;
 
-    /**
-     * Set updatedAt
-     *
-     * @param DateTime|null $updatedAt
-     *
-     * @return BaseEntity
-     */
-    public function setUpdatedAt(DateTime $updatedAt = null);
+    public function setCreatedAt(?\DateTimeInterface $createdAt = null);
 
-    /**
-     * Get updatedAt
-     *
-     * @return DateTime
-     */
-    public function getUpdatedAt();
+    public function getUpdatedAt(): ?\DateTimeInterface;
 
-    /**
-     * Set createdBy
-     *
-     * @param User|null $createdBy
-     *
-     * @return BaseEntity
-     */
-    public function setCreatedBy(User $createdBy = null): BaseEntityInterface;
+    public function setUpdatedAt(?\DateTimeInterface $updatedAt = null);
 
-    /**
-     * Get createdBy
-     *
-     * @return User
-     */
     public function getCreatedBy(): ?User;
 
-    /**
-     * Set updatedBy
-     *
-     * @param User|null $updatedBy
-     *
-     * @return BaseEntity
-     */
-    public function setUpdatedBy(?User $updatedBy = null): BaseEntityInterface;
+    public function setCreatedBy(?User $createdBy = null): static;
 
-    /**
-     * Get updatedBy
-     *
-     * @return User
-     */
     public function getUpdatedBy(): ?User;
+
+    public function setUpdatedBy(?User $updatedBy = null): static;
 }

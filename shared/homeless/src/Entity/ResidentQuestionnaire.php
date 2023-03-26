@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\Entity;
 
@@ -11,36 +12,36 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: ResidentQuestionnaireRepository::class)]
 class ResidentQuestionnaire
 {
-    const TYPE_3 = 1;
-    const TYPE_6 = 2;
-    const TYPE_12 = 3;
+    public const TYPE_3 = 1;
+    public const TYPE_6 = 2;
+    public const TYPE_12 = 3;
 
-    const ROOM_TYPE_RENTS_A_ROOM = 1;
-    const ROOM_TYPE_REMOVES_THE_BED = 2;
-    const ROOM_TYPE_RENTS_AN_APARTMENT = 3;
-    const ROOM_TYPE_WITH_FRIENDS = 4;
-    const ROOM_TYPE_RIGHT_AT_WORK = 5;
-    const ROOM_TYPE_CHILD_CARE_CENTER = 6;
-    const ROOM_TYPE_DNP_STATE_INSTITUTIONS = 7;
-    const ROOM_TYPE_YOUR_HOME = 8;
-    const ROOM_TYPE_HOSTEL_FROM_WORK = 9;
-    const ROOM_TYPE_OTHER = 10;
+    public const ROOM_TYPE_RENTS_A_ROOM = 1;
+    public const ROOM_TYPE_REMOVES_THE_BED = 2;
+    public const ROOM_TYPE_RENTS_AN_APARTMENT = 3;
+    public const ROOM_TYPE_WITH_FRIENDS = 4;
+    public const ROOM_TYPE_RIGHT_AT_WORK = 5;
+    public const ROOM_TYPE_CHILD_CARE_CENTER = 6;
+    public const ROOM_TYPE_DNP_STATE_INSTITUTIONS = 7;
+    public const ROOM_TYPE_YOUR_HOME = 8;
+    public const ROOM_TYPE_HOSTEL_FROM_WORK = 9;
+    public const ROOM_TYPE_OTHER = 10;
 
-    const CHANGED_JOBS_COUNT_0 = 1;
-    const CHANGED_JOBS_COUNT_1 = 2;
-    const CHANGED_JOBS_COUNT_2 = 3;
-    const CHANGED_JOBS_COUNT_3 = 4;
+    public const CHANGED_JOBS_COUNT_0 = 1;
+    public const CHANGED_JOBS_COUNT_1 = 2;
+    public const CHANGED_JOBS_COUNT_2 = 3;
+    public const CHANGED_JOBS_COUNT_3 = 4;
 
-    const REASON_FOR_TRANSITION_BEST_WORKING_CONDITIONS = 1;
-    const REASON_FOR_TRANSITION_MORE_INTERESTING_ACTIVITY = 2;
-    const REASON_FOR_TRANSITION_CONFLICTS = 3;
-    const REASON_FOR_TRANSITION_REDUCTION_OF_WORKPLACE = 4;
+    public const REASON_FOR_TRANSITION_BEST_WORKING_CONDITIONS = 1;
+    public const REASON_FOR_TRANSITION_MORE_INTERESTING_ACTIVITY = 2;
+    public const REASON_FOR_TRANSITION_CONFLICTS = 3;
+    public const REASON_FOR_TRANSITION_REDUCTION_OF_WORKPLACE = 4;
 
-    const REASON_FOR_PETITION_HELP_ONLY = 1;
-    const REASON_FOR_PETITION_HUMANITARIAN_AID = 2;
-    const REASON_FOR_PETITION_ONE_TIME_CONSULTATION = 3;
-    const REASON_FOR_PETITION_ESCORT = 4;
-    const REASON_FOR_PETITION_RE_SETTLEMENT = 5;
+    public const REASON_FOR_PETITION_HELP_ONLY = 1;
+    public const REASON_FOR_PETITION_HUMANITARIAN_AID = 2;
+    public const REASON_FOR_PETITION_ONE_TIME_CONSULTATION = 3;
+    public const REASON_FOR_PETITION_ESCORT = 4;
+    public const REASON_FOR_PETITION_RE_SETTLEMENT = 5;
 
     public static array $types = [
         '3 месяца' => self::TYPE_3,
@@ -83,269 +84,205 @@ class ResidentQuestionnaire
         'Повторное заселение' => self::REASON_FOR_PETITION_RE_SETTLEMENT,
     ];
 
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column(type: 'integer')]
     #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: "AUTO")]
-    protected $id;
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
 
     /**
      * Тип анкеты проживающего
      */
-    #[ORM\Column(type: "integer", nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $typeId = self::TYPE_3;
 
     /**
      * Проживает в жилом помещении?
      */
-    #[ORM\Column(type: "boolean", nullable: true)]
-    private ?bool $isDwelling = null;
+    #[ORM\Column(type: 'boolean')]
+    private bool $isDwelling = false;
 
     /**
      * Тип жилья
      */
-    #[ORM\Column(type: "integer", nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $roomTypeId = null;
 
     /**
      * Работает?
      */
-    #[ORM\Column(type: "boolean", nullable: true)]
-    private ?bool $isWork = null;
+    #[ORM\Column(type: 'boolean')]
+    private bool $isWork = false;
 
     /**
      * Официальная работа?
      */
-    #[ORM\Column(type: "boolean", nullable: true)]
-    private ?bool $isWorkOfficial = null;
+    #[ORM\Column(type: 'boolean')]
+    private bool $isWorkOfficial = false;
 
     /**
      * Постоянная работа?
      */
-    #[ORM\Column(type: "boolean", nullable: true)]
-    private ?bool $isWorkConstant = null;
+    #[ORM\Column(type: 'boolean')]
+    private bool $isWorkConstant = false;
 
     /**
      * Сколько сменил работ
      */
-    #[ORM\Column(type: "integer", nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $changedJobsCountId = null;
 
     /**
      * Причина перехода на другую работу
      */
-    #[ORM\Column(type: "text", nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true)]
     private ?string $reasonForTransitionIds = null;
 
     /**
      * Причина обращения
      */
-    #[ORM\Column(type: "text", nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true)]
     private ?string $reasonForPetitionIds = null;
 
-    /**
-     * Клиент
-     */
-    #[ORM\ManyToOne(targetEntity: Client::class, inversedBy: "documents")]
+    #[ORM\ManyToOne(targetEntity: Client::class, inversedBy: 'documents')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?Client $client = null;
 
-    /**
-     * @return mixed
-     */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * Set client
-     *
-     * @param Client|null $client
-     *
-     * @return self
-     */
-    public function setClient(Client $client): ResidentQuestionnaire
+    public function getClient(): ?Client
+    {
+        return $this->client;
+    }
+
+    public function setClient(Client $client): self
     {
         $this->client = $client;
 
         return $this;
     }
 
-    /**
-     * Get client
-     *
-     * @return Client
-     */
-    public function getClient(): ?Client
-    {
-        return $this->client;
-    }
-
-    /**
-     * @return int
-     */
     public function getTypeId(): ?int
     {
         return $this->typeId;
     }
 
-    /**
-     * @return string
-     */
-    public function getType()
+    public function getType(): string
     {
-        return static::$types[$this->typeId] ?? $this->typeId;
+        return array_search($this->typeId, static::$types, true) ?: (string) $this->typeId;
     }
 
-    /**
-     * @param int|null $typeId
-     */
-    public function setTypeId(?int $typeId)
+    public function setTypeId(?int $typeId): void
     {
         $this->typeId = $typeId;
     }
 
-    /**
-     * @return bool|null
-     */
-    public function getisDwelling(): ?bool
+    public function isDwelling(): bool
     {
         return $this->isDwelling;
     }
 
-    /**
-     * @param bool|null $isDwelling
-     */
-    public function setIsDwelling(?bool $isDwelling)
+    public function setIsDwelling(bool $isDwelling): void
     {
         $this->isDwelling = $isDwelling;
     }
 
-    /**
-     * @return int|null
-     */
     public function getRoomTypeId(): ?int
     {
         return $this->roomTypeId;
     }
 
-    /**
-     * @param int|null $roomTypeId
-     */
-    public function setRoomTypeId(?int $roomTypeId)
+    public function setRoomTypeId(?int $roomTypeId): void
     {
         $this->roomTypeId = $roomTypeId;
     }
 
-    /**
-     * @return bool|null
-     */
-    public function getisWork(): ?bool
+    public function isWork(): bool
     {
         return $this->isWork;
     }
 
-    /**
-     * @param bool|null $isWork
-     */
-    public function setIsWork(?bool $isWork)
+    public function setIsWork(bool $isWork): void
     {
         $this->isWork = $isWork;
     }
 
-    /**
-     * @return bool|null
-     */
-    public function getisWorkOfficial(): ?bool
+    public function isWorkOfficial(): bool
     {
         return $this->isWorkOfficial;
     }
 
-    /**
-     * @param bool|null $isWorkOfficial
-     */
-    public function setIsWorkOfficial(?bool $isWorkOfficial)
+    public function setIsWorkOfficial(bool $isWorkOfficial): void
     {
         $this->isWorkOfficial = $isWorkOfficial;
     }
 
-    /**
-     * @return bool|null
-     */
-    public function getisWorkConstant(): ?bool
+    public function isWorkConstant(): bool
     {
         return $this->isWorkConstant;
     }
 
-    /**
-     * @param bool|null $isWorkConstant
-     */
-    public function setIsWorkConstant(?bool $isWorkConstant)
+    public function setIsWorkConstant(bool $isWorkConstant): void
     {
         $this->isWorkConstant = $isWorkConstant;
     }
 
-    /**
-     * @return int|null
-     */
     public function getChangedJobsCountId(): ?int
     {
         return $this->changedJobsCountId;
     }
 
-    /**
-     * @param int|null $changedJobsCountId
-     */
-    public function setChangedJobsCountId(?int $changedJobsCountId)
+    public function setChangedJobsCountId(?int $changedJobsCountId): void
     {
         $this->changedJobsCountId = $changedJobsCountId;
     }
 
     /**
-     * @return false|string[]
+     * @return array<string>
      */
-    public function getReasonForTransitionIds()
+    public function getReasonForTransitionIds(): array
     {
         return explode(',', $this->reasonForTransitionIds);
     }
 
     /**
-     * @param mixed $reasonForTransitionIds
+     * @param array<string> $reasonForTransitionIds
      */
-    public function setReasonForTransitionIds($reasonForTransitionIds)
+    public function setReasonForTransitionIds(array $reasonForTransitionIds): void
     {
         $this->reasonForTransitionIds = implode(',', $reasonForTransitionIds);
     }
 
     /**
-     * @return false|string[]
+     * @return array<string>
      */
-    public function getReasonForPetitionIds()
+    public function getReasonForPetitionIds(): array
     {
         return explode(',', $this->reasonForPetitionIds);
     }
 
     /**
-     * @param mixed $reasonForPetitionIds
+     * @param array<string> $reasonForPetitionIds
      */
-    public function setReasonForPetitionIds($reasonForPetitionIds)
+    public function setReasonForPetitionIds(array $reasonForPetitionIds): void
     {
         $this->reasonForPetitionIds = implode(',', $reasonForPetitionIds);
     }
 
     /**
      * Заполнено менеджером?
-     *
-     * @return bool
      */
     public function isFull(): bool
     {
-        return $this->isDwelling !== null ||
-            $this->roomTypeId !== null ||
-            $this->isWork !== null ||
-            $this->isWorkOfficial !== null ||
-            $this->isWorkConstant !== null ||
-            $this->changedJobsCountId !== null ||
-            $this->reasonForTransitionIds !== null ||
-            $this->reasonForPetitionIds !== null;
+        return $this->isDwelling !== null
+            || $this->roomTypeId !== null
+            || $this->isWork !== null
+            || $this->isWorkOfficial !== null
+            || $this->isWorkConstant !== null
+            || $this->changedJobsCountId !== null
+            || $this->reasonForTransitionIds !== null
+            || $this->reasonForPetitionIds !== null;
     }
 }

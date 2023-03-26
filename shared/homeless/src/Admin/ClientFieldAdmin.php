@@ -1,10 +1,10 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\Admin;
 
 use App\Entity\ClientField;
 use Knp\Menu\ItemInterface;
-use Knp\Menu\ItemInterface as MenuItemInterface;
 use Sonata\AdminBundle\Admin\AdminInterface;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
@@ -15,19 +15,18 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
     'manager_type' => 'orm',
     'label' => 'client_fields',
     'model_class' => ClientField::class,
-    'label_translator_strategy' => 'sonata.admin.label.strategy.underscore'
+    'label_translator_strategy' => 'sonata.admin.label.strategy.underscore',
 ])]
-class ClientFieldAdmin extends BaseAdmin
+class ClientFieldAdmin extends AbstractAdmin
 {
-    protected array $datagridValues = array(
+    protected array $datagridValues = [
         '_sort_order' => 'ASC',
         '_sort_by' => 'sort',
-    );
+    ];
 
-    protected string $translationDomain = 'App';
-
-    public function __construct(ClientFieldOptionAdmin $clientFieldOptionAdmin)
-    {
+    public function __construct(
+        ClientFieldOptionAdmin $clientFieldOptionAdmin,
+    ) {
         $this->addChild($clientFieldOptionAdmin, 'field');
         parent::__construct();
     }
@@ -73,12 +72,10 @@ class ClientFieldAdmin extends BaseAdmin
             ])
             ->add('description', null, [
                 'label' => 'Описание',
-            ]);
+            ])
+        ;
     }
 
-    /**
-     * @param ListMapper $list
-     */
     protected function configureListFields(ListMapper $list): void
     {
         $list
@@ -115,18 +112,14 @@ class ClientFieldAdmin extends BaseAdmin
                 'actions' => [
                     'edit' => [],
                     'delete' => [],
-                ]
-            ]);
+                ],
+            ])
+        ;
     }
 
-    /**
-     * @param MenuItemInterface $menu
-     * @param string $action
-     * @param AdminInterface|null $childAdmin
-     */
     protected function configureTabMenu(ItemInterface $menu, string $action, ?AdminInterface $childAdmin = null): void
     {
-        if (!$childAdmin && $action != 'edit') {
+        if (!$childAdmin && $action !== 'edit') {
             return;
         }
 
@@ -134,10 +127,10 @@ class ClientFieldAdmin extends BaseAdmin
 
         $id = $admin->getRequest()->get('id');
 
-        if ($admin->getSubject() instanceof ClientField && $admin->getSubject()->getType() == ClientField::TYPE_OPTION) {
+        if ($admin->getSubject() instanceof ClientField && $admin->getSubject()->getType() === ClientField::TYPE_OPTION) {
             $menu->addChild(
                 'Варианты выбора',
-                ['uri' => $admin->generateUrl(ClientFieldOptionAdmin::class.'.list', ['id' => $id])]
+                ['uri' => $admin->generateUrl(ClientFieldOptionAdmin::class.'.list', ['id' => $id])],
             );
         }
     }

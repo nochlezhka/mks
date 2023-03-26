@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\Entity;
 
@@ -12,116 +13,63 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity]
 class Region extends BaseEntity
 {
-    /**
-     * Название
-     */
-    #[ORM\Column(type: "string", nullable: true)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $name = null;
 
-    /**
-     * Сокращенное название
-     */
-    #[ORM\Column(type: "string", nullable: true)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $shortName = null;
 
-    /**
-     * Районы
-     */
-    #[ORM\OneToMany(mappedBy: "region", targetEntity: District::class)]
+    #[ORM\OneToMany(mappedBy: 'region', targetEntity: District::class)]
     private Collection $districts;
 
-    public function __toString()
-    {
-        return $this->name;
-    }
-
-    /**
-     * Constructor
-     */
     public function __construct()
     {
         $this->districts = new ArrayCollection();
     }
 
-    /**
-     * Set name
-     *
-     * @param string|null $name
-     *
-     * @return Region
-     */
-    public function setName(?string $name): Region
+    public function __toString(): string
+    {
+        return $this->name ?? '';
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(?string $name): self
     {
         $this->name = $name;
 
         return $this;
     }
 
-    /**
-     * Get name
-     *
-     * @return string
-     */
-    public function getName(): ?string
+    public function getShortName(): ?string
     {
-        return $this->name;
+        return $this->shortName;
     }
 
-    /**
-     * Set shortName
-     *
-     * @param string|null $shortName
-     *
-     * @return Region
-     */
-    public function setShortName(?string $shortName): Region
+    public function setShortName(?string $shortName): self
     {
         $this->shortName = $shortName;
 
         return $this;
     }
 
-    /**
-     * Get shortName
-     *
-     * @return string
-     */
-    public function getShortName(): ?string
+    public function getDistricts(): Collection
     {
-        return $this->shortName;
+        return $this->districts;
     }
 
-    /**
-     * Add district
-     *
-     * @param District $district
-     *
-     * @return Region
-     */
-    public function addDistrict(District $district): Region
+    public function addDistrict(District $district): self
     {
         $this->districts[] = $district;
 
         return $this;
     }
 
-    /**
-     * Remove district
-     *
-     * @param District $district
-     */
-    public function removeDistrict(District $district)
+    public function removeDistrict(District $district): void
     {
         $this->districts->removeElement($district);
-    }
-
-    /**
-     * Get districts
-     *
-     * @return Collection
-     */
-    public function getDistricts()
-    {
-        return $this->districts;
     }
 }

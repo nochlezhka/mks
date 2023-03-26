@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\Entity;
 
@@ -13,266 +14,170 @@ class CertificateType extends BaseEntity
 {
     // SyncId различных типов
     // Стандартный документ
-    const STANDARD = 1;
+    public const STANDARD = 1;
     // Справка о регистрации
-    const REGISTRATION = 11;
+    public const REGISTRATION = 11;
     // Направление на санобработку
-    const SANITATION = 12;
+    public const SANITATION = 12;
     // Справка для проезда
-    const TRAVEL = 13;
+    public const TRAVEL = 13;
     // Направление в диспансер
-    const DISPENSARY = 14;
+    public const DISPENSARY = 14;
     // Справка о социальной помощи
-    const HELP = 15;
+    public const HELP = 15;
     // Транзит
-    const TRANSIT = 16;
+    public const TRANSIT = 16;
     // Направление в центр занятности
-    const EMPLOYMENT = 17;
+    public const EMPLOYMENT = 17;
     // Неизвестно
-    const UNKNOWN = 20;
+    public const UNKNOWN = 20;
 
     /**
      * Название
      */
-    #[ORM\Column(type: "string", nullable: true)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $name = null;
 
     /**
      * Доступен для скачивания
      */
-    #[ORM\Column(type: "boolean", nullable: true)]
-    private ?bool $downloadable = false;
+    #[ORM\Column(type: 'boolean')]
+    private bool $downloadable = false;
 
     /**
      * Отображать фото клиента
      */
-    #[ORM\Column(type: "boolean", nullable: true)]
-    private ?bool $showPhoto = false;
+    #[ORM\Column(type: 'boolean')]
+    private bool $showPhoto = false;
 
     /**
      * Отображать дату ниже ФИО сотрудника
      */
-    #[ORM\Column(type: "boolean", nullable: true)]
-    private ?bool $showDate = false;
+    #[ORM\Column(type: 'boolean')]
+    private bool $showDate = false;
 
     /**
      * Содержимое верхнего левого блока
      */
-    #[ORM\Column(type: "text", nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true)]
     private ?string $contentHeaderLeft = null;
 
     /**
      * Содержимое верхнего правого блока
      */
-    #[ORM\Column(type: "text", nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true)]
     private ?string $contentHeaderRight = null;
 
     /**
      * Содержимое среднего блока
      */
-    #[ORM\Column(type: "text", nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true)]
     private ?string $contentBodyRight = null;
 
     /**
      * Содержимое нижнего блока
      */
-    #[ORM\Column(type: "text", nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true)]
     private ?string $contentFooter = null;
 
-    public function __toString()
+    public function __toString(): string
+    {
+        return $this->name ?? '';
+    }
+
+    public function getName(): ?string
     {
         return $this->name;
     }
 
-    /**
-     * Set name
-     *
-     * @param string|null $name
-     *
-     * @return CertificateType
-     */
-    public function setName(?string $name): CertificateType
+    public function setName(?string $name): self
     {
         $this->name = $name;
 
         return $this;
     }
 
-    /**
-     * Get name
-     *
-     * @return string
-     */
-    public function getName(): ?string
+    public function isDownloadable(): bool
     {
-        return $this->name;
+        return $this->downloadable;
     }
 
-    /**
-     * Set downloadable
-     *
-     * @param boolean $downloadable
-     *
-     * @return CertificateType
-     */
-    public function setDownloadable(?bool $downloadable): CertificateType
+    public function setDownloadable(bool $downloadable): self
     {
         $this->downloadable = $downloadable;
 
         return $this;
     }
 
-    /**
-     * Get downloadable
-     *
-     * @return boolean
-     */
-    public function getDownloadable(): ?bool
+    public function getShowPhoto(): bool
     {
-        return $this->downloadable;
+        return $this->showPhoto;
     }
 
-    /**
-     * Set showPhoto
-     *
-     * @param boolean $showPhoto
-     *
-     * @return CertificateType
-     */
-    public function setShowPhoto(?bool $showPhoto): CertificateType
+    public function setShowPhoto(bool $showPhoto): self
     {
         $this->showPhoto = $showPhoto;
 
         return $this;
     }
 
-    /**
-     * Get showPhoto
-     *
-     * @return boolean
-     */
-    public function getShowPhoto(): ?bool
+    public function getShowDate(): bool
     {
-        return $this->showPhoto;
+        return $this->showDate;
     }
 
-    /**
-     * Set showDate
-     *
-     * @param boolean $showDate
-     *
-     * @return CertificateType
-     */
-    public function setShowDate(?bool $showDate): CertificateType
+    public function setShowDate(bool $showDate): self
     {
         $this->showDate = $showDate;
 
         return $this;
     }
 
-    /**
-     * Get showDate
-     *
-     * @return boolean
-     */
-    public function getShowDate(): ?bool
+    public function getContentHeaderLeft(): ?string
     {
-        return $this->showDate;
+        return $this->contentHeaderLeft;
     }
 
-    /**
-     * Set contentHeaderLeft
-     *
-     * @param string|null $contentHeaderLeft
-     *
-     * @return CertificateType
-     */
-    public function setContentHeaderLeft(?string $contentHeaderLeft): CertificateType
+    public function setContentHeaderLeft(?string $contentHeaderLeft): self
     {
         $this->contentHeaderLeft = $contentHeaderLeft;
 
         return $this;
     }
 
-    /**
-     * Get contentHeaderLeft
-     *
-     * @return string
-     */
-    public function getContentHeaderLeft(): ?string
+    public function getContentHeaderRight(): ?string
     {
-        return $this->contentHeaderLeft;
+        return $this->contentHeaderRight;
     }
 
-    /**
-     * Set contentHeaderRight
-     *
-     * @param string|null $contentHeaderRight
-     *
-     * @return CertificateType
-     */
-    public function setContentHeaderRight(?string $contentHeaderRight): CertificateType
+    public function setContentHeaderRight(?string $contentHeaderRight): self
     {
         $this->contentHeaderRight = $contentHeaderRight;
 
         return $this;
     }
 
-    /**
-     * Get contentHeaderRight
-     *
-     * @return string
-     */
-    public function getContentHeaderRight(): ?string
+    public function getContentBodyRight(): ?string
     {
-        return $this->contentHeaderRight;
+        return $this->contentBodyRight;
     }
 
-    /**
-     * Set contentBodyRight
-     *
-     * @param string|null $contentBodyRight
-     *
-     * @return CertificateType
-     */
-    public function setContentBodyRight(?string $contentBodyRight): CertificateType
+    public function setContentBodyRight(?string $contentBodyRight): self
     {
         $this->contentBodyRight = $contentBodyRight;
 
         return $this;
     }
 
-    /**
-     * Get contentBodyRight
-     *
-     * @return string
-     */
-    public function getContentBodyRight(): ?string
+    public function getContentFooter(): ?string
     {
-        return $this->contentBodyRight;
+        return $this->contentFooter;
     }
 
-    /**
-     * Set contentFooter
-     *
-     * @param string|null $contentFooter
-     *
-     * @return CertificateType
-     */
-    public function setContentFooter(?string $contentFooter): CertificateType
+    public function setContentFooter(?string $contentFooter): self
     {
         $this->contentFooter = $contentFooter;
 
         return $this;
-    }
-
-    /**
-     * Get contentFooter
-     *
-     * @return string
-     */
-    public function getContentFooter(): ?string
-    {
-        return $this->contentFooter;
     }
 }

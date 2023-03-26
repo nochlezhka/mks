@@ -1,145 +1,85 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\Entity;
 
 use App\Repository\HistoryDownloadRepository;
-use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * HistoryDownload
- */
-#[ORM\Table(name: "history_download")]
+#[ORM\Table(name: 'history_download')]
 #[ORM\Entity(repositoryClass: HistoryDownloadRepository::class)]
 class HistoryDownload
 {
-
-    #[ORM\Column(name: "id", type: "integer")]
+    #[ORM\Column(type: 'integer')]
     #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: "AUTO")]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
     private int $id = 0;
 
-    #[ORM\ManyToOne(targetEntity: Client::class, inversedBy: "historyDownloads")]
-    #[ORM\JoinColumn(name: "client_id", referencedColumnName: "id")]
+    #[ORM\ManyToOne(targetEntity: Client::class, inversedBy: 'historyDownloads')]
+    #[ORM\JoinColumn(name: 'client_id', referencedColumnName: 'id')]
     private ?Client $client = null;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
-    #[ORM\JoinColumn(name: "user_id", referencedColumnName: "id")]
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')]
     private ?User $user = null;
 
-    #[ORM\Column(name: "date", type: "datetime")]
-    private DateTime $date;
+    #[ORM\Column(type: 'datetime_immutable')]
+    private \DateTimeImmutable $date;
 
-    /**
-     * Тип сертификата
-     */
     #[ORM\ManyToOne(targetEntity: CertificateType::class)]
-    #[ORM\JoinColumn(name: "certificate_type_id", referencedColumnName: "id")]
+    #[ORM\JoinColumn(name: 'certificate_type_id', referencedColumnName: 'id')]
     private ?CertificateType $certificateType = null;
 
-    /**
-     * Get id
-     *
-     * @return int
-     */
     public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * Set client
-     *
-     * @param Client|null $client
-     *
-     * @return HistoryDownload
-     */
-    public function setClient(Client $client): HistoryDownload
+    public function getClient(): ?Client
+    {
+        return $this->client;
+    }
+
+    public function setClient(Client $client): self
     {
         $this->client = $client;
 
         return $this;
     }
 
-    /**
-     * Get client
-     *
-     * @return Client
-     */
-    public function getClient(): ?Client
+    public function getUser(): ?User
     {
-        return $this->client;
+        return $this->user;
     }
 
-    /**
-     * Set user
-     *
-     * @param User|null $user
-     *
-     * @return HistoryDownload
-     */
-    public function setUser(User $user): HistoryDownload
+    public function setUser(User $user): self
     {
         $this->user = $user;
 
         return $this;
     }
 
-    /**
-     * Get user
-     *
-     * @return User
-     */
-    public function getUser(): ?User
+    public function getDate(): \DateTimeImmutable
     {
-        return $this->user;
+        return $this->date;
     }
 
-    /**
-     * Set date
-     *
-     * @param DateTime $date
-     *
-     * @return HistoryDownload
-     */
-    public function setDate(DateTime $date): HistoryDownload
+    public function setDate(\DateTimeImmutable $date): self
     {
         $this->date = $date;
 
         return $this;
     }
 
-    /**
-     * Get date
-     *
-     * @return DateTime
-     */
-    public function getDate(): DateTime
+    public function getCertificateType(): ?CertificateType
     {
-        return $this->date;
+        return $this->certificateType;
     }
 
-    /**
-     * Set certificate
-     *
-     * @param CertificateType $certificateType
-     *
-     * @return HistoryDownload
-     */
-    public function setCertificateType(CertificateType $certificateType): HistoryDownload
+    public function setCertificateType(CertificateType $certificateType): self
     {
         $this->certificateType = $certificateType;
 
         return $this;
-    }
-
-    /**
-     * Get certificate
-     *
-     * @return CertificateType
-     */
-    public function getCertificateType(): ?CertificateType
-    {
-        return $this->certificateType;
     }
 }

@@ -1,10 +1,12 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\Admin;
 
 use App\Controller\CRUDController;
 use App\Entity\Note;
 use Sonata\AdminBundle\Datagrid\ListMapper;
+use Sonata\AdminBundle\FieldDescription\FieldDescriptionInterface;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\FormatterBundle\Form\Type\SimpleFormatterType;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
@@ -14,20 +16,15 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
     'label' => 'notes',
     'model_class' => Note::class,
     'controller' => CRUDController::class,
-    'label_translator_strategy' => 'sonata.admin.label.strategy.underscore'
+    'label_translator_strategy' => 'sonata.admin.label.strategy.underscore',
 ])]
-class NoteAdmin extends BaseAdmin
+class NoteAdmin extends AbstractAdmin
 {
-    protected array $datagridValues = array(
+    protected array $datagridValues = [
         '_sort_order' => 'ASC',
         '_sort_by' => 'createdAt',
-    );
+    ];
 
-    protected string $translationDomain = 'App';
-
-    /**
-     * @param FormMapper $form
-     */
     protected function configureFormFields(FormMapper $form): void
     {
         $form
@@ -40,19 +37,18 @@ class NoteAdmin extends BaseAdmin
             ->add('important', null, [
                 'label' => 'Важное',
                 'required' => false,
-            ]);
+            ])
+        ;
     }
 
-    /**
-     * @param ListMapper $list
-     */
     protected function configureListFields(ListMapper $list): void
     {
         $list
             ->add('createdBy', null, [
                 'label' => 'Кем добавлено',
+                'admin_code' => UserAdmin::class,
             ])
-            ->add('createdAt', 'date', [
+            ->add('createdAt', FieldDescriptionInterface::TYPE_DATE, [
                 'label' => 'Когда добавлено',
             ])
             ->add('text', null, [
@@ -64,7 +60,8 @@ class NoteAdmin extends BaseAdmin
                 'actions' => [
                     'edit' => [],
                     'delete' => [],
-                ]
-            ]);
+                ],
+            ])
+        ;
     }
 }

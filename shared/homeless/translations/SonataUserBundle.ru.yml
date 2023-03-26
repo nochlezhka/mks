@@ -1,2 +1,8 @@
 breadcrumb:
-      link_user_delete: Удалить
+  link_user_delete: Удалить
+
+form:
+  group_profile: Профиль
+
+user: Пользователь
+roles: Роли

@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\Form\Type;
 
@@ -6,7 +7,7 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 
-#[AutoconfigureTag(name: 'form.type', attributes: ['alias'=> 'app_contract_duration'])]
+#[AutoconfigureTag(name: 'form.type', attributes: ['alias' => 'app_contract_duration'])]
 
 class AppContractDurationType extends AbstractType
 {
@@ -19,7 +20,6 @@ class AppContractDurationType extends AbstractType
     {
         return $this->getBlockPrefix();
     }
-
 
     public function getParent(): string
     {

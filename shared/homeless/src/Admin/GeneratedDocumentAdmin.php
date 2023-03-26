@@ -1,53 +1,50 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\Admin;
 
 use App\Controller\CRUDController;
 use App\Entity\GeneratedDocument;
+use App\Entity\GeneratedDocumentEndText;
+use App\Entity\GeneratedDocumentStartText;
+use App\Entity\GeneratedDocumentType;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Sonata\AdminBundle\Datagrid\ListMapper;
+use Sonata\AdminBundle\FieldDescription\FieldDescriptionInterface;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Route\RouteCollectionInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 #[AutoconfigureTag(name: 'sonata.admin', attributes: [
     'manager_type' => 'orm',
     'label' => 'Построить документ',
     'model_class' => GeneratedDocument::class,
-    'controller'=> CRUDController::class,
-    'label_translator_strategy' => 'sonata.admin.label.strategy.underscore'
+    'controller' => CRUDController::class,
+    'label_translator_strategy' => 'sonata.admin.label.strategy.underscore',
 ])]
-class GeneratedDocumentAdmin extends BaseAdmin
+class GeneratedDocumentAdmin extends AbstractAdmin
 {
-    protected array $datagridValues = array(
+    protected array $datagridValues = [
         '_sort_order' => 'DESC',
         '_sort_by' => 'createdAt',
-    );
-
-    protected string $translationDomain = 'App';
+    ];
 
     protected function configureRoutes(RouteCollectionInterface $collection): void
     {
-        $collection
-            ->add('download', $this->getRouterIdParameter() . '/download');
+        $collection->add('download', $this->getRouterIdParameter().'/download');
     }
 
-    /**
-     * @param FormMapper $form
-     */
     protected function configureFormFields(FormMapper $form): void
     {
         $form
             ->add('type', EntityType::class, [
                 'label' => 'Тип',
                 'required' => false,
-                'class' => 'App\Entity\GeneratedDocumentType',
-                'query_builder' => function (EntityRepository $er) {
-                    return $er->createQueryBuilder('t')
-                        ->orderBy('t.name', 'ASC');
-                },
+                'class' => GeneratedDocumentType::class,
+                'query_builder' => static fn (EntityRepository $repository): QueryBuilder => $repository->createQueryBuilder('t')
+                    ->orderBy('t.name', 'ASC'),
             ])
             ->add('number', null, [
                 'label' => 'Номер',
@@ -57,37 +54,31 @@ class GeneratedDocumentAdmin extends BaseAdmin
                 'label' => 'Кому',
                 'required' => false,
             ])
-            ->add('startText', 'entity', [
+            ->add('startText', EntityType::class, [
                 'label' => 'Преамбула',
                 'required' => false,
-                'class' => 'App\Entity\GeneratedDocumentStartText',
-                'query_builder' => function (EntityRepository $er) {
-                    return $er->createQueryBuilder('t')
-                        ->orderBy('t.name', 'ASC');
-                },
+                'class' => GeneratedDocumentStartText::class,
+                'query_builder' => static fn (EntityRepository $repository): QueryBuilder => $repository->createQueryBuilder('t')
+                    ->orderBy('t.name', 'ASC'),
             ])
-            ->add(TextType::class, null, [
+            ->add('text', null, [
                 'label' => 'Основная часть',
                 'required' => false,
             ])
             ->add('endText', EntityType::class, [
                 'label' => 'Заключение',
                 'required' => false,
-                'class' => 'App\Entity\GeneratedDocumentEndText',
-                'query_builder' => function (EntityRepository $er) {
-                    return $er->createQueryBuilder('t')
-                        ->orderBy('t.name', 'ASC');
-                },
+                'class' => GeneratedDocumentEndText::class,
+                'query_builder' => static fn (EntityRepository $repository): QueryBuilder => $repository->createQueryBuilder('t')
+                    ->orderBy('t.name', 'ASC'),
             ])
             ->add('signature', null, [
                 'label' => 'Подпись',
                 'required' => false,
-            ]);
+            ])
+        ;
     }
 
-    /**
-     * @param ListMapper $list
-     */
     protected function configureListFields(ListMapper $list): void
     {
         $list
@@ -100,22 +91,24 @@ class GeneratedDocumentAdmin extends BaseAdmin
             ->add('whom', null, [
                 'label' => 'Кому',
             ])
-            ->add('createdAt', 'date', [
+            ->add('createdAt', FieldDescriptionInterface::TYPE_DATE, [
                 'label' => 'Когда добавлен',
                 'pattern' => 'dd.MM.YYYY',
             ])
             ->add('createdBy', null, [
                 'label' => 'Кем добавлен',
+                'admin_code' => UserAdmin::class,
             ])
             ->add(ListMapper::NAME_ACTIONS, ListMapper::TYPE_ACTIONS, [
                 'label' => 'Действие',
                 'actions' => [
                     'download' => [
-                        'template' => '/CRUD/list_generated_document_action_download.html.twig'
+                        'template' => '/CRUD/list_generated_document_action_download.html.twig',
                     ],
                     'edit' => [],
                     'delete' => [],
-                ]
-            ]);
+                ],
+            ])
+        ;
     }
 }

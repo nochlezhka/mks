@@ -1,9 +1,9 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\Entity;
 
 use App\Repository\NoticeRepository;
-use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -14,166 +14,95 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: NoticeRepository::class)]
 class Notice extends BaseEntity
 {
-    /**
-     * Текст
-     */
-    #[ORM\Column(type: "text", nullable: true)]
-    private ?string $text = "";
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $text = null;
 
-    /**
-     * Дата
-     */
-    #[ORM\Column(type: "date", nullable: true)]
-    private ?DateTime $date = null;
+    #[ORM\Column(type: 'date_immutable', nullable: true)]
+    private ?\DateTimeImmutable $date = null;
 
-    /**
-     * Клиент
-     */
     #[ORM\ManyToOne(targetEntity: Client::class)]
     private ?Client $client = null;
 
-    /**
-     * Кем просмотрено
-     */
-    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: "viewedNotices")]
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'viewedNotices')]
     private Collection $viewedBy;
-
-    public function __toString()
-    {
-        return mb_substr($this->text, 0, 20) . '...';
-    }
-
-    public function __construct()
-    {
-        $this->viewedBy = new ArrayCollection();
-    }
 
     /**
      * Просмотрено текущим пользователем
      */
     private bool $viewed = false;
 
-    /**
-     * @return bool
-     */
-    public function getViewed(): bool
+    public function __construct()
+    {
+        $this->viewedBy = new ArrayCollection();
+    }
+
+    public function __toString(): string
+    {
+        return mb_substr($this->text ?? '', 0, 20).'...';
+    }
+
+    public function isViewed(): bool
     {
         return $this->viewed;
     }
 
-    /**
-     * @param mixed $viewed
-     */
-    public function setViewed($viewed)
+    public function setViewed($viewed): void
     {
         $this->viewed = $viewed;
     }
 
-    /**
-     * Set text
-     *
-     * @param string|null $text
-     *
-     * @return Notice
-     */
-    public function setText(?string $text): Notice
+    public function getText(): ?string
+    {
+        return $this->text;
+    }
+
+    public function setText(?string $text): self
     {
         $this->text = $text;
 
         return $this;
     }
 
-    /**
-     * Get text
-     *
-     * @return string
-     */
-    public function getText(): ?string
+    public function getDate(): ?\DateTimeImmutable
     {
-        return $this->text;
+        return $this->date;
     }
 
-    /**
-     * Set date
-     *
-     * @param DateTime|null $date
-     *
-     * @return Notice
-     */
-    public function setDate(?DateTime $date): Notice
+    public function setDate(?\DateTimeImmutable $date): self
     {
         $this->date = $date;
 
         return $this;
     }
 
-    /**
-     * Get date
-     *
-     * @return DateTime
-     */
-    public function getDate(): ?DateTime
+    public function getClient(): ?Client
     {
-        return $this->date;
+        return $this->client;
     }
 
-    /**
-     * Set client
-     *
-     * @param Client|null $client
-     *
-     * @return Notice
-     */
-    public function setClient(Client $client): Notice
+    public function setClient(Client $client): self
     {
         $this->client = $client;
 
         return $this;
     }
 
-    /**
-     * Get client
-     *
-     * @return Client
-     */
-    public function getClient(): ?Client
+    public function getViewedBy(): Collection
     {
-        return $this->client;
+        return $this->viewedBy;
     }
 
-    /**
-     * Add viewedBy
-     *
-     * @param User $viewedBy
-     *
-     * @return Notice
-     */
-    public function addViewedBy(User $viewedBy): Notice
+    public function addViewedBy(User $viewedBy): self
     {
-        $this->viewedBy[] = $viewedBy;
+        $this->viewedBy->add($viewedBy);
         $viewedBy->addViewedNotice($this);
 
         return $this;
     }
 
-    /**
-     * Remove viewedBy
-     *
-     * @param User $viewedBy
-     */
-    public function removeViewedBy(User $viewedBy)
+    public function removeViewedBy(User $viewedBy): void
     {
         $this->viewedBy->removeElement($viewedBy);
         $viewedBy->removeViewedNotice($this);
-    }
-
-    /**
-     * Get viewedBy
-     *
-     * @return Collection
-     */
-    public function getViewedBy()
-    {
-        return $this->viewedBy;
     }
 }

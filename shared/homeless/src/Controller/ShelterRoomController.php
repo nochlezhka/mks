@@ -1,29 +1,25 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\Controller;
 
-use App\Entity\ShelterRoom;
-use App\Entity\User;
-use Doctrine\Persistence\ManagerRegistry;
+use App\Repository\ShelterRoomRepository;
+use App\Security\User\Role;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Contracts\Service\Attribute\Required;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class ShelterRoomController extends \Sonata\AdminBundle\Controller\CRUDController
 {
-    private ManagerRegistry $managerRegistry;
+    public function __construct(
+        private readonly ShelterRoomRepository $shelterRoomRepository,
+    ) {}
 
+    #[IsGranted(Role::ADMIN)]
     public function listAction(Request $request): Response
     {
-        $user = $this->getUser();
-
-        if (!$user instanceof User || !$this->isGranted('ROLE_ADMIN')) {
-            throw $this->createAccessDeniedException();
-        }
-
         $roomData = [];
-        foreach ($this->managerRegistry->getRepository(ShelterRoom::class)->findAll() as $item) {
-
+        foreach ($this->shelterRoomRepository->findAll() as $item) {
             $roomData[] = [
                 'id' => $item->getId(),
                 'number' => $item->getNumber(),
@@ -34,13 +30,7 @@ class ShelterRoomController extends \Sonata\AdminBundle\Controller\CRUDControlle
         }
 
         return $this->render('admin/shelter_room.html.twig', [
-            'rooms' => $roomData
+            'rooms' => $roomData,
         ]);
-    }
-
-    #[Required]
-    public function setManagerRegistry(ManagerRegistry $managerRegistry): void
-    {
-        $this->managerRegistry = $managerRegistry;
     }
 }

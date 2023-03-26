@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\Service;
 
@@ -15,19 +16,15 @@ use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 
-class RenderService
+// phpcs:disable SlevomatCodingStandard.Classes.RequireConstructorPropertyPromotion.RequiredConstructorPropertyPromotion
+readonly class RenderService
 {
     protected KernelInterface $kernel;
     protected Environment $twig;
 
-    /**
-     * RenderService constructor.
-     * @param KernelInterface $kernel
-     * @param Environment $twig
-     */
     public function __construct(
         #[Autowire('@kernel')] KernelInterface $kernel,
-        #[Autowire('@twig')] Environment $twig
+        #[Autowire('@twig')] Environment $twig,
     ) {
         $this->kernel = $kernel;
         $this->twig = $twig;
@@ -35,12 +32,10 @@ class RenderService
 
     /**
      * Рендеринг справки по шаблону, в зависимости от ее типа
-     * @param Certificate $certificate
-     * @param Client $client
-     * @return null|string
+     *
      * @throws LoaderError
-     * @throws SyntaxError
      * @throws RuntimeError
+     * @throws SyntaxError
      */
     public function renderCertificate(Certificate $certificate, Client $client): ?string
     {
@@ -51,9 +46,9 @@ class RenderService
         }
         $image = '';
         if (file_exists($client->getPhotoPath())) {
-            $image = 'data:image/png;base64,' . base64_encode(file_get_contents($client->getPhotoPath()));
+            $image = 'data:image/png;base64,'.base64_encode(file_get_contents($client->getPhotoPath()));
         }
-        list($width, $height) = $client->getPhotoSize(300, 350);
+        [$width, $height] = $client->getPhotoSize(300, 350);
 
         return $this->twig->render('/pdf/certificate/layout.html.twig', [
             'contentHeaderLeft' => empty($type->getContentHeaderLeft()) ? '' : $this->twig->createTemplate($type->getContentHeaderLeft())->render(['certificate' => $certificate]),
@@ -62,8 +57,8 @@ class RenderService
             'contentFooter' => empty($type->getContentFooter()) ? '' : $this->twig->createTemplate($type->getContentFooter())->render(['certificate' => $certificate]),
             'certificate' => $certificate,
             'rootDir' => $this->kernel->getProjectDir(),
-            'webDir' => $this->kernel->getProjectDir() . '/public',
-            'logo' => 'data:image/png;base64,' . base64_encode(file_get_contents($this->kernel->getProjectDir() . "/public/" . getenv('BIG_LOGO_PATH'))),
+            'webDir' => $this->kernel->getProjectDir().'/public',
+            'logo' => 'data:image/png;base64,'.base64_encode(file_get_contents($this->kernel->getProjectDir().'/public/'.getenv('BIG_LOGO_PATH'))),
             'image' => $image,
             'height' => $height,
             'width' => $width,
@@ -72,8 +67,7 @@ class RenderService
 
     /**
      * Рендеринг построенного документа
-     * @param GeneratedDocument $document
-     * @return string
+     *
      * @throws LoaderError
      * @throws RuntimeError
      * @throws SyntaxError
@@ -83,18 +77,14 @@ class RenderService
         return $this->twig->render('/pdf/generated_document.html.twig', [
             'document' => $document,
             'rootDir' => $this->kernel->getProjectDir(),
-            'webDir' => $this->kernel->getProjectDir() . '/public',
-            'logo' => 'data:image/png;base64,' . base64_encode(file_get_contents($this->kernel->getProjectDir() . "/public/" . getenv('BIG_LOGO_PATH'))),
+            'webDir' => $this->kernel->getProjectDir().'/public',
+            'logo' => 'data:image/png;base64,'.base64_encode(file_get_contents($this->kernel->getProjectDir().'/public/'.getenv('BIG_LOGO_PATH'))),
         ]);
     }
 
     /**
      * Рендеринг сервисного плана
      *
-     * @param Contract $contract
-     * @param Client $client
-     * @param User $user
-     * @return string
      * @throws LoaderError
      * @throws RuntimeError
      * @throws SyntaxError
@@ -103,15 +93,16 @@ class RenderService
     {
         $image = '';
         if (file_exists($client->getPhotoPath())) {
-            $image = 'data:image/png;base64,' . base64_encode(file_get_contents($client->getPhotoPath()));
+            $image = 'data:image/png;base64,'.base64_encode(file_get_contents($client->getPhotoPath()));
         }
-        list($width, $height) = $client->getPhotoSize(300, 350);
+        [$width, $height] = $client->getPhotoSize(300, 350);
+
         return $this->twig->render('/pdf/contract.html.twig', [
             'contract' => $contract,
             'client' => $client,
             'user' => $user,
             'specialty' => ($user->getPositionText() ?: ($user->getPosition() ? $user->getPosition()->getName() : 'Специалист по социальной работе')),
-            'webDir' => $this->kernel->getProjectDir() . '/public',
+            'webDir' => $this->kernel->getProjectDir().'/public',
             'image' => $image,
             'height' => $height,
             'width' => $width,

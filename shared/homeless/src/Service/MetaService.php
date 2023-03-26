@@ -1,79 +1,68 @@
-<?php
-
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\Service;
 
-
 use App\Entity\Meta;
-use Doctrine\Persistence\ManagerRegistry;
+use App\Repository\MetaRepository;
+use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * Чтение и включение флажков
  */
 class MetaService
 {
-    const CLIENT_FORMS_ENABLED = 'client_forms_enabled';
-
-    private ManagerRegistry $managerRegistry;
+    public const CLIENT_FORMS_ENABLED = 'client_forms_enabled';
 
     private array $booleanMetaCache = [];
 
-    public function __construct(ManagerRegistry $managerRegistry)
-    {
-        $this->managerRegistry = $managerRegistry;
-    }
+    public function __construct(
+        private readonly EntityManagerInterface $entityManager,
+        private readonly MetaRepository $metaRepository,
+    ) {}
 
     /**
      * Разрешено ли использование анкеты проживающего в новом формате.
-     *
-     * Включается с помощью консольной команды `homeless:resident_qnr:check_and_switch`
-     *
-     * @return bool
      */
     public function isClientFormsEnabled(): bool
     {
-        return $this->getCachedBooleanMeta(self::CLIENT_FORMS_ENABLED);
+        return $this->getCachedBooleanMeta();
     }
 
     public function enableClientForms(): void
     {
-        $this->setCachedBooleanMeta(self::CLIENT_FORMS_ENABLED, true);
+        $this->setCachedBooleanMeta();
     }
 
-    private function getCachedBooleanMeta(string $name): bool
+    private function getCachedBooleanMeta(): bool
     {
-        if (isset($this->booleanMetaCache[$name])) {
-            return $this->booleanMetaCache[$name];
+        if (isset($this->booleanMetaCache[self::CLIENT_FORMS_ENABLED])) {
+            return $this->booleanMetaCache[self::CLIENT_FORMS_ENABLED];
         }
-        $arr = $this->managerRegistry->getRepository(Meta::class)->findBy(['key' => $name]);
-        if (count($arr) == 0) {
-            $this->booleanMetaCache[$name] = false;
+        $arr = $this->metaRepository->findBy(['key' => self::CLIENT_FORMS_ENABLED]);
+        if (\count($arr) === 0) {
+            $this->booleanMetaCache[self::CLIENT_FORMS_ENABLED] = false;
+
             return false;
         }
+        /** @var Meta $meta */
         $meta = $arr[0];
-        /**
-         * @var Meta $meta
-         */
-        $this->booleanMetaCache[$name] = !!$meta->getValue();
-        return $this->booleanMetaCache[$name];
+        $this->booleanMetaCache[self::CLIENT_FORMS_ENABLED] = (bool) $meta->getValue();
+
+        return $this->booleanMetaCache[self::CLIENT_FORMS_ENABLED];
     }
 
-    private function setCachedBooleanMeta(string $name, bool $value): void
+    private function setCachedBooleanMeta(): void
     {
-        $entityManager = $this->managerRegistry->getManager();
-        $arr = $entityManager->getRepository(Meta::class)->findBy(['key' => self::CLIENT_FORMS_ENABLED]);
-        /**
-         * @var Meta $meta
-         */
-        $meta = null;
-        if (count($arr) == 0) {
+        $arr = $this->metaRepository->findBy(['key' => self::CLIENT_FORMS_ENABLED]);
+        if (\count($arr) === 0) {
             $meta = new Meta();
             $meta->setKey(self::CLIENT_FORMS_ENABLED);
-            $entityManager->persist($meta);
+            $this->entityManager->persist($meta);
         } else {
             $meta = $arr[0];
         }
-        $meta->setValue(!!$value ? '1' : '0');
-        $this->booleanMetaCache[$name] = !!$value;
+        $meta->setValue(true ? '1' : '0');
+        $this->booleanMetaCache[self::CLIENT_FORMS_ENABLED] = true;
     }
 }

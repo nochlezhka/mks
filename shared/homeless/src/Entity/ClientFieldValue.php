@@ -1,46 +1,42 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\Entity;
 
 use App\Repository\ClientFieldValueRepository;
-use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\UniqueConstraint;
+use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
  * Значение дополнительного поля клиента
  */
-#[UniqueConstraint(name: "value_unique", columns: ["field_id", "client_id"])]
+#[UniqueConstraint(name: 'value_unique', columns: ['field_id', 'client_id'])]
 #[ORM\Entity(repositoryClass: ClientFieldValueRepository::class)]
 #[Vich\Uploadable]
 class ClientFieldValue extends BaseEntity
 {
-    /**
-     * Поле
-     */
     #[ORM\ManyToOne(targetEntity: ClientField::class)]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?ClientField $field = null;
 
-    /**
-     * Клиент
-     */
-    #[ORM\ManyToOne(targetEntity: Client::class, inversedBy: "fieldValues")]
+    #[ORM\ManyToOne(targetEntity: Client::class, inversedBy: 'fieldValues')]
     private ?Client $client = null;
 
     /**
      * Значение поля - текст
      */
-    #[ORM\Column(type: "text", nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true)]
     private ?string $text = null;
 
     /**
      * Значение поля - дата/время
      */
-    #[ORM\Column(type: "datetime", nullable: true)]
-    private ?DateTime $datetime = null;
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    private ?\DateTimeImmutable $datetime = null;
 
     /**
      * Вариант значения (если поле не multiple)
@@ -57,278 +53,155 @@ class ClientFieldValue extends BaseEntity
     /**
      * Имя файла для файлового поля
      */
-    #[ORM\Column(type: "string", nullable: true)]
-    private ?DateTime $filename = null;
+    #[ORM\Column(type: 'string', nullable: true)]
+    private ?\DateTimeImmutable $filename = null;
 
     /**
      * Значение поля - файл
      */
-    #[Vich\UploadableField(mapping: "client_field_file", fileNameProperty: "filename")]
-    private $file;
+    #[Vich\UploadableField(mapping: 'client_field_file', fileNameProperty: 'filename')]
+    private ?File $file = null;
 
-    public function getFile()
+    public function __construct()
     {
-        return $this->file;
+        $this->options = new ArrayCollection();
     }
 
-    public function setFile($file = null): ClientFieldValue
+    public function setFile(?File $file = null): self
     {
         $this->file = $file;
 
         if ($file) {
-            $this->setUpdatedAt(new DateTime());
+            $this->setUpdatedAt(new \DateTimeImmutable());
         }
 
         return $this;
     }
 
+    public function getFile(): ?File
+    {
+        return $this->file;
+    }
+
     /**
      * Возвращает значение в зависимости от типа поля
-     * @return ClientFieldOption|DateTime|Collection|null|string
      */
-    public function getValue()
+    public function getValue(): ClientFieldOption|\DateTimeImmutable|Collection|string|null
     {
-        $type = $this->field->getType();
-
-        if ($type == ClientField::TYPE_TEXT) {
-            return $this->getText();
-        }
-
-        if ($type == ClientField::TYPE_DATETIME) {
-            return $this->getDatetime();
-        }
-
-        if ($type == ClientField::TYPE_FILE) {
-            return $this->getFile();
-        }
-
-        if ($type == ClientField::TYPE_OPTION) {
-            if ($this->field->getMultiple()) {
-                return $this->getOptions();
-            }
-
-            return $this->getOption();
-        }
-
-        return null;
+        return match ($this->field->getType()) {
+            ClientField::TYPE_TEXT => $this->getText(),
+            ClientField::TYPE_DATETIME => $this->getDatetime(),
+            ClientField::TYPE_FILE => $this->getFile(),
+            ClientField::TYPE_OPTION => $this->field->isMultiple()
+                ? $this->getOptions()
+                : $this->getOption(),
+            default => null,
+        };
     }
 
     /**
      * Устанавливает значение в зависимости от типа поля
-     * @param $value
-     * @return ClientFieldValue
      */
-    public function setValue($value): ?ClientFieldValue
+    public function setValue(ClientFieldOption|\DateTimeImmutable|Collection|string|null $value): self
     {
-        $type = $this->field->getType();
-
-        if ($type == ClientField::TYPE_TEXT) {
-            return $this->setText($value);
-        }
-
-        if ($type == ClientField::TYPE_DATETIME) {
-            return $this->setDatetime($value);
-        }
-
-        if ($type == ClientField::TYPE_FILE) {
-            return $this->setFile($value);
-        }
-
-        if ($type == ClientField::TYPE_OPTION) {
-            if ($this->field->getMultiple()) {
-                return $this->setOptions($value);
-            }
-
-            return $this->setOption($value);
-        }
-
-        return null;
+        return match ($this->field->getType()) {
+            ClientField::TYPE_TEXT => $this->setText($value),
+            ClientField::TYPE_DATETIME => $this->setDatetime($value),
+            ClientField::TYPE_FILE => $this->setFile($value),
+            ClientField::TYPE_OPTION => $this->field->isMultiple()
+                ? $this->setOptions($value)
+                : $this->setOption($value),
+            default => $this,
+        };
     }
 
-    /**
-     * Set text
-     *
-     * @param string|null $text
-     *
-     * @return ClientFieldValue
-     */
-    public function setText(?string $text): ClientFieldValue
+    public function getText(): ?string
+    {
+        return $this->text;
+    }
+
+    public function setText(?string $text): self
     {
         $this->text = $text;
 
         return $this;
     }
 
-    /**
-     * Get text
-     *
-     * @return string
-     */
-    public function getText(): ?string
+    public function getDatetime(): ?\DateTimeImmutable
     {
-        return $this->text;
+        return $this->datetime;
     }
 
-    /**
-     * Set datetime
-     *
-     * @param DateTime|null $datetime
-     *
-     * @return ClientFieldValue
-     */
-    public function setDatetime(?DateTime $datetime): ClientFieldValue
+    public function setDatetime(?\DateTimeImmutable $datetime): self
     {
         $this->datetime = $datetime;
 
         return $this;
     }
 
-    /**
-     * Get datetime
-     *
-     * @return DateTime
-     */
-    public function getDatetime(): ?DateTime
+    public function getFilename(): ?\DateTimeImmutable
     {
-        return $this->datetime;
+        return $this->filename;
     }
 
-    /**
-     * Set filename
-     *
-     * @param DateTime|null $filename
-     *
-     * @return ClientFieldValue
-     */
-    public function setFilename(?DateTime $filename): ClientFieldValue
+    public function setFilename(?\DateTimeImmutable $filename): self
     {
         $this->filename = $filename;
 
         return $this;
     }
 
-    /**
-     * Get filename
-     *
-     * @return DateTime
-     */
-    public function getFilename(): ?DateTime
+    public function getField(): ?ClientField
     {
-        return $this->filename;
+        return $this->field;
     }
 
-    /**
-     * Set field
-     *
-     * @param ClientField|null $field
-     *
-     * @return ClientFieldValue
-     */
-    public function setField(ClientField $field): ClientFieldValue
+    public function setField(?ClientField $field): self
     {
         $this->field = $field;
 
         return $this;
     }
 
-    /**
-     * Get field
-     *
-     * @return ClientField
-     */
-    public function getField(): ?ClientField
+    public function getClient(): ?Client
     {
-        return $this->field;
+        return $this->client;
     }
 
-    /**
-     * Set client
-     *
-     * @param Client|null $client
-     *
-     * @return ClientFieldValue
-     */
-    public function setClient(Client $client): ClientFieldValue
+    public function setClient(?Client $client): self
     {
         $this->client = $client;
 
         return $this;
     }
 
-    /**
-     * Get client
-     *
-     * @return Client
-     */
-    public function getClient(): ?Client
+    public function getOption(): ?ClientFieldOption
     {
-        return $this->client;
+        return $this->option;
     }
 
-    /**
-     * Set option
-     *
-     * @param ClientFieldOption|null $option
-     *
-     * @return ClientFieldValue
-     */
-    public function setOption(ClientFieldOption $option): ClientFieldValue
+    public function setOption(?ClientFieldOption $option): self
     {
         $this->option = $option;
 
         return $this;
     }
 
-    /**
-     * Get option
-     *
-     * @return ClientFieldOption
-     */
-    public function getOption(): ?ClientFieldOption
+    public function getOptions(): Collection
     {
-        return $this->option;
+        return $this->options;
     }
 
-    /**
-     * Constructor
-     */
-    public function __construct()
+    public function addOption(ClientFieldOption $option): self
     {
-        $this->options = new ArrayCollection();
-    }
-
-    /**
-     * Add option
-     *
-     * @param ClientFieldOption $option
-     *
-     * @return ClientFieldValue
-     */
-    public function addOption(ClientFieldOption $option): ClientFieldValue
-    {
-        $this->options[] = $option;
+        $this->options->add($option);
 
         return $this;
     }
 
-    /**
-     * Remove option
-     *
-     * @param ClientFieldOption $option
-     */
-    public function removeOption(ClientFieldOption $option)
+    public function removeOption(ClientFieldOption $option): void
     {
         $this->options->removeElement($option);
-    }
-
-    /**
-     * Get options
-     *
-     * @return Collection
-     */
-    public function getOptions()
-    {
-        return $this->options;
     }
 
     public function hasOption(ClientFieldOption $option): bool
@@ -336,13 +209,7 @@ class ClientFieldValue extends BaseEntity
         return $this->options->contains($option);
     }
 
-    /**
-     * Get options
-     *
-     * @param Collection $options
-     * @return ClientFieldValue
-     */
-    public function setOptions(Collection $options): ClientFieldValue
+    public function setOptions(Collection $options): self
     {
         $this->options = $options;
 

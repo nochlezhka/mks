@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\EventListener;
 
@@ -15,11 +16,14 @@ class ContractListener
      */
     public function postPersist(Contract $contract, LifecycleEventArgs $event): void
     {
-        if (empty($contract->getNumber())) {
-            $contract->setNumber($contract->getId());
-            $em = $event->getObjectManager();
-            $em->persist($contract);
-            $em->flush($contract);
+        if (!empty($contract->getNumber())) {
+            return;
         }
+
+        $contract->setNumber((string) $contract->getId());
+
+        $em = $event->getObjectManager();
+        $em->persist($contract);
+        $em->flush($contract);
     }
 }

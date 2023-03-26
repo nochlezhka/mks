@@ -1,8 +1,8 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\Entity;
 
-use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -11,155 +11,86 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity]
 class ContractItem extends BaseEntity
 {
-    /**
-     * Комментарий
-     */
-    #[ORM\Column(type: "text", nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true)]
     private ?string $comment = null;
 
-    /**
-     * Дата начала выполнения
-     */
-    #[ORM\Column(type: "date", nullable: true)]
-    private ?DateTime $dateStart = null;
+    #[ORM\Column(type: 'date_immutable', nullable: true)]
+    private ?\DateTimeImmutable $dateStart = null;
 
-    /**
-     * Дата выполнения
-     */
-    #[ORM\Column(type: "date", nullable: true)]
-    private ?DateTime $date = null;
+    #[ORM\Column(type: 'date_immutable', nullable: true)]
+    private ?\DateTimeImmutable $date = null;
 
-    /**
-     * Договор
-     */
-    #[ORM\ManyToOne(targetEntity: Contract::class, inversedBy: "items")]
+    #[ORM\ManyToOne(targetEntity: Contract::class, inversedBy: 'items')]
     private ?Contract $contract = null;
 
-    /**
-     * Тип
-     */
     #[ORM\ManyToOne(targetEntity: ContractItemType::class)]
     private ?ContractItemType $type;
 
-    public function __toString()
+    public function __toString(): string
     {
         $type = $this->getType();
 
         if ($type instanceof ContractItemType) {
-            return $type->getName();
+            return $type->getName() ?? '';
         }
 
         return '';
     }
 
-    /**
-     * Set comment
-     *
-     * @param string|null $comment
-     *
-     * @return ContractItem
-     */
-    public function setComment(?string $comment): ContractItem
+    public function getComment(): ?string
+    {
+        return $this->comment;
+    }
+
+    public function setComment(?string $comment): self
     {
         $this->comment = $comment;
 
         return $this;
     }
 
-    /**
-     * Get comment
-     *
-     * @return string
-     */
-    public function getComment(): ?string
+    public function getDate(): ?\DateTimeImmutable
     {
-        return $this->comment;
+        return $this->date;
     }
 
-    /**
-     * Set date
-     *
-     * @param DateTime|null $date
-     *
-     * @return ContractItem
-     */
-    public function setDate(?DateTime $date): ContractItem
+    public function setDate(?\DateTimeImmutable $date): self
     {
         $this->date = $date;
 
         return $this;
     }
 
-    /**
-     * Get date
-     *
-     * @return DateTime
-     */
-    public function getDate(): ?DateTime
+    public function getContract(): ?Contract
     {
-        return $this->date;
+        return $this->contract;
     }
 
-    /**
-     * Set contract
-     *
-     * @param Contract|null $contract
-     *
-     * @return ContractItem
-     */
-    public function setContract(Contract $contract = null): ContractItem
+    public function setContract(?Contract $contract = null): self
     {
         $this->contract = $contract;
 
         return $this;
     }
 
-    /**
-     * Get contract
-     *
-     * @return Contract
-     */
-    public function getContract(): ?Contract
+    public function getType(): ?ContractItemType
     {
-        return $this->contract;
+        return $this->type;
     }
 
-    /**
-     * Set type
-     *
-     * @param ContractItemType|null $type
-     *
-     * @return ContractItem
-     */
-    public function setType(ContractItemType $type = null): ContractItem
+    public function setType(?ContractItemType $type = null): self
     {
         $this->type = $type;
 
         return $this;
     }
 
-    /**
-     * Get type
-     *
-     * @return ContractItemType
-     */
-    public function getType(): ?ContractItemType
-    {
-        return $this->type;
-    }
-
-    /**
-     * @return DateTime|null
-     */
-    public function getDateStart(): ?DateTime
+    public function getDateStart(): ?\DateTimeImmutable
     {
         return $this->dateStart;
     }
 
-    /**
-     * @param DateTime|null $dateStart
-     */
-    public function setDateStart(?DateTime $dateStart)
+    public function setDateStart(?\DateTimeImmutable $dateStart): void
     {
         $this->dateStart = $dateStart;
     }

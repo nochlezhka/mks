@@ -1,8 +1,7 @@
-<?php
-
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\Util;
-
 
 class ClientFormUtil
 {
@@ -12,32 +11,28 @@ class ClientFormUtil
      *
      * Функция вернёт массив всегда, даже если на входе `null`.
      *
-     * @param string $optionsText
-     * @return string[]
+     * @return array<string>
      */
-    public static function optionsTextToArray($optionsText)
+    public static function optionsTextToArray(?string $optionsText): array
     {
         if ($optionsText === null) {
             return [];
         }
+
         $list = preg_split("/[\r\n]+/", $optionsText);
         if ($list === false) {
             return [];
         }
-        $list = array_filter(array_map('trim', $list), function ($v) { return $v != ''; });
-        return $list;
+
+        return array_filter(array_map('trim', $list), static fn ($v): bool => $v !== '');
     }
 
     /**
      * Преобразует массив строк в многострочный текст, где строки разделяются переводами строк.
      * Все строки проходят через `trim`, пустые строки удаляются.
-     *
-     * @param string[] $array
-     * @return string
      */
-    public static function arrayToOptionsText($array)
+    public static function arrayToOptionsText(array $array): string
     {
-        $array = array_filter(array_map('trim', $array), function ($v) { return $v != ''; });
-        return implode("\n", $array);
+        return implode("\n", array_filter(array_map('trim', $array), static fn ($v): bool => $v !== ''));
     }
 }

@@ -1,9 +1,9 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\Entity;
 
 use App\Repository\DocumentRepository;
-use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -12,65 +12,50 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: DocumentRepository::class)]
 class Document extends BaseEntity
 {
-    const REGISTRATION_UNKNOWN = 0;
-    const REGISTRATION_YES = 1;
-    const REGISTRATION_NO = 2;
+    public const REGISTRATION_UNKNOWN = 0;
+    public const REGISTRATION_YES = 1;
+    public const REGISTRATION_NO = 2;
 
-    /**
-     * Адрес
-     */
-    #[ORM\Column(type: "string", nullable: true)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $address = null;
 
-    /**
-     * Город
-     */
-    #[ORM\Column(type: "string", nullable: true)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $city = null;
 
-    /**
-     * Дата
-     */
-    #[ORM\Column(type: "date", nullable: true)]
-    private ?DateTime $date = null;
+    #[ORM\Column(type: 'date_immutable', nullable: true)]
+    private ?\DateTimeImmutable $date = null;
 
     /**
      * Номер
      */
-    #[ORM\Column(type: "string", nullable: true)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $number = null;
 
     /**
      * Серия
      */
-    #[ORM\Column(type: "string", nullable: true)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $numberPrefix = null;
 
     /**
      * Регистрация
      */
-    #[ORM\Column(type: "integer", nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $registration = null;
 
     /**
      * Кем и когда выдан
      */
-    #[ORM\Column(type: "string", nullable: true)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $issued = null;
 
-    /**
-     * Клиент
-     */
-    #[ORM\ManyToOne(targetEntity: Client::class, inversedBy: "documents")]
+    #[ORM\ManyToOne(targetEntity: Client::class, inversedBy: 'documents')]
     private ?Client $client = null;
 
-    /**
-     * Тип
-     */
     #[ORM\ManyToOne(targetEntity: DocumentType::class)]
     private ?DocumentType $type = null;
 
-    public function __toString()
+    public function __toString(): string
     {
         $string = '';
 
@@ -79,235 +64,127 @@ class Document extends BaseEntity
         $string .= $type->getName();
 
         if ($this->numberPrefix) {
-            $string .= ' ' . $this->numberPrefix;
+            $string .= ' '.$this->numberPrefix;
         }
 
         if ($this->number) {
-            $string .= ' ' . $this->number;
+            $string .= ' '.$this->number;
         }
 
         if ($this->issued) {
-            $string .= ' выдан ' . $this->issued;
+            $string .= ' выдан '.$this->issued;
         }
 
-        $string .= ' ' . $this->date->format('d.m.Y');
+        $string .= ' '.$this->date->format('d.m.Y');
 
         return $string;
     }
 
-    /**
-     * Set address
-     *
-     * @param string|null $address
-     *
-     * @return Document
-     */
-    public function setAddress(?string $address): Document
+    public function getAddress(): ?string
+    {
+        return $this->address;
+    }
+
+    public function setAddress(?string $address): self
     {
         $this->address = $address;
 
         return $this;
     }
 
-    /**
-     * Get address
-     *
-     * @return string
-     */
-    public function getAddress(): ?string
+    public function getCity(): ?string
     {
-        return $this->address;
+        return $this->city;
     }
 
-    /**
-     * Set city
-     *
-     * @param string $city
-     *
-     * @return Document
-     */
-    public function setCity(?string $city): Document
+    public function setCity(?string $city): self
     {
         $this->city = $city;
 
         return $this;
     }
 
-    /**
-     * Get city
-     *
-     * @return string
-     */
-    public function getCity(): ?string
+    public function getDate(): ?\DateTimeImmutable
     {
-        return $this->city;
+        return $this->date;
     }
 
-    /**
-     * Set date
-     *
-     * @param DateTime|null $date
-     *
-     * @return Document
-     */
-    public function setDate(?DateTime $date): Document
+    public function setDate(?\DateTimeImmutable $date): self
     {
         $this->date = $date;
 
         return $this;
     }
 
-    /**
-     * Get date
-     *
-     * @return DateTime
-     */
-    public function getDate(): ?DateTime
+    public function getNumber(): ?string
     {
-        return $this->date;
+        return $this->number;
     }
 
-    /**
-     * Set number
-     *
-     * @param string|null $number
-     *
-     * @return Document
-     */
-    public function setNumber(?string $number): Document
+    public function setNumber(?string $number): self
     {
         $this->number = $number;
 
         return $this;
     }
 
-    /**
-     * Get number
-     *
-     * @return string
-     */
-    public function getNumber(): ?string
+    public function getNumberPrefix(): ?string
     {
-        return $this->number;
+        return $this->numberPrefix;
     }
 
-    /**
-     * Set numberPrefix
-     *
-     * @param string $numberPrefix
-     *
-     * @return Document
-     */
-    public function setNumberPrefix(?string $numberPrefix): Document
+    public function setNumberPrefix(?string $numberPrefix): self
     {
         $this->numberPrefix = $numberPrefix;
 
         return $this;
     }
 
-    /**
-     * Get numberPrefix
-     *
-     * @return string
-     */
-    public function getNumberPrefix(): ?string
+    public function getRegistration(): ?int
     {
-        return $this->numberPrefix;
+        return $this->registration;
     }
 
-    /**
-     * Set registration
-     *
-     * @param int|null $registration
-     *
-     * @return Document
-     */
-    public function setRegistration(?int $registration): Document
+    public function setRegistration(?int $registration): self
     {
         $this->registration = $registration;
 
         return $this;
     }
 
-    /**
-     * Get registration
-     *
-     * @return integer
-     */
-    public function getRegistration(): ?int
+    public function getIssued(): ?string
     {
-        return $this->registration;
+        return $this->issued;
     }
 
-    /**
-     * Set issued
-     *
-     * @param string|null $issued
-     *
-     * @return Document
-     */
-    public function setIssued(?string $issued): Document
+    public function setIssued(?string $issued): self
     {
         $this->issued = $issued;
 
         return $this;
     }
 
-    /**
-     * Get issued
-     *
-     * @return string
-     */
-    public function getIssued(): ?string
+    public function getClient(): ?Client
     {
-        return $this->issued;
+        return $this->client;
     }
 
-    /**
-     * Set client
-     *
-     * @param Client|null $client
-     *
-     * @return Document
-     */
-    public function setClient(Client $client): Document
+    public function setClient(Client $client): self
     {
         $this->client = $client;
 
         return $this;
     }
 
-    /**
-     * Get client
-     *
-     * @return Client
-     */
-    public function getClient(): ?Client
+    public function getType(): ?DocumentType
     {
-        return $this->client;
+        return $this->type;
     }
 
-    /**
-     * Set type
-     *
-     * @param DocumentType|null $type
-     *
-     * @return Document
-     */
-    public function setType(DocumentType $type): Document
+    public function setType(DocumentType $type): self
     {
         $this->type = $type;
 
         return $this;
-    }
-
-    /**
-     * Get type
-     *
-     * @return DocumentType
-     */
-    public function getType(): ?DocumentType
-    {
-        return $this->type;
     }
 }

@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\Form\Type;
 
@@ -11,14 +12,32 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Vich\UploaderBundle\Storage\StorageInterface;
 
-#[AutoconfigureTag(name: 'form.type', attributes: ['alias'=> 'app_file'])]
+#[AutoconfigureTag(name: 'form.type', attributes: ['alias' => 'app_file'])]
 class AppFileType extends AbstractType
 {
-    private StorageInterface $storage;
+    public function __construct(
+        private readonly StorageInterface $storage,
+    ) {}
 
-    public function __construct(StorageInterface $storage)
+    public function buildView(FormView $view, FormInterface $form, array $options): void
     {
-        $this->storage = $storage;
+        $view->vars['download_uri'] = $this->getDownloadUri($form, $options);
+        $view->vars['filename'] = basename($view->vars['download_uri']);
+    }
+
+    public function getBlockPrefix(): string
+    {
+        return 'app_file';
+    }
+
+    public function getName(): string
+    {
+        return $this->getBlockPrefix();
+    }
+
+    public function getParent(): string
+    {
+        return FileType::class;
     }
 
     private function getDownloadUri(FormInterface $form, array $options): ?string
@@ -27,7 +46,8 @@ class AppFileType extends AbstractType
             return null;
         }
 
-        if (empty($client = $form->getParent()->getData())) {
+        $client = $form->getParent()->getData();
+        if (empty($client)) {
             return null;
         }
 
@@ -42,39 +62,10 @@ class AppFileType extends AbstractType
         $fieldCode = substr($options['property_path'], 15);
 
         $fieldValueObj = $client->getAdditionalFieldValueObject($fieldCode);
-
         if (!$fieldValueObj instanceof ClientFieldValue) {
             return null;
         }
 
         return $this->storage->resolveUri($fieldValueObj, 'file');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function buildView(FormView $view, FormInterface $form, array $options)
-    {
-        $view->vars['download_uri'] = $this->getDownloadUri($form, $options);
-        $view->vars['filename'] = basename($view->vars['download_uri']);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getBlockPrefix(): string
-    {
-        return 'app_file';
-    }
-
-    public function getName(): string
-    {
-        return $this->getBlockPrefix();
-    }
-
-
-    public function getParent(): string
-    {
-        return FileType::class;
     }
 }

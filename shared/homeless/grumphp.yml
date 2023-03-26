@@ -1,0 +1,24 @@
+grumphp:
+  ignore_unstaged_changes: true
+  hide_circumvention_tip: true
+  ascii: ~
+
+  fixer:
+    enabled: false
+
+  tasks:
+    composer_normalize:
+      indent_size: 4
+      indent_style: 'space'
+      no_update_lock: true
+      verbose: false
+
+    phpcs:
+      ignore_patterns:
+        - '/^migrations\//'
+        - '/^var\//'
+
+    phpcsfixer:
+      config: '.php-cs-fixer.php'
+
+    securitychecker_local: ~

@@ -1,26 +1,23 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\Repository;
 
-use App\Entity\Service;
 use App\Entity\ServiceType;
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 
-class ServiceTypeRepository extends EntityRepository
+/**
+ * @method ServiceType|null   find($id, $lockMode = null, $lockVersion = null)
+ * @method ServiceType|null   findOneBy(array $criteria, array $orderBy = null)
+ * @method array<ServiceType> findAll()
+ * @method array<ServiceType> findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ */
+class ServiceTypeRepository extends ServiceEntityRepository
 {
-    /**
-     * Получение доступных типов для сертификата
-     *
-     * @param Service $service
-     * @return ServiceType[]
-     */
-    public function getAvailableForService(Service $service): array
-    {
-
-        $qb = $this->createQueryBuilder('t');
-        $qb->orderBy('t.sort', 'ASC');
-        $result = $qb->getQuery()->execute();
-
-        return null === $result ? [] : $result;
+    public function __construct(
+        ManagerRegistry $registry,
+    ) {
+        parent::__construct($registry, ServiceType::class);
     }
 }

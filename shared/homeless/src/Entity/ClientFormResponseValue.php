@@ -1,11 +1,9 @@
-<?php
-
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\Mapping\Index;
-use Doctrine\ORM\Mapping\UniqueConstraint;
 
 /**
  * Значение поля анкеты.
@@ -14,19 +12,19 @@ use Doctrine\ORM\Mapping\UniqueConstraint;
  * Так проще и, возможно, поможет не потерять данные.
  */
 #[ORM\Entity]
-#[ORM\UniqueConstraint(name: "client_form_response_uniq", columns: ["client_form_response_id", "client_form_field_id"])]
+#[ORM\UniqueConstraint(name: 'client_form_response_uniq', columns: ['client_form_response_id', 'client_form_field_id'])]
 class ClientFormResponseValue extends BaseEntity
 {
     // константы-значения фиксированных полей
-    const RESIDENT_QUESTIONNAIRE_TYPE_3_MONTHS = "3 месяца";
-    const RESIDENT_QUESTIONNAIRE_TYPE_6_MONTHS = "6 месяцев";
-    const RESIDENT_QUESTIONNAIRE_TYPE_1_YEAR = "1 год";
-    const RESIDENT_QUESTIONNAIRE_TYPE_2_YEARS = "2 года";
+    public const RESIDENT_QUESTIONNAIRE_TYPE_3_MONTHS = '3 месяца';
+    public const RESIDENT_QUESTIONNAIRE_TYPE_6_MONTHS = '6 месяцев';
+    public const RESIDENT_QUESTIONNAIRE_TYPE_1_YEAR = '1 год';
+    public const RESIDENT_QUESTIONNAIRE_TYPE_2_YEARS = '2 года';
 
     /**
      * Анкета
      */
-    #[ORM\ManyToOne(targetEntity: ClientFormResponse::class, inversedBy: "values")]
+    #[ORM\ManyToOne(targetEntity: ClientFormResponse::class, inversedBy: 'values')]
     #[ORM\JoinColumn(nullable: false)]
     private ?ClientFormResponse $clientFormResponse = null;
 
@@ -46,72 +44,45 @@ class ClientFormResponseValue extends BaseEntity
     #[ORM\JoinColumn(nullable: false)]
     private ?Client $client = null;
 
-    /**
-     * Значение поля
-     */
-    #[ORM\Column(type: "text", nullable: false)]
-    private string $value = "";
+    #[ORM\Column(type: 'text', nullable: false)]
+    private string $value = '';
 
-    /**
-     * @return ClientFormResponse
-     */
     public function getClientFormResponse(): ?ClientFormResponse
     {
         return $this->clientFormResponse;
     }
 
-    /**
-     * @param ClientFormResponse $clientFormResponse
-     */
-    public function setClientFormResponse(ClientFormResponse $clientFormResponse)
+    public function setClientFormResponse(ClientFormResponse $clientFormResponse): void
     {
         $this->clientFormResponse = $clientFormResponse;
     }
 
-    /**
-     * @return ClientFormField
-     */
     public function getClientFormField(): ?ClientFormField
     {
         return $this->clientFormField;
     }
 
-    /**
-     * @param ClientFormField $clientFormField
-     */
-    public function setClientFormField(ClientFormField $clientFormField)
+    public function setClientFormField(ClientFormField $clientFormField): void
     {
         $this->clientFormField = $clientFormField;
     }
 
-    /**
-     * @return Client
-     */
     public function getClient(): ?Client
     {
         return $this->client;
     }
 
-    /**
-     * @param Client $client
-     */
-    public function setClient(Client $client)
+    public function setClient(Client $client): void
     {
         $this->client = $client;
     }
 
-    /**
-     * @return string
-     */
     public function getValue(): string
     {
         return $this->value;
     }
 
-    /**
-     * @param string $value
-     */
-    public function setValue(string $value)
+    public function setValue(string $value): void
     {
         $this->value = $value;
     }

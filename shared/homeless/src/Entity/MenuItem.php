@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\Entity;
 
@@ -10,108 +11,63 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * Для настройки отображения пунктов меню в анкете клиента
  */
 #[ORM\Entity(repositoryClass: MenuItemRepository::class)]
-#[UniqueEntity("code")]
+#[UniqueEntity('code')]
 class MenuItem extends BaseEntity
 {
-    const CODE_SHELTER_HISTORY = 'shelter_history';
-    const CODE_CERTIFICATE = 'certificate';
-    const CODE_GENERATED_DOCUMENT = 'generated_document';
-    const CODE_NOTIFICATIONS = 'notifications';
-    const CODE_STATUS_HOMELESS = 'status_homeless';
-    const CODE_QUESTIONNAIRE_LIVING = 'questionnaire_living';
+    public const CODE_SHELTER_HISTORY = 'shelter_history';
+    public const CODE_CERTIFICATE = 'certificate';
+    public const CODE_GENERATED_DOCUMENT = 'generated_document';
+    public const CODE_NOTIFICATIONS = 'notifications';
+    public const CODE_STATUS_HOMELESS = 'status_homeless';
+    public const CODE_QUESTIONNAIRE_LIVING = 'questionnaire_living';
 
-    /**
-     * Название
-     */
-    #[ORM\Column(type: "string", nullable: true)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $name = null;
 
-    /**
-     * Код
-     */
-    #[ORM\Column(type: "string", unique: true, nullable: true)]
+    #[ORM\Column(type: 'string', unique: true, nullable: true)]
     private ?string $code = null;
 
-    /**
-     * Включено
-     */
-    #[ORM\Column(type: "boolean", nullable: true)]
-    private ?bool $enabled = true;
+    #[ORM\Column(type: 'boolean', options: ['default' => true])]
+    private bool $enabled = true;
 
-    public function __toString()
+    public function __toString(): string
+    {
+        return $this->name ?? '';
+    }
+
+    public function getName(): ?string
     {
         return $this->name;
     }
 
-    /**
-     * Set name
-     *
-     * @param string|null $name
-     *
-     * @return MenuItem
-     */
-    public function setName(?string $name): MenuItem
+    public function setName(?string $name): self
     {
         $this->name = $name;
 
         return $this;
     }
 
-    /**
-     * Get name
-     *
-     * @return string
-     */
-    public function getName(): ?string
+    public function getCode(): ?string
     {
-        return $this->name;
+        return $this->code;
     }
 
-    /**
-     * Set code
-     *
-     * @param string|null $code
-     *
-     * @return MenuItem
-     */
-    public function setCode(?string $code): MenuItem
+    public function setCode(?string $code): self
     {
         $this->code = $code;
 
         return $this;
     }
 
-    /**
-     * Get code
-     *
-     * @return string
-     */
-    public function getCode(): ?string
+    public function isEnabled(): bool
     {
-        return $this->code;
+        return $this->enabled;
     }
 
-    /**
-     * Set enabled
-     *
-     * @param boolean $enabled
-     *
-     * @return MenuItem
-     */
-    public function setEnabled(?bool $enabled): MenuItem
+    public function setEnabled(bool $enabled): self
     {
         $this->enabled = $enabled;
 
         return $this;
-    }
-
-    /**
-     * Get enabled
-     *
-     * @return boolean
-     */
-    public function getEnabled(): ?bool
-    {
-        return $this->enabled;
     }
 }

@@ -1,34 +1,32 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\Admin;
 
 use App\Controller\CRUDController;
 use App\Entity\ResidentQuestionnaire;
 use Sonata\AdminBundle\Datagrid\ListMapper;
+use Sonata\AdminBundle\FieldDescription\FieldDescriptionInterface;
 use Sonata\AdminBundle\Form\FormMapper;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 #[AutoconfigureTag(name: 'sonata.admin', attributes: [
     'manager_type' => 'orm',
     'label' => 'resident_questionnaire',
     'model_class' => ResidentQuestionnaire::class,
-    'controller'=> CRUDController::class,
-    'label_translator_strategy' => 'sonata.admin.label.strategy.underscore'
+    'controller' => CRUDController::class,
+    'label_translator_strategy' => 'sonata.admin.label.strategy.underscore',
 ])]
 
-class ResidentQuestionnaireAdmin extends BaseAdmin
+class ResidentQuestionnaireAdmin extends AbstractAdmin
 {
-    protected array $datagridValues = array(
+    protected array $datagridValues = [
         '_sort_order' => 'DESC',
         '_sort_by' => 'typeId',
-    );
+    ];
 
-    protected string $translationDomain = 'App';
-
-    /**
-     * @param FormMapper $form
-     */
     protected function configureFormFields(FormMapper $form): void
     {
         $form
@@ -37,7 +35,7 @@ class ResidentQuestionnaireAdmin extends BaseAdmin
                 'choices' => ResidentQuestionnaire::$types,
                 'required' => false,
             ])
-            ->add('isDwelling', 'checkbox', [
+            ->add('isDwelling', CheckboxType::class, [
                 'label' => 'Проживает в жилом помещении',
                 'required' => false,
             ])
@@ -46,15 +44,15 @@ class ResidentQuestionnaireAdmin extends BaseAdmin
                 'choices' => ResidentQuestionnaire::$roomTypes,
                 'required' => false,
             ])
-            ->add('isWork', 'checkbox', [
+            ->add('isWork', CheckboxType::class, [
                 'label' => 'Работает?',
                 'required' => false,
             ])
-            ->add('isWorkOfficial', 'checkbox', [
+            ->add('isWorkOfficial', CheckboxType::class, [
                 'label' => 'Официальная работа?',
                 'required' => false,
             ])
-            ->add('isWorkConstant', 'checkbox', [
+            ->add('isWorkConstant', CheckboxType::class, [
                 'label' => 'Постоянная работа?',
                 'required' => false,
             ])
@@ -78,25 +76,22 @@ class ResidentQuestionnaireAdmin extends BaseAdmin
         ;
     }
 
-    /**
-     * @param ListMapper $list
-     */
     protected function configureListFields(ListMapper $list): void
     {
         $list
             ->addIdentifier('type', null, [
                 'label' => 'Тип',
             ])
-            ->add('isFull', 'boolean', [
+            ->add('isFull', FieldDescriptionInterface::TYPE_BOOLEAN, [
                 'label' => 'Заполнено',
-            ]);
-        $list
+            ])
             ->add(ListMapper::NAME_ACTIONS, ListMapper::TYPE_ACTIONS, [
                 'label' => 'Действие',
                 'actions' => [
                     'edit' => [],
                     'delete' => [],
-                ]
-            ]);
+                ],
+            ])
+        ;
     }
 }

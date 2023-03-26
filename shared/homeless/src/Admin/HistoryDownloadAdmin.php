@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\Admin;
 
@@ -12,21 +13,16 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
     'label' => 'История скачиваний',
     'model_class' => HistoryDownload::class,
     'controller' => CRUDController::class,
-    'label_translator_strategy' => 'sonata.admin.label.strategy.underscore'
+    'label_translator_strategy' => 'sonata.admin.label.strategy.underscore',
 ])]
 
-class HistoryDownloadAdmin extends BaseAdmin
+class HistoryDownloadAdmin extends AbstractAdmin
 {
-    protected array $datagridValues = array(
+    protected array $datagridValues = [
         '_sort_order' => 'DESC',
         '_sort_by' => 'date',
-    );
+    ];
 
-    protected string $translationDomain = 'App';
-
-    /**
-     * @param ListMapper $list
-     */
     protected function configureListFields(ListMapper $list): void
     {
         $list
@@ -43,6 +39,7 @@ class HistoryDownloadAdmin extends BaseAdmin
             ->add('delete', null, [
                 'label' => 'Удалить',
                 'template' => '/CRUD/list_delete.html.twig',
-            ]);
+            ])
+        ;
     }
 }

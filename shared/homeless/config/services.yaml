@@ -1,63 +1,20 @@
 services:
-    # default configuration for services in *this* file
-    _defaults:
-        autowire: true      # Automatically injects dependencies in your services.
-        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+  # default configuration for services in *this* file
+  _defaults:
+    autowire: true      # Automatically injects dependencies in your services.
+    autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
 
-    App\:
-        resource: '../src/'
-        exclude:
-            - '../src/DependencyInjection/'
-            - '../src/Entity/'
-            - '../src/Kernel.php'
+  App\:
+    resource: '../src/'
+    exclude:
+      - '../src/DependencyInjection/'
+      - '../src/Entity/'
+      - '../src/Kernel.php'
 
-    App\Admin\ClientAdmin:
-        class: App\Admin\ClientAdmin
-        calls:
-            - [setTemplate, ['layout', 'admin/layout.html.twig']]
-            - [setTemplate, ['edit', 'admin/client/edit.html.twig']]
+  App\Admin\ClientAdmin:
+    calls:
+      - [ setTemplate, [ 'layout', 'admin/layout.html.twig' ] ]
+      - [ setTemplate, [ 'edit', 'admin/client/edit.html.twig' ] ]
 
-    App\Repository\ClientFieldOptionRepository:
-        class: App\Repository\ClientFieldOptionRepository
-        factory: ['@doctrine.orm.default_entity_manager', getRepository]
-        arguments: ['App\Entity\ClientFieldOption']
-
-    App\Repository\CertificateTypeRepository:
-        class: App\Repository\CertificateTypeRepository
-        factory: ['@doctrine.orm.default_entity_manager', getRepository]
-        arguments: ['App\Entity\CertificateType']
-
-    App\Repository\ServiceTypeRepository:
-        class: App\Repository\ServiceTypeRepository
-        factory: ['@doctrine.orm.default_entity_manager', getRepository]
-        arguments: ['App\Entity\ServiceType']
-
-    App\Repository\NoticeRepository:
-        class: App\Repository\NoticeRepository
-        factory: [ '@doctrine.orm.default_entity_manager', getRepository ]
-        arguments: [ 'App\Entity\Notice' ]
-
-    App\Repository\MenuItemRepository:
-        class: App\Repository\MenuItemRepository
-        factory: [ '@doctrine.orm.default_entity_manager', getRepository ]
-        arguments: [ 'App\Entity\MenuItem' ]
-
-    App\Repository\ClientFieldRepository:
-        class: App\Repository\ClientFieldRepository
-        factory: [ '@doctrine.orm.default_entity_manager', getRepository ]
-        arguments: [ 'App\Entity\ClientField' ]
-
-    App\Repository\ClientFieldValueRepository:
-        class: App\Repository\ClientFieldValueRepository
-        factory: [ '@doctrine.orm.default_entity_manager', getRepository ]
-        arguments: [ 'App\Entity\ClientFieldValue' ]
-
-    App\Repository\ClientFormResponseRepository:
-        class: App\Repository\ClientFormResponseRepository
-        factory: ['@doctrine.orm.default_entity_manager', getRepository]
-        arguments: ['App\Entity\ClientFormResponse']
-
-    App\Repository\ClientFormRepository:
-        class: App\Repository\ClientFormRepository
-        factory: ['@doctrine.orm.default_entity_manager', getRepository]
-        arguments: ['App\Entity\ClientForm']
+  sonata.user.admin.user:
+    class: App\Admin\UserAdmin

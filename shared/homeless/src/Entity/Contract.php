@@ -1,9 +1,9 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\Entity;
 
 use App\Service\DownloadableInterface;
-use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -16,322 +16,193 @@ use Symfony\Component\Validator\Context\ExecutionContext;
 #[ORM\Entity]
 class Contract extends BaseEntity implements DownloadableInterface
 {
-    /**
-     * Комментарий
-     */
-    #[ORM\Column(type: "text", nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true)]
     private ?string $comment = null;
 
-    /**
-     * Номер
-     */
-    #[ORM\Column(type: "string", nullable: true)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $number = null;
 
-    /**
-     * Дата начала
-     */
-    #[ORM\Column(type: "date", nullable: true)]
-    private ?DateTime $dateFrom = null;
+    #[ORM\Column(type: 'date_immutable', nullable: true)]
+    private ?\DateTimeImmutable $dateFrom = null;
 
-    /**
-     * Дата завершения
-     */
-    #[ORM\Column(type: "date", nullable: true)]
-    private ?DateTime $dateTo = null;
+    #[ORM\Column(type: 'date_immutable', nullable: true)]
+    private ?\DateTimeImmutable $dateTo = null;
 
-    /**
-     * Клиент
-     */
-    #[ORM\ManyToOne(targetEntity: Client::class, inversedBy: "contracts")]
+    #[ORM\ManyToOne(targetEntity: Client::class, inversedBy: 'contracts')]
     private ?Client $client = null;
 
-    /**
-     * Статус
-     */
     #[ORM\ManyToOne(targetEntity: ContractStatus::class)]
     private ?ContractStatus $status = null;
 
-    /**
-     * Документ
-     */
     #[ORM\ManyToOne(targetEntity: Document::class)]
     private ?Document $document = null;
 
-    /**
-     * Пункты
-     */
-    #[ORM\OneToMany(mappedBy: "contract", targetEntity: ContractItem::class, cascade: ["all"], orphanRemoval: true)]
-    #[ORM\OrderBy(["date" => "DESC", "id" => "DESC"])]
+    #[ORM\OneToMany(mappedBy: 'contract', targetEntity: ContractItem::class, cascade: ['all'], orphanRemoval: true)]
+    #[ORM\OrderBy(['date' => 'DESC', 'id' => 'DESC'])]
     private Collection $items;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getNamePrefix(): string
-    {
-        return 'contract';
-    }
-
-    public function __toString()
-    {
-        return $this->getLabel();
-    }
-
-    public function getLabel(): string
-    {
-        $label = $this->getNumber();
-
-        if ($this->getDateFrom() instanceof DateTime) {
-            $label .= ' от ' . $this->getDateFrom()->format('d.m.Y');
-        }
-
-        if ($this->getDateTo() instanceof DateTime) {
-            $label .= ' до ' . $this->getDateTo()->format('d.m.Y');
-        }
-
-        if ($this->getStatus() instanceof ContractStatus) {
-            $label .= ' (' . $this->getStatus() . ')';
-        }
-
-        if ($this->getCreatedBy() instanceof User) {
-            $label .= ', ' . $this->getCreatedBy();
-        }
-
-        return $label;
-    }
 
     public function __construct()
     {
         $this->items = new ArrayCollection();
     }
 
-    public function __set($name, $value)
+    public function __toString(): string
     {
+        return $this->getLabel();
+    }
 
+    public function __set($name, $value): void
+    {
+    }
+
+    public function getNamePrefix(): string
+    {
+        return 'contract';
+    }
+
+    public function getLabel(): string
+    {
+        $label = $this->getNumber();
+
+        if ($this->getDateFrom() instanceof \DateTimeImmutable) {
+            $label .= ' от '.$this->getDateFrom()->format('d.m.Y');
+        }
+
+        if ($this->getDateTo() instanceof \DateTimeImmutable) {
+            $label .= ' до '.$this->getDateTo()->format('d.m.Y');
+        }
+
+        if ($this->getStatus() instanceof ContractStatus) {
+            $label .= ' ('.$this->getStatus().')';
+        }
+
+        if ($this->getCreatedBy() instanceof User) {
+            $label .= ', '.$this->getCreatedBy();
+        }
+
+        return $label;
     }
 
     /**
      * Срок действия договора в месяцах
-     * @return int
      */
     public function getDuration(): ?int
     {
         $dateTo = $this->dateTo;
-        if ($dateTo == null) return null;
+        if ($dateTo === null) {
+            return null;
+        }
+
         return $this->dateFrom->diff($dateTo)->m;
     }
 
-    /**
-     * Set comment
-     *
-     * @param string|null $comment
-     *
-     * @return Contract
-     */
-    public function setComment(?string $comment): Contract
+    public function getComment(): ?string
+    {
+        return $this->comment;
+    }
+
+    public function setComment(?string $comment): self
     {
         $this->comment = $comment;
 
         return $this;
     }
 
-    /**
-     * Get comment
-     *
-     * @return string
-     */
-    public function getComment(): ?string
+    public function getNumber(): ?string
     {
-        return $this->comment;
+        return $this->number;
     }
 
-    /**
-     * Set number
-     *
-     * @param string|null $number
-     *
-     * @return Contract
-     */
-    public function setNumber(?string $number): Contract
+    public function setNumber(?string $number): self
     {
         $this->number = $number;
 
         return $this;
     }
 
-    /**
-     * Get number
-     *
-     * @return string
-     */
-    public function getNumber(): ?string
+    public function getDateFrom(): ?\DateTimeImmutable
     {
-        return $this->number;
+        return $this->dateFrom;
     }
 
-    /**
-     * Set dateFrom
-     *
-     * @param DateTime|null $dateFrom
-     *
-     * @return Contract
-     */
-    public function setDateFrom(?DateTime $dateFrom): Contract
+    public function setDateFrom(?\DateTimeImmutable $dateFrom): self
     {
         $this->dateFrom = $dateFrom;
 
         return $this;
     }
 
-    /**
-     * Get dateFrom
-     *
-     * @return DateTime
-     */
-    public function getDateFrom(): ?DateTime
+    public function getDateTo(): ?\DateTimeImmutable
     {
-        return $this->dateFrom;
+        return $this->dateTo;
     }
 
-    /**
-     * Set dateTo
-     *
-     * @param DateTime|null $dateTo
-     *
-     * @return Contract
-     */
-    public function setDateTo(?DateTime $dateTo): Contract
+    public function setDateTo(?\DateTimeImmutable $dateTo): self
     {
         $this->dateTo = $dateTo;
 
         return $this;
     }
 
-    /**
-     * Get dateTo
-     *
-     * @return DateTime
-     */
-    public function getDateTo(): ?DateTime
+    public function getClient(): ?Client
     {
-        return $this->dateTo;
+        return $this->client;
     }
 
-    /**
-     * Set client
-     *
-     * @param Client|null $client
-     *
-     * @return Contract
-     */
-    public function setClient(Client $client): Contract
+    public function setClient(Client $client): self
     {
         $this->client = $client;
 
         return $this;
     }
 
-    /**
-     * Get client
-     *
-     * @return Client
-     */
-    public function getClient(): ?Client
+    public function getStatus(): ?ContractStatus
     {
-        return $this->client;
+        return $this->status;
     }
 
-    /**
-     * Set status
-     *
-     * @param ContractStatus|null $status
-     *
-     * @return Contract
-     */
-    public function setStatus(ContractStatus $status): Contract
+    public function setStatus(ContractStatus $status): self
     {
         $this->status = $status;
 
         return $this;
     }
 
-    /**
-     * Get status
-     *
-     * @return ContractStatus
-     */
-    public function getStatus(): ?ContractStatus
+    public function getDocument(): ?Document
     {
-        return $this->status;
+        return $this->document;
     }
 
-    /**
-     * Set document
-     *
-     * @param Document|null $document
-     *
-     * @return Contract
-     */
-    public function setDocument(Document $document): Contract
+    public function setDocument(Document $document): self
     {
         $this->document = $document;
 
         return $this;
     }
 
-    /**
-     * Get document
-     *
-     * @return Document
-     */
-    public function getDocument(): ?Document
+    public function getItems(): Collection
     {
-        return $this->document;
+        return $this->items;
     }
 
-    /**
-     * Add item
-     *
-     * @param ContractItem $item
-     *
-     * @return Contract
-     */
-    public function addItem(ContractItem $item): Contract
+    public function addItem(ContractItem $item): self
     {
         $item->setContract($this);
-        $this->items[] = $item;
+        $this->items->add($item);
 
         return $this;
     }
 
-    /**
-     * Remove item
-     *
-     * @param ContractItem $item
-     */
-    public function removeItem(ContractItem $item)
+    public function removeItem(ContractItem $item): void
     {
         $item->setContract();
         $this->items->removeElement($item);
     }
 
-    /**
-     * Get items
-     *
-     * @return Collection
-     */
-    public function getItems()
+    #[Assert\Callback]
+    public function validate(ExecutionContext $context): void
     {
-        return $this->items;
-    }
-
-    /**
-     * @Assert\Callback
-     */
-    public function validate(ExecutionContext $context)
-    {
-        if (!$this->getItems()->count()) {
+        if ($this->items->isEmpty()) {
             $context->addViolation('Не указан пункт', ['items']);
         }
     }

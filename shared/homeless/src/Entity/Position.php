@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\Entity;
 
@@ -13,16 +14,13 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: PositionRepository::class)]
 class Position extends BaseEntity
 {
-    /**
-     * Название
-     */
-    #[ORM\Column(type: "string", nullable: true)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $name = null;
 
     /**
      * Пользователи с данной должностью
      */
-    #[ORM\OneToMany(mappedBy: "position", targetEntity: User::class)]
+    #[ORM\OneToMany(mappedBy: 'position', targetEntity: User::class)]
     private Collection $users;
 
     public function __construct()
@@ -30,61 +28,37 @@ class Position extends BaseEntity
         $this->users = new ArrayCollection();
     }
 
-    /**
-     * Set name
-     *
-     * @param string|null $name
-     *
-     * @return Position
-     */
-    public function setName(?string $name): Position
+    public function __toString(): string
+    {
+        return $this->name ?? '';
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(?string $name): self
     {
         $this->name = $name;
 
         return $this;
     }
 
-    /**
-     * Get name
-     *
-     * @return string
-     */
-    public function getName(): ?string
+    public function getUsers(): Collection
     {
-        return $this->name;
+        return $this->users;
     }
 
-    /**
-     * Add user
-     *
-     * @param User $user
-     *
-     * @return Position
-     */
-    public function addUser(User $user): Position
+    public function addUser(User $user): self
     {
         $this->users[] = $user;
 
         return $this;
     }
 
-    /**
-     * Remove user
-     *
-     * @param User $user
-     */
-    public function removeUser(User $user)
+    public function removeUser(User $user): void
     {
         $this->users->removeElement($user);
-    }
-
-    /**
-     * Get users
-     *
-     * @return Collection
-     */
-    public function getUsers()
-    {
-        return $this->users;
     }
 }

@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\Service;
 
@@ -6,15 +7,11 @@ interface DownloadableInterface
 {
     /**
      * Возвращает префикс названия файла
-     *
-     * @return string
      */
-    public function getNamePrefix();
+    public function getNamePrefix(): string;
 
     /**
      * Возвращает идентификатор сущности
-     *
-     * @return mixed
      */
-    public function getId();
+    public function getId(): ?int;
 }

@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types=1);
+// SPDX-License-Identifier: BSD-3-Clause
 
 namespace App\Admin;
 
@@ -12,20 +13,15 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
     'manager_type' => 'orm',
     'label' => 'render_menu_item',
     'model_class' => MenuItem::class,
-    'label_translator_strategy' => 'sonata.admin.label.strategy.underscore'
+    'label_translator_strategy' => 'sonata.admin.label.strategy.underscore',
 ])]
-class MenuItemAdmin extends BaseAdmin
+class MenuItemAdmin extends AbstractAdmin
 {
-    protected array $datagridValues = array(
+    protected array $datagridValues = [
         '_sort_order' => 'ASC',
         '_sort_by' => 'name',
-    );
+    ];
 
-    protected string $translationDomain = 'App';
-
-    /**
-     * @param FormMapper $form
-     */
     protected function configureFormFields(FormMapper $form): void
     {
         $form
@@ -40,7 +36,8 @@ class MenuItemAdmin extends BaseAdmin
             ->add('enabled', null, [
                 'label' => 'Включен',
                 'required' => false,
-            ]);
+            ])
+        ;
     }
 
     protected function configureShowFields(ShowMapper $show): void
@@ -57,12 +54,10 @@ class MenuItemAdmin extends BaseAdmin
             ->add('enabled', null, [
                 'label' => 'Включен',
                 'required' => false,
-            ]);
+            ])
+        ;
     }
 
-    /**
-     * @param ListMapper $list
-     */
     protected function configureListFields(ListMapper $list): void
     {
         $list
@@ -77,7 +72,8 @@ class MenuItemAdmin extends BaseAdmin
                 'actions' => [
                     'edit' => [],
                     'delete' => [],
-                ]
-            ]);
+                ],
+            ])
+        ;
     }
 }
