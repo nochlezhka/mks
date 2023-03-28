@@ -1,0 +1,56 @@
+name: "CI: Audit"
+
+on: [ push, pull_request ]
+
+jobs:
+  audit:
+    name: Audit
+    strategy:
+      matrix:
+        php-version: ['8.2']
+      fail-fast: false
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout (PR)
+        uses: actions/checkout@v3
+        if: github.event_name == 'pull_request'
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+
+      - name: Checkout (Push)
+        uses: actions/checkout@v3
+        if: github.event_name == 'push'
+        with:
+          fetch-depth: 0
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: composer:v2
+          coverage: xdebug
+        env:
+          fail-fast: true
+
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "DIR=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.composer-cache.outputs.DIR }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install dependencies
+        run: |
+          echo "::group::composer install"
+          composer install -d shared/homeless --no-interaction
+          echo "::endgroup::"
+
+      - name: Auditor
+        uses: docker://nbgrp/auditor:latest
+        with:
+          working-directory: shared/homeless

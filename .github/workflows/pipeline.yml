@@ -23,66 +23,67 @@ jobs:
   build:
     runs-on: ubuntu-20.04
     steps:
-      -
+      - name: Checkout (PR)
         uses: actions/checkout@v3
         if: github.event_name == 'pull_request'
         with:
           ref: ${{ github.event.pull_request.head.ref }}
           fetch-depth: 0
-      -
+
+      - name: Checkout (Push)
         uses: actions/checkout@v3
         if: github.event_name == 'push'
         with:
           fetch-depth: 0
-      -
-        name: Set up QEMU
+
+      - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
         with:
           platforms: all
-      -
-        name: Set up Docker Buildx
+
+      - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
-      -
-        name: Login to Docker Hub
+
+      - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      -
-        name: Set application version
+
+      - name: Set application version
         if: github.event_name == 'push'
         id: set_version
-        uses: kvendingoldo/semver-action@v1.11
+        uses: kvendingoldo/semver-action@v1.15
         with:
           primary_branch: master
-      -
-        name: Set application version (PR)
+
+      - name: Set application version (PR)
         if: github.event_name == 'pull_request'
         run: |
           echo "VERSION_PR=$(date '+%Y%m%d-%H%M%S')-$(echo $GITHUB_SHA | rev | cut -c5- | rev)" >> $GITHUB_ENV
-      -
-        name: Prepare files for docker build
+
+      - name: Prepare files for docker build
         run: |
           cp -r shared/homeless docker/app/files
-      -
-        name: Build app docker image and push it
-        uses: docker/build-push-action@v3
+
+      - name: Build app docker image and push it
+        uses: docker/build-push-action@v4
         with:
           context: ./docker/app
           file: ./docker/app/Dockerfile
           push: true
           tags: |
             ${{ env.registry_name }}/${{ env.app_image_name }}:${{ steps.set_version.outputs.safe_version }}${{ env.VERSION_PR }}
-      -
-        name: Print image version
+
+      - name: Print image version
         run: echo ${{ steps.set_version.outputs.safe_version }}
-      -
-        name: Output image version
+
+      - name: Output image version
         run: |
           echo '### Image version: ' >> $GITHUB_STEP_SUMMARY
           echo '${{ steps.set_version.outputs.safe_version }}${{ env.VERSION_PR }}' >> $GITHUB_STEP_SUMMARY
-      -
-        name: Telegram success notification
+
+      - name: Telegram success notification
         uses: appleboy/telegram-action@master
         if: success()
         with:
@@ -92,8 +93,8 @@ jobs:
           message: |
             *[mks]*
             ✅ Version *${{ steps.set_version.outputs.safe_version }}${{ env.VERSION_PR }}* has been built successfully from *${{ github.ref }}* branch
-      -
-        name: Telegram failure notification
+
+      - name: Telegram failure notification
         uses: appleboy/telegram-action@master
         if: failure()
         with:
