@@ -9,10 +9,11 @@ use Sonata\AdminBundle\Form\FormMapper;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
 #[AutoconfigureTag(name: 'sonata.admin', attributes: [
-    'manager_type' => 'orm',
+    'code' => 'app.position.admin',
     'label' => 'positions',
-    'model_class' => Position::class,
     'label_translator_strategy' => 'sonata.admin.label.strategy.underscore',
+    'manager_type' => 'orm',
+    'model_class' => Position::class,
 ])]
 class PositionAdmin extends AbstractAdmin
 {

@@ -14,18 +14,17 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
  * ID формы анкеты захардкожен в `$this->formId`
  */
 #[AutoconfigureTag(name: 'sonata.admin', attributes: [
-    'manager_type' => 'orm',
+    'code' => 'app.resident_form_response.admin',
     'label' => 'resident_form_response',
-    'model_class' => ClientFormResponse::class,
     'label_translator_strategy' => 'sonata.admin.label.strategy.underscore',
+    'manager_type' => 'orm',
+    'model_class' => ClientFormResponse::class,
 ])]
 class ResidentFormResponseAdmin extends ClientFormResponseAdmin
 {
     protected ?int $formId = ClientForm::RESIDENT_QUESTIONNAIRE_FORM_ID;
 
     // переопределения для роутов и breadcrumbs
-    protected $baseRouteName = 'resident_form_response';
-    protected $baseRoutePattern = 'resident_form_response';
     protected $classnameLabel = 'resident_form_response';
 
     public function __construct(MetaService $metaService)
@@ -47,5 +46,15 @@ class ResidentFormResponseAdmin extends ClientFormResponseAdmin
         }
 
         parent::preValidate($object);
+    }
+
+    protected function generateBaseRouteName(bool $isChildAdmin = false): string
+    {
+        return 'resident_form_response';
+    }
+
+    protected function generateBaseRoutePattern(bool $isChildAdmin = false): string
+    {
+        return 'resident_form_response';
     }
 }

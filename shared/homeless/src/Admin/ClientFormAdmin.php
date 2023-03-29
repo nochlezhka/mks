@@ -13,10 +13,11 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 #[AutoconfigureTag(name: 'sonata.admin', attributes: [
-    'manager_type' => 'orm',
+    'code' => 'app.client_form.admin',
     'label' => 'client_forms',
-    'model_class' => ClientForm::class,
     'label_translator_strategy' => 'sonata.admin.label.strategy.underscore',
+    'manager_type' => 'orm',
+    'model_class' => ClientForm::class,
 ])]
 class ClientFormAdmin extends AbstractAdmin
 {
@@ -24,12 +25,6 @@ class ClientFormAdmin extends AbstractAdmin
         '_sort_order' => 'ASC',
         '_sort_by' => 'sort',
     ];
-
-    public function __construct(ClientFormFieldAdmin $clientFormFieldAdmin)
-    {
-        $this->addChild($clientFormFieldAdmin, 'form');
-        parent::__construct();
-    }
 
     protected function configureFormFields(FormMapper $form): void
     {
@@ -63,7 +58,7 @@ class ClientFormAdmin extends AbstractAdmin
                     'uri' => $admin->generateUrl('edit', ['id' => $id]),
                 ])
                 ->addChild('Список полей', [
-                    'uri' => $admin->generateUrl(ClientFormFieldAdmin::class.'.list', ['id' => $id]),
+                    'uri' => $admin->generateUrl('app.client_form_field.admin.list', ['id' => $id]),
                 ])
             ;
         }

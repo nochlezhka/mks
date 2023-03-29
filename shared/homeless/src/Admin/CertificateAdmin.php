@@ -23,11 +23,12 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
 #[AutoconfigureTag(name: 'sonata.admin', attributes: [
-    'manager_type' => 'orm',
-    'label' => 'certificates',
-    'model_class' => Certificate::class,
+    'code' => 'app.certificate.admin',
     'controller' => CRUDController::class,
+    'label' => 'certificates',
     'label_translator_strategy' => 'sonata.admin.label.strategy.underscore',
+    'manager_type' => 'orm',
+    'model_class' => Certificate::class,
 ])]
 class CertificateAdmin extends AbstractAdmin
 {

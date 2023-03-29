@@ -13,11 +13,12 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 #[AutoconfigureTag(name: 'sonata.admin', attributes: [
-    'manager_type' => 'orm',
-    'label' => 'resident_questionnaire',
-    'model_class' => ResidentQuestionnaire::class,
+    'code' => 'app.resident_questionnaire.admin',
     'controller' => CRUDController::class,
+    'label' => 'resident_questionnaire',
     'label_translator_strategy' => 'sonata.admin.label.strategy.underscore',
+    'manager_type' => 'orm',
+    'model_class' => ResidentQuestionnaire::class,
 ])]
 
 class ResidentQuestionnaireAdmin extends AbstractAdmin

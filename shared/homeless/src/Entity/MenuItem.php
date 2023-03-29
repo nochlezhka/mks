@@ -27,7 +27,7 @@ class MenuItem extends BaseEntity
     #[ORM\Column(type: 'string', unique: true, nullable: true)]
     private ?string $code = null;
 
-    #[ORM\Column(type: 'boolean', options: ['default' => true])]
+    #[ORM\Column(type: 'boolean')]
     private bool $enabled = true;
 
     public function __toString(): string

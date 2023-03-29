@@ -49,11 +49,12 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 #[AutoconfigureTag(name: 'sonata.admin', attributes: [
-    'manager_type' => 'orm',
-    'label' => 'Клиенты',
-    'model_class' => Client::class,
+    'code' => 'app.client.admin',
     'controller' => ClientController::class,
+    'label' => 'Клиенты',
     'label_translator_strategy' => 'sonata.admin.label.strategy.underscore',
+    'manager_type' => 'orm',
+    'model_class' => Client::class,
 ])]
 class ClientAdmin extends AbstractAdmin
 {
@@ -96,35 +97,11 @@ class ClientAdmin extends AbstractAdmin
     private array $choiceTypeMaps = [];
 
     public function __construct(
-        NoteAdmin $noteAdmin,
-        ServiceAdmin $serviceAdmin,
-        DocumentAdmin $documentAdmin,
-        DocumentFileAdmin $documentFileAdmin,
-        ContractAdmin $contractAdmin,
-        ShelterHistoryAdmin $shelterHistoryAdmin,
-        ResidentQuestionnaireAdmin $residentQuestionnaireAdmin,
-        CertificateAdmin $certificateAdmin,
-        GeneratedDocumentAdmin $generatedDocumentAdmin,
-        NoticeAdmin $noticeAdmin,
-        HistoryDownloadAdmin $historyDownloadAdmin,
-        ResidentFormResponseAdmin $residentFormResponseAdmin,
         private readonly AdditionalFieldToArrayTransformer $additionalFieldToArrayTransformer,
         private readonly AuthorizationCheckerInterface $authorizationChecker,
         private readonly ClientFieldRepository $clientFieldRepository,
         private readonly ClientFieldValueRepository $clientFieldValueRepository,
     ) {
-        $this->addChild($noteAdmin, 'client');
-        $this->addChild($serviceAdmin, 'client');
-        $this->addChild($documentAdmin, 'client');
-        $this->addChild($documentFileAdmin, 'client');
-        $this->addChild($contractAdmin, 'client');
-        $this->addChild($shelterHistoryAdmin, 'client');
-        $this->addChild($residentQuestionnaireAdmin, 'client');
-        $this->addChild($certificateAdmin, 'client');
-        $this->addChild($generatedDocumentAdmin, 'client');
-        $this->addChild($noticeAdmin, 'client');
-        $this->addChild($historyDownloadAdmin, 'client');
-        $this->addChild($residentFormResponseAdmin, 'client');
         parent::__construct();
     }
 
@@ -361,12 +338,7 @@ class ClientAdmin extends AbstractAdmin
         }
     }
 
-    public function getContractCreatedByFilter(
-        ProxyQueryInterface $queryBuilder,
-        string $alias,
-        string $_,
-        FilterData $data,
-    ): bool {
+    public function getContractCreatedByFilter(ProxyQueryInterface $queryBuilder, string $alias, string $_, FilterData $data): bool {
         if (!$data->hasValue()) {
             return false;
         }
@@ -379,12 +351,7 @@ class ClientAdmin extends AbstractAdmin
         return true;
     }
 
-    public function getContractStatusFilter(
-        ProxyQueryInterface $queryBuilder,
-        string $alias,
-        string $_,
-        FilterData $data,
-    ): bool {
+    public function getContractStatusFilter(ProxyQueryInterface $queryBuilder, string $alias, string $_, FilterData $data): bool {
         if (!$data->hasValue()) {
             return false;
         }
@@ -400,12 +367,7 @@ class ClientAdmin extends AbstractAdmin
         return true;
     }
 
-    public function getClientSearchFilter(
-        ProxyQueryInterface $queryBuilder,
-        string $alias,
-        string $_,
-        FilterData $data,
-    ): bool {
+    public function getClientSearchFilter(ProxyQueryInterface $queryBuilder, string $alias, string $_, FilterData $data): bool {
         if (!$data->hasValue()) {
             return false;
         }
@@ -422,12 +384,7 @@ class ClientAdmin extends AbstractAdmin
         return true;
     }
 
-    public function getClientSearchLastName(
-        ProxyQueryInterface $queryBuilder,
-        string $alias,
-        string $_,
-        FilterData $data,
-    ): bool {
+    public function getClientSearchLastName(ProxyQueryInterface $queryBuilder, string $alias, string $_, FilterData $data): bool {
         if (!$data->hasValue()) {
             return false;
         }
@@ -442,12 +399,7 @@ class ClientAdmin extends AbstractAdmin
         return true;
     }
 
-    public function getClientSearchFirstName(
-        ProxyQueryInterface $queryBuilder,
-        string $alias,
-        string $_,
-        FilterData $data,
-    ): bool {
+    public function getClientSearchFirstName(ProxyQueryInterface $queryBuilder, string $alias, string $_, FilterData $data): bool {
         if (!$data->hasValue()) {
             return false;
         }
@@ -462,12 +414,7 @@ class ClientAdmin extends AbstractAdmin
         return true;
     }
 
-    public function getClientSearchMiddleName(
-        ProxyQueryInterface $queryBuilder,
-        string $alias,
-        string $_,
-        FilterData $data,
-    ): bool {
+    public function getClientSearchMiddleName(ProxyQueryInterface $queryBuilder, string $alias, string $_, FilterData $data): bool {
         if (!$data->hasValue()) {
             return false;
         }
@@ -482,12 +429,7 @@ class ClientAdmin extends AbstractAdmin
         return true;
     }
 
-    public function getClientSearchNote(
-        ProxyQueryInterface $queryBuilder,
-        string $alias,
-        string $_,
-        FilterData $data,
-    ): bool {
+    public function getClientSearchNote(ProxyQueryInterface $queryBuilder, string $alias, string $_, FilterData $data): bool {
         if (!$data->hasValue()) {
             return false;
         }
@@ -504,12 +446,7 @@ class ClientAdmin extends AbstractAdmin
         return true;
     }
 
-    public function getClientSearchContract(
-        ProxyQueryInterface $queryBuilder,
-        string $alias,
-        string $_,
-        FilterData $data,
-    ): bool {
+    public function getClientSearchContract(ProxyQueryInterface $queryBuilder, string $alias, string $_, FilterData $data): bool {
         if (!$data->hasValue()) {
             return false;
         }
@@ -852,11 +789,7 @@ class ClientAdmin extends AbstractAdmin
     /**
      * @throws NonUniqueResultException
      */
-    protected function configureTabMenu(
-        MenuItemInterface $menu,
-        string $action,
-        ?AdminInterface $childAdmin = null,
-    ): void {
+    protected function configureTabMenu(MenuItemInterface $menu, string $action, ?AdminInterface $childAdmin = null): void {
         if (!$childAdmin && !\in_array($action, ['show', 'edit'], true)) {
             return;
         }
@@ -870,7 +803,7 @@ class ClientAdmin extends AbstractAdmin
         ) {
             $menu->addChild(
                 'Документы',
-                ['uri' => $admin->generateUrl(DocumentAdmin::class.'.list', ['id' => $id])],
+                ['uri' => $admin->generateUrl('app.document.admin.list', ['id' => $id])],
             );
         }
 
@@ -880,7 +813,7 @@ class ClientAdmin extends AbstractAdmin
         ) {
             $menu->addChild(
                 'Файлы',
-                ['uri' => $admin->generateUrl(DocumentFileAdmin::class.'.list', ['id' => $id])],
+                ['uri' => $admin->generateUrl('app.document_file.admin.list', ['id' => $id])],
             );
         }
 
@@ -890,7 +823,7 @@ class ClientAdmin extends AbstractAdmin
         ) {
             $menu->addChild(
                 'Сервисные планы',
-                ['uri' => $admin->generateUrl(ContractAdmin::class.'.list', ['id' => $id])],
+                ['uri' => $admin->generateUrl('app.contract.admin.list', ['id' => $id])],
             );
         }
         if ($this->isMenuItemEnabled(MenuItem::CODE_SHELTER_HISTORY) && $this->authorizationChecker->isGranted(Role::SUPER_ADMIN)
@@ -900,7 +833,7 @@ class ClientAdmin extends AbstractAdmin
             if ($this->isMenuItemEnabled(MenuItem::CODE_SHELTER_HISTORY) && $this->isMenuItemEnabledShelterHistory($id)) {
                 $menu->addChild(
                     'Проживание в приюте',
-                    ['uri' => $admin->generateUrl(ShelterHistoryAdmin::class.'.list', ['id' => $id])],
+                    ['uri' => $admin->generateUrl('app.shelter_history.admin.list', ['id' => $id])],
                 );
             }
         }
@@ -914,7 +847,7 @@ class ClientAdmin extends AbstractAdmin
                 $name = $clientFormsEnabled ? 'Старая анкета' : 'Анкета';
                 $menu->addChild(
                     $name,
-                    ['uri' => $admin->generateUrl(ResidentQuestionnaireAdmin::class.'.list', ['id' => $id])],
+                    ['uri' => $admin->generateUrl('app.resident_questionnaire.admin.list', ['id' => $id])],
                 );
             }
         }
@@ -926,7 +859,7 @@ class ClientAdmin extends AbstractAdmin
                 $name = $clientFormsEnabled ? 'Анкета' : 'Новая анкета';
                 $menu->addChild(
                     $name,
-                    ['uri' => $admin->generateUrl(ResidentFormResponseAdmin::class.'.list', ['id' => $id])],
+                    ['uri' => $admin->generateUrl('app.resident_form_response.admin.list', ['id' => $id])],
                 );
             }
         }
@@ -938,7 +871,7 @@ class ClientAdmin extends AbstractAdmin
             if ($this->isMenuItemEnabled(MenuItem::CODE_CERTIFICATE)) {
                 $menu->addChild(
                     'Выдать справку',
-                    ['uri' => $admin->generateUrl(CertificateAdmin::class.'.list', ['id' => $id])],
+                    ['uri' => $admin->generateUrl('app.certificate.admin.list', ['id' => $id])],
                 );
             }
         }
@@ -950,7 +883,7 @@ class ClientAdmin extends AbstractAdmin
             if ($this->isMenuItemEnabled(MenuItem::CODE_GENERATED_DOCUMENT)) {
                 $menu->addChild(
                     'Построить документ',
-                    ['uri' => $admin->generateUrl(GeneratedDocumentAdmin::class.'.list', ['id' => $id])],
+                    ['uri' => $admin->generateUrl('app.generated_document.admin.list', ['id' => $id])],
                 );
             }
         }
@@ -971,7 +904,7 @@ class ClientAdmin extends AbstractAdmin
 
         $menu->addChild(
             'Напоминания'.($noticesCount > 0 ? " ({$noticesCount})" : ''),
-            ['uri' => $admin->generateUrl(NoticeAdmin::class.'.list', ['id' => $id, 'filter' => ['date' => ['value' => ['end' => date('d.m.Y')]], 'viewed' => ['value' => 2]]])],
+            ['uri' => $admin->generateUrl('app.notice.admin.list', ['id' => $id, 'filter' => ['date' => ['value' => ['end' => date('d.m.Y')]], 'viewed' => ['value' => 2]]])],
         );
     }
 

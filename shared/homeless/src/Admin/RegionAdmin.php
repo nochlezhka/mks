@@ -11,10 +11,11 @@ use Sonata\AdminBundle\Form\FormMapper;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
 #[AutoconfigureTag(name: 'sonata.admin', attributes: [
-    'manager_type' => 'orm',
+    'code' => 'app.region.admin',
     'label' => 'regions',
-    'model_class' => Region::class,
     'label_translator_strategy' => 'sonata.admin.label.strategy.underscore',
+    'manager_type' => 'orm',
+    'model_class' => Region::class,
 ])]
 class RegionAdmin extends AbstractAdmin
 {
@@ -22,13 +23,6 @@ class RegionAdmin extends AbstractAdmin
         '_sort_order' => 'ASC',
         '_sort_by' => 'name',
     ];
-
-    public function __construct(
-        DistrictAdmin $districtAdmin,
-    ) {
-        $this->addChild($districtAdmin, 'region');
-        parent::__construct();
-    }
 
     protected function configureFormFields(FormMapper $form): void
     {
@@ -75,7 +69,7 @@ class RegionAdmin extends AbstractAdmin
 
         $menu->addChild(
             'Районы',
-            ['uri' => $admin->generateUrl(DistrictAdmin::class.'.list', ['id' => $id])],
+            ['uri' => $admin->generateUrl('app.district.admin.list', ['id' => $id])],
         );
     }
 }

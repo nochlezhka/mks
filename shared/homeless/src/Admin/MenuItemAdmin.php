@@ -10,10 +10,11 @@ use Sonata\AdminBundle\Show\ShowMapper;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
 #[AutoconfigureTag(name: 'sonata.admin', attributes: [
-    'manager_type' => 'orm',
+    'code' => 'app.menu_item.admin',
     'label' => 'render_menu_item',
-    'model_class' => MenuItem::class,
     'label_translator_strategy' => 'sonata.admin.label.strategy.underscore',
+    'manager_type' => 'orm',
+    'model_class' => MenuItem::class,
 ])]
 class MenuItemAdmin extends AbstractAdmin
 {

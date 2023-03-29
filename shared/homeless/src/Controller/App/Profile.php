@@ -3,7 +3,6 @@
 
 namespace App\Controller\App;
 
-use App\Admin\UserAdmin;
 use App\Security\User\Role;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,7 +19,7 @@ class Profile extends AbstractController
         $user = $this->getUser();
 
         return $this->forward('sonata.admin.controller.crud::editAction', [], [
-            '_sonata_admin' => UserAdmin::class,
+            '_sonata_admin' => 'sonata.user.admin.user',
             'id' => $user->getId(),
         ]);
     }

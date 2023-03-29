@@ -9,10 +9,11 @@ use Sonata\AdminBundle\Form\FormMapper;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
 #[AutoconfigureTag(name: 'sonata.admin', attributes: [
-    'manager_type' => 'orm',
+    'code' => 'app.client_field_option.admin',
     'label' => 'choice_field_options',
-    'model_class' => ClientFieldOption::class,
     'label_translator_strategy' => 'sonata.admin.label.strategy.underscore',
+    'manager_type' => 'orm',
+    'model_class' => ClientFieldOption::class,
 ])]
 class ClientFieldOptionAdmin extends AbstractAdmin
 {

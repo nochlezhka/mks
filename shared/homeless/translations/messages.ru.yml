@@ -105,6 +105,7 @@ form:
   group_generated_document_end_texts: Заключения построенных документов
   group_positions: Должности
   group_shelter_rooms: Приют
+  group_client_forms: Редактирование форм
   group_client_form_field: Поля формы
 
 show:

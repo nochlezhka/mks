@@ -18,11 +18,12 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
 #[AutoconfigureTag(name: 'sonata.admin', attributes: [
-    'manager_type' => 'orm',
-    'label' => 'Построить документ',
-    'model_class' => GeneratedDocument::class,
+    'code' => 'app.generated_document.admin',
     'controller' => CRUDController::class,
+    'label' => 'Построить документ',
     'label_translator_strategy' => 'sonata.admin.label.strategy.underscore',
+    'manager_type' => 'orm',
+    'model_class' => GeneratedDocument::class,
 ])]
 class GeneratedDocumentAdmin extends AbstractAdmin
 {
@@ -97,7 +98,7 @@ class GeneratedDocumentAdmin extends AbstractAdmin
             ])
             ->add('createdBy', null, [
                 'label' => 'Кем добавлен',
-                'admin_code' => UserAdmin::class,
+                'admin_code' => 'sonata.user.admin.user',
             ])
             ->add(ListMapper::NAME_ACTIONS, ListMapper::TYPE_ACTIONS, [
                 'label' => 'Действие',

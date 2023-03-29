@@ -3,7 +3,6 @@
 
 namespace App\Controller\App\Client;
 
-use App\Admin\ClientAdmin;
 use App\Security\User\Role;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -29,7 +28,7 @@ class Search extends AbstractController
         }
 
         return $this->forward('SonataAdminBundle:CRUD:list', [], [
-            '_sonata_admin' => ClientAdmin::class,
+            '_sonata_admin' => 'app.client.admin',
             'filter' => $filter,
         ]);
     }

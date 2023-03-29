@@ -9,10 +9,11 @@ use Sonata\AdminBundle\Form\FormMapper;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
 #[AutoconfigureTag(name: 'sonata.admin', attributes: [
-    'manager_type' => 'orm',
+    'code' => 'app.generated_document_start_text.admin',
     'label' => 'generated_document_start_texts',
-    'model_class' => GeneratedDocumentStartText::class,
     'label_translator_strategy' => 'sonata.admin.label.strategy.underscore',
+    'manager_type' => 'orm',
+    'model_class' => GeneratedDocumentStartText::class,
 ])]
 class GeneratedDocumentStartTextAdmin extends AbstractAdmin
 {

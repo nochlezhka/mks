@@ -3,7 +3,6 @@
 
 namespace App\Controller\App\Client;
 
-use App\Admin\ClientAdmin;
 use App\Security\User\Role;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,7 +16,7 @@ class Create extends AbstractController
     public function __invoke(): Response
     {
         return $this->forward('sonata.admin.controller.crud::createAction', [], [
-            '_sonata_admin' => ClientAdmin::class,
+            '_sonata_admin' => 'app.client.admin',
         ]);
     }
 }

@@ -12,10 +12,11 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 #[AutoconfigureTag(name: 'sonata.admin', attributes: [
-    'manager_type' => 'orm',
+    'code' => 'app.service_type.admin',
     'label' => 'service_types',
-    'model_class' => ServiceType::class,
     'label_translator_strategy' => 'sonata.admin.label.strategy.underscore',
+    'manager_type' => 'orm',
+    'model_class' => ServiceType::class,
 ])]
 class ServiceTypeAdmin extends AbstractAdmin
 {

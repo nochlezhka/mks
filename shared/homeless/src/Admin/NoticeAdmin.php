@@ -21,10 +21,11 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 #[AutoconfigureTag(name: 'sonata.admin', attributes: [
-    'manager_type' => 'orm',
+    'code' => 'app.notice.admin',
     'label' => 'notices',
-    'model_class' => Notice::class,
     'label_translator_strategy' => 'sonata.admin.label.strategy.underscore',
+    'manager_type' => 'orm',
+    'model_class' => Notice::class,
 ])]
 class NoticeAdmin extends AbstractAdmin
 {
@@ -163,7 +164,7 @@ class NoticeAdmin extends AbstractAdmin
             ])
             ->add('createdBy', null, [
                 'label' => 'Кем добавлено',
-                'admin_code' => UserAdmin::class,
+                'admin_code' => 'sonata.user.admin.user',
             ])
             ->add(ListMapper::NAME_ACTIONS, ListMapper::TYPE_ACTIONS, [
                 'label' => 'Действие',
@@ -209,7 +210,7 @@ class NoticeAdmin extends AbstractAdmin
             ])
             ->add('createdBy', null, [
                 'label' => 'Кем добавлено',
-                'admin_code' => UserAdmin::class,
+                'admin_code' => 'sonata.user.admin.user',
                 'advanced_filter' => false,
             ])
             ->add('id', CallbackFilter::class, [

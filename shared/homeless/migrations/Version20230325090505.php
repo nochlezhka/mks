@@ -7,9 +7,6 @@ namespace DoctrineMigrations;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
-/**
- * Auto-generated Migration: Please modify to your needs!
- */
 final class Version20230325090505 extends AbstractMigration
 {
     public function getDescription(): string
@@ -19,27 +16,26 @@ final class Version20230325090505 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('UPDATE certificate_type SET downloadable = 0 WHERE downloadable IS NULL');
         $this->addSql('UPDATE certificate_type SET show_photo = 0 WHERE show_photo IS NULL');
         $this->addSql('UPDATE certificate_type SET show_date = 0 WHERE show_date IS NULL');
         $this->addSql('ALTER TABLE certificate_type CHANGE downloadable downloadable TINYINT(1) NOT NULL, CHANGE show_photo show_photo TINYINT(1) NOT NULL, CHANGE show_date show_date TINYINT(1) NOT NULL');
 
         $this->addSql('UPDATE client SET is_homeless = 1 WHERE is_homeless IS NULL');
-        $this->addSql('ALTER TABLE client CHANGE is_homeless is_homeless TINYINT(1) DEFAULT 1 NOT NULL');
+        $this->addSql('ALTER TABLE client CHANGE is_homeless is_homeless TINYINT(1) NOT NULL');
 
         $this->addSql('UPDATE client_field SET enabled = 1 WHERE enabled IS NULL');
         $this->addSql('UPDATE client_field SET required = 0 WHERE required IS NULL');
         $this->addSql('UPDATE client_field SET multiple = 0 WHERE multiple IS NULL');
         $this->addSql('UPDATE client_field SET mandatory_for_homeless = 0 WHERE mandatory_for_homeless IS NULL');
         $this->addSql('UPDATE client_field SET enabled_for_homeless = 1 WHERE enabled_for_homeless IS NULL');
-        $this->addSql('ALTER TABLE client_field CHANGE enabled enabled TINYINT(1) DEFAULT 1 NOT NULL, CHANGE required required TINYINT(1) NOT NULL, CHANGE multiple multiple TINYINT(1) NOT NULL, CHANGE mandatory_for_homeless mandatory_for_homeless TINYINT(1) NOT NULL, CHANGE enabled_for_homeless enabled_for_homeless TINYINT(1) DEFAULT 1 NOT NULL');
+        $this->addSql('ALTER TABLE client_field CHANGE enabled enabled TINYINT(1) NOT NULL, CHANGE required required TINYINT(1) NOT NULL, CHANGE multiple multiple TINYINT(1) NOT NULL, CHANGE mandatory_for_homeless mandatory_for_homeless TINYINT(1) NOT NULL, CHANGE enabled_for_homeless enabled_for_homeless TINYINT(1) NOT NULL');
 
         $this->addSql('UPDATE client_field_option SET not_single = 0 WHERE not_single IS NULL');
         $this->addSql('ALTER TABLE client_field_option CHANGE not_single not_single TINYINT(1) NOT NULL');
 
         $this->addSql('UPDATE menu_item SET enabled = 1 WHERE enabled IS NULL');
-        $this->addSql('ALTER TABLE menu_item CHANGE enabled enabled TINYINT(1) DEFAULT 1 NOT NULL');
+        $this->addSql('ALTER TABLE menu_item CHANGE enabled enabled TINYINT(1) NOT NULL');
 
         $this->addSql('UPDATE note SET important = 0 WHERE important IS NULL');
         $this->addSql('ALTER TABLE note CHANGE important important TINYINT(1) NOT NULL');
@@ -59,7 +55,6 @@ final class Version20230325090505 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        // this down() migration is auto-generated, please modify it to your needs
         $this->addSql('ALTER TABLE certificate_type CHANGE downloadable downloadable TINYINT(1) DEFAULT NULL, CHANGE show_photo show_photo TINYINT(1) DEFAULT NULL, CHANGE show_date show_date TINYINT(1) DEFAULT NULL');
         $this->addSql('ALTER TABLE client CHANGE is_homeless is_homeless TINYINT(1) DEFAULT NULL');
         $this->addSql('ALTER TABLE client_field CHANGE enabled enabled TINYINT(1) DEFAULT NULL, CHANGE enabled_for_homeless enabled_for_homeless TINYINT(1) DEFAULT NULL, CHANGE required required TINYINT(1) DEFAULT NULL, CHANGE mandatory_for_homeless mandatory_for_homeless TINYINT(1) DEFAULT NULL, CHANGE multiple multiple TINYINT(1) DEFAULT NULL');

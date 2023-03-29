@@ -17,10 +17,11 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
 #[AutoconfigureTag(name: 'sonata.admin', attributes: [
-    'manager_type' => 'orm',
+    'code' => 'app.shelter_history.admin',
     'label' => 'shelter_history',
-    'model_class' => ShelterHistory::class,
     'label_translator_strategy' => 'sonata.admin.label.strategy.underscore',
+    'manager_type' => 'orm',
+    'model_class' => ShelterHistory::class,
 ])]
 class ShelterHistoryAdmin extends AbstractAdmin
 {

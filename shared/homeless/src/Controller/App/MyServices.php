@@ -3,7 +3,6 @@
 
 namespace App\Controller\App;
 
-use App\Admin\ServiceAdmin;
 use App\Security\User\Role;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,7 +22,7 @@ class MyServices extends AbstractController
         $user = $this->getUser();
 
         return $this->forward('sonata.admin.controller.crud::listAction', [], [
-            '_sonata_admin' => ServiceAdmin::class,
+            '_sonata_admin' => 'app.service.admin',
             'filter' => ['createdBy' => ['value' => $user->getId()]],
         ]);
     }
