@@ -1,27 +1,33 @@
 #!/bin/sh
-#
-# Prepare additional configuration file and run nginx
-#
 
 set -ue
 
-# File creation mask
+MODE=${MODE:-http}
+DOMAIN=${DOMAIN:-_}
+
+#
+# Choose nginx mode
+#
 umask 0027
-
-opt_conf_file=/etc/nginx/conf.d/opts.conf
-conf_file=/etc/nginx/conf.d/www.conf
-
-cat << _EOF_ >> $opt_conf_file
-fastcgi_param HTTPS ${NGINX_HTTPS:-off};
-_EOF_
-
-if [ ${NGINX_HTTPS:-off} == on ]; then
-  export return="return 301 https://\$host\$request_uri;"
+if [ "${MODE}" = "http" ]; then
+  envsubst '${DOMAIN}' < /etc/nginx/templates/http/default.conf.tpl > /etc/nginx/conf.d/default.conf
 fi
 
-envsubst '${return}' < /etc/nginx/conf.d/www.conf.tpl > /etc/nginx/conf.d/www.conf
+if [ "${MODE}" = "https_init" ]; then
+  envsubst '${DOMAIN}' < /etc/nginx/templates/https/init.conf.tpl > /etc/nginx/conf.d/default.conf
+fi
+
+if [ "${MODE}" = "https" ]; then
+  envsubst '${DOMAIN}' < /etc/nginx/templates/https/default.conf.tpl > /etc/nginx/conf.d/default.conf
+  cp /etc/nginx/templates/https/options-ssl-nginx.conf /etc/nginx/conf.d/
+fi
 
 #
-# start nginx
+# Run nginx
 #
+while :
+do
+    sleep 6h
+    /usr/sbin/nginx -s reload
+done &
 /usr/sbin/nginx
