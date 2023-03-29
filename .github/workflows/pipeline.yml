@@ -55,6 +55,8 @@ jobs:
         uses: kvendingoldo/semver-action@v1.15
         with:
           primary_branch: master
+          enable_github_releases: true
+          github_token: "${{ secrets.GITHUB_TOKEN }}"
       -
         name: Set application version (PR)
         if: github.event_name == 'pull_request'
@@ -71,6 +73,8 @@ jobs:
           context: ./docker/app
           file: ./docker/app/Dockerfile
           push: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
           tags: |
             ${{ env.registry_name }}/${{ env.app_image_name }}:${{ steps.set_version.outputs.safe_version }}${{ env.VERSION_PR }}
       -
