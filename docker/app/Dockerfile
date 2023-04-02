@@ -49,9 +49,9 @@ ENV HOME=/home/nochlezhka \
     XDG_RUNTIME_DIR=/run/user/1000 \
     APP_ENV=prod
 
-COPY --chown=nochlezhka files/homeless /var/www/symfony
-COPY --chown=nochlezhka files/php/symfony.ini /usr/local/etc/php/conf.d/
-COPY --chown=nochlezhka files/nginx /etc/nginx/
+COPY --chown=nochlezhka shared/homeless /var/www/symfony
+COPY --chown=nochlezhka docker/app/files/php/symfony.ini /usr/local/etc/php/conf.d/
+COPY --chown=nochlezhka docker/app/files/nginx /etc/nginx/
 RUN chmod +x /etc/nginx/entrypoint.sh
 
 WORKDIR /var/www/symfony

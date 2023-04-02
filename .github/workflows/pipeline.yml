@@ -64,14 +64,10 @@ jobs:
         run: |
           echo "VERSION_PR=$(date '+%Y%m%d-%H%M%S')-$(echo $GITHUB_SHA | rev | cut -c5- | rev)" >> $GITHUB_ENV
 
-      - name: Prepare files for docker build
-        run: |
-          cp -r shared/homeless docker/app/files
-
       - name: Build app docker image and push it
         uses: docker/build-push-action@v4
         with:
-          context: ./docker/app
+          context: .
           file: ./docker/app/Dockerfile
           push: true
           cache-from: type=gha
