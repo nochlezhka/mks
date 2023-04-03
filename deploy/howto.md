@@ -44,11 +44,11 @@ docker-compose --profile certbot up -d
 ```
 
 ## Конфигурация
-1. выполните следующую команду чтобы выполнить миграцию базы данных
+1. выполните следующую команду, чтобы выполнить миграцию базы данных
 ```sh
-docker exec mks-app ./app/console doctrine:migrations:migrate --no-interaction --env=prod
+docker exec mks-app ./bin/console doctrine:migrations:migrate --no-interaction --env=prod
 ```
 2. сконфигурируйте пароль
 ```sh
-docker exec mks-app ./app/console fos:user:change-password admin "<PASSWORD>" --env=prod
+docker exec mks-app ./bin/console fos:user:change-password admin "<PASSWORD>" --env=prod
 ```

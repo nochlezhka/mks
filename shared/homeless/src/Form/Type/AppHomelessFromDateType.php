@@ -207,7 +207,7 @@ class AppHomelessFromDateType extends AbstractType
             'years' => range($year - 5, $year + 5),
             'months' => range(1, 12),
             'widget' => 'choice',
-            'input' => 'datetime',
+            'input' => 'datetime_immutable',
             'format' => $format,
             'model_timezone' => null,
             'view_timezone' => null,
@@ -230,7 +230,7 @@ class AppHomelessFromDateType extends AbstractType
         $resolver->setNormalizer('choice_translation_domain', $choiceTranslationDomainNormalizer);
 
         $resolver->setAllowedValues('input', [
-            'datetime',
+            'datetime_immutable',
             'string',
             'timestamp',
             'array',

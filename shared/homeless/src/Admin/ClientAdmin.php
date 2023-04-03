@@ -574,9 +574,9 @@ class ClientAdmin extends AbstractAdmin
                     if ($field->isMultiple()) {
                         $options['multiple'] = true;
                     }
-                    // когда у селекта выставлен `required`, по-умолчанию выбирается первый элемент из списка
-                    // Это может быть нежелательно для скрываемых полей - мы делаем их необязательными, если они скрыты
-                    // Чтобы избежать незаметной отправки непустого значения, указываем `placeholder`
+                    // Когда у селекта выставлен `required`, по-умолчанию выбирается первый элемент из списка.
+                    // Это может быть нежелательно для скрываемых полей - мы делаем их необязательными, если они скрыты.
+                    // Чтобы избежать незаметной отправки непустого значения, указываем `placeholder`.
                     if ($this->isAdditionalFieldDependant($field) && $options['required']) {
                         $options['placeholder'] = '';
                     }
@@ -607,7 +607,7 @@ class ClientAdmin extends AbstractAdmin
             return;
         }
 
-        // проверяем заполненность обязательных доп. полей
+        // Проверяем заполненность обязательных доп. полей
         $clientsFields = $this->clientFieldRepository->findAll();
         $statusHomelessEnabled = $this->isMenuItemEnabled(MenuItem::CODE_STATUS_HOMELESS);
         foreach ($clientsFields as $clientsField) {
@@ -991,6 +991,9 @@ class ClientAdmin extends AbstractAdmin
                 break;
 
             default:
+                if ($field->getType() === ClientField::TYPE_DATETIME) {
+                    $options['input'] = 'datetime_immutable';
+                }
                 $form->add(self::getAdditionalFieldName($field->getCode()), $field->getFormFieldType(), $options);
                 break;
         }

@@ -94,7 +94,7 @@ class ClientField extends BaseEntity
     /**
      * Тип поля для отображения в анкете
      */
-    public function getShowFieldType(): ClientFieldOption|\DateTimeImmutable|Collection|string|null
+    public function getShowFieldType(): ?string
     {
         return match ($this->type) {
             self::TYPE_TEXT => TextareaType::class,
