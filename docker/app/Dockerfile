@@ -35,7 +35,13 @@ RUN apk update \
       gettext \
  && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer \
  && composer self-update 2.5.1 \
- && docker-php-ext-install gd zip bcmath intl pdo_mysql \
+ && docker-php-ext-install \
+      gd \
+      bcmath \
+      intl \
+      opcache \
+      pdo_mysql \
+      zip \
  \
  && touch /run/nginx.pid \
  && mkdir -p /var/cache/nginx /etc/nginx /var/log/nginx /var/www/symfony/vendor /var/lib/nginx /var/log/php8 \
