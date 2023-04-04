@@ -24,20 +24,22 @@ RUN addgroup -S --gid 1000 nochlezhka \
 RUN apk update \
  && apk upgrade \
  && apk add --no-cache \
+      curl \
+      gettext \
+      icu-data-full \
+      icu-dev \
+      icu-libs \
+      libpng-dev \
+      libreoffice \
+      libzip-dev \
+      nginx \
       nodejs \
       yarn \
-      curl \
-      icu-dev \
-      libzip-dev \
-      libreoffice \
-      libpng-dev \
-      nginx \
-      gettext \
  && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer \
  && composer self-update 2.5.1 \
  && docker-php-ext-install \
-      gd \
       bcmath \
+      gd \
       intl \
       opcache \
       pdo_mysql \
