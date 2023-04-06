@@ -24,7 +24,7 @@ RUN addgroup -S --gid 1000 nochlezhka \
 RUN apk update \
  && apk upgrade \
  && apk add --no-cache \
-      nodejs=~16.19 \
+      nodejs=~16.20 \
       yarn=~1.22.19 \
       curl=~7.83 \
       icu-dev=~71.1 \
