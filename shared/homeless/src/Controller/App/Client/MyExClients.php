@@ -5,17 +5,14 @@ namespace App\Controller\App\Client;
 
 use App\Entity\ContractStatus;
 use App\Repository\ContractStatusRepository;
-use App\Security\User\Role;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
  * Мои бывшие клиенты
  */
 #[Route('/my-ex-clients', name: 'my_ex_clients')]
-#[IsGranted(Role::SONATA_ADMIN)]
 class MyExClients extends AbstractController
 {
     public function __invoke(ContractStatusRepository $contractStatusRepository): Response

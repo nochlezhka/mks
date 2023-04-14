@@ -1,13 +1,15 @@
 <?php declare(strict_types=1);
 // SPDX-License-Identifier: BSD-3-Clause
 
+namespace Symfony\Component\DependencyInjection\Loader\Configurator;
+
 use App\Security\User\Role;
 use Symfony\Config\SonataAdminConfig;
 
 return static function (SonataAdminConfig $sonataAdmin): void {
     $sonataAdmin
         ->title(' ')
-        ->titleLogo('/render/logo.png')
+        ->titleLogo(env('LOGO_PATH'))
         ->showMosaicButton(false)
     ;
 
@@ -44,56 +46,39 @@ return static function (SonataAdminConfig $sonataAdmin): void {
     $clientsDashboard = $dashboard->group('app.clients')
         ->label('Клиенты')
         ->icon('<i class="fa fa-users"></i>')
+        ->roles([Role::EMPLOYEE])
     ;
     $clientsDashboard->item()
         ->route('my_clients')
         ->label('Мои клиенты')
-        ->roles([
-            Role::APP_CLIENT_ADMIN_LIST,
-            Role::ADMIN,
-        ])
     ;
     $clientsDashboard->item()
         ->route('add_client')
         ->label('Добавить клиента')
-        ->roles([
-            Role::APP_CLIENT_ADMIN_CREATE,
-            Role::ADMIN,
-        ])
     ;
     $clientsDashboard->item()
         ->route('my_ex_clients')
         ->label('Мои бывшие клиенты')
-        ->roles([
-            Role::APP_CLIENT_ADMIN_LIST,
-            Role::ADMIN,
-        ])
     ;
 
     $profileDashboard = $dashboard->group('app.profile')
         ->label('Личный кабинет')
         ->icon('<i class="fa fa-user"></i>')
+        ->roles([Role::EMPLOYEE])
     ;
     $profileDashboard->item()
         ->route('my_services')
         ->label('Оказанные мной услуги')
-        ->roles([
-            Role::APP_SERVICE_ADMIN_ALL,
-            Role::ADMIN,
-        ])
     ;
     $profileDashboard->item()
         ->route('profile')
         ->label('Мой профиль')
-        ->roles([
-            Role::SONATA_USER_ADMIN_USER_EDIT,
-            Role::ADMIN,
-        ])
     ;
 
     $settingsDashboard = $dashboard->group('app.settings')
         ->label('Настройки')
         ->icon('<i class="fa fa-wrench"></i>')
+        ->roles([Role::SUPER_ADMIN])
     ;
     $settingsDashboard->item()->admin('app.client_field.admin');
     $settingsDashboard->item()->admin('app.region.admin');
@@ -108,5 +93,4 @@ return static function (SonataAdminConfig $sonataAdmin): void {
     $settingsDashboard->item()->admin('sonata.user.admin.user');
     $settingsDashboard->item()->admin('app.client_form.admin');
     $settingsDashboard->item()->admin('app.shelter_room.admin');
-    $settingsDashboard->roles([Role::ADMIN]);
 };

@@ -22,12 +22,14 @@ abstract class BaseEntity implements BaseEntityInterface
     protected ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
     protected ?User $createdBy = null;
 
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     protected ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
     protected ?User $updatedBy = null;
 
     public function getId(): ?int

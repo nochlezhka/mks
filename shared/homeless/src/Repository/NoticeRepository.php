@@ -82,23 +82,11 @@ class NoticeRepository extends ServiceEntityRepository
     {
         return $this->contractRepository
             ->createQueryBuilder('cont')
-            ->where('cont.createdBy=:contractCreatedBy')
-            ->andWhere('cont.status=:contractStatus')
+            ->where('cont.createdBy = :contractCreatedBy')
+            ->andWhere('cont.status = :contractStatus')
             ->setParameters([
                 'contractCreatedBy' => $filter['contractCreatedBy'],
                 'contractStatus' => $filter['contractStatus'],
-            ])
-            ->getQuery()
-        ;
-    }
-
-    public function getAllContractsResidentQuestionnaire(array $filter): Query
-    {
-        return $this->contractRepository
-            ->createQueryBuilder('cont')
-            ->where('cont.createdBy=:contractCreatedBy')
-            ->setParameters([
-                'contractCreatedBy' => $filter['contractCreatedBy'],
             ])
             ->getQuery()
         ;

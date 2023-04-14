@@ -1,15 +1,12 @@
 <?php declare(strict_types=1);
 // SPDX-License-Identifier: BSD-3-Clause
 
+namespace Symfony\Component\DependencyInjection\Loader\Configurator;
+
 use App\Entity\User;
 use Symfony\Config\SonataUserConfig;
 
 return static function (SonataUserConfig $sonataUser): void {
-    $sonataUser
-        ->securityAcl(false)
-        ->managerType('orm')
-    ;
-
     $sonataUser->class()
         ->user(User::class)
     ;

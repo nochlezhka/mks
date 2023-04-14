@@ -4,6 +4,7 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use App\Security\User\Role;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -19,6 +20,8 @@ use Symfony\Component\Security\Core\User\LegacyPasswordAuthenticatedUserInterfac
 #[ORM\Table(name: 'fos_user_user')]
 class User extends BaseUser implements BaseEntityInterface, TimezoneAwareInterface, LegacyPasswordAuthenticatedUserInterface
 {
+    public const ROLE_DEFAULT = Role::EMPLOYEE;
+
     #[ORM\Column(type: 'integer')]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
@@ -93,9 +96,13 @@ class User extends BaseUser implements BaseEntityInterface, TimezoneAwareInterfa
     private ?int $syncId = null;
     #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $sort = null;
+
     #[ORM\ManyToOne(targetEntity: self::class)]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
     private ?User $createdBy = null;
+
     #[ORM\ManyToOne(targetEntity: self::class)]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
     private ?User $updatedBy = null;
 
     public function __construct()
