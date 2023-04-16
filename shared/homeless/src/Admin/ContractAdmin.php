@@ -141,7 +141,7 @@ class ContractAdmin extends AbstractAdmin
             throw new \InvalidArgumentException('Unexpected User type');
         }
 
-        if ($user->hasRole(Role::ADMIN) || $user->hasRole(Role::SUPER_ADMIN)) {
+        if ($user->hasRole(Role::EMPLOYEE) || $user->hasRole(Role::SUPER_ADMIN)) {
             $actions['delete'] = [];
         }
 

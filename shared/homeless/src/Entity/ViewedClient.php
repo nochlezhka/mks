@@ -12,6 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
 class ViewedClient extends BaseEntity
 {
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'viewedClients')]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
     protected ?User $createdBy = null;
 
     #[ORM\ManyToOne(targetEntity: Client::class, inversedBy: 'clientViews')]

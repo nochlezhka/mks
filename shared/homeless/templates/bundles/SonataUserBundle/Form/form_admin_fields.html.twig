@@ -1,0 +1,9 @@
+{% extends '@!SonataUser/Form/form_admin_fields.html.twig' %}
+
+{% block sonata_roles_matrix_widget %}
+{% apply spaceless %}
+    <ul class="list-unstyled">
+        {{ renderRolesList(form)|raw }}
+    </ul>
+{% endapply %}
+{% endblock sonata_roles_matrix_widget %}

@@ -51,37 +51,12 @@ class UserAdmin extends SonataUserAdmin
             throw new AccessDeniedException();
         }
 
-        if ($isSuperAdmin) {
-            $form->tab('user');
-        }
-
-        $form
-            ->with('profile', ['class' => 'col-md-6'])->end()
-            ->with('general', ['class' => 'col-md-6'])->end()
-        ;
-
-        if ($isSuperAdmin) {
-            $form->end();
-        }
-
-        if ($isSuperAdmin) {
-            $form->tab('roles');
-            $form
-                ->with('roles', ['class' => 'col-md-12'])->end()
-            ;
-            $form->end();
-        }
-
-        if ($isSuperAdmin) {
-            $form->tab('user');
-        }
-
         $positions = ['Другая должность' => ''];
         foreach ($this->entityManager->getRepository(Position::class)->findAll() as $item) {
             $positions[$item->getName()] = $item->getId();
         }
 
-        $form->with('profile');
+        $form->with('profile', ['class' => 'col-md-6']);
         $form
             ->add('lastname', null, [
                 'required' => false,
@@ -125,36 +100,33 @@ class UserAdmin extends SonataUserAdmin
 
         $form->getFormBuilder()->get('position')->addModelTransformer($this->transformer);
 
-        $form->with('general');
+        $form->with('general', ['class' => 'col-md-6']);
         $form
             ->add('username')
             ->add('email')
             ->add('plainPassword', TextType::class, [
                 'required' => $this->getSubject()?->getId() === null,
             ])
-            ->add('enabled')
         ;
-        $form->end();
 
         if ($isSuperAdmin) {
-            $form->end();
+            $form
+                ->add('realRoles', RolesMatrixType::class, [
+                    'label' => false,
+                    'excluded_roles' => [
+                        Role::EMPLOYEE,
+                        Role::SONATA_ADMIN,
+                        Role::ALLOWED_TO_SWITCH,
+                    ],
+                    'multiple' => true,
+                    'required' => false,
+                ])
+            ;
         }
 
-        if (!$isSuperAdmin) {
-            return;
-        }
-
-        $form->tab('roles');
-
-        $form->with('roles');
         $form
-            ->add('realRoles', RolesMatrixType::class, [
-                'label' => false,
-                'multiple' => true,
-                'required' => false,
-            ])
+            ->add('enabled')
         ;
-        $form->end();
 
         $form->end();
     }

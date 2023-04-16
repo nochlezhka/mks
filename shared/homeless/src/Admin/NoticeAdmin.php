@@ -51,7 +51,7 @@ class NoticeAdmin extends AbstractAdmin
             ++$valueIndex;
             $orOperator = $valueIndex !== $valueCount ? 'OR ' : '';
 
-            $queryString .= "{$alias}.id={$val} {$orOperator}";
+            $queryString .= "{$alias}.id = {$val} {$orOperator}";
         }
 
         $queryBuilder->andWhere("({$queryString})");

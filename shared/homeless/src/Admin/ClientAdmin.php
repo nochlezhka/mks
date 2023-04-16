@@ -101,7 +101,8 @@ class ClientAdmin extends AbstractAdmin
         private readonly AuthorizationCheckerInterface $authorizationChecker,
         private readonly ClientFieldRepository $clientFieldRepository,
         private readonly ClientFieldValueRepository $clientFieldValueRepository,
-    ) {
+    )
+    {
         parent::__construct();
     }
 
@@ -158,10 +159,7 @@ class ClientAdmin extends AbstractAdmin
         }
         $show->end();
 
-        if ($this->authorizationChecker->isGranted(Role::SUPER_ADMIN)
-            || $this->authorizationChecker->isGranted(Role::APP_SERVICE_ADMIN_LIST)
-            || $this->authorizationChecker->isGranted(Role::APP_SERVICE_ADMIN_ALL)
-        ) {
+        if ($this->authorizationChecker->isGranted(Role::APP_SERVICE_ADMIN_ALL)) {
             $show->with('last_services', ['class' => 'col-md-4']);
             $show
                 ->add('services', FieldDescriptionInterface::TYPE_ARRAY, [
@@ -172,10 +170,7 @@ class ClientAdmin extends AbstractAdmin
             $show->end();
         }
 
-        if ($this->authorizationChecker->isGranted(Role::SUPER_ADMIN)
-            || $this->authorizationChecker->isGranted(Role::APP_NOTE_ADMIN_LIST)
-            || $this->authorizationChecker->isGranted(Role::APP_NOTE_ADMIN_ALL)
-        ) {
+        if ($this->authorizationChecker->isGranted(Role::APP_NOTE_ADMIN_ALL)) {
             $show->with('last_notes');
             $show
                 ->add('notes', FieldDescriptionInterface::TYPE_ARRAY, [
@@ -186,10 +181,7 @@ class ClientAdmin extends AbstractAdmin
             $show->end();
         }
 
-        if (!$this->authorizationChecker->isGranted(Role::SUPER_ADMIN)
-            && !$this->authorizationChecker->isGranted(Role::APP_CLIENT_ADMIN_EDIT)
-            && !$this->authorizationChecker->isGranted(Role::APP_CLIENT_ADMIN_ALL)
-        ) {
+        if (!$this->authorizationChecker->isGranted(Role::APP_CLIENT_ADMIN_ALL)) {
             return;
         }
 
@@ -338,7 +330,8 @@ class ClientAdmin extends AbstractAdmin
         }
     }
 
-    public function getContractCreatedByFilter(ProxyQueryInterface $queryBuilder, string $alias, string $_, FilterData $data): bool {
+    public function getContractCreatedByFilter(ProxyQueryInterface $queryBuilder, string $alias, string $_, FilterData $data): bool
+    {
         if (!$data->hasValue()) {
             return false;
         }
@@ -351,7 +344,8 @@ class ClientAdmin extends AbstractAdmin
         return true;
     }
 
-    public function getContractStatusFilter(ProxyQueryInterface $queryBuilder, string $alias, string $_, FilterData $data): bool {
+    public function getContractStatusFilter(ProxyQueryInterface $queryBuilder, string $alias, string $_, FilterData $data): bool
+    {
         if (!$data->hasValue()) {
             return false;
         }
@@ -367,7 +361,8 @@ class ClientAdmin extends AbstractAdmin
         return true;
     }
 
-    public function getClientSearchFilter(ProxyQueryInterface $queryBuilder, string $alias, string $_, FilterData $data): bool {
+    public function getClientSearchFilter(ProxyQueryInterface $queryBuilder, string $alias, string $_, FilterData $data): bool
+    {
         if (!$data->hasValue()) {
             return false;
         }
@@ -384,7 +379,8 @@ class ClientAdmin extends AbstractAdmin
         return true;
     }
 
-    public function getClientSearchLastName(ProxyQueryInterface $queryBuilder, string $alias, string $_, FilterData $data): bool {
+    public function getClientSearchLastName(ProxyQueryInterface $queryBuilder, string $alias, string $_, FilterData $data): bool
+    {
         if (!$data->hasValue()) {
             return false;
         }
@@ -399,7 +395,8 @@ class ClientAdmin extends AbstractAdmin
         return true;
     }
 
-    public function getClientSearchFirstName(ProxyQueryInterface $queryBuilder, string $alias, string $_, FilterData $data): bool {
+    public function getClientSearchFirstName(ProxyQueryInterface $queryBuilder, string $alias, string $_, FilterData $data): bool
+    {
         if (!$data->hasValue()) {
             return false;
         }
@@ -414,7 +411,8 @@ class ClientAdmin extends AbstractAdmin
         return true;
     }
 
-    public function getClientSearchMiddleName(ProxyQueryInterface $queryBuilder, string $alias, string $_, FilterData $data): bool {
+    public function getClientSearchMiddleName(ProxyQueryInterface $queryBuilder, string $alias, string $_, FilterData $data): bool
+    {
         if (!$data->hasValue()) {
             return false;
         }
@@ -429,7 +427,8 @@ class ClientAdmin extends AbstractAdmin
         return true;
     }
 
-    public function getClientSearchNote(ProxyQueryInterface $queryBuilder, string $alias, string $_, FilterData $data): bool {
+    public function getClientSearchNote(ProxyQueryInterface $queryBuilder, string $alias, string $_, FilterData $data): bool
+    {
         if (!$data->hasValue()) {
             return false;
         }
@@ -446,7 +445,8 @@ class ClientAdmin extends AbstractAdmin
         return true;
     }
 
-    public function getClientSearchContract(ProxyQueryInterface $queryBuilder, string $alias, string $_, FilterData $data): bool {
+    public function getClientSearchContract(ProxyQueryInterface $queryBuilder, string $alias, string $_, FilterData $data): bool
+    {
         if (!$data->hasValue()) {
             return false;
         }
@@ -601,7 +601,8 @@ class ClientAdmin extends AbstractAdmin
         $form->end();
     }
 
-    protected function formSubmit(FormEvent $event): void {
+    protected function formSubmit(FormEvent $event): void
+    {
         $client = $event->getForm()->getData();
         if (!$client instanceof Client) {
             return;
@@ -684,7 +685,7 @@ class ClientAdmin extends AbstractAdmin
             ->add('createdAt', FieldDescriptionInterface::TYPE_DATE, [
                 'label' => 'Когда добавлен',
             ])
-            ->add('_action', null, [
+            ->add(ListMapper::NAME_ACTIONS, null, [
                 'label' => 'Действие',
                 'actions' => [
                     'show' => [],
@@ -789,7 +790,8 @@ class ClientAdmin extends AbstractAdmin
     /**
      * @throws NonUniqueResultException
      */
-    protected function configureTabMenu(MenuItemInterface $menu, string $action, ?AdminInterface $childAdmin = null): void {
+    protected function configureTabMenu(MenuItemInterface $menu, string $action, ?AdminInterface $childAdmin = null): void
+    {
         if (!$childAdmin && !\in_array($action, ['show', 'edit'], true)) {
             return;
         }
@@ -797,101 +799,82 @@ class ClientAdmin extends AbstractAdmin
         $admin = $this->isChild() ? $this->getParent() : $this;
         $id = $admin->getRequest()->get('id');
 
-        if ($this->authorizationChecker->isGranted(Role::SUPER_ADMIN)
-            || $this->authorizationChecker->isGranted(Role::APP_DOCUMENT_ADMIN_LIST)
-            || $this->authorizationChecker->isGranted(Role::APP_DOCUMENT_ADMIN_ALL)
-        ) {
-            $menu->addChild(
-                'Документы',
-                ['uri' => $admin->generateUrl('app.document.admin.list', ['id' => $id])],
-            );
+        if ($this->authorizationChecker->isGranted(Role::APP_DOCUMENT_ADMIN_ALL)) {
+            $menu->addChild('Документы', [
+                'uri' => $admin->generateUrl('app.document.admin.list', [
+                    'id' => $id,
+                ]),
+            ]);
         }
 
-        if ($this->authorizationChecker->isGranted(Role::SUPER_ADMIN)
-            || $this->authorizationChecker->isGranted(Role::APP_DOCUMENT_FILE_ADMIN_LIST)
-            || $this->authorizationChecker->isGranted(Role::APP_DOCUMENT_FILE_ADMIN_ALL)
-        ) {
-            $menu->addChild(
-                'Файлы',
-                ['uri' => $admin->generateUrl('app.document_file.admin.list', ['id' => $id])],
-            );
+        if ($this->authorizationChecker->isGranted(Role::APP_DOCUMENT_FILE_ADMIN_ALL)) {
+            $menu->addChild('Файлы', [
+                'uri' => $admin->generateUrl('app.document_file.admin.list', [
+                    'id' => $id,
+                ]),
+            ]);
         }
 
-        if ($this->authorizationChecker->isGranted(Role::SUPER_ADMIN)
-            || $this->authorizationChecker->isGranted(Role::APP_CONTRACT_ADMIN_LIST)
-            || $this->authorizationChecker->isGranted(Role::APP_CONTRACT_ADMIN_ALL)
-        ) {
-            $menu->addChild(
-                'Сервисные планы',
-                ['uri' => $admin->generateUrl('app.contract.admin.list', ['id' => $id])],
-            );
+        if ($this->authorizationChecker->isGranted(Role::APP_CONTRACT_ADMIN_ALL)) {
+            $menu->addChild('Сервисные планы', [
+                'uri' => $admin->generateUrl('app.contract.admin.list', [
+                    'id' => $id,
+                ]),
+            ]);
         }
-        if ($this->isMenuItemEnabled(MenuItem::CODE_SHELTER_HISTORY) && $this->authorizationChecker->isGranted(Role::SUPER_ADMIN)
-            || $this->authorizationChecker->isGranted(Role::APP_SHELTER_HISTORY_ADMIN_LIST)
-            || $this->authorizationChecker->isGranted(Role::APP_SHELTER_HISTORY_ADMIN_ALL)
+
+        if ($this->authorizationChecker->isGranted(Role::APP_SHELTER_HISTORY_ADMIN_ALL)
+            && $this->isMenuItemEnabled(MenuItem::CODE_SHELTER_HISTORY)
+            && $this->isMenuItemEnabledShelterHistory($id)
         ) {
-            if ($this->isMenuItemEnabled(MenuItem::CODE_SHELTER_HISTORY) && $this->isMenuItemEnabledShelterHistory($id)) {
-                $menu->addChild(
-                    'Проживание в приюте',
-                    ['uri' => $admin->generateUrl('app.shelter_history.admin.list', ['id' => $id])],
-                );
-            }
+            $menu->addChild('Проживание в приюте', [
+                'uri' => $admin->generateUrl('app.shelter_history.admin.list', [
+                    'id' => $id,
+                ]),
+            ]);
         }
 
         $clientFormsEnabled = $this->metaService->isClientFormsEnabled();
-        if ($this->authorizationChecker->isGranted(Role::SUPER_ADMIN)
-            || $this->authorizationChecker->isGranted(Role::APP_RESIDENT_QUESTIONNAIRE_ADMIN_LIST)
-            || $this->authorizationChecker->isGranted(Role::APP_RESIDENT_QUESTIONNAIRE_ADMIN_ALL)
-        ) {
+        if ($this->authorizationChecker->isGranted(Role::APP_RESIDENT_QUESTIONNAIRE_ADMIN_ALL)) {
             if ($this->isMenuItemEnabled(MenuItem::CODE_QUESTIONNAIRE_LIVING) && $this->isMenuItemEnabledShelterHistory($id)) {
-                $name = $clientFormsEnabled ? 'Старая анкета' : 'Анкета';
-                $menu->addChild(
-                    $name,
-                    ['uri' => $admin->generateUrl('app.resident_questionnaire.admin.list', ['id' => $id])],
-                );
+                $menu->addChild($clientFormsEnabled ? 'Старая анкета' : 'Анкета', [
+                    'uri' => $admin->generateUrl('app.resident_questionnaire.admin.list', [
+                        'id' => $id,
+                    ]),
+                ]);
             }
         }
-        if ($this->authorizationChecker->isGranted(Role::SUPER_ADMIN)
-            || $this->authorizationChecker->isGranted(Role::APP_RESIDENT_FORM_RESPONSE_ADMIN_LIST)
-            || $this->authorizationChecker->isGranted(Role::APP_RESIDENT_FORM_RESPONSE_ADMIN_ALL)
-        ) {
+        if ($this->authorizationChecker->isGranted(Role::APP_RESIDENT_FORM_RESPONSE_ADMIN_ALL)) {
             if ($this->isMenuItemEnabled(MenuItem::CODE_QUESTIONNAIRE_LIVING) && $this->isMenuItemEnabledShelterHistory($id)) {
-                $name = $clientFormsEnabled ? 'Анкета' : 'Новая анкета';
-                $menu->addChild(
-                    $name,
-                    ['uri' => $admin->generateUrl('app.resident_form_response.admin.list', ['id' => $id])],
-                );
+                $menu->addChild($clientFormsEnabled ? 'Анкета' : 'Новая анкета', [
+                    'uri' => $admin->generateUrl('app.resident_form_response.admin.list', [
+                        'id' => $id,
+                    ]),
+                ]);
             }
         }
 
-        if ($this->authorizationChecker->isGranted(Role::SUPER_ADMIN)
-            || $this->authorizationChecker->isGranted(Role::APP_CERTIFICATE_ADMIN_LIST)
-            || $this->authorizationChecker->isGranted(Role::APP_CERTIFICATE_ADMIN_ALL)
-        ) {
+        if ($this->authorizationChecker->isGranted(Role::APP_CERTIFICATE_ADMIN_ALL)) {
             if ($this->isMenuItemEnabled(MenuItem::CODE_CERTIFICATE)) {
-                $menu->addChild(
-                    'Выдать справку',
-                    ['uri' => $admin->generateUrl('app.certificate.admin.list', ['id' => $id])],
-                );
+                $menu->addChild('Выдать справку', [
+                    'uri' => $admin->generateUrl('app.certificate.admin.list', [
+                        'id' => $id,
+                    ]),
+                ]);
             }
         }
 
-        if ($this->authorizationChecker->isGranted(Role::SUPER_ADMIN)
-            || $this->authorizationChecker->isGranted(Role::APP_GENERATED_DOCUMENT_ADMIN_LIST)
-            || $this->authorizationChecker->isGranted(Role::APP_GENERATED_DOCUMENT_ADMIN_ALL)
-        ) {
+        if ($this->authorizationChecker->isGranted(Role::APP_GENERATED_DOCUMENT_ADMIN_ALL)) {
             if ($this->isMenuItemEnabled(MenuItem::CODE_GENERATED_DOCUMENT)) {
-                $menu->addChild(
-                    'Построить документ',
-                    ['uri' => $admin->generateUrl('app.generated_document.admin.list', ['id' => $id])],
+                $menu->addChild('Построить документ', [
+                    'uri' => $admin->generateUrl('app.generated_document.admin.list', [
+                        'id' => $id,
+                    ])],
                 );
             }
         }
 
-        if (!$this->authorizationChecker->isGranted(Role::SUPER_ADMIN)
-            && !$this->authorizationChecker->isGranted(Role::APP_NOTICE_ADMIN_LIST)
-            && !$this->authorizationChecker->isGranted(Role::APP_NOTICE_ADMIN_ALL)
-        ) {
+        if (!$this->authorizationChecker->isGranted(Role::APP_NOTICE_ADMIN_ALL)) {
             return;
         }
 
@@ -902,9 +885,20 @@ class ClientAdmin extends AbstractAdmin
 
         $noticesCount = $this->noticeRepository->getUnviewedCount($this->getSubject(), $user);
 
-        $menu->addChild(
-            'Напоминания'.($noticesCount > 0 ? " ({$noticesCount})" : ''),
-            ['uri' => $admin->generateUrl('app.notice.admin.list', ['id' => $id, 'filter' => ['date' => ['value' => ['end' => date('d.m.Y')]], 'viewed' => ['value' => 2]]])],
+        $menu->addChild('Напоминания'.($noticesCount > 0 ? " ({$noticesCount})" : ''), [
+            'uri' => $admin->generateUrl('app.notice.admin.list', [
+                'id' => $id,
+                'filter' => [
+                    'date' => [
+                        'value' => [
+                            'end' => date('d.m.Y'),
+                        ],
+                    ],
+                    'viewed' => [
+                        'value' => 2,
+                    ],
+                ],
+            ])],
         );
     }
 

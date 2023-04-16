@@ -37,28 +37,37 @@ return static function (SecurityConfig $security): void {
 
     $security->accessControl()
         ->path('^/login$')
-        ->roles([AuthenticatedVoter::PUBLIC_ACCESS])
+        ->roles(AuthenticatedVoter::PUBLIC_ACCESS)
     ;
     $security->accessControl()
         ->path('^/resetting')
-        ->roles([AuthenticatedVoter::PUBLIC_ACCESS])
+        ->roles(AuthenticatedVoter::PUBLIC_ACCESS)
     ;
     $security->accessControl()
         ->path('^/.*')
-        ->roles([Role::ADMIN, Role::SONATA_ADMIN])
+        ->roles(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)
     ;
 
-    $security->roleHierarchy(Role::ADMIN, Role::USER);
-    $security->roleHierarchy(Role::SUPER_ADMIN, [
-        Role::USER,
+    $security->roleHierarchy(Role::EMPLOYEE, [
         Role::SONATA_ADMIN,
-        Role::ADMIN,
-        Role::ALLOWED_TO_SWITCH,
-        Role::SONATA,
+        Role::SONATA_USER_ADMIN_USER_EDIT,
+
+        Role::APP_CLIENT_ADMIN_ALL,
+        Role::APP_DOCUMENT_ADMIN_ALL,
+        Role::APP_DOCUMENT_FILE_ADMIN_ALL,
+        Role::APP_CONTRACT_ADMIN_ALL,
+        Role::APP_CERTIFICATE_ADMIN_ALL,
+        Role::APP_SHELTER_HISTORY_ADMIN_ALL,
+        Role::APP_RESIDENT_QUESTIONNAIRE_ADMIN_ALL,
+        Role::APP_RESIDENT_FORM_RESPONSE_ADMIN_ALL,
+        Role::APP_GENERATED_DOCUMENT_ADMIN_ALL,
+        Role::APP_NOTE_ADMIN_ALL,
+        Role::APP_NOTICE_ADMIN_ALL,
+        Role::APP_SERVICE_ADMIN_ALL,
     ]);
-    $security->roleHierarchy(Role::SONATA, [
-        Role::SONATA_PAGE_ADMIN_PAGE_EDIT,
-        Role::SONATA_PAGE_ADMIN_BLOCK_EDIT,
+    $security->roleHierarchy(Role::SUPER_ADMIN, [
+        Role::EMPLOYEE,
+        Role::ALLOWED_TO_SWITCH,
     ]);
 
     $security->passwordHasher(LegacyPasswordHasherInterface::class)
