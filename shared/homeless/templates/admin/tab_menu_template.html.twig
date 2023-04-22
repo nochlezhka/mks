@@ -21,7 +21,7 @@
                 padding: 15px 10px 1px 10px;
             }
         </style>
-        {% include '@SonataDoctrineORMAdmin/CRUD/edit_modal.html.twig' %}
+        {% include '@SonataAdmin/CRUD/Association/edit_modal.html.twig' %}
     {% elseif item.name =='Выдать справку' %}
         {% set id = item.name|replace({ ' ': ''})  %}
         <a style="float: left; padding-left: 0px; padding-top: 12px;"  href="{{ item.uri|slice(0,item.uri|length - 4) }}list?type=custom_modal" data-toggle="modal" data-target="#field_dialog_{{ id }}">
@@ -33,6 +33,6 @@
                 padding: 15px 10px 1px 10px;
             }
         </style>
-        {% include '@SonataDoctrineORMAdmin/CRUD/edit_modal.html.twig' %}
+        {% include '@SonataAdmin/CRUD/Association/edit_modal.html.twig' %}
     {% endif %}
 {% endblock %}

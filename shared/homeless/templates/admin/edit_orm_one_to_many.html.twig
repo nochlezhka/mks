@@ -13,7 +13,7 @@
                     {% endif %}
                 {% elseif form.children|length > 0 %}
                     {% set associationAdmin = sonata_admin.field_description.associationadmin %}
-                    {% include '@SonataDoctrineORMAdmin/CRUD/edit_orm_one_to_many_inline_tabs.html.twig' %}
+                    {% include '@SonataAdmin/CRUD/Association/edit_one_to_many_inline_tabs.html.twig' %}
 
                 {% endif %}
             {% else %}
@@ -52,14 +52,14 @@
             {# add code for the sortable options #}
             {% if sonata_admin.field_description.options.sortable is defined %}
                 {% if sonata_admin.inline == 'table' %}
-                    {% include '@SonataDoctrineORMAdmin/CRUD/edit_orm_one_to_many_sortable_script_table.html.twig' %}
+                    {% include '@SonataAdmin/CRUD/Association/edit_one_to_many_sortable_script_table.html.twig' %}
                 {% else %}
-                    {% include '@SonataDoctrineORMAdmin/CRUD/edit_orm_one_to_many_sortable_script_tabs.html.twig' %}
+                    {% include '@SonataAdmin/CRUD/Association/edit_one_to_many_sortable_script_tabs.html.twig' %}
                 {% endif %}
             {% endif %}
 
             {# include association code #}
-            {% include '@SonataDoctrineORMAdmin/CRUD/edit_orm_one_association_script.html.twig' %}
+            {% include '@SonataAdmin/CRUD/Association/edit_one_script.html.twig' %}
 
         {% else %}
             <span id="field_actions_{{ id }}" >
@@ -79,9 +79,9 @@
                 {% endif %}
             </span>
 
-            {% include '@SonataDoctrineORMAdmin/CRUD/edit_modal.html.twig' %}
+            {% include '@SonataAdmin/CRUD/Association/edit_modal.html.twig' %}
 
-            {% include '@SonataDoctrineORMAdmin/CRUD/edit_orm_many_association_script.html.twig' %}
+            {% include '@SonataAdmin/CRUD/Association/edit_many_script.html.twig' %}
         {% endif %}
     </div>
 {% endif %}
