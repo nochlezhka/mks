@@ -11,7 +11,7 @@ services:
       - 8443:443
     restart: unless-stopped
     volumes:
-      - "./storage/data/uploads:/var/www/symfony/web/uploads"
+      - "./storage/data/uploads:/var/www/symfony/public/uploads"
       - "./storage/data/letsencrypt:/etc/letsencrypt:ro"
       - "./storage/data/certbot:/var/www/certbot:ro"
     environment:
@@ -36,7 +36,7 @@ services:
     image: nochlezhka/mks-app:${MKS_VERSION}
     restart: unless-stopped
     volumes:
-      - "./storage/data/uploads:/var/www/symfony/web/uploads"
+      - "./storage/data/uploads:/var/www/symfony/public/uploads"
     env_file:
       - .env
   db:
