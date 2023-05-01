@@ -43,7 +43,7 @@ class ClientFormResponseValue extends BaseEntity
      * на поиск по значениям полей всех анкет клиента.
      */
     #[ORM\ManyToOne(targetEntity: Client::class)]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private ?Client $client = null;
 
     #[ORM\Column(type: 'text', nullable: false)]

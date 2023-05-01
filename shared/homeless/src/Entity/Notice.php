@@ -23,6 +23,7 @@ class Notice extends BaseEntity
     private ?\DateTimeImmutable $date = null;
 
     #[ORM\ManyToOne(targetEntity: Client::class)]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?Client $client = null;
 
     #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'viewedNotices')]

@@ -37,6 +37,7 @@ class ContractItemAdmin extends AbstractAdmin
                 'label' => 'Дата начала',
                 'format' => 'dd.MM.yyyy HH:mm',
                 'required' => false,
+                'input' => 'datetime_immutable',
                 'attr' => [
                     'style' => 'width: 110px;',
                 ],
@@ -45,6 +46,7 @@ class ContractItemAdmin extends AbstractAdmin
                 'label' => 'Дата выполнения',
                 'format' => 'dd.MM.yyyy HH:mm',
                 'required' => false,
+                'input' => 'datetime_immutable',
                 'attr' => [
                     'style' => 'width: 110px;',
                 ],

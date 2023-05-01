@@ -14,6 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
 class History extends BaseEntity
 {
     #[ORM\ManyToOne(targetEntity: Client::class)]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?Client $client = null;
 
     public function getClient(): ?Client

@@ -17,7 +17,7 @@ use Doctrine\ORM\Mapping as ORM;
 class ClientFormResponse extends BaseEntity
 {
     #[ORM\ManyToOne(targetEntity: Client::class)]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private ?Client $client = null;
 
     /**
