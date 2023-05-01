@@ -7,6 +7,8 @@ namespace App\Admin;
 
 use App\Controller\CRUDController;
 use App\Entity\ResidentQuestionnaire;
+use App\Service\ResidentQuestionnaireConverter;
+use Doctrine\ORM\EntityManager;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\FieldDescription\FieldDescriptionInterface;
 use Sonata\AdminBundle\Form\FormMapper;
@@ -29,6 +31,58 @@ class ResidentQuestionnaireAdmin extends AbstractAdmin
         '_sort_order' => 'DESC',
         '_sort_by' => 'typeId',
     ];
+
+    public function __construct(
+        private readonly ResidentQuestionnaireConverter $converter,
+    ) {
+        parent::__construct();
+    }
+
+    /**
+     * При создании анкеты, в транзакции создаём её копию в новом формате.
+     */
+    public function postPersist(object $object): void
+    {
+        if (!$object instanceof ResidentQuestionnaire) {
+            return;
+        }
+
+        $this->entityManager->wrapInTransaction(function (EntityManager $em) use ($object): void {
+            $cfr = $this->converter->lockClientForm($object);
+            $this->converter->createOrUpdateClientFormResponse($object, $cfr);
+            $em->flush();
+        });
+    }
+
+    /**
+     * При обновлении анкеты, в транзакции создаём или обновляем её копию в новом формате.
+     */
+    public function postUpdate(object $object): void
+    {
+        if (!$object instanceof ResidentQuestionnaire) {
+            return;
+        }
+
+        $this->entityManager->wrapInTransaction(function (EntityManager $em) use ($object): void {
+            $cfr = $this->converter->lockClientForm($object);
+            $this->converter->createOrUpdateClientFormResponse($object, $cfr);
+        });
+    }
+
+    /**
+     * При удалении анкеты, в транзакции удалить её копию в новом формате.
+     */
+    public function preRemove(object $object): void
+    {
+        if (!$object instanceof ResidentQuestionnaire) {
+            return;
+        }
+
+        $this->entityManager->wrapInTransaction(function (EntityManager $em) use ($object): void {
+            $this->converter->lockClientForm($object);
+            $this->converter->deleteClientFormResponse($object);
+        });
+    }
 
     protected function configureFormFields(FormMapper $form): void
     {

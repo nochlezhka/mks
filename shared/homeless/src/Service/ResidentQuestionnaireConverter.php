@@ -11,12 +11,13 @@ use App\Entity\ClientFormResponse;
 use App\Entity\ResidentQuestionnaire;
 use App\Repository\ClientFormRepository;
 use App\Repository\ClientFormResponseRepository;
+use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 
 class ResidentQuestionnaireConverter
 {
-    private ?array $residentQrnFormSchemaCache;
+    private ?array $residentQrnFormSchemaCache = null;
 
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
@@ -67,6 +68,28 @@ class ResidentQuestionnaireConverter
     }
 
     /**
+     * Лочит в БД копию анкеты проживающего `$qnr`.
+     * Если копия не найдена, возвращает `null`.
+     *
+     * @throws \Doctrine\ORM\TransactionRequiredException
+     */
+    public function lockClientForm(ResidentQuestionnaire $qnr): ?ClientFormResponse
+    {
+        $res = $this->entityManager
+            ->createQuery(/* @lang DQL */ '
+                SELECT cfr
+                FROM App\\Entity\\ClientFormResponse cfr
+                WHERE cfr.residentQuestionnaireId = :qnrId
+            ')
+            ->setParameter('qnrId', $qnr->getId())
+            ->setLockMode(LockMode::PESSIMISTIC_WRITE)
+            ->getResult()
+        ;
+
+        return \count($res) > 0 ? $res[0] : null;
+    }
+
+    /**
      * Если параметр `$resp` не `null`, обновляет копию анкеты `$resp` из анкеты в старом формате `$qnr`
      * Если `$resp` - `null`, создаёт новую копию анкеты на основе значений из `$qnr`
      */
@@ -91,11 +114,22 @@ class ResidentQuestionnaireConverter
         $this->entityManager->persist($resp);
     }
 
+    /**
+     * Удаляет копию анкеты проживающего, составленную из `$qnr`, в новом формате.
+     */
+    public function deleteClientFormResponse(ResidentQuestionnaire $qnr): void
+    {
+        $resp = $this->clientFormResponseRepository->findOneBy(['residentQuestionnaireId' => $qnr->getId()]);
+        if ($resp !== null) {
+            $this->entityManager->remove($resp);
+        }
+    }
+
     public function checkClientFormSchema(LoggerInterface $logger): bool
     {
         $qnrSchema = $this->getResidentQnrFormSchema();
         $fieldIdToType = [];
-        foreach ($qnrSchema as $field => $fieldSchema) {
+        foreach ($qnrSchema as $fieldSchema) {
             $fieldIdToType[$fieldSchema['fieldId']] = $fieldSchema['type'];
         }
 
@@ -143,7 +177,7 @@ class ResidentQuestionnaireConverter
         $array = [];
         foreach ($schema as $field => $fieldSchema) {
             $fieldId = $fieldSchema['fieldId'];
-            $array[$field] = $cfr->__get("field_{$fieldId}");
+            $array[$field] = $cfr->__get('field_'.$fieldId);
         }
 
         return $array;
@@ -162,7 +196,7 @@ class ResidentQuestionnaireConverter
                 'fieldId' => 1,
             ],
             'isDwelling' => [
-                'getter' => 'getisDwelling',
+                'getter' => 'isDwelling',
                 'type' => ClientFormField::TYPE_CHECKBOX,
                 'fieldId' => 2,
             ],
@@ -173,17 +207,17 @@ class ResidentQuestionnaireConverter
                 'fieldId' => 3,
             ],
             'isWork' => [
-                'getter' => 'getisWork',
+                'getter' => 'isWork',
                 'type' => ClientFormField::TYPE_CHECKBOX,
                 'fieldId' => 4,
             ],
             'isWorkOfficial' => [
-                'getter' => 'getisWorkOfficial',
+                'getter' => 'isWorkOfficial',
                 'type' => ClientFormField::TYPE_CHECKBOX,
                 'fieldId' => 5,
             ],
             'isWorkConstant' => [
-                'getter' => 'getisWorkConstant',
+                'getter' => 'isWorkConstant',
                 'type' => ClientFormField::TYPE_CHECKBOX,
                 'fieldId' => 6,
             ],
@@ -222,12 +256,14 @@ class ResidentQuestionnaireConverter
                 break;
 
             case ClientFormField::TYPE_OPTION:
-                $options = $fieldSchema['options'];
-                $value = isset($fieldSchema['multiselect']) && $fieldSchema['multiselect'] ? self::convertMultiselect($qnrValue, $options, $field) : self::convertSelect($qnrValue, $options, $field);
+                $options = array_flip($fieldSchema['options']);
+                $value = isset($fieldSchema['multiselect']) && $fieldSchema['multiselect']
+                    ? self::convertMultiselect($qnrValue, $options, $field)
+                    : self::convertSelect($qnrValue, $options, $field);
                 break;
 
             default:
-                throw new \LogicException("Didn't expect fields of type ".$fieldSchema['type']." ({$field})");
+                throw new \LogicException("Didn't expect fields of type ".$fieldSchema['type'].' ({$field})');
         }
 
         return $value;

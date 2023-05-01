@@ -12,6 +12,7 @@ use App\Form\DataTransformer\ClientFormCheckboxTransformer;
 use App\Form\DataTransformer\ClientFormMultiselectTransformer;
 use App\Util\BaseEntityUtil;
 use App\Util\ClientFormUtil;
+use Doctrine\ORM\EntityManager;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\FieldDescription\FieldDescriptionInterface;
@@ -37,6 +38,40 @@ class ClientFormResponseAdmin extends AbstractAdmin
      * @see ResidentFormResponseAdmin
      */
     protected ?int $formId;
+
+    /**
+     * Создание анкеты. Оборачиваем в транзакцию, т.к. нужно консистентно писать в несколько таблиц.
+     */
+    public function prePersist(object $object): void
+    {
+        if (!$object instanceof ClientFormResponse) {
+            return;
+        }
+
+        $this->entityManager->wrapInTransaction(function (EntityManager $em) use ($object): void {
+            /** @var \App\Repository\ClientFormResponseRepository $repository */
+            $repository = $em->getRepository(ClientFormResponse::class);
+            $repository->prepareForCreateOrUpdate($object, $this->getCurrentForm());
+        });
+    }
+
+    /**
+     * Обновление анкеты. Оборачиваем в транзакцию для консистентности таблицы `_value`
+     * и лочимся об запись в `client_form_response`, чтобы случайно не смешать несколько параллельных обновлений.
+     */
+    public function preUpdate(object $object): void
+    {
+        if (!$object instanceof ClientFormResponse) {
+            return;
+        }
+
+        $this->entityManager->wrapInTransaction(function (EntityManager $em) use ($object): void {
+            /** @var \App\Repository\ClientFormResponseRepository $repository */
+            $repository = $em->getRepository(ClientFormResponse::class);
+            $repository->lockForUpdate($object);
+            $repository->prepareForCreateOrUpdate($object, $this->getCurrentForm());
+        });
+    }
 
     protected function configureDefaultFilterValues(array &$filterValues): void
     {
@@ -103,7 +138,7 @@ class ClientFormResponseAdmin extends AbstractAdmin
             ->add('isFull', FieldDescriptionInterface::TYPE_BOOLEAN, [
                 'label' => 'Заполнено',
             ])
-            ->add('_action', null, [
+            ->add(ListMapper::NAME_ACTIONS, ListMapper::TYPE_ACTIONS, [
                 'label' => 'Действие',
                 'actions' => [
                     'edit' => [],
@@ -120,6 +155,10 @@ class ClientFormResponseAdmin extends AbstractAdmin
      */
     private function getCurrentForm(): ClientForm
     {
+        if (!$this->hasSubject()) {
+            $this->setSubject($this->getNewInstance());
+        }
+
         /** @var ClientFormResponse $subject */
         $subject = $this->getSubject();
         if ($this->formId !== null) {
@@ -135,7 +174,7 @@ class ClientFormResponseAdmin extends AbstractAdmin
         /** @var ClientForm $currentForm */
         $currentForm = $this->getModelManager()->find(ClientForm::class, $formId);
         if (!$currentForm) {
-            throw new BadRequestHttpException("ClientForm {$formId} was not found");
+            throw new BadRequestHttpException('ClientForm '.$formId.' was not found');
         }
 
         return $currentForm;

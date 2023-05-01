@@ -7,7 +7,6 @@ namespace App\Admin;
 
 use App\Entity\ClientForm;
 use App\Entity\ClientFormResponse;
-use App\Service\MetaService;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
@@ -28,12 +27,6 @@ class ResidentFormResponseAdmin extends ClientFormResponseAdmin
 
     // переопределения для роутов и breadcrumbs
     protected $classnameLabel = 'resident_form_response';
-
-    public function __construct(MetaService $metaService)
-    {
-        parent::__construct();
-        $this->metaService = $metaService;
-    }
 
     public function preValidate(object $object): void
     {

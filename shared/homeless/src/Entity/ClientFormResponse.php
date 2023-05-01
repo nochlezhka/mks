@@ -70,7 +70,7 @@ class ClientFormResponse extends BaseEntity
     public function __get(mixed $name): ?string
     {
         if (str_starts_with($name, 'field_')) {
-            return $this->getFieldValue(substr($name, 6));
+            return $this->getFieldValue((int) substr($name, 6));
         }
 
         throw new \LogicException("No field {$name} in ClientFormResponse");
@@ -118,7 +118,7 @@ class ClientFormResponse extends BaseEntity
         $this->form = $form;
     }
 
-    public function getValues(): ArrayCollection
+    public function getValues(): Collection
     {
         return $this->values;
     }
@@ -193,7 +193,7 @@ class ClientFormResponse extends BaseEntity
         $this->residentQuestionnaireId = $residentQuestionnaireId;
     }
 
-    private function getFieldValue($fieldId): ?string
+    private function getFieldValue(?int $fieldId): ?string
     {
         /** @var ClientFormResponseValue $value */
         foreach ($this->getValues() as $value) {

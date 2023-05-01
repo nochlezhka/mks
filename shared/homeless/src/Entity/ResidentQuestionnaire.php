@@ -149,6 +149,11 @@ class ResidentQuestionnaire
     #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?Client $client = null;
 
+    public function __toString(): string
+    {
+        return $this->getType();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -246,7 +251,7 @@ class ResidentQuestionnaire
      */
     public function getReasonForTransitionIds(): array
     {
-        return explode(',', $this->reasonForTransitionIds);
+        return explode(',', $this->reasonForTransitionIds ?? '');
     }
 
     /**
@@ -262,7 +267,7 @@ class ResidentQuestionnaire
      */
     public function getReasonForPetitionIds(): array
     {
-        return explode(',', $this->reasonForPetitionIds);
+        return explode(',', $this->reasonForPetitionIds ?? '');
     }
 
     /**
@@ -278,11 +283,7 @@ class ResidentQuestionnaire
      */
     public function isFull(): bool
     {
-        return $this->isDwelling !== null
-            || $this->roomTypeId !== null
-            || $this->isWork !== null
-            || $this->isWorkOfficial !== null
-            || $this->isWorkConstant !== null
+        return $this->roomTypeId !== null
             || $this->changedJobsCountId !== null
             || $this->reasonForTransitionIds !== null
             || $this->reasonForPetitionIds !== null;

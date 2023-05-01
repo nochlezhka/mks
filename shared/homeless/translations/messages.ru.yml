@@ -109,6 +109,8 @@ form:
   group_shelter_rooms: Приют
   group_client_forms: Редактирование форм
   group_client_form_field: Поля формы
+  group_resident_form_response: Анкета проживающего
+  group_resident_questionnaire: Анкета проживающего 2
 
 show:
   group_last_services: Последние услуги

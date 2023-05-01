@@ -52,7 +52,7 @@ class ClientFormResponseRepository extends ServiceEntityRepository
             if ($value === null) {
                 $toRemove[] = $fieldId;
             } else {
-                $fieldValue->setValue($value);
+                $fieldValue->setValue((string) $value);
             }
             unset($submittedFields[$fieldId]);
         }
@@ -96,7 +96,7 @@ class ClientFormResponseRepository extends ServiceEntityRepository
             $fieldValue->setClientFormResponse($object);
             $fieldValue->setClientFormField($fieldsById[$fieldId]);
             $fieldValue->setClient($object->getClient());
-            $fieldValue->setValue($value);
+            $fieldValue->setValue((string) $value);
 
             $formValues[] = $fieldValue;
         }
