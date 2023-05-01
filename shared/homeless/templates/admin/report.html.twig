@@ -1,24 +1,7 @@
 {% extends 'admin/layout.html.twig' %}
 
-
 {% block javascripts %}
     {{ parent() }}
-
-    <script>
-        {% if app.request.attributes.get('_route') == 'admin_app_client_certificate_list' %}
-        console.log("{{ path('admin_app_client_historydownload_list', {'id': app.request.attributes.get('id')}) }}");
-        $.ajax({
-            url: "{{ path('admin_app_client_historydownload_list', {'id': app.request.attributes.get('id')}) }}",
-            cache: false,
-            success: function (html) {
-                var newBlock = $(html);
-                console.log(newBlock);
-
-                $('.added-block').html($(newBlock.find('.col-xs-12.col-md-12')[1]).parent().html());
-            }
-        });
-        {% endif %}
-    </script>
 
     <script>
         function changeType() {
@@ -36,9 +19,28 @@
                 $('#type-aggregated2').hide();
             }
         }
+
+        {% if app.request.attributes.get('_route') == 'admin_app_client_certificate_list' %}
+        $.ajax({
+            url: "{{ path('admin_app_client_historydownload_list', {'id': app.request.attributes.get('id')}) }}",
+            cache: false,
+            success: function (html) {
+                const newBlock = $(html);
+                $('.added-block').html($(newBlock.find('.col-xs-12.col-md-12')[1]).parent().html());
+            }
+        });
+        {% endif %}
+
+        const observer = new MutationObserver(function (mutations) {
+            mutations.forEach(function (mutation) {
+                if (mutation.target.id === 'report-btn' && mutation.type === 'attributes' && mutation.attributeName === 'disabled') {
+                    $(mutation.target).removeAttr('disabled');
+                }
+            });
+        });
+        window.onload = () => observer.observe(document.getElementById('report-btn'), {attributes: true});
     </script>
 {% endblock %}
-
 
 {% block sonata_admin_content %}
 
@@ -52,9 +54,9 @@
 
     <div class="sonata-ba-form">
         <form
-                role="form"
-                action="{{ path('reportDownload') }}"
-                method="POST"
+            role="form"
+            action="{{ path('reportDownload') }}"
+            method="POST"
         >
             <div class="row">
                 <div class="col-md-12">
@@ -342,12 +344,12 @@
                                                     <div class="input-group">
                                                         <div class='input-group date' id='dp_s5a37d10f9fe56_createServiceFromTo'>
                                                             <input
-                                                                    type="text" id="s5a37d10f9fe56_createServiceFromTo"
-                                                                    name="createServiceFromTo"
-                                                                    class="sonata-medium-date form-control"
-                                                                    data-date-format="DD.MM.YYYY"/><span
-                                                                    class="input-group-addon"><span
-                                                                        class="fa fa-calendar"></span></span></div>
+                                                                type="text"
+                                                                id="s5a37d10f9fe56_createServiceFromTo"
+                                                                name="createServiceFromTo"
+                                                                class="sonata-medium-date form-control"
+                                                                data-date-format="DD.MM.YYYY"/><span class="input-group-addon"><span class="fa fa-calendar"></span></span>
+                                                        </div>
                                                     </div>
                                                     <script type="text/javascript">
                                                       jQuery(function ($) {
@@ -388,8 +390,12 @@
                                                     Причины бездомности
                                                 </label>
                                                 <div class="sonata-ba-field sonata-ba-field-standard-natural">
-                                                    <select id="s5a37cdd74da55_homelessReason" name="homelessReason[]" multiple="multiple"
-                                                            class=" form-control">
+                                                    <select
+                                                        id="s5a37cdd74da55_homelessReason"
+                                                        name="homelessReason[]"
+                                                        multiple="multiple"
+                                                        class=" form-control"
+                                                    >
                                                         <option value=""></option>
                                                         {% for id,value in optionsHomelessReason %}
                                                             <option value="{{ value }}">{{ id }}</option>
@@ -444,8 +450,8 @@
 
 
             <div class="sonata-ba-form-actions well well-small form-actions">
-                <button type="submit" class="btn btn-success" name="btn_update_and_list"><i class="fa fa-save"></i> <i
-                            class="fa fa-list" aria-hidden="true"></i>Сгенерировать
+                <button id="report-btn" type="submit" class="btn btn-success" name="btn_update_and_list"><i class="fa fa-save"></i>
+                    <i class="fa fa-list" aria-hidden="true"></i>Сгенерировать
                 </button>
             </div>
         </form>
