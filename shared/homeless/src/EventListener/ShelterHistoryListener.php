@@ -7,15 +7,16 @@ namespace App\EventListener;
 
 use App\Entity\ShelterHistory;
 use App\Entity\ShelterRoom;
+use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsEntityListener;
-use Doctrine\ORM\Event\PreUpdateEventArgs;
+use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Events;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 
 #[AsEntityListener(event: Events::postPersist, method: 'postPersist', entity: ShelterHistory::class)]
 #[AsEntityListener(event: Events::postRemove, method: 'postRemove', entity: ShelterHistory::class)]
-#[AsEntityListener(event: Events::preUpdate, method: 'preUpdate', entity: ShelterHistory::class)]
-class ShelterRoomListener
+#[AsDoctrineListener(event: Events::onFlush)]
+class ShelterHistoryListener
 {
     /**
      * При создании договора номер устанавливается равным id
@@ -27,9 +28,9 @@ class ShelterRoomListener
             return;
         }
 
-        $currentOccupants = $room->getCurrentOccupants();
+        $room->setCurrentOccupants($room->getCurrentOccupants() + 1);
+
         $em = $args->getObjectManager();
-        $room->setCurrentOccupants($currentOccupants + 1);
         $em->persist($room);
         $em->flush();
     }
@@ -41,27 +42,41 @@ class ShelterRoomListener
             return;
         }
 
-        $currentOccupants = $room->getCurrentOccupants();
+        $room->setCurrentOccupants(max($room->getCurrentOccupants() - 1, 0));
+
         $em = $args->getObjectManager();
-        $room->setCurrentOccupants(($currentOccupants === 0) ? 0 : $currentOccupants - 1);
         $em->persist($room);
         $em->flush();
     }
 
-    public function preUpdate(ShelterHistory $shelterHistory, PreUpdateEventArgs $args): void
+    public function onFlush(OnFlushEventArgs $args): void
     {
         $em = $args->getObjectManager();
+        $shelterRoomRepository = $em->getRepository(ShelterRoom::class);
         $unitOfWork = $em->getUnitOfWork();
-        $updatedEntities = $unitOfWork->getEntityChangeSet($shelterHistory);
-        if ($args->hasChangedField('room')) {
-            $changeSetId = $updatedEntities['room'][0]->getId();
-            $oldRoom = $em->getRepository(ShelterRoom::class)->find($changeSetId);
-            $oldRoom->setCurrentOccupants(($oldRoom->getCurrentOccupants() === 0) ? 0 : $oldRoom->getCurrentOccupants() - 1);
-            $em->persist($oldRoom);
-            $newRoom = $shelterHistory->getRoom();
+        $updatedEntities = $unitOfWork->getScheduledEntityUpdates();
+
+        foreach ($updatedEntities as $entity) {
+            if (!$entity instanceof ShelterHistory) {
+                continue;
+            }
+
+            $changeSet = $unitOfWork->getEntityChangeSet($entity);
+            if (!isset($changeSet['room'])) {
+                continue;
+            }
+
+            $oldRoom = $shelterRoomRepository->find($changeSet['room'][0]->getId());
+            $oldRoom->setCurrentOccupants(max($oldRoom->getCurrentOccupants() - 1, 0));
+
+            $newRoom = $shelterRoomRepository->find($changeSet['room'][1]->getId());
             $newRoom->setCurrentOccupants($newRoom->getCurrentOccupants() + 1);
+
+            $em->persist($oldRoom);
+            $unitOfWork->recomputeSingleEntityChangeSet($em->getClassMetadata(ShelterRoom::class), $oldRoom);
+
             $em->persist($newRoom);
+            $unitOfWork->recomputeSingleEntityChangeSet($em->getClassMetadata(ShelterRoom::class), $newRoom);
         }
-        $em->flush();
     }
 }

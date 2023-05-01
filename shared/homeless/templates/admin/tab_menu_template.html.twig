@@ -1,6 +1,5 @@
 {% extends '@SonataAdmin/Core/tab_menu_template.html.twig' %}
 
-
 {% block linkElement %}
     {% import "knp_menu.html.twig" as macros %}
     <a href="{{ item.uri }}"{{ macros.attributes(item.linkAttributes) }}>
@@ -23,7 +22,7 @@
         </style>
         {% include '@SonataAdmin/CRUD/Association/edit_modal.html.twig' %}
     {% elseif item.name =='Выдать справку' %}
-        {% set id = item.name|replace({ ' ': ''})  %}
+        {% set id = item.name|replace({ ' ': ''}) %}
         <a style="float: left; margin-right: -15px;"  href="{{ item.uri|slice(0,item.uri|length - 4) }}list?type=custom_modal" data-toggle="modal" data-target="#field_dialog_{{ id }}">
             <i class="fa fa-plus-circle" style="color: rgb(0, 166, 90);" aria-hidden="true"></i>
         </a>

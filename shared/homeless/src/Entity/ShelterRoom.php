@@ -60,9 +60,9 @@ class ShelterRoom extends BaseEntity
         return $this;
     }
 
-    public function getCurrentOccupants(): ?int
+    public function getCurrentOccupants(): int
     {
-        return $this->currentOccupants;
+        return $this->currentOccupants ?? 0;
     }
 
     public function setCurrentOccupants(?int $currentOccupants): self

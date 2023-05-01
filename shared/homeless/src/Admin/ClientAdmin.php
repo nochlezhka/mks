@@ -103,8 +103,7 @@ class ClientAdmin extends AbstractAdmin
         private readonly AuthorizationCheckerInterface $authorizationChecker,
         private readonly ClientFieldRepository $clientFieldRepository,
         private readonly ClientFieldValueRepository $clientFieldValueRepository,
-    )
-    {
+    ) {
         parent::__construct();
     }
 
