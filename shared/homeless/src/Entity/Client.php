@@ -202,7 +202,7 @@ class Client extends BaseEntity
 
     public function getPhotoPath(): string
     {
-        return __DIR__.'/../../../web/'.$this->getPhotoPathWeb();
+        return __DIR__.'/../../../public/'.$this->getPhotoPathWeb();
     }
 
     public function getPhotoSize(int $width, int $height): array
@@ -361,9 +361,9 @@ class Client extends BaseEntity
         return $this->lastname.' '.$this->getInitials();
     }
 
-    public function getPhotoName(): ?string
+    public function getPhotoName(): string
     {
-        return $this->photoName;
+        return $this->photoName ?? '';
     }
 
     public function setPhotoName(?string $photoName): self

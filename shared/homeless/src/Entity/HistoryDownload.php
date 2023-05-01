@@ -15,7 +15,7 @@ class HistoryDownload
     #[ORM\Column(type: 'integer')]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
-    private int $id = 0;
+    private ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: Client::class, inversedBy: 'historyDownloads')]
     #[ORM\JoinColumn(name: 'client_id', referencedColumnName: 'id')]
@@ -31,6 +31,11 @@ class HistoryDownload
     #[ORM\ManyToOne(targetEntity: CertificateType::class)]
     #[ORM\JoinColumn(name: 'certificate_type_id', referencedColumnName: 'id')]
     private ?CertificateType $certificateType = null;
+
+    public function __toString(): string
+    {
+        return sprintf('%s (%s)', $this->user, $this->date->format('d.m.Y'));
+    }
 
     public function getId(): int
     {

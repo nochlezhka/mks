@@ -25,6 +25,7 @@ use App\Admin\ResidentQuestionnaireAdmin;
 use App\Admin\ServiceAdmin;
 use App\Admin\ShelterHistoryAdmin;
 use App\Admin\UserAdmin;
+use App\Service\RenderService;
 
 return static function (ContainerConfigurator $container): void {
     $src = \dirname(__DIR__).'/src';
@@ -69,4 +70,12 @@ return static function (ContainerConfigurator $container): void {
     ;
 
     $services->set('sonata.user.admin.user', UserAdmin::class);
+
+    $services->set(RenderService::class)
+        ->args([
+            service('kernel'),
+            service('twig'),
+            env('BIG_LOGO_PATH'),
+        ])
+    ;
 };

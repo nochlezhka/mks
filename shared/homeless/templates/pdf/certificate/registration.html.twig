@@ -9,7 +9,7 @@
     {% if certificate.client %}
         {{ certificate.client.fullname }},<br/>
         регистрационный номер клиента в базе данных: № {{ certificate.client.id }}<br/>
-        {% if certificate.client.birthDate %}Дата рождения: {{ certificate.client.birthDate|format_date('dd.MM.YYYY') }}
+        {% if certificate.client.birthDate %}Дата рождения: {{ certificate.client.birthDate|format_date('none', 'dd.MM.YYYY') }}
             <br/>{% endif %}
         {% if certificate.client.birthPlace %}Место рождения: {{ certificate.client.birthPlace }}{% endif %}
     {% endif %}
@@ -23,15 +23,15 @@
     {% endif %}
 
     {% if certificate.client and certificate.client.createdAt %}
-        Дата регистрации: {{ certificate.client.createdAt|format_date('dd.MM.YYYY') }}<br/>
+        Дата регистрации: {{ certificate.client.createdAt|format_date('none', 'dd.MM.YYYY') }}<br/>
     {% endif %}
 
     {% if certificate.dateFrom %}
-        Дата выдачи справки: {{ certificate.dateFrom|format_date('dd.MM.YYYY') }}<br/>
+        Дата выдачи справки: {{ certificate.dateFrom|format_date('none', 'dd.MM.YYYY') }}<br/>
     {% endif %}
 
     {% if certificate.dateTo %}
-        Справка действует до: {{ certificate.dateTo|format_date('dd.MM.YYYY') }}<br/>
+        Справка действует до: {{ certificate.dateTo|format_date('none', 'dd.MM.YYYY') }}<br/>
     {% endif %}
 {% endblock %}
 
