@@ -31,6 +31,7 @@ class HistoryDownloadAdmin extends AbstractAdmin
         $list
             ->add('user', null, [
                 'label' => 'Кем скачана',
+                'admin_code' => 'sonata.user.admin.user',
             ])
             ->add('certificateType.name', null, [
                 'label' => 'Тип',
@@ -39,9 +40,11 @@ class HistoryDownloadAdmin extends AbstractAdmin
                 'label' => 'Создано',
                 'pattern' => 'dd.MM.YYYY',
             ])
-            ->add('delete', null, [
-                'label' => 'Удалить',
-                'template' => '/CRUD/list_delete.html.twig',
+            ->add(ListMapper::NAME_ACTIONS, ListMapper::TYPE_ACTIONS, [
+                'label' => 'Действие',
+                'actions' => [
+                    'delete' => [],
+                ],
             ])
         ;
     }

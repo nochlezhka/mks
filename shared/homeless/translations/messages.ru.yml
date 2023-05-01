@@ -77,6 +77,7 @@ breadcrumb:
   link_shelter_room_list: Список комнат
   link_shelter_room_delete: Удалить комнату
   link_shelter_room_create: Добавить комнату
+  link_history_download_list: История скачиваний
 
 list:
   label_id: ID
