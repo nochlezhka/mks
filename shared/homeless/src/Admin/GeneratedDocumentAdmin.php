@@ -22,7 +22,7 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 #[AutoconfigureTag(name: 'sonata.admin', attributes: [
     'code' => 'app.generated_document.admin',
     'controller' => CRUDController::class,
-    'label' => 'Построить документ',
+    'label' => 'generated_document',
     'label_translator_strategy' => 'sonata.admin.label.strategy.underscore',
     'manager_type' => 'orm',
     'model_class' => GeneratedDocument::class,

@@ -101,6 +101,7 @@ form:
   group_notices: Напоминания
   group_service_types: Типы услуг
   group_contract_item_types: Типы пунктов договоров
+  group_generated_document: Построить документ
   group_generated_document_types: Типы построенных документов
   group_generated_document_start_texts: Преамбулы построенных документов
   group_generated_document_end_texts: Заключения построенных документов
