@@ -102,9 +102,6 @@
             "config/routes/liip_imagine.yaml"
         ]
     },
-    "mopa/bootstrap-bundle": {
-        "version": "v3.3.1"
-    },
     "sensio/distribution-bundle": {
         "version": "v5.0.25"
     },

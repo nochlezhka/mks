@@ -16,7 +16,6 @@
         "laminas/laminas-zendframework-bridge": "^1.5",
         "liip/imagine-bundle": "^2.0",
         "mnvx/lowrapper": "^1.0",
-        "mopa/bootstrap-bundle": "^3.1",
         "phpoffice/phpspreadsheet": "^1.23",
         "sonata-project/datagrid-bundle": "^3.0",
         "sonata-project/doctrine-extensions": "^1.0",
@@ -90,12 +89,6 @@
         "symfony-web-dir": "web"
     },
     "scripts": {
-        "post-install-cmd": [
-            "Mopa\\Bundle\\BootstrapBundle\\Composer\\ScriptHandler::postInstallSymlinkTwitterBootstrapSass"
-        ],
-        "post-update-cmd": [
-            "Mopa\\Bundle\\BootstrapBundle\\Composer\\ScriptHandler::postInstallSymlinkTwitterBootstrapSass"
-        ],
         "auto-scripts": {
             "security-checker security:check": "script",
             "cache:clear": "symfony-cmd",
