@@ -74,7 +74,7 @@ class DataClearCommand extends Command
         $projectDir = $this->kernel->getProjectDir();
 
         echo "Удаление загруженных файлов\r\n";
-        $fs->remove($projectDir.'/web/uploads');
+        $fs->remove($projectDir.'/public/uploads');
 
         $output->writeln('<info>Удаление данных завершено</info>');
     }

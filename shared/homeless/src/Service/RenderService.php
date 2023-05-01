@@ -11,7 +11,6 @@ use App\Entity\Client;
 use App\Entity\Contract;
 use App\Entity\GeneratedDocument;
 use App\Entity\User;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Twig\Environment;
 use Twig\Error\LoaderError;
@@ -21,16 +20,11 @@ use Twig\Error\SyntaxError;
 // phpcs:disable SlevomatCodingStandard.Classes.RequireConstructorPropertyPromotion.RequiredConstructorPropertyPromotion
 readonly class RenderService
 {
-    protected KernelInterface $kernel;
-    protected Environment $twig;
-
     public function __construct(
-        #[Autowire('@kernel')] KernelInterface $kernel,
-        #[Autowire('@twig')] Environment $twig,
-    ) {
-        $this->kernel = $kernel;
-        $this->twig = $twig;
-    }
+        private KernelInterface $kernel,
+        private Environment $twig,
+        private string $logoPath,
+    ) {}
 
     /**
      * Рендеринг справки по шаблону, в зависимости от ее типа
@@ -42,15 +36,16 @@ readonly class RenderService
     public function renderCertificate(Certificate $certificate, Client $client): ?string
     {
         $type = $certificate->getType();
-
         if (!$type instanceof CertificateType) {
             return null;
         }
+
         $image = '';
+        [$width, $height] = [0, 0];
         if (file_exists($client->getPhotoPath())) {
-            $image = 'data:image/png;base64,'.base64_encode(file_get_contents($client->getPhotoPath()));
+            $image = $client->getPhotoFileBase64();
+            [$width, $height] = $client->getPhotoSize(300, 350);
         }
-        [$width, $height] = $client->getPhotoSize(300, 350);
 
         return $this->twig->render('/pdf/certificate/layout.html.twig', [
             'contentHeaderLeft' => empty($type->getContentHeaderLeft()) ? '' : $this->twig->createTemplate($type->getContentHeaderLeft())->render(['certificate' => $certificate]),
@@ -60,7 +55,7 @@ readonly class RenderService
             'certificate' => $certificate,
             'rootDir' => $this->kernel->getProjectDir(),
             'webDir' => $this->kernel->getProjectDir().'/public',
-            'logo' => 'data:image/png;base64,'.base64_encode(file_get_contents($this->kernel->getProjectDir().'/public/'.getenv('BIG_LOGO_PATH'))),
+            'logo' => 'data:image/png;base64,'.base64_encode(file_get_contents($this->kernel->getProjectDir().'/public/'.$this->logoPath)),
             'image' => $image,
             'height' => $height,
             'width' => $width,
@@ -80,7 +75,7 @@ readonly class RenderService
             'document' => $document,
             'rootDir' => $this->kernel->getProjectDir(),
             'webDir' => $this->kernel->getProjectDir().'/public',
-            'logo' => 'data:image/png;base64,'.base64_encode(file_get_contents($this->kernel->getProjectDir().'/public/'.getenv('BIG_LOGO_PATH'))),
+            'logo' => 'data:image/png;base64,'.base64_encode(file_get_contents($this->kernel->getProjectDir().'/public/'.$this->logoPath)),
         ]);
     }
 
