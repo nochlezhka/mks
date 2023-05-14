@@ -12,7 +12,7 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
 #[AutoconfigureTag(name: 'sonata.admin', attributes: [
     'code' => 'app.district.admin',
-    'label' => 'Районы',
+    'label' => 'districts',
     'label_translator_strategy' => 'sonata.admin.label.strategy.underscore',
     'manager_type' => 'orm',
     'model_class' => District::class,

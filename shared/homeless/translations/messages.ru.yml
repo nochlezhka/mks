@@ -94,6 +94,7 @@ form:
   group_client_fields: Доп. поля клиентов
   group_choice_field_options: Вариант выбора
   group_regions: Регионы
+  group_districts: Районы
   group_certificates: Справки
   group_certificate_types: Типы справок
   group_document_files: Загруженные файлы
