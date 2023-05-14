@@ -76,7 +76,7 @@
                 {% if certificate.createdBy %}<span class="underline">{{ certificate.createdBy.fullname }}</span> {% endif %}
 
                 {% if certificate.type and certificate.type.showDate and certificate.dateFrom %}
-                    <br/><span class="underline">«{{ certificate.dateFrom|format_date('d') }}»</span> <span class="underline">{{ certificate.dateFrom|format_date('MMMM') }}</span> {{ certificate.dateFrom|format_date('Y') }} года
+                    <br/><span class="underline">«{{ certificate.dateFrom|format_date('none', 'd') }}»</span> <span class="underline">{{ certificate.dateFrom|format_date('none', 'MMMM') }}</span> {{ certificate.dateFrom|format_date('none', 'Y') }} года
                 {% endif %}
             {% endif %}
         </td>

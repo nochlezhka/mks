@@ -22,7 +22,19 @@ final class Version20230501101801 extends AbstractMigration
     {
         $this->addSql(<<<'SQL'
             UPDATE certificate_type
-            SET content_header_left = replace(content_header_left, 'format_date(\'dd . MM . YYYY\')', 'format_date(\'none\', \'dd . MM . YYYY\')'),
+            SET content_header_left = replace(
+                  replace(
+                    replace(
+                      replace(
+                        content_header_left,
+                        'format_date(\'Y\')', 'format_date(\'none\', \'Y\')'
+                      ),
+                      'format_date(\'MMMM\')', 'format_date(\'none\', \'MMMM\')'
+                    ),
+                    'format_date(\'d\')', 'format_date(\'none\', \'d\')'
+                  ),
+                  'format_date(\'dd . MM . YYYY\')', 'format_date(\'none\', \'dd . MM . YYYY\')'
+                ),
                 content_header_right = replace(content_header_right, 'format_date(\'dd . MM . YYYY\')', 'format_date(\'none\', \'dd . MM . YYYY\')'),
                 content_body_right = replace(content_body_right, 'format_date(\'dd . MM . YYYY\')', 'format_date(\'none\', \'dd . MM . YYYY\')'),
                 content_footer = replace(content_footer, 'format_date(\'dd . MM . YYYY\')', 'format_date(\'none\', \'dd . MM . YYYY\')')
