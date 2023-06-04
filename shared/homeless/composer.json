@@ -82,7 +82,8 @@
         },
         "symfony": {
             "allow-contrib": true,
-            "docker": true
+            "docker": true,
+            "require": "6.2.*"
         },
         "symfony-app-dir": "app",
         "symfony-assets-install": "relative",
