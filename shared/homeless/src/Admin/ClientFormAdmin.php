@@ -75,7 +75,9 @@ class ClientFormAdmin extends AbstractAdmin
 
     protected function configureRoutes(RouteCollectionInterface $collection): void
     {
-        $collection->remove('create');
-        $collection->remove('delete');
+        $collection
+            ->remove('create')
+            ->remove('delete')
+        ;
     }
 }

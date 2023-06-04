@@ -8,6 +8,7 @@ namespace App\Admin;
 use App\Entity\MenuItem;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
+use Sonata\AdminBundle\Route\RouteCollectionInterface;
 use Sonata\AdminBundle\Show\ShowMapper;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
@@ -70,13 +71,14 @@ class MenuItemAdmin extends AbstractAdmin
             ->add('enabled', null, [
                 'label' => 'Включен',
             ])
-            ->add(ListMapper::NAME_ACTIONS, ListMapper::TYPE_ACTIONS, [
-                'label' => 'Действие',
-                'actions' => [
-                    'edit' => [],
-                    'delete' => [],
-                ],
-            ])
+        ;
+    }
+
+    protected function configureRoutes(RouteCollectionInterface $collection): void
+    {
+        $collection
+            ->remove('create')
+            ->remove('delete')
         ;
     }
 }
