@@ -23,7 +23,7 @@ breadcrumb:
   link_document_list: Документы
   link_document_create: Создать
   link_document_delete: Удалить
-  link_document_file_list: Загруженные файлы
+  link_document_file_list: Файлы
   link_document_file_create: Создать
   link_document_file_delete: Удалить
   link_contract_list: Сервисные планы
@@ -97,7 +97,7 @@ form:
   group_districts: Районы
   group_certificates: Справки
   group_certificate_types: Типы справок
-  group_document_files: Загруженные файлы
+  group_document_files: Файлы
   group_documents: Документы
   group_notices: Напоминания
   group_service_types: Типы услуг
@@ -150,7 +150,7 @@ client_fields: Доп. поля клиентов
 regions: Регионы
 certificates: Справки
 certificate_types: Типы справок
-document_files: Загруженные файлы
+document_files: Файлы
 documents: Документы
 notices: Напоминания
 service_types: Типы услуг
