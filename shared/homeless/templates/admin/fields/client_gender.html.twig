@@ -1,0 +1,10 @@
+{% extends '@SonataAdmin/CRUD/base_show_field.html.twig' %}
+
+{% block field %}
+    {% if value|default(null) is null %}
+    {% elseif value == 1 %}
+        Мужской
+    {% else %}
+        Женский
+    {% endif %}
+{% endblock %}

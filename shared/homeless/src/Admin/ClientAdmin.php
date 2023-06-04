@@ -129,12 +129,9 @@ class ClientAdmin extends AbstractAdmin
             ->add('id', TextType::class, [
                 'label' => 'ID',
             ])
-            ->add('gender', ChoiceType::class, [
+            ->add('gender', null, [
                 'label' => 'Пол',
-                'choices' => [
-                    'Мужской' => Client::GENDER_MALE,
-                    'Женский' => Client::GENDER_FEMALE,
-                ],
+                'template' => '/admin/fields/client_gender.html.twig',
             ])
             ->add('birthDate', FieldDescriptionInterface::TYPE_DATE, [
                 'label' => 'Дата рождения',
@@ -686,7 +683,7 @@ class ClientAdmin extends AbstractAdmin
             ->add('createdAt', FieldDescriptionInterface::TYPE_DATE, [
                 'label' => 'Когда добавлен',
             ])
-            ->add(ListMapper::NAME_ACTIONS, null, [
+            ->add(ListMapper::NAME_ACTIONS, ListMapper::TYPE_ACTIONS, [
                 'label' => 'Действие',
                 'actions' => [
                     'show' => [],
