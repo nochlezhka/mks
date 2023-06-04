@@ -5,6 +5,7 @@ declare(strict_types=1);
 
 namespace App\Admin;
 
+use App\Controller\UserController;
 use App\Entity\Position;
 use App\Entity\User;
 use App\Form\DataTransformer\PositionToChoiceFieldMaskTypeTransformer;
@@ -23,6 +24,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 #[AutoconfigureTag(name: 'sonata.admin', attributes: [
     'code' => 'sonata.user.admin.user',
+    'controller' => UserController::class,
     'label' => 'users',
     'label_translator_strategy' => 'sonata.admin.label.strategy.underscore',
     'manager_type' => 'orm',

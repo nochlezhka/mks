@@ -482,6 +482,10 @@
                 <source>read_less</source>
                 <target>Закрыть</target>
             </trans-unit>
+            <trans-unit id="cannot_delete_own_account">
+                <source>cannot_delete_own_account</source>
+                <target>Вы не можете удалить свой профиль</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
