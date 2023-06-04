@@ -40,7 +40,7 @@ class GeneratedDocument extends BaseEntity implements DownloadableInterface
 
     public function __toString(): string
     {
-        return $this->type->getName() ?? '';
+        return $this->type?->getName() ?? '';
     }
 
     public function getNamePrefix(): string
