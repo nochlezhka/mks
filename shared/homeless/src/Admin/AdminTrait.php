@@ -11,7 +11,6 @@ use App\Entity\User;
 use App\Repository\ContractStatusRepository;
 use App\Repository\MenuItemRepository;
 use App\Repository\NoticeRepository;
-use App\Service\MetaService;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -20,18 +19,11 @@ use Symfony\Contracts\Service\Attribute\Required;
 
 trait AdminTrait
 {
-    protected MetaService $metaService;
     protected TokenStorageInterface $tokenStorage;
     protected EntityManagerInterface $entityManager;
     protected MenuItemRepository $menuItemRepository;
     protected NoticeRepository $noticeRepository;
     protected ContractStatusRepository $contractStatusRepository;
-
-    #[Required]
-    public function setMetaService(MetaService $metaService): void
-    {
-        $this->metaService = $metaService;
-    }
 
     #[Required]
     public function setTokenStorage(TokenStorageInterface $tokenStorage): void
@@ -84,11 +76,7 @@ trait AdminTrait
             throw new \InvalidArgumentException('Unexpected User type');
         }
 
-        return $this->noticeRepository->getMyClientsNoticeHeaderCount(
-            $filter,
-            $user,
-            $this->metaService->isClientFormsEnabled(),
-        );
+        return $this->noticeRepository->getMyClientsNoticeHeaderCount($filter, $user);
     }
 
     /**
@@ -114,11 +102,7 @@ trait AdminTrait
             throw new \InvalidArgumentException('Unexpected User type');
         }
 
-        return $this->noticeRepository->getMyClientsNoticeHeader(
-            $filter,
-            $user,
-            $this->metaService->isClientFormsEnabled(),
-        );
+        return $this->noticeRepository->getMyClientsNoticeHeader($filter, $user);
     }
 
     protected function getUser(): ?UserInterface

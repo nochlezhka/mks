@@ -12,6 +12,7 @@ use App\Form\DataTransformer\ClientFormCheckboxTransformer;
 use App\Form\DataTransformer\ClientFormMultiselectTransformer;
 use App\Util\BaseEntityUtil;
 use App\Util\ClientFormUtil;
+use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManager;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
@@ -68,7 +69,7 @@ class ClientFormResponseAdmin extends AbstractAdmin
         $this->entityManager->wrapInTransaction(function (EntityManager $em) use ($object): void {
             /** @var \App\Repository\ClientFormResponseRepository $repository */
             $repository = $em->getRepository(ClientFormResponse::class);
-            $repository->lockForUpdate($object);
+            $em->lock($object, LockMode::PESSIMISTIC_WRITE);
             $repository->prepareForCreateOrUpdate($object, $this->getCurrentForm());
         });
     }

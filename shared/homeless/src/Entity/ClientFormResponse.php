@@ -39,13 +39,6 @@ class ClientFormResponse extends BaseEntity
     private Collection $values;
 
     /**
-     * Ссылка на ResidentQuestionnaire, из которого была скопирована заполненная анкета.
-     * Нужна на период миграции из старой формы анкеты в новую.
-     */
-    #[ORM\Column(type: 'integer', unique: true, nullable: true)]
-    private ?int $residentQuestionnaireId = null;
-
-    /**
      * Набор значений полей формы из запроса на создание/обновление заполненной анкеты.
      * Заполняется через магический метод `__set`.
      *
@@ -175,22 +168,6 @@ class ClientFormResponse extends BaseEntity
         }
 
         return false;
-    }
-
-    /**
-     * Возвращает ID объекта `ResidentQuestionnaire`, из которого была скопирована анкета.
-     * Если здесь `null`, значит анкета была создана вручную.
-     *
-     * @see ResidentQuestionnaire
-     */
-    public function getResidentQuestionnaireId(): ?int
-    {
-        return $this->residentQuestionnaireId;
-    }
-
-    public function setResidentQuestionnaireId(?int $residentQuestionnaireId): void
-    {
-        $this->residentQuestionnaireId = $residentQuestionnaireId;
     }
 
     private function getFieldValue(?int $fieldId): ?string

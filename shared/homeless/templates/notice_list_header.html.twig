@@ -6,11 +6,7 @@
                 {% if notice.id is defined %}
                     <li><a href="{{ path('admin_app_client_notice_list', {'id': notice.client.id}) }}">{{ notice.client }}: "{{ notice.text }}"</a></li>
                 {% else %}
-                    {% if notice.clientFormsEnabled %}
-                        <li><a href="{{ path('admin_app_client_resident_form_response_list', {'id': notice.client.id}) }}">{{ notice.client }}: "{{ notice.text }}"</a></li>
-                    {% else %}
-                        <li><a href="{{ path('admin_app_client_residentquestionnaire_list', {'id': notice.client.id}) }}">{{ notice.client }}: "{{ notice.text }}"</a></li>
-                    {% endif %}
+                    <li><a href="{{ path('admin_app_client_resident_form_response_list', {'id': notice.client.id}) }}">{{ notice.client }}: "{{ notice.text }}"</a></li>
                 {% endif %}
             {% endfor %}
         {% endif %}

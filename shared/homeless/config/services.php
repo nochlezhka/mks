@@ -21,7 +21,6 @@ use App\Admin\NoteAdmin;
 use App\Admin\NoticeAdmin;
 use App\Admin\RegionAdmin;
 use App\Admin\ResidentFormResponseAdmin;
-use App\Admin\ResidentQuestionnaireAdmin;
 use App\Admin\ServiceAdmin;
 use App\Admin\ShelterHistoryAdmin;
 use App\Admin\UserAdmin;
@@ -47,7 +46,6 @@ return static function (ContainerConfigurator $container): void {
         ->call('addChild', [service(DocumentFileAdmin::class), 'client'])
         ->call('addChild', [service(ContractAdmin::class), 'client'])
         ->call('addChild', [service(ShelterHistoryAdmin::class), 'client'])
-        ->call('addChild', [service(ResidentQuestionnaireAdmin::class), 'client'])
         ->call('addChild', [service(CertificateAdmin::class), 'client'])
         ->call('addChild', [service(GeneratedDocumentAdmin::class), 'client'])
         ->call('addChild', [service(NoticeAdmin::class), 'client'])

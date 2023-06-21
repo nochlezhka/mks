@@ -8,7 +8,6 @@ namespace App\Admin;
 use App\Entity\ClientForm;
 use App\Entity\ClientFormResponse;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * Дочерний класс `ClientFormResponseAdmin` для работы с анкетой проживающего.
@@ -32,12 +31,6 @@ class ResidentFormResponseAdmin extends ClientFormResponseAdmin
     {
         if (!$object instanceof ClientFormResponse) {
             return;
-        }
-
-        // если анкеты в новом формате ещё не открыли, запрещаем редактирование синхронных копий,
-        // составленных из анкет в старом формате
-        if (!$this->metaService->isClientFormsEnabled() && $object->getResidentQuestionnaireId() !== null) {
-            throw new AccessDeniedException('Изменение копии анкеты запрещено.');
         }
 
         parent::preValidate($object);

@@ -61,7 +61,6 @@ return static function (SecurityConfig $security): void {
         Role::APP_CONTRACT_ITEM_ADMIN_ALL,
         Role::APP_CERTIFICATE_ADMIN_ALL,
         Role::APP_SHELTER_HISTORY_ADMIN_ALL,
-        Role::APP_RESIDENT_QUESTIONNAIRE_ADMIN_ALL,
         Role::APP_RESIDENT_FORM_RESPONSE_ADMIN_ALL,
         Role::APP_GENERATED_DOCUMENT_ADMIN_ALL,
         Role::APP_NOTE_ADMIN_ALL,

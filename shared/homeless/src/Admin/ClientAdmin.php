@@ -832,19 +832,9 @@ class ClientAdmin extends AbstractAdmin
             ]);
         }
 
-        $clientFormsEnabled = $this->metaService->isClientFormsEnabled();
-        if ($this->authorizationChecker->isGranted(Role::APP_RESIDENT_QUESTIONNAIRE_ADMIN_ALL)) {
-            if ($this->isMenuItemEnabled(MenuItem::CODE_QUESTIONNAIRE_LIVING) && $this->isMenuItemEnabledShelterHistory($id)) {
-                $menu->addChild($clientFormsEnabled ? 'Старая анкета' : 'Анкета', [
-                    'uri' => $admin->generateUrl('app.resident_questionnaire.admin.list', [
-                        'id' => $id,
-                    ]),
-                ]);
-            }
-        }
         if ($this->authorizationChecker->isGranted(Role::APP_RESIDENT_FORM_RESPONSE_ADMIN_ALL)) {
             if ($this->isMenuItemEnabled(MenuItem::CODE_QUESTIONNAIRE_LIVING) && $this->isMenuItemEnabledShelterHistory($id)) {
-                $menu->addChild($clientFormsEnabled ? 'Анкета' : 'Новая анкета', [
+                $menu->addChild('Анкета', [
                     'uri' => $admin->generateUrl('app.resident_form_response.admin.list', [
                         'id' => $id,
                     ]),
