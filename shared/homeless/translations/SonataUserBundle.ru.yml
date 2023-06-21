@@ -3,6 +3,7 @@ breadcrumb:
 
 form:
   group_profile: Профиль
+  label_username: Логин
 
 user: Пользователь
 roles: Роли

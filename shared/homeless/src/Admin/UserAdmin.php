@@ -63,10 +63,10 @@ class UserAdmin extends SonataUserAdmin
         $form->with('profile', ['class' => 'col-md-6']);
         $form
             ->add('lastname', null, [
-                'required' => false,
+                'required' => true,
             ])
             ->add('firstname', null, [
-                'required' => false,
+                'required' => true,
             ])
             ->add('middlename', null, [
                 'required' => false,

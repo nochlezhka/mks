@@ -36,11 +36,11 @@ class User extends BaseUser implements BaseEntityInterface, TimezoneAwareInterfa
     #[ORM\ManyToOne(targetEntity: Position::class, inversedBy: 'users')]
     private ?Position $position;
 
-    #[ORM\Column(type: 'string', nullable: true)]
-    private ?string $lastname = null;
+    #[ORM\Column(type: 'string')]
+    private string $lastname = '';
 
-    #[ORM\Column(type: 'string', nullable: true)]
-    private ?string $firstname = null;
+    #[ORM\Column(type: 'string')]
+    private string $firstname = '';
 
     /**
      * Отчество
