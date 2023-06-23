@@ -1,0 +1,9 @@
+{#{% extends '@SonataAdmin/CRUD/base_show_field.html.twig' %}#}
+
+{% block field %}
+    {{ value|join(', ') }}
+    <script>
+        $('.service_type_select').select2();
+        $('.service_type_select').select2('open');
+    </script>
+{% endblock %}

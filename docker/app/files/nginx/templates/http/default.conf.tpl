@@ -6,14 +6,14 @@ server {
     listen 80;
     server_name ${DOMAIN};
 
-    root /var/www/symfony/web;
+    root /var/www/symfony/public;
 
     location ~* /sitemap(.*).xml {
         try_files $uri @rewrite;
     }
     location / {
-        # try to serve file directly, fallback to app.php
-        try_files $uri /app.php$is_args$args;
+        # try to serve file directly, fallback to index.php
+        try_files $uri /index.php$is_args$args;
     }
     
     location ~* \.(jpg|xml|gif|swf|ico|css|zip|rar|doc|xls|js|txt|dtd|png|jpeg|eot|woff|woff2|ttf|svg|html)$ {
@@ -21,16 +21,8 @@ server {
         expires max;
     }
 
-    # DEV
-    location ~ ^/(app_dev|config|adminer)\.php(/|$) {
-        fastcgi_pass php-upstream;
-        fastcgi_split_path_info ^(.+\.php)(/.*)$;
-        include fastcgi_params;
-        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
-        fastcgi_param DOCUMENT_ROOT $realpath_root;
-    }
     # PROD
-    location ~ ^/app\.php(/|$) {
+    location ~ ^/index\.php(/|$) {
         fastcgi_pass php-upstream;
         fastcgi_split_path_info ^(.+\.php)(/.*)$;
         include fastcgi_params;

@@ -1,4 +1,4 @@
-FROM php:7.4.29-fpm-alpine3.16
+FROM php:8.2.4-fpm-alpine
 
 #
 # Setup Moscow time
@@ -24,33 +24,42 @@ RUN addgroup -S --gid 1000 nochlezhka \
 RUN apk update \
  && apk upgrade \
  && apk add --no-cache \
-      nodejs=~16.20 \
-      yarn=~1.22.19 \
-      curl=~7.83 \
-      icu-dev=~71.1 \
-      libzip-dev=~1.8.0 \
-      libreoffice=~7.2.7.2 \
-      libpng-dev=~1.6.37 \
-      nginx=~1.22.1 \
+      curl \
       gettext \
+      icu-data-full \
+      icu-dev \
+      icu-libs \
+      libpng-dev \
+      libreoffice \
+      libzip-dev \
+      nginx \
+      nodejs \
+      yarn \
  && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer \
- && composer self-update 2.2.9 \
- && docker-php-ext-install gd zip bcmath intl pdo_mysql \
+ && composer self-update 2.5.1 \
+ && docker-php-ext-install \
+      bcmath \
+      gd \
+      intl \
+      opcache \
+      pdo_mysql \
+      zip \
  \
  && touch /run/nginx.pid \
- && mkdir -p /var/cache/nginx /etc/nginx /var/log/nginx /var/www/symfony/vendor /var/lib/nginx /var/log/php7 \
- && chown -R 1000:1000 /var/www /var/cache/nginx /etc/nginx /var/log/nginx /run/nginx.pid /var/lib/nginx /var/log/php7 \
+ && mkdir -p /var/cache/nginx /etc/nginx /var/log/nginx /var/www/symfony/vendor /var/lib/nginx /var/log/php8 \
+ && chown -R 1000:1000 /var/www /var/cache/nginx /etc/nginx /var/log/nginx /run/nginx.pid /var/lib/nginx /var/log/php8 \
  && chmod -R 755 /var/www \
  && rm -f /etc/nginx/conf.d/default.conf
 
 USER 1000:1000
 ENV HOME=/home/nochlezhka \
     USER=nochlezhka \
-    XDG_RUNTIME_DIR=/run/user/1000
+    XDG_RUNTIME_DIR=/run/user/1000 \
+    APP_ENV=prod
 
-COPY --chown=nochlezhka files/homeless /var/www/symfony
-COPY --chown=nochlezhka files/php/symfony.ini /usr/local/etc/php/conf.d/
-COPY --chown=nochlezhka files/nginx /etc/nginx/
+COPY --chown=nochlezhka shared/homeless /var/www/symfony
+COPY --chown=nochlezhka docker/app/files/php/symfony.ini /usr/local/etc/php/conf.d/
+COPY --chown=nochlezhka docker/app/files/nginx /etc/nginx/
 RUN chmod +x /etc/nginx/entrypoint.sh
 
 WORKDIR /var/www/symfony
@@ -58,11 +67,10 @@ WORKDIR /var/www/symfony
 #
 # Install PHP dependencies
 #
-RUN composer install --no-scripts \
+RUN composer install --no-scripts --no-dev --optimize-autoloader \
  && yarn install \
  && yarn cache clean
-RUN ./app/console fos:js-routing:dump \
- && ./app/console ckeditor:install \
- && ./app/console assets:install --symlink \
- && yarn encore prod \
- && php vendor/sensio/distribution-bundle/Resources/bin/build_bootstrap.php
+RUN chmod +x ./bin/console \
+ && ./bin/console ckeditor:install \
+ && ./bin/console assets:install --symlink \
+ && yarn encore prod

@@ -1,0 +1,479 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script>
+        function changeType() {
+            if ($('#s5a37cdd74da55_type').val() === 'aggregated') {
+                $('#type-default').hide();
+                $('#type-aggregated2').hide();
+                $('#type-aggregated').show();
+            } else if ($('#s5a37cdd74da55_type').val() === 'aggregated2') {
+                $('#type-default').hide();
+                $('#type-aggregated').show();
+                $('#type-aggregated2').show();
+            } else {
+                $('#type-default').show();
+                $('#type-aggregated').hide();
+                $('#type-aggregated2').hide();
+            }
+        }
+
+        {% if app.request.attributes.get('_route') == 'admin_app_client_certificate_list' %}
+        $.ajax({
+            url: "{{ path('admin_app_client_historydownload_list', {'id': app.request.attributes.get('id')}) }}",
+            cache: false,
+            success: function (html) {
+                const newBlock = $(html);
+                $('.added-block').html($(newBlock.find('.col-xs-12.col-md-12')[1]).parent().html());
+            }
+        });
+        {% endif %}
+
+        const observer = new MutationObserver(function (mutations) {
+            mutations.forEach(function (mutation) {
+                if (mutation.target.id === 'report-btn' && mutation.type === 'attributes' && mutation.attributeName === 'disabled') {
+                    $(mutation.target).removeAttr('disabled');
+                }
+            });
+        });
+        window.onload = () => observer.observe(document.getElementById('report-btn'), {attributes: true});
+    </script>
+{% endblock %}
+
+{% block sonata_admin_content %}
+
+    {% block notice %}
+        {% include '@SonataTwig/FlashMessage/render.html.twig' %}
+    {% endblock notice %}
+
+    {% if _preview is not empty %}
+        <div class="sonata-ba-preview">{{ _preview|raw }}</div>
+    {% endif %}
+
+    <div class="sonata-ba-form">
+        <form
+            role="form"
+            action="{{ path('reportDownload') }}"
+            method="POST"
+        >
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="box box-primary">
+                                <div class="box-header">
+                                    <h4 class="box-title">
+                                        Отчёты
+                                    </h4>
+                                </div>
+                                <div class="box-body">
+                                    <div class="sonata-ba-collapsed-fields">
+                                        <div class="form-group" id="sonata-ba-field-container-s5a37cdd74da55_type">
+                                            <label class="control-label required" for="s5a37cdd74da55_type">
+                                                Тип
+                                            </label>
+                                            <div class="sonata-ba-field sonata-ba-field-standard-natural">
+                                                <select id="s5a37cdd74da55_type" name="type" onchange="changeType()"
+                                                        class=" form-control">
+                                                    <option value=""></option>
+                                                    {% for id, name in types %}
+                                                        <option value="{{ id }}">{{ name }}</option>
+                                                    {% endfor %}
+                                                </select>
+
+                                            </div>
+                                        </div>
+                                        <div id="type-default">
+                                            <div class="form-group" id="sonata-ba-field-container-s5a37cdd74da56_type">
+                                                <label class="control-label" for="s5a37cdd74da56_type">
+                                                    Сотрудник
+                                                </label>
+                                                <div class="sonata-ba-field sonata-ba-field-standard-natural">
+                                                    <select id="s5a37cdd74da56_type" name="userId"
+                                                            class=" form-control">
+                                                        <option value=""></option>
+                                                        {% for user in users %}
+                                                            <option value="{{ user.id }}">{{ user.fullname }}</option>
+                                                        {% endfor %}
+                                                    </select>
+
+                                                </div>
+                                            </div>
+                                            <div class="form-group" id="sonata-ba-field-container-s5a37d10f9fe56_dateFrom">
+                                                <label class="control-label" for="s5a37d10f9fe56_dateFrom">
+                                                    Дата начала
+                                                </label>
+                                                <div class="sonata-ba-field sonata-ba-field-standard-natural">
+                                                    <div class="input-group">
+                                                        <div class='input-group date' id='dp_s5a37d10f9fe56_dateFrom'>
+                                                            <input type="text" id="s5a37d10f9fe56_dateFrom"
+                                                                   name="dateFrom"
+                                                                   class="sonata-medium-date form-control"
+                                                                   data-date-format="DD.MM.YYYY"/><span
+                                                                    class="input-group-addon"><span
+                                                                        class="fa fa-calendar"></span></span></div>
+                                                    </div>
+                                                    <script type="text/javascript">
+                                                        jQuery(function ($) {
+                                                            $('#dp_s5a37d10f9fe56_dateFrom').datetimepicker({
+                                                                "pickTime": false,
+                                                                "pickDate": true,
+                                                                "useCurrent": true,
+                                                                "minDate": "1\/1\/1900",
+                                                                "maxDate": null,
+                                                                "showToday": true,
+                                                                "language": "ru",
+                                                                "disabledDates": [],
+                                                                "enabledDates": [],
+                                                                "icons": {
+                                                                    "time": "fa fa-clock-o",
+                                                                    "date": "fa fa-calendar",
+                                                                    "up": "fa fa-chevron-up",
+                                                                    "down": "fa fa-chevron-down"
+                                                                },
+                                                                "useStrict": false,
+                                                                "sideBySide": false,
+                                                                "daysOfWeekDisabled": [],
+                                                                "collapse": true,
+                                                                "calendarWeeks": false,
+                                                                "viewMode": "days",
+                                                                "minViewMode": "days",
+                                                                "defaultDate": "2017-12-18",
+                                                                "useSeconds": false
+                                                            });
+                                                        });
+                                                    </script>
+                                                </div>
+                                            </div>
+                                            <div class="form-group" id="sonata-ba-field-container-s5a37d10f9fe56_dateTo">
+                                            <label class="control-label" for="s5a37d10f9fe56_dateTo">
+                                                Дата окончания
+                                            </label>
+                                            <div class="sonata-ba-field sonata-ba-field-standard-natural">
+                                                <div class="input-group">
+                                                    <div class='input-group date' id='dp_s5a37d10f9fe56_dateTo'>
+                                                        <input
+                                                                type="text" id="s5a37d10f9fe56_dateTo"
+                                                                name="dateTo"
+                                                                class="sonata-medium-date form-control"
+                                                                data-date-format="DD.MM.YYYY"/><span
+                                                                class="input-group-addon"><span
+                                                                    class="fa fa-calendar"></span></span></div>
+                                                </div>
+                                                <script type="text/javascript">
+                                                    jQuery(function ($) {
+                                                        $('#dp_s5a37d10f9fe56_dateTo').datetimepicker({
+                                                            "pickTime": false,
+                                                            "pickDate": true,
+                                                            "useCurrent": true,
+                                                            "minDate": "1\/1\/1900",
+                                                            "maxDate": null,
+                                                            "showToday": true,
+                                                            "language": "ru",
+                                                            "disabledDates": [],
+                                                            "enabledDates": [],
+                                                            "icons": {
+                                                                "time": "fa fa-clock-o",
+                                                                "date": "fa fa-calendar",
+                                                                "up": "fa fa-chevron-up",
+                                                                "down": "fa fa-chevron-down"
+                                                            },
+                                                            "useStrict": false,
+                                                            "sideBySide": false,
+                                                            "daysOfWeekDisabled": [],
+                                                            "collapse": true,
+                                                            "calendarWeeks": false,
+                                                            "viewMode": "days",
+                                                            "minViewMode": "days",
+                                                            "defaultDate": "2017-12-18",
+                                                            "useSeconds": false
+                                                        });
+                                                    });
+                                                </script>
+                                            </div>
+                                        </div>
+                                        </div>
+
+                                        <div id="type-aggregated" style="display: none">
+                                            <div class="form-group" id="sonata-ba-field-container-s5a37d10f9fe56_createClientdateFrom">
+                                                <label class="control-label required" for="s5a37d10f9fe56_createClientdateFrom">
+                                                    Создание анкеты. Дата начала
+                                                </label>
+                                                <div class="sonata-ba-field sonata-ba-field-standard-natural">
+                                                    <div class="input-group">
+                                                        <div class='input-group date' id='dp_s5a37d10f9fe56_createClientdateFrom'>
+                                                            <input type="text" id="s5a37d10f9fe56_createClientdateFrom"
+                                                                   name="createClientdateFrom"
+                                                                   class="sonata-medium-date form-control"
+                                                                   data-date-format="DD.MM.YYYY"/><span
+                                                                    class="input-group-addon"><span
+                                                                        class="fa fa-calendar"></span></span></div>
+                                                    </div>
+                                                    <script type="text/javascript">
+                                                      jQuery(function ($) {
+                                                        $('#dp_s5a37d10f9fe56_createClientdateFrom').datetimepicker({
+                                                          "pickTime": false,
+                                                          "pickDate": true,
+                                                          "useCurrent": true,
+                                                          "minDate": "1\/1\/1900",
+                                                          "maxDate": null,
+                                                          "showToday": true,
+                                                          "language": "ru",
+                                                          "disabledDates": [],
+                                                          "enabledDates": [],
+                                                          "icons": {
+                                                            "time": "fa fa-clock-o",
+                                                            "date": "fa fa-calendar",
+                                                            "up": "fa fa-chevron-up",
+                                                            "down": "fa fa-chevron-down"
+                                                          },
+                                                          "useStrict": false,
+                                                          "sideBySide": false,
+                                                          "daysOfWeekDisabled": [],
+                                                          "collapse": true,
+                                                          "calendarWeeks": false,
+                                                          "viewMode": "days",
+                                                          "minViewMode": "days",
+                                                          "defaultDate": "2017-12-18",
+                                                          "useSeconds": false
+                                                        });
+                                                      });
+                                                    </script>
+                                                </div>
+                                            </div>
+                                            <div class="form-group" id="sonata-ba-field-container-s5a37d10f9fe56_createClientFromTo">
+                                                <label class="control-label required" for="s5a37d10f9fe56_createClientFromTo">
+                                                    Создание анкеты. Дата окончания
+                                                </label>
+                                                <div class="sonata-ba-field sonata-ba-field-standard-natural">
+                                                    <div class="input-group">
+                                                        <div class='input-group date' id='dp_s5a37d10f9fe56_createClientFromTo'>
+                                                            <input
+                                                                    type="text" id="s5a37d10f9fe56_createClientFromTo"
+                                                                    name="createClientFromTo"
+                                                                    class="sonata-medium-date form-control"
+                                                                    data-date-format="DD.MM.YYYY"/><span
+                                                                    class="input-group-addon"><span
+                                                                        class="fa fa-calendar"></span></span></div>
+                                                    </div>
+                                                    <script type="text/javascript">
+                                                      jQuery(function ($) {
+                                                        $('#dp_s5a37d10f9fe56_createClientFromTo').datetimepicker({
+                                                          "pickTime": false,
+                                                          "pickDate": true,
+                                                          "useCurrent": true,
+                                                          "minDate": "1\/1\/1900",
+                                                          "maxDate": null,
+                                                          "showToday": true,
+                                                          "language": "ru",
+                                                          "disabledDates": [],
+                                                          "enabledDates": [],
+                                                          "icons": {
+                                                            "time": "fa fa-clock-o",
+                                                            "date": "fa fa-calendar",
+                                                            "up": "fa fa-chevron-up",
+                                                            "down": "fa fa-chevron-down"
+                                                          },
+                                                          "useStrict": false,
+                                                          "sideBySide": false,
+                                                          "daysOfWeekDisabled": [],
+                                                          "collapse": true,
+                                                          "calendarWeeks": false,
+                                                          "viewMode": "days",
+                                                          "minViewMode": "days",
+                                                          "defaultDate": "2017-12-18",
+                                                          "useSeconds": false
+                                                        });
+                                                      });
+                                                    </script>
+                                                </div>
+                                            </div>
+                                            <div class="form-group" id="sonata-ba-field-container-s5a37d10f9fe56_createServicedateFrom">
+                                                <label class="control-label required" for="s5a37d10f9fe56_createServicedateFrom">
+                                                    Услуга. Дата начала
+                                                </label>
+                                                <div class="sonata-ba-field sonata-ba-field-standard-natural">
+                                                    <div class="input-group">
+                                                        <div class='input-group date' id='dp_s5a37d10f9fe56_createServicedateFrom'>
+                                                            <input type="text" id="s5a37d10f9fe56_createServicedateFrom"
+                                                                   name="createServicedateFrom"
+                                                                   class="sonata-medium-date form-control"
+                                                                   data-date-format="DD.MM.YYYY"/><span
+                                                                    class="input-group-addon"><span
+                                                                        class="fa fa-calendar"></span></span></div>
+                                                    </div>
+                                                    <script type="text/javascript">
+                                                      jQuery(function ($) {
+                                                        $('#dp_s5a37d10f9fe56_createServicedateFrom').datetimepicker({
+                                                          "pickTime": false,
+                                                          "pickDate": true,
+                                                          "useCurrent": true,
+                                                          "minDate": "1\/1\/1900",
+                                                          "maxDate": null,
+                                                          "showToday": true,
+                                                          "language": "ru",
+                                                          "disabledDates": [],
+                                                          "enabledDates": [],
+                                                          "icons": {
+                                                            "time": "fa fa-clock-o",
+                                                            "date": "fa fa-calendar",
+                                                            "up": "fa fa-chevron-up",
+                                                            "down": "fa fa-chevron-down"
+                                                          },
+                                                          "useStrict": false,
+                                                          "sideBySide": false,
+                                                          "daysOfWeekDisabled": [],
+                                                          "collapse": true,
+                                                          "calendarWeeks": false,
+                                                          "viewMode": "days",
+                                                          "minViewMode": "days",
+                                                          "defaultDate": "2017-12-18",
+                                                          "useSeconds": false
+                                                        });
+                                                      });
+                                                    </script>
+                                                </div>
+                                            </div>
+                                            <div class="form-group" id="sonata-ba-field-container-s5a37d10f9fe56_createServiceFromTo">
+                                                <label class="control-label required" for="s5a37d10f9fe56_createServiceFromTo">
+                                                    Услуга. Дата окончания
+                                                </label>
+                                                <div class="sonata-ba-field sonata-ba-field-standard-natural">
+                                                    <div class="input-group">
+                                                        <div class='input-group date' id='dp_s5a37d10f9fe56_createServiceFromTo'>
+                                                            <input
+                                                                type="text"
+                                                                id="s5a37d10f9fe56_createServiceFromTo"
+                                                                name="createServiceFromTo"
+                                                                class="sonata-medium-date form-control"
+                                                                data-date-format="DD.MM.YYYY"/><span class="input-group-addon"><span class="fa fa-calendar"></span></span>
+                                                        </div>
+                                                    </div>
+                                                    <script type="text/javascript">
+                                                      jQuery(function ($) {
+                                                        $('#dp_s5a37d10f9fe56_createServiceFromTo').datetimepicker({
+                                                          "pickTime": false,
+                                                          "pickDate": true,
+                                                          "useCurrent": true,
+                                                          "minDate": "1\/1\/1900",
+                                                          "maxDate": null,
+                                                          "showToday": true,
+                                                          "language": "ru",
+                                                          "disabledDates": [],
+                                                          "enabledDates": [],
+                                                          "icons": {
+                                                            "time": "fa fa-clock-o",
+                                                            "date": "fa fa-calendar",
+                                                            "up": "fa fa-chevron-up",
+                                                            "down": "fa fa-chevron-down"
+                                                          },
+                                                          "useStrict": false,
+                                                          "sideBySide": false,
+                                                          "daysOfWeekDisabled": [],
+                                                          "collapse": true,
+                                                          "calendarWeeks": false,
+                                                          "viewMode": "days",
+                                                          "minViewMode": "days",
+                                                          "defaultDate": "2017-12-18",
+                                                          "useSeconds": false
+                                                        });
+                                                      });
+                                                    </script>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div id="type-aggregated2" style="display: none">
+                                            <div class="form-group" id="sonata-ba-field-container-s5a37cdd74da55_homelessReason">
+                                                <label class="control-label" for="s5a37cdd74da55_homelessReason">
+                                                    Причины бездомности
+                                                </label>
+                                                <div class="sonata-ba-field sonata-ba-field-standard-natural">
+                                                    <select
+                                                        id="s5a37cdd74da55_homelessReason"
+                                                        name="homelessReason[]"
+                                                        multiple="multiple"
+                                                        class=" form-control"
+                                                    >
+                                                        <option value=""></option>
+                                                        {% for id,value in optionsHomelessReason %}
+                                                            <option value="{{ value }}">{{ id }}</option>
+                                                        {% endfor %}
+                                                    </select>
+
+                                                </div>
+                                            </div>
+                                            <div class="form-group" id="sonata-ba-field-container-s5a37cdd74da55_disease">
+                                                <label class="control-label" for="s5a37cdd74da55_disease">
+                                                    Хронические болезни
+                                                </label>
+                                                <div class="sonata-ba-field sonata-ba-field-standard-natural">
+                                                    <select id="s5a37cdd74da55_disease" name="disease[]" multiple="multiple"
+                                                            class=" form-control">
+                                                        <option value=""></option>
+                                                        {% for id,value in optionsDisease %}
+                                                            <option value="{{ value }}">{{ id }}</option>
+                                                        {% endfor %}
+                                                    </select>
+
+                                                </div>
+                                            </div>
+                                            <div class="form-group" id="sonata-ba-field-container-s5a37cdd74da55_breadwinner">
+                                                <label class="control-label" for="s5a37cdd74da55_breadwinner">
+                                                    Источники существования
+                                                </label>
+                                                <div class="sonata-ba-field sonata-ba-field-standard-natural">
+                                                    <select id="s5a37cdd74da55_breadwinner" name="breadwinner[]" multiple="multiple"
+                                                            class=" form-control">
+                                                        <option value=""></option>
+                                                        {% for id,value in optionsBreadwinner %}
+                                                            <option value="{{ value }}">{{ id }}</option>
+                                                        {% endfor %}
+                                                    </select>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <input type="hidden" id="s5a37cdd74da55__token" name="s5a37cdd74da55[_token]" class=" form-control"
+                   value="HVWScIWCg0Eb56_CgDV0u6LMiKBBErIYNCuhzskPhGQ"/>
+
+
+            <div class="sonata-ba-form-actions well well-small form-actions">
+                <button id="report-btn" type="submit" class="btn btn-success" name="btn_update_and_list"><i class="fa fa-save"></i>
+                    <i class="fa fa-list" aria-hidden="true"></i>Сгенерировать
+                </button>
+            </div>
+        </form>
+    </div>
+
+    {% if _show is not empty %}
+        <div class="sonata-ba-show">{{ _show|raw }}</div>
+    {% endif %}
+
+    {% if _form is not empty %}
+        <div class="sonata-ba-form">{{ _form|raw }}</div>
+    {% endif %}
+
+    {% if _list_filters is not empty %}
+        <div class="row">
+            {{ _list_filters|raw }}
+        </div>
+    {% endif %}
+
+    {% if _list_table is not empty %}
+        <div class="row">
+            {{ _list_table|raw }}
+        </div>
+    {% endif %}
+{% endblock sonata_admin_content %}

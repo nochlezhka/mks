@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta charset="utf-8">
+    <style>
+        * {
+            font-family: sans-serif;
+            border-spacing: 0;
+            padding: 0;
+            font-size: medium;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        td, th {
+            font-family: sans-serif;
+            border-spacing: 0;
+            padding: 0;
+            font-size: medium;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        table {
+            font-family: sans-serif;
+            border-spacing: 0;
+            padding: 0;
+            font-size: medium;
+            text-align: left;
+            vertical-align: top;
+        }
+    </style>
+</head>
+<body>
+<table width="700px" border="0">
+    <tr>
+        <td>
+            <table width="100%" border="0">
+                <tr>
+                    <td width="33%">
+                        <img src="{{ logo }}" width="213px" height="66px">
+                    </td>
+                    <td width="66%" style="font-size: small">
+                        {{ org_contacts_full|join('<br/>')|raw }}
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+
+    <tr>
+        <td>
+            <table width="100%" border="0">
+                <tr>
+                    <td>
+                        <hr/>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+
+    {% if document.number or document.createdAt %}
+        <tr>
+            <td>
+                <p>
+                    {% if document.number %}Исх. {{ document.number }}{% endif %}
+                    {% if document.createdAt %}<br/>От {{ document.createdAt|format_date('none', 'dd.MM.YYYY') }}{% endif %}
+                    {% if document.whom %}<br/>{{ document.whom }}{% endif %}
+                </p>
+            </td>
+        </tr>
+    {% endif %}
+
+    {% if document.type %}
+        <tr>
+            <td>
+                <p style="text-align: center">{{ document.type }}</p>
+            </td>
+        </tr>
+    {% endif %}
+
+    {% if document.startText %}
+        <tr>
+            <td>
+                <p>{{ document.startText }}</p>
+            </td>
+        </tr>
+    {% endif %}
+
+    {% if document.text %}
+        <tr>
+            <td>
+                <p>{{ document.text }}</p>
+            </td>
+        </tr>
+    {% endif %}
+
+    {% if document.endText %}
+        <tr>
+            <td>
+                <p>{{ document.endText }}</p>
+            </td>
+        </tr>
+    {% endif %}
+
+    {% if document.signature %}
+        <tr>
+            <td>
+                <table width="100%" border="0">
+                    <tr>
+                        <td width="50%"></td>
+                        <td width="50%">
+                            <p style="text-align: right">{{ document.signature }}</p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    {% endif %}
+
+    {% if document.createdBy %}
+        <tr>
+            <td>
+                <p style="text-align: left">Исполнитель: {{ document.createdBy }}</p>
+            </td>
+        </tr>
+    {% endif %}
+
+</table>
+</body>
+</html>

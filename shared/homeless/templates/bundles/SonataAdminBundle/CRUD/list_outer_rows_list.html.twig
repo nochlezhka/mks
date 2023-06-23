@@ -1,0 +1,5 @@
+{% for object in admin.datagrid.results %}
+    <tr>
+        {% include '@SonataAdmin/CRUD/list_inner_row.html.twig' %}
+    </tr>
+{% endfor %}

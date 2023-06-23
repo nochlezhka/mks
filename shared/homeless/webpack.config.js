@@ -2,7 +2,7 @@ var Encore = require('@symfony/webpack-encore');
 
 Encore
     // directory where compiled assets will be stored
-    .setOutputPath('web/_assets/js/')
+    .setOutputPath('public/_assets/js/')
     .setPublicPath('/_assets/js')
     .addEntry('app', './assets/js/app.js')
     .disableSingleRuntimeChunk()
