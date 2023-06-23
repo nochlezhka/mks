@@ -1,0 +1,38 @@
+{% extends '/pdf/certificate/layout.html.twig' %}
+
+{% block header_left %}
+    Справка № <u>{{ certificate.id }}</u><br/>
+    о регистрации
+{% endblock %}
+
+{% block header_right %}
+    {% if certificate.client %}
+        {{ certificate.client.fullname }},<br/>
+        регистрационный номер клиента в базе данных: № {{ certificate.client.id }}<br/>
+        {% if certificate.client.birthDate %}Дата рождения: {{ certificate.client.birthDate|format_date('none', 'dd.MM.YYYY') }}
+            <br/>{% endif %}
+        {% if certificate.client.birthPlace %}Место рождения: {{ certificate.client.birthPlace }}{% endif %}
+    {% endif %}
+{% endblock %}
+
+{% block body_right %}
+    состоит на учёте как лицо без определённого места жительства.<br/><br/>
+
+    {% if certificate.document %}
+        Основание выдачи справки: {{ certificate.document }}<br/><br/>
+    {% endif %}
+
+    {% if certificate.client and certificate.client.createdAt %}
+        Дата регистрации: {{ certificate.client.createdAt|format_date('none', 'dd.MM.YYYY') }}<br/>
+    {% endif %}
+
+    {% if certificate.dateFrom %}
+        Дата выдачи справки: {{ certificate.dateFrom|format_date('none', 'dd.MM.YYYY') }}<br/>
+    {% endif %}
+
+    {% if certificate.dateTo %}
+        Справка действует до: {{ certificate.dateTo|format_date('none', 'dd.MM.YYYY') }}<br/>
+    {% endif %}
+{% endblock %}
+
+{% block date %}{% endblock %}

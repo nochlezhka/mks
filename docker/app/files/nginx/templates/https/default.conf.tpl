@@ -30,7 +30,7 @@ server {
     ssl_certificate /etc/letsencrypt/live/${DOMAIN}/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/${DOMAIN}/privkey.pem;
 
-    root /var/www/symfony/web;
+    root /var/www/symfony/public;
 
     location ~* /sitemap(.*).xml {
         try_files $uri @rewrite;
@@ -41,8 +41,8 @@ server {
         proxy_set_header X-Forwarded-Host $host;
         proxy_set_header X-Forwarded-Proto https;
 
-        # try to serve file directly, fallback to app.php
-        try_files $uri /app.php$is_args$args;
+        # try to serve file directly, fallback to index.php
+        try_files $uri /index.php$is_args$args;
     }
 
     location ~* \.(jpg|xml|gif|swf|ico|css|zip|rar|doc|xls|js|txt|dtd|png|jpeg|eot|woff|woff2|ttf|svg|html)$ {
@@ -70,7 +70,7 @@ server {
     }
 
     # PROD
-    location ~ ^/app\.php(/|$) {
+    location ~ ^/index\.php(/|$) {
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-Host $host;

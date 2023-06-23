@@ -1,0 +1,11 @@
+{% extends '@SonataAdmin/CRUD/base_list_field.html.twig' %}
+
+{% block field %}
+    {% apply spaceless %}
+        {% if value == constant('App\\Entity\\Document::REGISTRATION_YES') %}
+            <span class="label label-success">{%- trans from 'SonataAdminBundle' %}label_type_yes{% endtrans -%}</span>
+        {% else %}
+            <span class="label label-danger">{%- trans from 'SonataAdminBundle' %}label_type_no{% endtrans -%}</span>
+        {% endif %}
+    {% endapply %}
+{% endblock %}

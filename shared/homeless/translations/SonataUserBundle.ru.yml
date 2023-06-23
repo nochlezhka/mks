@@ -1,0 +1,9 @@
+breadcrumb:
+  link_user_delete: Удалить
+
+form:
+  group_profile: Профиль
+  label_username: Логин
+
+user: Пользователь
+roles: Роли

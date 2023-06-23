@@ -1,0 +1,10 @@
+{% if admin.hasAccess('create') and admin.hasRoute('create') %}
+    {% if admin.subClasses is empty %}
+        <li>
+            <a class="sonata-action-element" href="{{ admin.generateUrl('create') }}">
+                <i class="fa fa-plus-circle" aria-hidden="true"></i>
+                {{ 'link_action_create_client'|trans({}, 'SonataAdminBundle') }}
+            </a>
+        </li>
+    {% endif %}
+{% endif %}

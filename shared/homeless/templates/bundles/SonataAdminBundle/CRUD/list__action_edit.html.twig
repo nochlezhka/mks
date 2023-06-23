@@ -1,0 +1,6 @@
+{% if admin.hasAccess('edit', object) and admin.hasRoute('edit') and not app.request.isXmlHttpRequest %}
+    <a href="{{ admin.generateObjectUrl('edit', object) }}" class="btn btn-sm btn-default edit_link"
+       title="{{ 'action_edit'|trans({}, 'SonataAdminBundle') }}">
+        <i class="fa fa-pencil" aria-hidden="true"></i>
+    </a>
+{% endif %}

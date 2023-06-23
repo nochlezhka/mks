@@ -3,7 +3,7 @@ services:
   nginx:
     container_name: nginx
     image: nochlezhka/mks-app:${MKS_VERSION}
-    entrypoint: ["/etc/nginx/entrypoint.sh"]
+    entrypoint: [ "/etc/nginx/entrypoint.sh" ]
     links:
       - php
     ports:
@@ -11,12 +11,13 @@ services:
       - 8443:443
     restart: unless-stopped
     volumes:
-      - "./storage/data/uploads:/var/www/symfony/web/uploads"
+      - "./storage/data/uploads:/var/www/symfony/public/uploads"
       - "./storage/data/letsencrypt:/etc/letsencrypt:ro"
       - "./storage/data/certbot:/var/www/certbot:ro"
     environment:
       - DOMAIN=${MKS_DOMAIN}
       - MODE=${NGINX_MODE}
+
   certbot:
     container_name: certbot
     image: certbot/certbot:v2.4.0
@@ -36,9 +37,10 @@ services:
     image: nochlezhka/mks-app:${MKS_VERSION}
     restart: unless-stopped
     volumes:
-      - "./storage/data/uploads:/var/www/symfony/web/uploads"
+      - "./storage/data/uploads:/var/www/symfony/public/uploads"
     env_file:
       - .env
+
   db:
     container_name: db
     image: mysql:8.0.30
