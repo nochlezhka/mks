@@ -26,7 +26,7 @@ RUN apk update \
  && apk add --no-cache \
       nodejs=~16.20 \
       yarn=~1.22.19 \
-      curl=~7.83 \
+      curl=~8.1.2 \
       icu-dev=~71.1 \
       libzip-dev=~1.8.0 \
       libreoffice=~7.2.7.2 \
