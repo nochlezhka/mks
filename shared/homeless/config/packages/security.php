@@ -38,11 +38,7 @@ return static function (SecurityConfig $security): void {
     $mainFirewall->switchUser();
 
     $security->accessControl()
-        ->path('^/login$')
-        ->roles(AuthenticatedVoter::PUBLIC_ACCESS)
-    ;
-    $security->accessControl()
-        ->path('^/resetting')
+        ->path('^/(login|resetting|app/version)$')
         ->roles(AuthenticatedVoter::PUBLIC_ACCESS)
     ;
     $security->accessControl()
