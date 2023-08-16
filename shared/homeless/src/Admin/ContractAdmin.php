@@ -70,14 +70,18 @@ class ContractAdmin extends AbstractAdmin
                     ->orderBy('s.name', 'ASC'),
             ])
             ->add('dateFrom', DatePickerType::class, [
-                'dp_default_date' => (new \DateTimeImmutable())->format('Y-m-d'),
+                'datepicker_options' => [
+                    'defaultDate' => (new \DateTimeImmutable())->format('Y-m-d'),
+                ],
                 'format' => 'dd.MM.yyyy',
                 'label' => 'Дата начала',
                 'required' => true,
                 'input' => 'datetime_immutable',
             ])
             ->add('dateTo', DatePickerType::class, [
-                'dp_default_date' => (new \DateTimeImmutable())->format('Y-m-d'),
+                'datepicker_options' => [
+                    'defaultDate' => (new \DateTimeImmutable())->format('Y-m-d'),
+                ],
                 'format' => 'dd.MM.yyyy',
                 'label' => 'Дата окончания',
                 'required' => false,

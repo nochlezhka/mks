@@ -53,7 +53,9 @@ class DocumentAdmin extends AbstractAdmin
                 'label' => 'Кем выдан',
             ])
             ->add('date', DatePickerType::class, [
-                'dp_default_date' => (new \DateTimeImmutable())->format('Y-m-d'),
+                'datepicker_options' => [
+                    'defaultDate' => (new \DateTimeImmutable())->format('Y-m-d'),
+                ],
                 'format' => 'dd.MM.yyyy',
                 'label' => 'Когда выдан',
                 'required' => true,

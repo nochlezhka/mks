@@ -519,7 +519,9 @@ class ClientAdmin extends AbstractAdmin
                 ],
             ])
             ->add('birthDate', DatePickerType::class, [
-                'dp_default_date' => (new \DateTimeImmutable('-50 year'))->format('Y-m-d'),
+                'datepicker_options' => [
+                    'defaultDate' => (new \DateTimeImmutable('-50 year'))->format('Y-m-d'),
+                ],
                 'format' => 'dd.MM.yyyy',
                 'label' => 'Дата рождения',
                 'required' => true,
