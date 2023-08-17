@@ -102,7 +102,9 @@ class ServiceAdmin extends AbstractAdmin
 
         $form
             ->add('createdAt', DatePickerType::class, [
-                'dp_default_date' => (new \DateTimeImmutable())->format('Y-m-d'),
+                'datepicker_options' => [
+                    'defaultDate' => (new \DateTimeImmutable())->format('Y-m-d'),
+                ],
                 'format' => 'dd.MM.yyyy',
                 'label' => 'Когда добавлена',
                 'input' => 'datetime_immutable',

@@ -59,14 +59,18 @@ class ShelterHistoryAdmin extends AbstractAdmin
                     ->orderBy('r.number', 'ASC'),
             ])
             ->add('dateFrom', DatePickerType::class, [
-                'dp_default_date' => (new \DateTimeImmutable())->format('Y-m-d'),
+                'datepicker_options' => [
+                    'defaultDate' => (new \DateTimeImmutable())->format('Y-m-d'),
+                ],
                 'format' => 'dd.MM.yyyy',
                 'label' => 'Дата заселения',
                 'required' => false,
                 'input' => 'datetime_immutable',
             ])
             ->add('dateTo', DatePickerType::class, [
-                'dp_default_date' => (new \DateTimeImmutable())->format('Y-m-d'),
+                'datepicker_options' => [
+                    'defaultDate' => (new \DateTimeImmutable())->format('Y-m-d'),
+                ],
                 'format' => 'dd.MM.yyyy',
                 'label' => 'Дата выселения',
                 'required' => false,
@@ -77,28 +81,36 @@ class ShelterHistoryAdmin extends AbstractAdmin
                 'required' => false,
             ])
             ->add('fluorographyDate', DatePickerType::class, [
-                'dp_default_date' => (new \DateTimeImmutable())->format('Y-m-d'),
+                'datepicker_options' => [
+                    'defaultDate' => (new \DateTimeImmutable())->format('Y-m-d'),
+                ],
                 'format' => 'dd.MM.yyyy',
                 'label' => 'Дата флюорографии',
                 'required' => false,
                 'input' => 'datetime_immutable',
             ])
             ->add('diphtheriaVaccinationDate', DatePickerType::class, [
-                'dp_default_date' => (new \DateTimeImmutable())->format('Y-m-d'),
+                'datepicker_options' => [
+                    'defaultDate' => (new \DateTimeImmutable())->format('Y-m-d'),
+                ],
                 'format' => 'dd.MM.yyyy',
                 'label' => 'Дата прививки от дифтерии',
                 'required' => false,
                 'input' => 'datetime_immutable',
             ])
             ->add('hepatitisVaccinationDate', DatePickerType::class, [
-                'dp_default_date' => (new \DateTimeImmutable())->format('Y-m-d'),
+                'datepicker_options' => [
+                    'defaultDate' => (new \DateTimeImmutable())->format('Y-m-d'),
+                ],
                 'format' => 'dd.MM.yyyy',
                 'label' => 'Дата прививки от гепатита',
                 'required' => false,
                 'input' => 'datetime_immutable',
             ])
             ->add('typhusVaccinationDate', DatePickerType::class, [
-                'dp_default_date' => (new \DateTimeImmutable())->format('Y-m-d'),
+                'datepicker_options' => [
+                    'defaultDate' => (new \DateTimeImmutable())->format('Y-m-d'),
+                ],
                 'format' => 'dd.MM.yyyy',
                 'label' => 'Дата прививки от тифа',
                 'required' => false,
