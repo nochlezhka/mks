@@ -1,6 +1,19 @@
 {
-  "devDependencies": {
-    "@symfony/webpack-encore": "^2.0.0",
-    "script-loader": "^0.7.2"
-  }
+    "devDependencies": {
+        "@babel/core": "^7.22.11",
+        "@babel/preset-env": "^7.22.10",
+        "@symfony/webpack-encore": "^4.4.0",
+        "core-js": "^3.32.1",
+        "regenerator-runtime": "^0.14.0",
+        "script-loader": "^0.7.2",
+        "webpack": "^5.88.2",
+        "webpack-cli": "^4.10.0",
+        "webpack-notifier": "^1.15.0"
+    },
+    "scripts": {
+        "dev-server": "encore dev-server",
+        "dev": "encore dev",
+        "watch": "encore dev --watch",
+        "build": "encore production --progress"
+    }
 }
