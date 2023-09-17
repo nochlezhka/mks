@@ -19,7 +19,7 @@ return static function (SonataUserConfig $sonataUser): void {
 
     $resetting = $sonataUser->resetting();
     $resetting->email()
-        ->address('sonata@localhost')
-        ->senderName('Sonata Admin')
+        ->address('%env(SONATA_RESETTING_ADDRESS)%')
+        ->senderName('%env(SONATA_RESETTING_SENDER)%')
     ;
 };
