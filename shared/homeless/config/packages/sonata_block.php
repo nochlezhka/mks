@@ -8,8 +8,6 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 use Symfony\Config\SonataBlockConfig;
 
 return static function (SonataBlockConfig $sonataBlock): void {
-    $sonataBlock->httpCache(false);
-
     $sonataBlock->defaultContexts(['sonata_page_bundle']);
     $sonataBlock->block('sonata.admin.block.stats')
         ->contexts(['admin'])

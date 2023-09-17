@@ -39,7 +39,7 @@ return static function (DoctrineConfig $doctrine, ContainerConfigurator $contain
     $orm->autoGenerateProxyClasses(true);
 
     $defaultEntityManager = $orm->entityManager('default')
-        ->namingStrategy('doctrine.orm.naming_strategy.underscore')
+        ->namingStrategy('doctrine.orm.naming_strategy.underscore_number_aware')
         ->autoMapping(true)
     ;
     $defaultEntityManager->dql()
