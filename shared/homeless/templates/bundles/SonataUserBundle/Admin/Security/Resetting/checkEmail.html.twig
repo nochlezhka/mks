@@ -1,0 +1,26 @@
+{% extends '@!SonataUser/Admin/Security/Resetting/checkEmail.html.twig' %}
+
+{% block sonata_wrapper %}
+    <div class="login-box">
+        {% block login_box_header %}
+            <div class="login-logo">
+                <a href="{{ path('sonata_admin_dashboard') }}">
+                    {% if 'icon' == sonata_config.getOption('logo_content') or 'all' == sonata_config.getOption('logo_content') %}
+                        <div>
+                            <img src="{{ asset(sonata_config.logo) }}" alt="{{ sonata_config.title }}">
+                        </div>
+                    {% endif %}
+                    {% if 'text' == sonata_config.getOption('logo_content') or 'all' == sonata_config.getOption('logo_content') %}
+                        <span>{{ sonata_config.title }}</span>
+                    {% endif %}
+                </a>
+            </div>
+        {% endblock %}
+        <div class="login-box-body">
+            <p>{{ 'resetting.check_email'|trans({'tokenLifetime': tokenLifetime}, 'SonataUserBundle')|nl2br }}</p>
+            <a href="{{ path('sonata_user_admin_security_login') }}">
+                {{ 'title_user_authentication'|trans({}, 'SonataUserBundle') }}
+            </a>
+        </div>
+    </div>
+{% endblock sonata_wrapper %}
