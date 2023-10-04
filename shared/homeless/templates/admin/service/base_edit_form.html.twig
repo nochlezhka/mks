@@ -158,16 +158,6 @@
 
     {{ sonata_block_render_event('sonata.admin.edit.form.bottom', { 'admin': admin, 'object': object }) }}
 
-    <script>
-        $(function () {
-            setTimeout(function () {
-                $('.service_type_select').select2();
-                $('.service_type_select').select2('open');
-                $('#select2-drop-mask').hide();
-            }, 400);
-
-        });
-    </script>
     <style>
         .modal-dialog.modal-lg .modal-content form > .row {
             position: relative;

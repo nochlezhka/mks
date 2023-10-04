@@ -28,7 +28,6 @@ return (new PhpCsFixer\Config())
         'blank_line_before_statement' => [
             'statements' => ['case', 'default', 'return', 'throw', 'try'],
         ],
-        'curly_braces_position' => false,
         'comment_to_phpdoc' => [
             'ignored_tags' => [
                 'see',
@@ -37,6 +36,7 @@ return (new PhpCsFixer\Config())
         ],
         'linebreak_after_opening_tag' => false,
         'method_argument_space' => [
+            'attribute_placement' => 'standalone',
             'on_multiline' => 'ignore',
         ],
         'multiline_whitespace_before_semicolons' => [

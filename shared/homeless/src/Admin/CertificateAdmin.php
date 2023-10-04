@@ -114,7 +114,8 @@ class CertificateAdmin extends AbstractAdmin
     /**
      * Обработка типов справок, требующих указаний значений дополнительных полей при создании
      */
-    protected function formSubmit(FormEvent $event): void {
+    protected function formSubmit(FormEvent $event): void
+    {
         /** @var Certificate $certificate */
         $certificate = $event->getForm()->getViewData();
         switch ($certificate->getType()->getSyncId()) {

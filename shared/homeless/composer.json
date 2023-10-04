@@ -22,6 +22,7 @@
         "sonata-project/doctrine-extensions": "^2.0",
         "sonata-project/doctrine-orm-admin-bundle": "^4.0",
         "sonata-project/exporter": "^2.0",
+        "sonata-project/form-extensions": "^2.1",
         "sonata-project/formatter-bundle": "^5.0",
         "sonata-project/intl-bundle": "^3.0",
         "sonata-project/translation-bundle": "^3.0",
