@@ -64,15 +64,21 @@ class ReportService
         mixed $breadwinner,
     ): void {
         if ($dateFrom) {
-            $date = new \DateTimeImmutable();
-            $date = $date->setTimestamp(strtotime($dateFrom));
-            $dateFrom = $date->format('Y-m-d');
+            $time = strtotime($dateFrom);
+            if ($time !== false) {
+                $date = new \DateTimeImmutable();
+                $date = $date->setTimestamp($time);
+                $dateFrom = $date->format('Y-m-d');
+            }
         }
 
         if ($dateTo) {
-            $date = new \DateTimeImmutable();
-            $date = $date->setTimestamp(strtotime($dateTo));
-            $dateTo = $date->format('Y-m-d');
+            $time = strtotime($dateTo);
+            if ($time !== false) {
+                $date = new \DateTimeImmutable();
+                $date = $date->setTimestamp($time);
+                $dateTo = $date->format('Y-m-d');
+            }
         }
 
         $result = match ($type) {
@@ -84,6 +90,7 @@ class ReportService
             static::AVERAGE_COMPLETED_ITEMS => $this->averageCompletedItems($dateFrom, $dateTo, $userId),
             static::AGGREGATED => $this->aggregated($createClientdateFrom, $createClientFromTo, $createServicedateFrom, $createServiceFromTo),
             static::AGGREGATED2 => $this->aggregated2($createClientdateFrom, $createClientFromTo, $createServicedateFrom, $createServiceFromTo, $homelessReason, $disease, $breadwinner),
+            default => throw new \RuntimeException('Unexpected report type "'.$type.'"'),
         };
 
         $this->doc->setActiveSheetIndex(0);
