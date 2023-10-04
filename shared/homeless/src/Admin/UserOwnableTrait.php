@@ -9,7 +9,8 @@ use App\Entity\Client;
 
 trait UserOwnableTrait
 {
-    public function getClient(): ?Client {
+    public function getClient(): ?Client
+    {
         $result = null;
 
         try {

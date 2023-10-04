@@ -13,10 +13,11 @@ return static function (TwigConfig $twig): void {
         ->strictVariables(param('kernel.debug'))
         ->formThemes([
             'form/fields.html.twig',
-            '@VichUploader/Form/fields.html.twig',
+            '@FOSCKEditor/Form/ckeditor_widget.html.twig',
+            '@SonataForm/Form/datepicker.html.twig',
             '@SonataFormatter/Form/formatter.html.twig',
             '@VichUploader/Form/fields.html.twig',
-            '@SonataForm/Form/datepicker.html.twig',
+            '@VichUploader/Form/fields.html.twig',
         ])
         ->global('org_name_short', env('ORG_NAME_SHORT'))
         ->global('org_name', env('ORG_NAME'))

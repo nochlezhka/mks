@@ -5,18 +5,26 @@
 
     <script>
         function changeType() {
-            if ($('#s5a37cdd74da55_type').val() === 'aggregated') {
-                $('#type-default').hide();
-                $('#type-aggregated2').hide();
-                $('#type-aggregated').show();
-            } else if ($('#s5a37cdd74da55_type').val() === 'aggregated2') {
-                $('#type-default').hide();
-                $('#type-aggregated').show();
-                $('#type-aggregated2').show();
-            } else {
-                $('#type-default').show();
-                $('#type-aggregated').hide();
-                $('#type-aggregated2').hide();
+            const typeValue = $('#s5a37cdd74da55_type').val();
+            const $typeDefault = $('#type-default');
+            const $typeAggregated2 = $('#type-aggregated2');
+            const $typeAggregated = $('#type-aggregated');
+
+            switch (typeValue) {
+                case 'aggregated':
+                    $typeDefault.hide();
+                    $typeAggregated2.hide();
+                    $typeAggregated.show();
+                    break;
+                case 'aggregated2':
+                    $typeDefault.hide();
+                    $typeAggregated.show();
+                    $typeAggregated2.show();
+                    break;
+                default:
+                    $typeDefault.show();
+                    $typeAggregated.hide();
+                    $typeAggregated2.hide();
             }
         }
 
@@ -107,44 +115,21 @@
                                                 </label>
                                                 <div class="sonata-ba-field sonata-ba-field-standard-natural">
                                                     <div class="input-group">
-                                                        <div class='input-group date' id='dp_s5a37d10f9fe56_dateFrom'>
-                                                            <input type="text" id="s5a37d10f9fe56_dateFrom"
-                                                                   name="dateFrom"
-                                                                   class="sonata-medium-date form-control"
-                                                                   data-date-format="DD.MM.YYYY"/><span
-                                                                    class="input-group-addon"><span
-                                                                        class="fa fa-calendar"></span></span></div>
+                                                        <div
+                                                            class="input-group date"
+                                                            id="dp_s5a37d10f9fe56_dateFrom"
+                                                            data-controller="datepicker"
+                                                            data-datepicker-options-value='{"display":{"theme":"light","components":{"clock":false}},"localization":{"locale":"ru","format":"dd.MM.yyyy"}}'
+                                                        >
+                                                            <input
+                                                                type="text"
+                                                                id="s5a37d10f9fe56_dateFrom"
+                                                                name="dateFrom"
+                                                                class="sonata-medium-date form-control"
+                                                                data-td-target="#dp_s5a37d10f9fe56_dateFrom"
+                                                            /><span class="input-group-addon" data-td-toggle="datetimepicker"
+                                                            ><span class="fa fa-calendar"></span></span></div>
                                                     </div>
-                                                    <script type="text/javascript">
-                                                        jQuery(function ($) {
-                                                            $('#dp_s5a37d10f9fe56_dateFrom').datetimepicker({
-                                                                "pickTime": false,
-                                                                "pickDate": true,
-                                                                "useCurrent": true,
-                                                                "minDate": "1\/1\/1900",
-                                                                "maxDate": null,
-                                                                "showToday": true,
-                                                                "language": "ru",
-                                                                "disabledDates": [],
-                                                                "enabledDates": [],
-                                                                "icons": {
-                                                                    "time": "fa fa-clock-o",
-                                                                    "date": "fa fa-calendar",
-                                                                    "up": "fa fa-chevron-up",
-                                                                    "down": "fa fa-chevron-down"
-                                                                },
-                                                                "useStrict": false,
-                                                                "sideBySide": false,
-                                                                "daysOfWeekDisabled": [],
-                                                                "collapse": true,
-                                                                "calendarWeeks": false,
-                                                                "viewMode": "days",
-                                                                "minViewMode": "days",
-                                                                "defaultDate": "2017-12-18",
-                                                                "useSeconds": false
-                                                            });
-                                                        });
-                                                    </script>
                                                 </div>
                                             </div>
                                             <div class="form-group" id="sonata-ba-field-container-s5a37d10f9fe56_dateTo">
@@ -153,45 +138,21 @@
                                             </label>
                                             <div class="sonata-ba-field sonata-ba-field-standard-natural">
                                                 <div class="input-group">
-                                                    <div class='input-group date' id='dp_s5a37d10f9fe56_dateTo'>
+                                                    <div
+                                                        class="input-group date"
+                                                        id="dp_s5a37d10f9fe56_dateTo"
+                                                        data-controller="datepicker"
+                                                        data-datepicker-options-value='{"display":{"theme":"light","components":{"clock":false}},"localization":{"locale":"ru","format":"dd.MM.yyyy"}}'
+                                                    >
                                                         <input
-                                                                type="text" id="s5a37d10f9fe56_dateTo"
-                                                                name="dateTo"
-                                                                class="sonata-medium-date form-control"
-                                                                data-date-format="DD.MM.YYYY"/><span
-                                                                class="input-group-addon"><span
-                                                                    class="fa fa-calendar"></span></span></div>
+                                                            type="text"
+                                                            id="s5a37d10f9fe56_dateTo"
+                                                            name="dateTo"
+                                                            class="sonata-medium-date form-control"
+                                                            data-td-target="#dp_s5a37d10f9fe56_dateTo"
+                                                        /><span class="input-group-addon" data-td-toggle="datetimepicker"
+                                                        ><span class="fa fa-calendar"></span></span></div>
                                                 </div>
-                                                <script type="text/javascript">
-                                                    jQuery(function ($) {
-                                                        $('#dp_s5a37d10f9fe56_dateTo').datetimepicker({
-                                                            "pickTime": false,
-                                                            "pickDate": true,
-                                                            "useCurrent": true,
-                                                            "minDate": "1\/1\/1900",
-                                                            "maxDate": null,
-                                                            "showToday": true,
-                                                            "language": "ru",
-                                                            "disabledDates": [],
-                                                            "enabledDates": [],
-                                                            "icons": {
-                                                                "time": "fa fa-clock-o",
-                                                                "date": "fa fa-calendar",
-                                                                "up": "fa fa-chevron-up",
-                                                                "down": "fa fa-chevron-down"
-                                                            },
-                                                            "useStrict": false,
-                                                            "sideBySide": false,
-                                                            "daysOfWeekDisabled": [],
-                                                            "collapse": true,
-                                                            "calendarWeeks": false,
-                                                            "viewMode": "days",
-                                                            "minViewMode": "days",
-                                                            "defaultDate": "2017-12-18",
-                                                            "useSeconds": false
-                                                        });
-                                                    });
-                                                </script>
                                             </div>
                                         </div>
                                         </div>
@@ -203,44 +164,21 @@
                                                 </label>
                                                 <div class="sonata-ba-field sonata-ba-field-standard-natural">
                                                     <div class="input-group">
-                                                        <div class='input-group date' id='dp_s5a37d10f9fe56_createClientdateFrom'>
-                                                            <input type="text" id="s5a37d10f9fe56_createClientdateFrom"
-                                                                   name="createClientdateFrom"
-                                                                   class="sonata-medium-date form-control"
-                                                                   data-date-format="DD.MM.YYYY"/><span
-                                                                    class="input-group-addon"><span
-                                                                        class="fa fa-calendar"></span></span></div>
+                                                        <div
+                                                            class="input-group date"
+                                                            id="dp_s5a37d10f9fe56_createClientdateFrom"
+                                                            data-controller="datepicker"
+                                                            data-datepicker-options-value='{"display":{"theme":"light","components":{"clock":false}},"localization":{"locale":"ru","format":"dd.MM.yyyy"}}'
+                                                        >
+                                                            <input
+                                                                type="text"
+                                                                id="s5a37d10f9fe56_createClientdateFrom"
+                                                                name="createClientdateFrom"
+                                                                class="sonata-medium-date form-control"
+                                                                data-td-target="#dp_s5a37d10f9fe56_createClientdateFrom"
+                                                            /><span class="input-group-addon" data-td-toggle="datetimepicker"
+                                                            ><span class="fa fa-calendar"></span></span></div>
                                                     </div>
-                                                    <script type="text/javascript">
-                                                      jQuery(function ($) {
-                                                        $('#dp_s5a37d10f9fe56_createClientdateFrom').datetimepicker({
-                                                          "pickTime": false,
-                                                          "pickDate": true,
-                                                          "useCurrent": true,
-                                                          "minDate": "1\/1\/1900",
-                                                          "maxDate": null,
-                                                          "showToday": true,
-                                                          "language": "ru",
-                                                          "disabledDates": [],
-                                                          "enabledDates": [],
-                                                          "icons": {
-                                                            "time": "fa fa-clock-o",
-                                                            "date": "fa fa-calendar",
-                                                            "up": "fa fa-chevron-up",
-                                                            "down": "fa fa-chevron-down"
-                                                          },
-                                                          "useStrict": false,
-                                                          "sideBySide": false,
-                                                          "daysOfWeekDisabled": [],
-                                                          "collapse": true,
-                                                          "calendarWeeks": false,
-                                                          "viewMode": "days",
-                                                          "minViewMode": "days",
-                                                          "defaultDate": "2017-12-18",
-                                                          "useSeconds": false
-                                                        });
-                                                      });
-                                                    </script>
                                                 </div>
                                             </div>
                                             <div class="form-group" id="sonata-ba-field-container-s5a37d10f9fe56_createClientFromTo">
@@ -249,45 +187,21 @@
                                                 </label>
                                                 <div class="sonata-ba-field sonata-ba-field-standard-natural">
                                                     <div class="input-group">
-                                                        <div class='input-group date' id='dp_s5a37d10f9fe56_createClientFromTo'>
+                                                        <div
+                                                            class="input-group date"
+                                                            id="dp_s5a37d10f9fe56_createClientFromTo"
+                                                            data-controller="datepicker"
+                                                            data-datepicker-options-value='{"display":{"theme":"light","components":{"clock":false}},"localization":{"locale":"ru","format":"dd.MM.yyyy"}}'
+                                                        >
                                                             <input
-                                                                    type="text" id="s5a37d10f9fe56_createClientFromTo"
-                                                                    name="createClientFromTo"
-                                                                    class="sonata-medium-date form-control"
-                                                                    data-date-format="DD.MM.YYYY"/><span
-                                                                    class="input-group-addon"><span
-                                                                        class="fa fa-calendar"></span></span></div>
+                                                                type="text"
+                                                                id="s5a37d10f9fe56_createClientFromTo"
+                                                                name="createClientFromTo"
+                                                                class="sonata-medium-date form-control"
+                                                                data-td-target="#dp_s5a37d10f9fe56_createClientFromTo"
+                                                            /><span class="input-group-addon" data-td-toggle="datetimepicker"
+                                                            ><span class="fa fa-calendar"></span></span></div>
                                                     </div>
-                                                    <script type="text/javascript">
-                                                      jQuery(function ($) {
-                                                        $('#dp_s5a37d10f9fe56_createClientFromTo').datetimepicker({
-                                                          "pickTime": false,
-                                                          "pickDate": true,
-                                                          "useCurrent": true,
-                                                          "minDate": "1\/1\/1900",
-                                                          "maxDate": null,
-                                                          "showToday": true,
-                                                          "language": "ru",
-                                                          "disabledDates": [],
-                                                          "enabledDates": [],
-                                                          "icons": {
-                                                            "time": "fa fa-clock-o",
-                                                            "date": "fa fa-calendar",
-                                                            "up": "fa fa-chevron-up",
-                                                            "down": "fa fa-chevron-down"
-                                                          },
-                                                          "useStrict": false,
-                                                          "sideBySide": false,
-                                                          "daysOfWeekDisabled": [],
-                                                          "collapse": true,
-                                                          "calendarWeeks": false,
-                                                          "viewMode": "days",
-                                                          "minViewMode": "days",
-                                                          "defaultDate": "2017-12-18",
-                                                          "useSeconds": false
-                                                        });
-                                                      });
-                                                    </script>
                                                 </div>
                                             </div>
                                             <div class="form-group" id="sonata-ba-field-container-s5a37d10f9fe56_createServicedateFrom">
@@ -296,44 +210,21 @@
                                                 </label>
                                                 <div class="sonata-ba-field sonata-ba-field-standard-natural">
                                                     <div class="input-group">
-                                                        <div class='input-group date' id='dp_s5a37d10f9fe56_createServicedateFrom'>
-                                                            <input type="text" id="s5a37d10f9fe56_createServicedateFrom"
-                                                                   name="createServicedateFrom"
-                                                                   class="sonata-medium-date form-control"
-                                                                   data-date-format="DD.MM.YYYY"/><span
-                                                                    class="input-group-addon"><span
-                                                                        class="fa fa-calendar"></span></span></div>
+                                                        <div
+                                                            class="input-group date"
+                                                            id="dp_s5a37d10f9fe56_createServicedateFrom"
+                                                            data-controller="datepicker"
+                                                            data-datepicker-options-value='{"display":{"theme":"light","components":{"clock":false}},"localization":{"locale":"ru","format":"dd.MM.yyyy"}}'
+                                                        >
+                                                            <input
+                                                                type="text"
+                                                                id="s5a37d10f9fe56_createServicedateFrom"
+                                                                name="createServicedateFrom"
+                                                                class="sonata-medium-date form-control"
+                                                                data-td-target="#dp_s5a37d10f9fe56_createServicedateFrom"
+                                                            /><span class="input-group-addon" data-td-toggle="datetimepicker"
+                                                            ><span class="fa fa-calendar"></span></span></div>
                                                     </div>
-                                                    <script type="text/javascript">
-                                                      jQuery(function ($) {
-                                                        $('#dp_s5a37d10f9fe56_createServicedateFrom').datetimepicker({
-                                                          "pickTime": false,
-                                                          "pickDate": true,
-                                                          "useCurrent": true,
-                                                          "minDate": "1\/1\/1900",
-                                                          "maxDate": null,
-                                                          "showToday": true,
-                                                          "language": "ru",
-                                                          "disabledDates": [],
-                                                          "enabledDates": [],
-                                                          "icons": {
-                                                            "time": "fa fa-clock-o",
-                                                            "date": "fa fa-calendar",
-                                                            "up": "fa fa-chevron-up",
-                                                            "down": "fa fa-chevron-down"
-                                                          },
-                                                          "useStrict": false,
-                                                          "sideBySide": false,
-                                                          "daysOfWeekDisabled": [],
-                                                          "collapse": true,
-                                                          "calendarWeeks": false,
-                                                          "viewMode": "days",
-                                                          "minViewMode": "days",
-                                                          "defaultDate": "2017-12-18",
-                                                          "useSeconds": false
-                                                        });
-                                                      });
-                                                    </script>
                                                 </div>
                                             </div>
                                             <div class="form-group" id="sonata-ba-field-container-s5a37d10f9fe56_createServiceFromTo">
@@ -342,45 +233,22 @@
                                                 </label>
                                                 <div class="sonata-ba-field sonata-ba-field-standard-natural">
                                                     <div class="input-group">
-                                                        <div class='input-group date' id='dp_s5a37d10f9fe56_createServiceFromTo'>
+                                                        <div
+                                                            class="input-group date"
+                                                            id="dp_s5a37d10f9fe56_createServiceFromTo"
+                                                            data-controller="datepicker"
+                                                            data-datepicker-options-value='{"display":{"theme":"light","components":{"clock":false}},"localization":{"locale":"ru","format":"dd.MM.yyyy"}}'
+                                                        >
                                                             <input
                                                                 type="text"
                                                                 id="s5a37d10f9fe56_createServiceFromTo"
                                                                 name="createServiceFromTo"
                                                                 class="sonata-medium-date form-control"
-                                                                data-date-format="DD.MM.YYYY"/><span class="input-group-addon"><span class="fa fa-calendar"></span></span>
+                                                                data-td-target="#dp_s5a37d10f9fe56_createServiceFromTo"
+                                                            /><span class="input-group-addon" data-td-toggle="datetimepicker"
+                                                            ><span class="fa fa-calendar"></span></span>
                                                         </div>
                                                     </div>
-                                                    <script type="text/javascript">
-                                                      jQuery(function ($) {
-                                                        $('#dp_s5a37d10f9fe56_createServiceFromTo').datetimepicker({
-                                                          "pickTime": false,
-                                                          "pickDate": true,
-                                                          "useCurrent": true,
-                                                          "minDate": "1\/1\/1900",
-                                                          "maxDate": null,
-                                                          "showToday": true,
-                                                          "language": "ru",
-                                                          "disabledDates": [],
-                                                          "enabledDates": [],
-                                                          "icons": {
-                                                            "time": "fa fa-clock-o",
-                                                            "date": "fa fa-calendar",
-                                                            "up": "fa fa-chevron-up",
-                                                            "down": "fa fa-chevron-down"
-                                                          },
-                                                          "useStrict": false,
-                                                          "sideBySide": false,
-                                                          "daysOfWeekDisabled": [],
-                                                          "collapse": true,
-                                                          "calendarWeeks": false,
-                                                          "viewMode": "days",
-                                                          "minViewMode": "days",
-                                                          "defaultDate": "2017-12-18",
-                                                          "useSeconds": false
-                                                        });
-                                                      });
-                                                    </script>
                                                 </div>
                                             </div>
                                         </div>

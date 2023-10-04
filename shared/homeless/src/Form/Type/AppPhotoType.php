@@ -14,9 +14,7 @@ use Vich\UploaderBundle\Form\Type\VichImageType;
 #[AutoconfigureTag(name: 'form.type', attributes: ['alias' => 'app_photo'])]
 class AppPhotoType extends AbstractType
 {
-    public function buildView(FormView $view, FormInterface $form, array $options): void
-    {
-    }
+    public function buildView(FormView $view, FormInterface $form, array $options): void {}
 
     public function getBlockPrefix(): string
     {

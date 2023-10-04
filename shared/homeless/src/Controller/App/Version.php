@@ -13,8 +13,10 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/version', name: 'version')]
 class Version extends AbstractController
 {
-    public function __invoke(#[Autowire(env: 'APP_VER')] string $version): Response
-    {
+    public function __invoke(
+        #[Autowire(env: 'APP_VER')]
+        string $version,
+    ): Response {
         return new Response($version);
     }
 }

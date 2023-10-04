@@ -65,13 +65,13 @@ class ReportService
     ): void {
         if ($dateFrom) {
             $date = new \DateTimeImmutable();
-            $date->setTimestamp(strtotime($dateFrom));
+            $date = $date->setTimestamp(strtotime($dateFrom));
             $dateFrom = $date->format('Y-m-d');
         }
 
         if ($dateTo) {
             $date = new \DateTimeImmutable();
-            $date->setTimestamp(strtotime($dateTo));
+            $date = $date->setTimestamp(strtotime($dateTo));
             $dateTo = $date->format('Y-m-d');
         }
 

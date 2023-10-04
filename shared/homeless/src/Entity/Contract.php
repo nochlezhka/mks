@@ -53,9 +53,7 @@ class Contract extends BaseEntity implements DownloadableInterface
         return $this->getLabel();
     }
 
-    public function __set($name, $value): void
-    {
-    }
+    public function __set($name, $value): void {}
 
     public function getNamePrefix(): string
     {
