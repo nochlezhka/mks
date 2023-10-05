@@ -83,8 +83,13 @@
                                                 Тип
                                             </label>
                                             <div class="sonata-ba-field sonata-ba-field-standard-natural">
-                                                <select id="s5a37cdd74da55_type" name="type" onchange="changeType()"
-                                                        class=" form-control">
+                                                <select
+                                                    id="s5a37cdd74da55_type"
+                                                    name="type"
+                                                    onchange="changeType()"
+                                                    class=" form-control"
+                                                    required="required"
+                                                >
                                                     <option value=""></option>
                                                     {% for id, name in types %}
                                                         <option value="{{ id }}">{{ name }}</option>
@@ -99,8 +104,11 @@
                                                     Сотрудник
                                                 </label>
                                                 <div class="sonata-ba-field sonata-ba-field-standard-natural">
-                                                    <select id="s5a37cdd74da56_type" name="userId"
-                                                            class=" form-control">
+                                                    <select
+                                                        id="s5a37cdd74da56_type"
+                                                        name="userId"
+                                                        class=" form-control"
+                                                    >
                                                         <option value=""></option>
                                                         {% for user in users %}
                                                             <option value="{{ user.id }}">{{ user.fullname }}</option>
