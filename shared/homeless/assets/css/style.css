@@ -34,7 +34,6 @@ form .sonata-ba-form-actions.stuck {
 }
 
 .select2-container .select2-choice > .select2-chosen {
-
     padding-top: 9px;
 }
 
@@ -254,14 +253,6 @@ input#filter_search_value {
 }
 
 .photo-block .box-header {
-    display: none;
-}
-
-.select2-search {
-    display: none;
-}
-
-.select2-search {
     display: none;
 }
 
