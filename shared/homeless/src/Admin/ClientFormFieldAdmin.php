@@ -80,8 +80,8 @@ class ClientFormFieldAdmin extends AbstractAdmin
         $form
             ->add('options', TextareaType::class, [
                 'label' => 'Варианты',
-                'help' => 'Каждый вариант в своей строке. '.
-                    '<br>Удаление или изменение варианта не приведёт к изменению полей в уже заполненных анкетах!',
+                'help' => 'Каждый вариант в своей строке. <br>Удаление или изменение варианта не приведёт к изменению полей в уже заполненных анкетах!',
+                'help_html' => true,
                 'required' => false,
                 'attr' => $optionsAttrs,
             ])
