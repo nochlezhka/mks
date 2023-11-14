@@ -54,12 +54,12 @@ class CRUDController extends SonataCRUDController
         }
 
         if (!($object instanceof DownloadableInterface)) {
-            throw new \InvalidArgumentException('App\Service\DownloadableInterface expected, '.$object::class.' given');
+            throw new \InvalidArgumentException(DownloadableInterface::class.' expected, '.$object::class.' given');
         }
 
         $html = '';
-        switch ($object::class) {
-            case Certificate::class:
+        switch (true) {
+            case $object instanceof Certificate:
                 if ($request->get('document')) {
                     $document = $this->documentRepository->find($request->get('document'));
                     $object->setDocument($document);
@@ -81,11 +81,11 @@ class CRUDController extends SonataCRUDController
                 $this->entityManager->flush();
                 break;
 
-            case GeneratedDocument::class:
+            case $object instanceof GeneratedDocument:
                 $html = $this->renderService->renderGeneratedDocument($object);
                 break;
 
-            case Contract::class:
+            case $object instanceof Contract:
                 $client = $object->getClient();
                 $this->entityManager->initializeObject($client);
                 $html = $this->renderService->renderContract($object, $client, $this->getUser());

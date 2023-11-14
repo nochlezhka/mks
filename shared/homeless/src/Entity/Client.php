@@ -202,7 +202,7 @@ class Client extends BaseEntity
 
     public function getPhotoPath(): string
     {
-        return __DIR__.'/../../../public/'.$this->getPhotoPathWeb();
+        return __DIR__.'/../../public/'.$this->getPhotoPathWeb();
     }
 
     public function getPhotoSize(int $width, int $height): array
@@ -226,10 +226,10 @@ class Client extends BaseEntity
         return [$width, $height];
     }
 
-    public function getPhotoFileBase64(): ?string
+    public function getPhotoFileBase64(): string
     {
         if (!$this->isImage()) {
-            return null;
+            return '';
         }
 
         return 'data:image/png;base64,'.base64_encode(file_get_contents($this->getPhotoPath()));
