@@ -40,12 +40,8 @@ readonly class RenderService
             return null;
         }
 
-        $image = '';
-        [$width, $height] = [0, 0];
-        if (file_exists($client->getPhotoPath())) {
-            $image = $client->getPhotoFileBase64();
-            [$width, $height] = $client->getPhotoSize(300, 350);
-        }
+        $image = $client->getPhotoFileBase64();
+        [$width, $height] = $client->getPhotoSize(300, 350);
 
         return $this->twig->render('/pdf/certificate/layout.html.twig', [
             'contentHeaderLeft' => empty($type->getContentHeaderLeft()) ? '' : $this->twig->createTemplate($type->getContentHeaderLeft())->render(['certificate' => $certificate]),
