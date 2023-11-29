@@ -184,7 +184,7 @@ class Client extends BaseEntity
         return $this->photo;
     }
 
-    public function setPhoto(?File $photo = null): self
+    public function setPhoto(?File $photo): self
     {
         $this->photo = $photo;
 

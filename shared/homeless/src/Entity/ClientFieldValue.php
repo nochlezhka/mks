@@ -69,7 +69,7 @@ class ClientFieldValue extends BaseEntity
         $this->options = new ArrayCollection();
     }
 
-    public function setFile(?File $file = null): self
+    public function setFile(?File $file): self
     {
         $this->file = $file;
 

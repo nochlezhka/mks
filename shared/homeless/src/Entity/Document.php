@@ -183,7 +183,7 @@ class Document extends BaseEntity
         return $this->type;
     }
 
-    public function setType(DocumentType $type): self
+    public function setType(?DocumentType $type): self
     {
         $this->type = $type;
 
