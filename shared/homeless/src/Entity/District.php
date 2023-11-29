@@ -41,7 +41,7 @@ class District extends BaseEntity
         return $this->region;
     }
 
-    public function setRegion(Region $region): self
+    public function setRegion(?Region $region): self
     {
         $this->region = $region;
 

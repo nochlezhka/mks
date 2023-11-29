@@ -68,7 +68,7 @@ class ContractItem extends BaseEntity
         return $this->contract;
     }
 
-    public function setContract(?Contract $contract = null): self
+    public function setContract(?Contract $contract): self
     {
         $this->contract = $contract;
 
@@ -80,7 +80,7 @@ class ContractItem extends BaseEntity
         return $this->type;
     }
 
-    public function setType(?ContractItemType $type = null): self
+    public function setType(?ContractItemType $type): self
     {
         $this->type = $type;
 

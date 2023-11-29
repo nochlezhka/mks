@@ -168,7 +168,7 @@ class User extends BaseUser implements BaseEntityInterface, TimezoneAwareInterfa
         return $this->position;
     }
 
-    public function setPosition(?Position $position = null): self
+    public function setPosition(?Position $position): self
     {
         $this->position = $position;
 
@@ -192,7 +192,7 @@ class User extends BaseUser implements BaseEntityInterface, TimezoneAwareInterfa
         return $this->createdBy;
     }
 
-    public function setCreatedBy(?self $createdBy = null): static
+    public function setCreatedBy(?self $createdBy): static
     {
         $this->createdBy = $createdBy;
 
@@ -204,7 +204,7 @@ class User extends BaseUser implements BaseEntityInterface, TimezoneAwareInterfa
         return $this->updatedBy;
     }
 
-    public function setUpdatedBy(?self $updatedBy = null): static
+    public function setUpdatedBy(?self $updatedBy): static
     {
         $this->updatedBy = $updatedBy;
 
