@@ -7,8 +7,8 @@ services:
     links:
       - php
     ports:
-      - 8080:80
-      - 8443:443
+      - ${HTTP_PORT:-8080}:80
+      - ${HTTPS_PORT:-8443}:443
     restart: unless-stopped
     volumes:
       - "./storage/data/uploads:/var/www/symfony/public/uploads"
