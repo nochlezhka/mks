@@ -150,7 +150,7 @@ class CertificateAdmin extends AbstractAdmin
                 'label' => 'Доп. поле',
                 'template' => '/CRUD/list_certificate_addition.html.twig',
                 'class' => Document::class,
-                'query_builder' => fn (DocumentRepository $documentRepository) => $documentRepository->getRegistrationDocumentsQueryBuilderByClient($this->getParent()->getSubject()),
+                'query_builder' => fn (DocumentRepository $documentRepository): QueryBuilder => $documentRepository->getRegistrationDocumentsQueryBuilderByClient($this->getParent()->getSubject()),
             ])
             ->add(ListMapper::NAME_ACTIONS, ListMapper::TYPE_ACTIONS, [
                 'label' => 'Действие',
