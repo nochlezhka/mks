@@ -971,12 +971,14 @@ class ClientAdmin extends AbstractAdmin
         switch ($field->getCode()) {
             case 'homelessFrom':
                 $options['years'] = range(date('Y'), date('Y') - 100);
+                $options['widget'] = 'choice';
                 $form->add(self::getAdditionalFieldName($field->getCode()), AppHomelessFromDateType::class, $options);
                 break;
 
             default:
                 if ($field->getType() === ClientField::TYPE_DATETIME) {
                     $options['input'] = 'datetime_immutable';
+                    $options['widget'] = 'choice';
                 }
                 $form->add(self::getAdditionalFieldName($field->getCode()), $field->getFormFieldType(), $options);
                 break;

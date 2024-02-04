@@ -348,7 +348,7 @@ class Client extends BaseEntity
     /**
      * Фамилия и инициалы
      */
-    public function getLastnameAndInitials(): string
+    public function getLastnameAndInitials(): ?string
     {
         if (empty($this->lastname)) {
             return $this->firstname;
