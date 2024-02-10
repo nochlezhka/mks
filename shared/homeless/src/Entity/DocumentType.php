@@ -16,12 +16,12 @@ class DocumentType extends BaseEntity
     /**
      * Для постановки на учет
      */
-    public const TYPE_REGISTRATION = 1;
+    public const int TYPE_REGISTRATION = 1;
 
     /**
      * Другой
      */
-    public const TYPE_OTHER = 2;
+    public const int TYPE_OTHER = 2;
 
     #[ORM\Column(type: 'string', nullable: true)]
     private ?string $name = null;

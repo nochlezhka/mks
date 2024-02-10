@@ -16,35 +16,35 @@ class ServiceType extends BaseEntity
 {
     // SyncId различных типов
     // Консультация
-    public const CONSULTATION = 1;
+    public const int CONSULTATION = 1;
     // Продукты
-    public const PRODUCTS = 2;
+    public const int PRODUCTS = 2;
     // Комплект одежды
-    public const SET_OF_CLOTHES = 3;
+    public const int SET_OF_CLOTHES = 3;
     // Получена корреспонденция
-    public const CORRESPONDENCE_RECEIVED = 4;
+    public const int CORRESPONDENCE_RECEIVED = 4;
     // Передана корреспонденция
-    public const CORRESPONDENCE_TRANSMITTED = 5;
+    public const int CORRESPONDENCE_TRANSMITTED = 5;
     // Содействие в получении медпомощи
-    public const ASSISTANCE_IN_OBTAINING_MEDICAL_CARE = 6;
+    public const int ASSISTANCE_IN_OBTAINING_MEDICAL_CARE = 6;
     // Направление в диспансер
-    public const REFERRAL_DISPENSARY = 10;
+    public const int REFERRAL_DISPENSARY = 10;
     // Изготовление фотографий
-    public const MAKING_PHOTOS = 12;
+    public const int MAKING_PHOTOS = 12;
     // Написание заявлений/запросов
-    public const WRITING_REQUESTS = 13;
+    public const int WRITING_REQUESTS = 13;
     // Оплата проезда
-    public const PAYMENT_TRAVEL = 14;
+    public const int PAYMENT_TRAVEL = 14;
     // Консультация психолога первичная
-    public const PRIMARY_PSYCHOLOGICAL_COUNSELING = 15;
+    public const int PRIMARY_PSYCHOLOGICAL_COUNSELING = 15;
     // Оплата пошлины
-    public const DUTY_PAYMENT = 16;
+    public const int DUTY_PAYMENT = 16;
     // Средства гигиены
-    public const MEANS_HYGIENE = 17;
+    public const int MEANS_HYGIENE = 17;
     // Консультация психолога повторная
-    public const REPEATED_COUNSELING_PSYCHOLOGIST = 20;
+    public const int REPEATED_COUNSELING_PSYCHOLOGIST = 20;
     // письмо вручено
-    public const LETTER_WAS_GIVEN = 21;
+    public const int LETTER_WAS_GIVEN = 21;
 
     #[ORM\Column(type: 'string', nullable: true)]
     private ?string $name = null;

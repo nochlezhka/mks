@@ -14,17 +14,17 @@ use Doctrine\ORM\Mapping as ORM;
 class ClientFormField extends BaseEntity
 {
     // ID фиксированного поля формы анкеты проживающего
-    public const RESIDENT_QUESTIONNAIRE_TYPE_FIELD_ID = 1;
+    public const int RESIDENT_QUESTIONNAIRE_TYPE_FIELD_ID = 1;
 
-    public const TYPE_TEXT = 1;
-    public const TYPE_OPTION = 2;
-    public const TYPE_CHECKBOX = 3;
+    public const int TYPE_TEXT = 1;
+    public const int TYPE_OPTION = 2;
+    public const int TYPE_CHECKBOX = 3;
 
-    public const FLAG_REQUIRED = 'required';
+    public const string FLAG_REQUIRED = 'required';
     // обозначает, что у селекта может быть множественный выбор
-    public const FLAG_MULTISELECT = 'multiselect';
+    public const string FLAG_MULTISELECT = 'multiselect';
     // если поле обозначено как "fixed", его нельзя изменять или удалять через админку
-    public const FLAG_FIXED = 'fixed';
+    public const string FLAG_FIXED = 'fixed';
 
     /**
      * Форма, которой принадлежит поле

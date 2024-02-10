@@ -14,14 +14,14 @@ use PhpOffice\PhpSpreadsheet\Writer\Xls;
 
 class ReportService
 {
-    public const ONE_OFF_SERVICES = 'one_off_services';
-    public const COMPLETED_ITEMS = 'completed_items';
-    public const OUTGOING = 'outgoing';
-    public const RESULTS_OF_SUPPORT = 'results_of_support';
-    public const ACCOMPANYING = 'accompanying';
-    public const AGGREGATED = 'aggregated';
-    public const AVERAGE_COMPLETED_ITEMS = 'average_completed_items';
-    public const AGGREGATED2 = 'aggregated2';
+    public const string ONE_OFF_SERVICES = 'one_off_services';
+    public const string COMPLETED_ITEMS = 'completed_items';
+    public const string OUTGOING = 'outgoing';
+    public const string RESULTS_OF_SUPPORT = 'results_of_support';
+    public const string ACCOMPANYING = 'accompanying';
+    public const string AGGREGATED = 'aggregated';
+    public const string AVERAGE_COMPLETED_ITEMS = 'average_completed_items';
+    public const string AGGREGATED2 = 'aggregated2';
 
     private Spreadsheet $doc;
 

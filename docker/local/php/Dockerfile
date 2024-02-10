@@ -1,9 +1,9 @@
-FROM php:8.2.4-fpm-alpine
+FROM php:8.3.2-fpm-alpine
 
 USER root
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer
-RUN composer self-update 2.2.9
+RUN composer self-update 2.7.1
 
 RUN apk --no-cache add icu-dev libzip-dev libreoffice libpng libpng-dev autoconf build-base linux-headers
 RUN docker-php-ext-install pdo_mysql bcmath intl zip gd
