@@ -22,9 +22,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class AppHomelessFromDateType extends AbstractType
 {
-    public const DEFAULT_FORMAT = \IntlDateFormatter::MEDIUM;
+    public const int DEFAULT_FORMAT = \IntlDateFormatter::MEDIUM;
 
-    public const HTML5_FORMAT = 'yyyy-MM';
+    public const string HTML5_FORMAT = 'yyyy-MM';
 
     private static array $acceptedFormats = [
         \IntlDateFormatter::FULL,

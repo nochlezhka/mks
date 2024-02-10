@@ -22,7 +22,7 @@ use Symfony\Component\Security\Core\User\LegacyPasswordAuthenticatedUserInterfac
 #[ORM\Table(name: 'fos_user_user')]
 class User extends BaseUser implements BaseEntityInterface, TimezoneAwareInterface, LegacyPasswordAuthenticatedUserInterface
 {
-    public const ROLE_DEFAULT = Role::EMPLOYEE;
+    public const string ROLE_DEFAULT = Role::EMPLOYEE;
 
     #[ORM\Column(type: 'integer')]
     #[ORM\Id]

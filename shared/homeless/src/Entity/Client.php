@@ -18,8 +18,8 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 #[Vich\Uploadable]
 class Client extends BaseEntity
 {
-    public const GENDER_MALE = 1;
-    public const GENDER_FEMALE = 2;
+    public const int GENDER_MALE = 1;
+    public const int GENDER_FEMALE = 2;
 
     /**
      * Значения дополнительных полей клиента, установленных при сохранении

@@ -14,9 +14,9 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: DocumentRepository::class)]
 class Document extends BaseEntity
 {
-    public const REGISTRATION_UNKNOWN = 0;
-    public const REGISTRATION_YES = 1;
-    public const REGISTRATION_NO = 2;
+    public const int REGISTRATION_UNKNOWN = 0;
+    public const int REGISTRATION_YES = 1;
+    public const int REGISTRATION_NO = 2;
 
     #[ORM\Column(type: 'string', nullable: true)]
     private ?string $address = null;
