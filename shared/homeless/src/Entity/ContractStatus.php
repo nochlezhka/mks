@@ -16,7 +16,7 @@ class ContractStatus extends BaseEntity
     /**
      * SyncId статуса "В процессе выполнения"
      */
-    public const IN_PROCESS = 1;
+    public const int IN_PROCESS = 1;
 
     #[ORM\Column(type: 'string', nullable: true)]
     private ?string $name = null;

@@ -18,8 +18,8 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 #[Vich\Uploadable]
 class Client extends BaseEntity
 {
-    public const GENDER_MALE = 1;
-    public const GENDER_FEMALE = 2;
+    public const int GENDER_MALE = 1;
+    public const int GENDER_FEMALE = 2;
 
     /**
      * Значения дополнительных полей клиента, установленных при сохранении
@@ -184,7 +184,7 @@ class Client extends BaseEntity
         return $this->photo;
     }
 
-    public function setPhoto(?File $photo = null): self
+    public function setPhoto(?File $photo): self
     {
         $this->photo = $photo;
 
@@ -348,7 +348,7 @@ class Client extends BaseEntity
     /**
      * Фамилия и инициалы
      */
-    public function getLastnameAndInitials(): string
+    public function getLastnameAndInitials(): ?string
     {
         if (empty($this->lastname)) {
             return $this->firstname;

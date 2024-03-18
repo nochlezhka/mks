@@ -16,23 +16,23 @@ class CertificateType extends BaseEntity
 {
     // SyncId различных типов
     // Стандартный документ
-    public const STANDARD = 1;
+    public const int STANDARD = 1;
     // Справка о регистрации
-    public const REGISTRATION = 11;
+    public const int REGISTRATION = 11;
     // Направление на санобработку
-    public const SANITATION = 12;
+    public const int SANITATION = 12;
     // Справка для проезда
-    public const TRAVEL = 13;
+    public const int TRAVEL = 13;
     // Направление в диспансер
-    public const DISPENSARY = 14;
+    public const int DISPENSARY = 14;
     // Справка о социальной помощи
-    public const HELP = 15;
+    public const int HELP = 15;
     // Транзит
-    public const TRANSIT = 16;
+    public const int TRANSIT = 16;
     // Направление в центр занятности
-    public const EMPLOYMENT = 17;
+    public const int EMPLOYMENT = 17;
     // Неизвестно
-    public const UNKNOWN = 20;
+    public const int UNKNOWN = 20;
 
     /**
      * Название

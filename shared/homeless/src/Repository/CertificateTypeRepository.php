@@ -31,8 +31,8 @@ class CertificateTypeRepository extends ServiceEntityRepository
      */
     public function getAvailableForCertificate(Certificate $certificate): array
     {
-        $queryBuilder = $this->createQueryBuilder('t');
-        $queryBuilder->orderBy('t.sort', 'ASC')
+        $queryBuilder = $this->createQueryBuilder('t')
+            ->orderBy('t.sort', 'ASC')
             ->where('t.syncId IN (:types)')
             ->setParameter('types', array_values([
                 CertificateType::REGISTRATION,
@@ -47,8 +47,6 @@ class CertificateTypeRepository extends ServiceEntityRepository
             ;
         }
 
-        $result = $queryBuilder->getQuery()->execute();
-
-        return $result === null ? [] : $result;
+        return $queryBuilder->getQuery()->getResult() ?? [];
     }
 }

@@ -16,12 +16,12 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 #[UniqueEntity('code')]
 class MenuItem extends BaseEntity
 {
-    public const CODE_SHELTER_HISTORY = 'shelter_history';
-    public const CODE_CERTIFICATE = 'certificate';
-    public const CODE_GENERATED_DOCUMENT = 'generated_document';
-    public const CODE_NOTIFICATIONS = 'notifications';
-    public const CODE_STATUS_HOMELESS = 'status_homeless';
-    public const CODE_QUESTIONNAIRE_LIVING = 'questionnaire_living';
+    public const string CODE_SHELTER_HISTORY = 'shelter_history';
+    public const string CODE_CERTIFICATE = 'certificate';
+    public const string CODE_GENERATED_DOCUMENT = 'generated_document';
+    public const string CODE_NOTIFICATIONS = 'notifications';
+    public const string CODE_STATUS_HOMELESS = 'status_homeless';
+    public const string CODE_QUESTIONNAIRE_LIVING = 'questionnaire_living';
 
     #[ORM\Column(type: 'string', nullable: true)]
     private ?string $name = null;

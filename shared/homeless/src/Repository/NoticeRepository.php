@@ -13,7 +13,6 @@ use App\Entity\Notice;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\ResultSetMappingBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -40,8 +39,7 @@ class NoticeRepository extends ServiceEntityRepository
      */
     public function getUnviewedCount(Client $client, User $user): mixed
     {
-        $result = $this
-            ->createQueryBuilder('n')
+        $result = $this->createQueryBuilder('n')
             ->select('COUNT(n) as cnt')
             ->where('n.client = :client')
             ->andWhere(':user NOT MEMBER OF n.viewedBy')
@@ -63,8 +61,7 @@ class NoticeRepository extends ServiceEntityRepository
      */
     public function getAllUserClientsNotice(Client $client, User $user): ?array
     {
-        return $this
-            ->createQueryBuilder('n')
+        return $this->createQueryBuilder('n')
             ->select('n.id, n.text')
             ->where('n.client = :client')
             ->andWhere(':user NOT MEMBER OF n.viewedBy')
@@ -80,17 +77,20 @@ class NoticeRepository extends ServiceEntityRepository
         ;
     }
 
-    public function getAllActiveContracts(array $filter): Query
+    /**
+     * @return array<\App\Entity\Contract>
+     */
+    public function getAllActiveContracts(array $filter): array
     {
-        return $this->contractRepository
-            ->createQueryBuilder('cont')
-            ->where('cont.createdBy = :contractCreatedBy')
-            ->andWhere('cont.status = :contractStatus')
+        return $this->contractRepository->createQueryBuilder('c')
+            ->where('c.createdBy = :createdBy')
+            ->andWhere('c.status = :status')
             ->setParameters([
-                'contractCreatedBy' => $filter['contractCreatedBy'],
-                'contractStatus' => $filter['contractStatus'],
+                'createdBy' => $filter['contractCreatedBy'],
+                'status' => $filter['contractStatus'],
             ])
             ->getQuery()
+            ->getResult()
         ;
     }
 
@@ -111,17 +111,17 @@ class NoticeRepository extends ServiceEntityRepository
         if (!$isNotification) {
             return [];
         }
+
         $result = [];
 
-        $arContracts = $this->getAllActiveContracts($filter);
-
-        foreach ($arContracts->getResult() as $itm) {
-            $arAllUserClientsNotice = $this->getAllUserClientsNotice($itm->getClient(), $user);
-            if ($arAllUserClientsNotice === null) {
+        foreach ($this->getAllActiveContracts($filter) as $contract) {
+            $client = $contract->getClient();
+            $allUserClientsNotice = $this->getAllUserClientsNotice($client, $user);
+            if ($allUserClientsNotice === null) {
                 continue;
             }
-            $result[$arAllUserClientsNotice['id']] = $arAllUserClientsNotice;
-            $result[$arAllUserClientsNotice['id']]['client'] = $itm->getClient();
+            $result[$allUserClientsNotice['id']] = $allUserClientsNotice;
+            $result[$allUserClientsNotice['id']]['client'] = $client;
         }
 
         $isQuestionnaireLiving = $this->menuItemRepository->isEnableCode(MenuItem::CODE_QUESTIONNAIRE_LIVING);

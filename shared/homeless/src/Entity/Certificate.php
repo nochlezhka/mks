@@ -48,7 +48,7 @@ class Certificate extends BaseEntity implements DownloadableInterface
         return 'contract';
     }
 
-    public function setCreatedAt(?\DateTimeInterface $createdAt = null): static
+    public function setCreatedAt(?\DateTimeInterface $createdAt): static
     {
         $this->dateFrom = $createdAt;
 
@@ -119,7 +119,7 @@ class Certificate extends BaseEntity implements DownloadableInterface
         return $this->client;
     }
 
-    public function setClient(Client $client): self
+    public function setClient(?Client $client): self
     {
         $this->client = $client;
 

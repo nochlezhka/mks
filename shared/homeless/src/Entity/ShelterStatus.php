@@ -16,7 +16,7 @@ class ShelterStatus extends BaseEntity
     /**
      * SyncId статуса "проживает"
      */
-    public const IN_PROCESS = 1;
+    public const int IN_PROCESS = 1;
 
     #[ORM\Column(type: 'string', nullable: true)]
     private ?string $name = null;

@@ -60,7 +60,7 @@ class ClientFormResponse extends BaseEntity
      * $r->__get('field_2') вернёт значение поля с ID == 2.
      * Все поля получаются через $this->getValues().
      */
-    public function __get(mixed $name): ?string
+    public function __get(mixed $name): mixed
     {
         if (str_starts_with($name, 'field_')) {
             return $this->getFieldValue((int) substr($name, 6));

@@ -28,10 +28,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 )]
 class ClientField extends BaseEntity
 {
-    public const TYPE_TEXT = 1;
-    public const TYPE_OPTION = 2; // Выбор значения(-ий) из списка
-    public const TYPE_FILE = 3;
-    public const TYPE_DATETIME = 4;
+    public const int TYPE_TEXT = 1;
+    public const int TYPE_OPTION = 2; // Выбор значения(-ий) из списка
+    public const int TYPE_FILE = 3;
+    public const int TYPE_DATETIME = 4;
 
     #[ORM\Column(type: 'string', nullable: true)]
     private ?string $name = null;
