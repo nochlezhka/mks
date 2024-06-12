@@ -53,6 +53,7 @@ final class ContractAdmin extends AbstractAdmin
                 ->add('duration', AppContractDurationType::class, [
                     'label' => 'Долгосрочность',
                     'required' => false,
+                    'setter' => static fn () => null,
                 ])
                 ->add('number', null, [
                     'label' => 'Номер',
@@ -116,7 +117,7 @@ final class ContractAdmin extends AbstractAdmin
     protected function configureListFields(ListMapper $list): void
     {
         $list
-            ->add('duration', 'number', [
+            ->add('duration', null, [
                 'template' => '/admin/fields/contract_duration_list.html.twig',
                 'label' => ' ',
             ])

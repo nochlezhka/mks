@@ -221,8 +221,12 @@ final class ClientAdmin extends AbstractAdmin
                 }
 
                 $field = $fieldValue->getField();
+                $fieldCode = $field->getCode();
 
-                $options = ['label' => $field->getName()];
+                $options = [
+                    'label' => $field->getName(),
+                    'accessor' => static fn (Client $client): mixed => $client->getAdditionalFieldValue($fieldCode),
+                ];
 
                 switch ($field->getType()) {
                     case ClientField::TYPE_OPTION:
@@ -242,12 +246,12 @@ final class ClientAdmin extends AbstractAdmin
                         break;
                 }
 
-                if ($field->getCode() === 'homelessFrom') {
+                if ($fieldCode === 'homelessFrom') {
                     $options['pattern'] = 'MMM y';
                 }
 
                 $showMapperAdditionalInfo[\count($showMapperAdditionalInfo) - 1]['add'] = [
-                    self::getAdditionalFieldName($field->getCode()),
+                    self::getAdditionalFieldName($fieldCode),
                     $field->getShowFieldType(),
                     $options,
                 ];
@@ -262,8 +266,7 @@ final class ClientAdmin extends AbstractAdmin
         foreach ($showMapperAdditionalInfoSort as $showMapperAdditionalInfoSortItems) {
             foreach ($showMapperAdditionalInfoSortItems as $item) {
                 if (isset($item['add'])) {
-                    $reflectionMethod = new \ReflectionMethod(ShowMapper::class, 'add');
-                    $reflectionMethod->invokeArgs($show, $item['add']);
+                    $show->add(...$item['add']);
                 }
             }
         }
@@ -545,6 +548,8 @@ final class ClientAdmin extends AbstractAdmin
                     'label' => 'Не бездомный',
                     'label_attr' => ['class' => 'changeSelectinsData'],
                     'required' => false,
+                    'getter' => static fn (Client $client): bool => !$client->isHomeless(),
+                    'setter' => static fn (Client $client, bool $value): Client => $client->setIsHomeless(!$value),
                 ])
             ;
         }
@@ -676,6 +681,7 @@ final class ClientAdmin extends AbstractAdmin
             ->add('lastContractDuration', null, [
                 'template' => '/admin/fields/client_contract_duration_list.html.twig',
                 'label' => ' ',
+                'virtual_field' => true,
             ])
             ->addIdentifier('id', 'number', [
                 'route' => ['name' => 'show'],

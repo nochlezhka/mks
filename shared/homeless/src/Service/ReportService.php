@@ -120,12 +120,10 @@ final class ReportService
               AND c.created_at >= :createClientdateFrom
               AND c.created_at <= :createClientFromTo
             ');
-            $parameters = [
-                ':createServicedateFrom' => $createServicedateFrom ? date('Y-m-d', strtotime($createServicedateFrom)) : '1960-01-01',
-                ':createServiceFromTo' => $createServiceFromTo ? date('Y-m-d', strtotime($createServiceFromTo)) : date('Y-m-d'),
-                ':createClientdateFrom' => $createClientdateFrom ? date('Y-m-d', strtotime($createClientdateFrom)) : '1960-01-01',
-                ':createClientFromTo' => $createClientFromTo ? date('Y-m-d', strtotime($createClientFromTo)) : date('Y-m-d'),
-            ];
+            $stmt->bindValue(':createServicedateFrom', $createServicedateFrom ? date('Y-m-d', strtotime($createServicedateFrom)) : '1960-01-01');
+            $stmt->bindValue(':createServiceFromTo', $createServiceFromTo ? date('Y-m-d', strtotime($createServiceFromTo)) : date('Y-m-d'));
+            $stmt->bindValue(':createClientdateFrom', $createClientdateFrom ? date('Y-m-d', strtotime($createClientdateFrom)) : '1960-01-01');
+            $stmt->bindValue(':createClientFromTo', $createClientFromTo ? date('Y-m-d', strtotime($createClientFromTo)) : date('Y-m-d'));
         } else {
             $stmt = $this->entityManager->getConnection()->prepare('
             SELECT c.id
@@ -133,13 +131,11 @@ final class ReportService
             WHERE c.created_at >= :createClientdateFrom
               AND c.created_at <= :createClientFromTo
             ');
-            $parameters = [
-                ':createClientdateFrom' => $createClientdateFrom ? date('Y-m-d', strtotime($createClientdateFrom)) : '1960-01-01',
-                ':createClientFromTo' => $createClientFromTo ? date('Y-m-d', strtotime($createClientFromTo)) : date('Y-m-d'),
-            ];
+            $stmt->bindValue(':createClientdateFrom', $createClientdateFrom ? date('Y-m-d', strtotime($createClientdateFrom)) : '1960-01-01');
+            $stmt->bindValue(':createClientFromTo', $createClientFromTo ? date('Y-m-d', strtotime($createClientFromTo)) : date('Y-m-d'));
         }
 
-        return $stmt->executeQuery($parameters)->fetchAllAssociative();
+        return $stmt->executeQuery()->fetchAllAssociative();
     }
 
     /**
@@ -157,7 +153,7 @@ final class ReportService
             'скольким людям она была предоставлена',
             'сумма',
         ]]);
-        $statement = $this->entityManager->getConnection()->prepare('
+        $stmt = $this->entityManager->getConnection()->prepare('
             SELECT
                 st.name,
                 COUNT(DISTINCT s.id) all_count,
@@ -170,15 +166,13 @@ final class ReportService
             GROUP BY st.id
             ORDER BY st.sort
         ');
-        $parameters = [
-            'dateFrom' => $dateFrom ?: '1960-01-01',
-            'dateTo' => $dateTo ?: date('Y-m-d'),
-        ];
+        $stmt->bindValue(':dateFrom', $dateFrom ?: '1960-01-01');
+        $stmt->bindValue(':dateTo', $dateTo ?: date('Y-m-d'));
         if ($userId) {
-            $parameters['userId'] = $userId;
+            $stmt->bindValue(':userId', $userId);
         }
 
-        return $statement->executeQuery($parameters)->fetchAllNumeric();
+        return $stmt->executeQuery()->fetchAllNumeric();
     }
 
     /**
@@ -210,15 +204,13 @@ final class ReportService
             GROUP BY i.type_id
             ORDER BY cit.sort
         ');
-        $parameters = [
-            ':dateFrom' => $dateFrom ?: '1960-01-01',
-            ':dateTo' => $dateTo ?: date('Y-m-d'),
-        ];
+        $stmt->bindValue(':dateFrom', $dateFrom ?: '1960-01-01');
+        $stmt->bindValue(':dateTo', $dateTo ?: date('Y-m-d'));
         if ($userId) {
-            $parameters[':userId'] = $userId;
+            $stmt->bindValue(':userId', $userId);
         }
 
-        return $stmt->executeQuery($parameters)->fetchAllNumeric();
+        return $stmt->executeQuery()->fetchAllNumeric();
     }
 
     /**
@@ -275,15 +267,13 @@ final class ReportService
             GROUP BY con.id, h.id
             ORDER BY h.date_to DESC
         ');
-        $parameters = [
-            ':dateFrom' => $dateFrom ?: '1960-01-01',
-            ':dateTo' => $dateTo ?: date('Y-m-d'),
-        ];
+        $stmt->bindValue(':dateFrom', $dateFrom ?: '1960-01-01');
+        $stmt->bindValue(':dateTo', $dateTo ?: date('Y-m-d'));
         if ($userId) {
-            $parameters[':userId'] = $userId;
+            $stmt->bindValue(':userId', $userId);
         }
 
-        return $stmt->executeQuery($parameters)->fetchAllNumeric();
+        return $stmt->executeQuery()->fetchAllNumeric();
     }
 
     /**
@@ -334,15 +324,13 @@ final class ReportService
             GROUP BY con.id
             ORDER BY con.date_to DESC
         ');
-        $parameters = [
-            ':dateFrom' => $dateFrom ?: '1960-01-01',
-            ':dateTo' => $dateTo ?: date('Y-m-d'),
-        ];
+        $stmt->bindValue(':dateFrom', $dateFrom ?: '1960-01-01');
+        $stmt->bindValue(':dateTo', $dateTo ?: date('Y-m-d'));
         if ($userId) {
-            $parameters[':userId'] = $userId;
+            $stmt->bindValue(':userId', $userId);
         }
 
-        return $stmt->executeQuery($parameters)->fetchAllNumeric();
+        return $stmt->executeQuery()->fetchAllNumeric();
     }
 
     /**
@@ -385,12 +373,11 @@ final class ReportService
             GROUP BY con.id
             ORDER BY con.date_to DESC
         ');
-        $parameters = [];
         if ($userId) {
-            $parameters[':userId'] = $userId;
+            $stmt->bindValue(':userId', $userId);
         }
 
-        return $stmt->executeQuery($parameters)->fetchAllNumeric();
+        return $stmt->executeQuery()->fetchAllNumeric();
     }
 
     /**
@@ -408,7 +395,7 @@ final class ReportService
         ]]);
         $stmt = $this->entityManager->getConnection()->prepare('
             SELECT cit.name,
-                   FLOOR(AVG (TO_DAYS(c.date_to) - TO_DAYS(c.date_from))) avg_days
+                   FLOOR(AVG(TO_DAYS(c.date_to) - TO_DAYS(c.date_from))) avg_days
             FROM contract_item i
                 JOIN contract c
                     ON i.contract_id = c.id
@@ -418,16 +405,15 @@ final class ReportService
               AND i.date <= :dateTo
               '.($userId ? 'AND ((i.created_by_id IS NOT NULL AND i.created_by_id = :userId) OR (i.created_by_id IS NULL AND c.created_by_id = :userId))' : '').'
             GROUP BY cit.name
-            ORDER BY cit.name');
-        $parameters = [
-            ':dateFrom' => $dateFrom ?: '2000-01-01',
-            ':dateTo' => $dateTo ?: date('Y-m-d'),
-        ];
+            ORDER BY cit.name
+        ');
+        $stmt->bindValue(':dateFrom', $dateFrom ?: '2000-01-01');
+        $stmt->bindValue(':dateTo', $dateTo ?: date('Y-m-d'));
         if ($userId) {
-            $parameters[':userId'] = $userId;
+            $stmt->bindValue(':userId', $userId);
         }
 
-        return $stmt->executeQuery($parameters)->fetchAllNumeric();
+        return $stmt->executeQuery()->fetchAllNumeric();
     }
 
     /**

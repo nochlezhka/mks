@@ -154,20 +154,6 @@ class Client extends BaseEntity
         return $this->getFullname();
     }
 
-    public function __call($name, $args): mixed
-    {
-        $property = lcfirst(substr($name, 3));
-        if (str_starts_with($name, 'get') && str_starts_with($property, 'additionalField')) {
-            return $this->getAdditionalFieldValue(substr($property, 15));
-        }
-
-        if (str_starts_with($name, 'set') && str_starts_with($property, 'additionalField')) {
-            $this->setAdditionalFieldValue(substr($name, 15), \count($args) === 1 ? $args[0] : null);
-        }
-
-        return null;
-    }
-
     public function getPhoto(): ?File
     {
         return $this->photo;
@@ -619,18 +605,6 @@ class Client extends BaseEntity
     public function setIsHomeless(bool $isHomeless): self
     {
         $this->isHomeless = $isHomeless;
-
-        return $this;
-    }
-
-    public function notIsHomeless(): bool
-    {
-        return !$this->isHomeless;
-    }
-
-    public function setNotIsHomeless(bool $notIsHomeless): self
-    {
-        $this->isHomeless = !$notIsHomeless;
 
         return $this;
     }
