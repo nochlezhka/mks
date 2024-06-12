@@ -12,7 +12,7 @@ use PhpOffice\PhpSpreadsheet\Exception as PhpSpreadsheetException;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xls;
 
-class ReportService
+final class ReportService
 {
     public const string ONE_OFF_SERVICES = 'one_off_services';
     public const string COMPLETED_ITEMS = 'completed_items';
@@ -34,14 +34,14 @@ class ReportService
     public function getTypes(): array
     {
         return [
-            static::ONE_OFF_SERVICES => 'Отчет о предоставленных разовых услугах',
-            static::COMPLETED_ITEMS => 'Отчет о выполненных пунктах сервисного плана',
-            static::OUTGOING => 'Отчет о выбывших из приюта',
-            static::RESULTS_OF_SUPPORT => 'Отчет по результатам сопровождения ',
-            static::ACCOMPANYING => 'Отчет по сопровождению',
-            static::AVERAGE_COMPLETED_ITEMS => 'Отчет по средней длительности пунктов сервисных планов',
-            static::AGGREGATED => 'Отчет агрегированный',
-            static::AGGREGATED2 => 'Отчет агрегированный 2',
+            self::ONE_OFF_SERVICES => 'Отчет о предоставленных разовых услугах',
+            self::COMPLETED_ITEMS => 'Отчет о выполненных пунктах сервисного плана',
+            self::OUTGOING => 'Отчет о выбывших из приюта',
+            self::RESULTS_OF_SUPPORT => 'Отчет по результатам сопровождения ',
+            self::ACCOMPANYING => 'Отчет по сопровождению',
+            self::AVERAGE_COMPLETED_ITEMS => 'Отчет по средней длительности пунктов сервисных планов',
+            self::AGGREGATED => 'Отчет агрегированный',
+            self::AGGREGATED2 => 'Отчет агрегированный 2',
         ];
     }
 
@@ -82,14 +82,14 @@ class ReportService
         }
 
         $result = match ($type) {
-            static::ONE_OFF_SERVICES => $this->oneOffServices($dateFrom, $dateTo, $userId),
-            static::COMPLETED_ITEMS => $this->completedItems($dateFrom, $dateTo, $userId),
-            static::OUTGOING => $this->outgoing($dateFrom, $dateTo, $userId),
-            static::RESULTS_OF_SUPPORT => $this->resultsOfSupport($dateFrom, $dateTo, $userId),
-            static::ACCOMPANYING => $this->accompanying($userId),
-            static::AVERAGE_COMPLETED_ITEMS => $this->averageCompletedItems($dateFrom, $dateTo, $userId),
-            static::AGGREGATED => $this->aggregated($createClientdateFrom, $createClientFromTo, $createServicedateFrom, $createServiceFromTo),
-            static::AGGREGATED2 => $this->aggregated2($createClientdateFrom, $createClientFromTo, $createServicedateFrom, $createServiceFromTo, $homelessReason, $disease, $breadwinner),
+            self::ONE_OFF_SERVICES => $this->oneOffServices($dateFrom, $dateTo, $userId),
+            self::COMPLETED_ITEMS => $this->completedItems($dateFrom, $dateTo, $userId),
+            self::OUTGOING => $this->outgoing($dateFrom, $dateTo, $userId),
+            self::RESULTS_OF_SUPPORT => $this->resultsOfSupport($dateFrom, $dateTo, $userId),
+            self::ACCOMPANYING => $this->accompanying($userId),
+            self::AVERAGE_COMPLETED_ITEMS => $this->averageCompletedItems($dateFrom, $dateTo, $userId),
+            self::AGGREGATED => $this->aggregated($createClientdateFrom, $createClientFromTo, $createServicedateFrom, $createServiceFromTo),
+            self::AGGREGATED2 => $this->aggregated2($createClientdateFrom, $createClientFromTo, $createServicedateFrom, $createServiceFromTo, $homelessReason, $disease, $breadwinner),
             default => throw new \RuntimeException('Unexpected report type "'.$type.'"'),
         };
 

@@ -66,7 +66,7 @@ class ClientField extends BaseEntity
     #[ORM\Column(type: 'string', nullable: true)]
     private ?string $description = null;
 
-    #[ORM\OneToMany(mappedBy: 'field', targetEntity: ClientFieldOption::class)]
+    #[ORM\OneToMany(targetEntity: ClientFieldOption::class, mappedBy: 'field')]
     private Collection $options;
 
     public function __construct()

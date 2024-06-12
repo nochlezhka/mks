@@ -7,6 +7,7 @@ namespace App\Admin;
 
 use App\Entity\Notice;
 use App\Entity\User;
+use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\FieldDescription\FieldDescriptionInterface;
@@ -29,8 +30,10 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
     'manager_type' => 'orm',
     'model_class' => Notice::class,
 ])]
-class NoticeAdmin extends AbstractAdmin
+final class NoticeAdmin extends AbstractAdmin
 {
+    use AdminTrait;
+
     protected array $datagridValues = [
         '_sort_order' => 'DESC',
         '_sort_by' => 'date',

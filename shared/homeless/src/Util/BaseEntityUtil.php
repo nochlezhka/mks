@@ -7,7 +7,7 @@ namespace App\Util;
 
 use App\Entity\BaseEntity;
 
-class BaseEntityUtil
+final class BaseEntityUtil
 {
     /**
      * Сортирует объекты-наследники `BaseEntity` по полю `sort` по возрастанию.

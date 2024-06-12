@@ -15,7 +15,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method array<ShelterRoom> findAll()
  * @method array<ShelterRoom> findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class ShelterRoomRepository extends ServiceEntityRepository
+final class ShelterRoomRepository extends ServiceEntityRepository
 {
     public function __construct(
         ManagerRegistry $registry,

@@ -17,7 +17,7 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\KernelInterface;
 
 #[AsCommand(name: 'homeless:data:clear')]
-class DataClearCommand extends Command
+final class DataClearCommand extends Command
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,

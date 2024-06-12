@@ -12,7 +12,9 @@ use App\Entity\MenuItem;
 use App\Entity\Notice;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\Query\Parameter;
 use Doctrine\ORM\Query\ResultSetMappingBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -22,7 +24,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method array<Notice> findAll()
  * @method array<Notice> findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class NoticeRepository extends ServiceEntityRepository
+final class NoticeRepository extends ServiceEntityRepository
 {
     public function __construct(
         private readonly ContractRepository $contractRepository,
@@ -44,11 +46,11 @@ class NoticeRepository extends ServiceEntityRepository
             ->where('n.client = :client')
             ->andWhere(':user NOT MEMBER OF n.viewedBy')
             ->andWhere('n.date <= :now')
-            ->setParameters([
-                'client' => $client,
-                'user' => $user,
-                'now' => new \DateTimeImmutable(),
-            ])
+            ->setParameters(new ArrayCollection([
+                new Parameter('client', $client),
+                new Parameter('user', $user),
+                new Parameter('now', new \DateTimeImmutable()),
+            ]))
             ->getQuery()
             ->getOneOrNullResult()
         ;
@@ -66,11 +68,11 @@ class NoticeRepository extends ServiceEntityRepository
             ->where('n.client = :client')
             ->andWhere(':user NOT MEMBER OF n.viewedBy')
             ->andWhere('n.date <= :now')
-            ->setParameters([
-                'client' => $client,
-                'user' => $user,
-                'now' => new \DateTimeImmutable(),
-            ])
+            ->setParameters(new ArrayCollection([
+                new Parameter('client', $client),
+                new Parameter('user', $user),
+                new Parameter('now', new \DateTimeImmutable()),
+            ]))
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult()
@@ -85,10 +87,10 @@ class NoticeRepository extends ServiceEntityRepository
         return $this->contractRepository->createQueryBuilder('c')
             ->where('c.createdBy = :createdBy')
             ->andWhere('c.status = :status')
-            ->setParameters([
-                'createdBy' => $filter['contractCreatedBy'],
-                'status' => $filter['contractStatus'],
-            ])
+            ->setParameters(new ArrayCollection([
+                new Parameter('createdBy', $filter['contractCreatedBy']),
+                new Parameter('status', $filter['contractStatus']),
+            ]))
             ->getQuery()
             ->getResult()
         ;

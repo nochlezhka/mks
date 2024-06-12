@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/profile', name: 'profile')]
-class Profile extends AbstractController
+final class Profile extends AbstractController
 {
     public function __invoke(): Response
     {

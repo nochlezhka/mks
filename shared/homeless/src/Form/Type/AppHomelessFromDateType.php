@@ -20,7 +20,7 @@ use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class AppHomelessFromDateType extends AbstractType
+final class AppHomelessFromDateType extends AbstractType
 {
     public const int DEFAULT_FORMAT = \IntlDateFormatter::MEDIUM;
 

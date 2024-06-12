@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/add-client', name: 'add_client')]
-class Create extends AbstractController
+final class Create extends AbstractController
 {
     public function __invoke(): Response
     {

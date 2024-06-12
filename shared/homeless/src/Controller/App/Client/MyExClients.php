@@ -15,7 +15,7 @@ use Symfony\Component\Routing\Annotation\Route;
  * Мои бывшие клиенты
  */
 #[Route('/my-ex-clients', name: 'my_ex_clients')]
-class MyExClients extends AbstractController
+final class MyExClients extends AbstractController
 {
     public function __invoke(ContractStatusRepository $contractStatusRepository): Response
     {

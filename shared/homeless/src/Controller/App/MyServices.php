@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Annotation\Route;
  * Оказанные мной услуги
  */
 #[Route('/my-services', name: 'my_services')]
-class MyServices extends AbstractController
+final class MyServices extends AbstractController
 {
     public function __invoke(): Response
     {

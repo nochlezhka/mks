@@ -39,7 +39,7 @@ class Contract extends BaseEntity implements DownloadableInterface
     #[ORM\ManyToOne(targetEntity: Document::class)]
     private ?Document $document = null;
 
-    #[ORM\OneToMany(mappedBy: 'contract', targetEntity: ContractItem::class, cascade: ['all'], orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: ContractItem::class, mappedBy: 'contract', cascade: ['all'], orphanRemoval: true)]
     #[ORM\OrderBy(['date' => 'DESC', 'id' => 'DESC'])]
     private Collection $items;
 

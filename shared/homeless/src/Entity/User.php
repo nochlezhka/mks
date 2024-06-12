@@ -11,7 +11,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Sonata\IntlBundle\Timezone\TimezoneAwareInterface;
-use Sonata\UserBundle\Entity\BaseUser;
+use Sonata\UserBundle\Entity\BaseUser3;
 use Symfony\Component\Security\Core\User\LegacyPasswordAuthenticatedUserInterface;
 
 /**
@@ -20,7 +20,7 @@ use Symfony\Component\Security\Core\User\LegacyPasswordAuthenticatedUserInterfac
  */
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'fos_user_user')]
-class User extends BaseUser implements BaseEntityInterface, TimezoneAwareInterface, LegacyPasswordAuthenticatedUserInterface
+class User extends BaseUser3 implements BaseEntityInterface, TimezoneAwareInterface, LegacyPasswordAuthenticatedUserInterface
 {
     public const string ROLE_DEFAULT = Role::EMPLOYEE;
 
@@ -81,7 +81,7 @@ class User extends BaseUser implements BaseEntityInterface, TimezoneAwareInterfa
     /**
      * Просмотренные анкеты клиентов
      */
-    #[ORM\OneToMany(mappedBy: 'createdBy', targetEntity: ViewedClient::class)]
+    #[ORM\OneToMany(targetEntity: ViewedClient::class, mappedBy: 'createdBy')]
     #[ORM\OrderBy(['createdAt' => 'DESC'])]
     private Collection $viewedClients;
 

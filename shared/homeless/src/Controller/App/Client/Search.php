@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/client/list', name: 'client_search')]
-class Search extends AbstractController
+final class Search extends AbstractController
 {
     public function __invoke(Request $request): Response
     {

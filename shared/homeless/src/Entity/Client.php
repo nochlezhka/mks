@@ -25,7 +25,7 @@ class Client extends BaseEntity
      * Значения дополнительных полей клиента, установленных при сохранении
      * для обработки в методах prePersist и preUpdate админки App\Admin\ClientAdmin
      */
-    public array $additionalFieldValues = [];
+    private array $additionalFieldValues = [];
 
     /**
      * Коды полей, для которых необходимо удалить объекты значений
@@ -33,7 +33,7 @@ class Client extends BaseEntity
      *
      * @var array<string>
      */
-    public array $additionalFieldValuesToRemove = [];
+    private array $additionalFieldValuesToRemove = [];
 
     /**
      * Название файла с фотографией (хранится с помощью VichUploaderBundle)
@@ -79,58 +79,58 @@ class Client extends BaseEntity
     /**
      * Значения дополнительных полей
      */
-    #[ORM\OneToMany(mappedBy: 'client', targetEntity: ClientFieldValue::class, cascade: ['remove'])]
+    #[ORM\OneToMany(targetEntity: ClientFieldValue::class, mappedBy: 'client', cascade: ['remove'])]
     private Collection $fieldValues;
 
-    #[ORM\OneToMany(mappedBy: 'client', targetEntity: Note::class, cascade: ['remove'])]
+    #[ORM\OneToMany(targetEntity: Note::class, mappedBy: 'client', cascade: ['remove'])]
     #[ORM\OrderBy(['createdAt' => 'DESC', 'id' => 'DESC'])]
     private Collection $notes;
 
     /**
      * Договоры
      */
-    #[ORM\OneToMany(mappedBy: 'client', targetEntity: Contract::class, cascade: ['remove'])]
+    #[ORM\OneToMany(targetEntity: Contract::class, mappedBy: 'client', cascade: ['remove'])]
     #[ORM\OrderBy(['dateFrom' => 'DESC'])]
     private Collection $contracts;
 
-    #[ORM\OneToMany(mappedBy: 'client', targetEntity: Document::class, cascade: ['remove'])]
+    #[ORM\OneToMany(targetEntity: Document::class, mappedBy: 'client', cascade: ['remove'])]
     private Collection $documents;
 
     /**
      * Данные о проживаниях в приюте (договоры о заселении)
      */
-    #[ORM\OneToMany(mappedBy: 'client', targetEntity: ShelterHistory::class, cascade: ['remove'])]
+    #[ORM\OneToMany(targetEntity: ShelterHistory::class, mappedBy: 'client', cascade: ['remove'])]
     private Collection $shelterHistories;
 
     /**
      * Загруженные файлы документов
      */
-    #[ORM\OneToMany(mappedBy: 'client', targetEntity: DocumentFile::class, cascade: ['remove'])]
+    #[ORM\OneToMany(targetEntity: DocumentFile::class, mappedBy: 'client', cascade: ['remove'])]
     private Collection $documentFiles;
 
     /**
      * Полученные услуги
      */
-    #[ORM\OneToMany(mappedBy: 'client', targetEntity: Service::class, cascade: ['remove'])]
+    #[ORM\OneToMany(targetEntity: Service::class, mappedBy: 'client', cascade: ['remove'])]
     #[ORM\OrderBy(['createdAt' => 'DESC', 'id' => 'DESC'])]
     private Collection $services;
 
     /**
      * Справки
      */
-    #[ORM\OneToMany(mappedBy: 'client', targetEntity: Certificate::class, cascade: ['remove'])]
+    #[ORM\OneToMany(targetEntity: Certificate::class, mappedBy: 'client', cascade: ['remove'])]
     private Collection $certificates;
 
     /**
      * Построенные документы
      */
-    #[ORM\OneToMany(mappedBy: 'client', targetEntity: GeneratedDocument::class, cascade: ['remove'])]
+    #[ORM\OneToMany(targetEntity: GeneratedDocument::class, mappedBy: 'client', cascade: ['remove'])]
     private Collection $generatedDocuments;
 
-    #[ORM\OneToMany(mappedBy: 'client', targetEntity: ViewedClient::class, cascade: ['remove'])]
+    #[ORM\OneToMany(targetEntity: ViewedClient::class, mappedBy: 'client', cascade: ['remove'])]
     private Collection $clientViews;
 
-    #[ORM\OneToMany(mappedBy: 'client', targetEntity: HistoryDownload::class, cascade: ['remove'])]
+    #[ORM\OneToMany(targetEntity: HistoryDownload::class, mappedBy: 'client', cascade: ['remove'])]
     private Collection $historyDownloads;
 
     #[Vich\UploadableField(mapping: 'client_photo', fileNameProperty: 'photoName')]
@@ -154,29 +154,18 @@ class Client extends BaseEntity
         return $this->getFullname();
     }
 
-    public function __get($name): mixed
+    public function __call($name, $args): mixed
     {
-        if (str_starts_with($name, 'additionalField')) {
-            return $this->{$name}();
+        $property = lcfirst(substr($name, 3));
+        if (str_starts_with($name, 'get') && str_starts_with($property, 'additionalField')) {
+            return $this->getAdditionalFieldValue(substr($property, 15));
+        }
+
+        if (str_starts_with($name, 'set') && str_starts_with($property, 'additionalField')) {
+            $this->setAdditionalFieldValue(substr($name, 15), \count($args) === 1 ? $args[0] : null);
         }
 
         return null;
-    }
-
-    public function __call($name, $arguments): mixed
-    {
-        if (str_starts_with($name, 'additionalField')) {
-            return $this->getAdditionalFieldValue(substr($name, 15));
-        }
-
-        return null;
-    }
-
-    public function __set($name, $value): void
-    {
-        if (str_starts_with($name, 'additionalField')) {
-            $this->setAdditionalFieldValue(substr($name, 15), $value);
-        }
     }
 
     public function getPhoto(): ?File
@@ -634,6 +623,11 @@ class Client extends BaseEntity
         return $this;
     }
 
+    public function notIsHomeless(): bool
+    {
+        return !$this->isHomeless;
+    }
+
     public function setNotIsHomeless(bool $notIsHomeless): self
     {
         $this->isHomeless = !$notIsHomeless;
@@ -663,6 +657,16 @@ class Client extends BaseEntity
         $this->historyDownloads = $historyDownloads;
 
         return $this;
+    }
+
+    public function getAdditionalFieldValues(): array
+    {
+        return $this->additionalFieldValues;
+    }
+
+    public function getAdditionalFieldValuesToRemove(): array
+    {
+        return $this->additionalFieldValuesToRemove;
     }
 
     private function isImage(): bool

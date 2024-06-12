@@ -7,6 +7,7 @@ namespace App\Admin;
 
 use App\Entity\ClientFormField;
 use App\Util\ClientFormUtil;
+use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\FieldDescription\FieldDescriptionInterface;
 use Sonata\AdminBundle\Form\FormMapper;
@@ -29,8 +30,10 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
     'manager_type' => 'orm',
     'model_class' => ClientFormField::class,
 ])]
-class ClientFormFieldAdmin extends AbstractAdmin
+final class ClientFormFieldAdmin extends AbstractAdmin
 {
+    use AdminTrait;
+
     protected array $datagridValues = [
         '_sort_order' => 'ASC',
         '_sort_by' => 'sort',

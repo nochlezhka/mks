@@ -8,17 +8,23 @@ return (new PhpCsFixer\Config())
         (new PhpCsFixer\Finder())
             ->in(__DIR__)
             ->exclude(['bin', 'migrations', 'var'])
+            ->notPath([
+                'src/EventListener/PrePersister.php',
+                'src/EventListener/PreUpdater.php',
+                'src/Kernel.php',
+            ])
             ->append([__FILE__])
     )
     ->setRiskyAllowed(true)
     ->setRules([
         // base presets
-        '@PER' => true,
+        '@PER-CS' => true,
         '@PhpCsFixer' => true,
         '@Symfony' => true,
         '@PHP82Migration' => true,
 
         // risky presets
+        '@PER-CS:risky' => true,
         '@PhpCsFixer:risky' => true,
         '@Symfony:risky' => true,
         '@PHP80Migration:risky' => true,
@@ -82,14 +88,17 @@ return (new PhpCsFixer\Config())
 
         // no-preset rules
         'date_time_immutable' => true,
+        'final_class' => true,
         'header_comment' => [
             'header' => 'SPDX-License-Identifier: BSD-3-Clause',
             'location' => 'after_open',
             'separate' => 'bottom',
         ],
         'nullable_type_declaration_for_default_null_value' => true,
+        'php_unit_attributes' => true,
         'self_static_accessor' => true,
         'simplified_null_return' => true,
+        'single_line_empty_body' => true,
         'static_lambda' => true,
     ])
 ;

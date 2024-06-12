@@ -13,7 +13,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 /**
  * @method \App\Entity\User getUser()
  */
-class UserController extends \Sonata\AdminBundle\Controller\CRUDController
+final class UserController extends \Sonata\AdminBundle\Controller\CRUDController
 {
     public function batchActionDelete(ProxyQueryInterface $query): Response
     {

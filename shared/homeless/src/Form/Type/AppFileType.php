@@ -15,7 +15,7 @@ use Symfony\Component\Form\FormView;
 use Vich\UploaderBundle\Storage\StorageInterface;
 
 #[AutoconfigureTag(name: 'form.type', attributes: ['alias' => 'app_file'])]
-class AppFileType extends AbstractType
+final class AppFileType extends AbstractType
 {
     public function __construct(
         private readonly StorageInterface $storage,

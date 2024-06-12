@@ -5,7 +5,7 @@ declare(strict_types=1);
 
 namespace App\Security\User;
 
-class Role
+final class Role
 {
     public const string EMPLOYEE = 'ROLE_EMPLOYEE';
     public const string ALLOWED_TO_SWITCH = 'ROLE_ALLOWED_TO_SWITCH';

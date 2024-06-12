@@ -6,6 +6,7 @@ declare(strict_types=1);
 namespace App\Admin;
 
 use App\Entity\DocumentFile;
+use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\FieldDescription\FieldDescriptionInterface;
 use Sonata\AdminBundle\Form\FormMapper;
@@ -19,8 +20,10 @@ use Vich\UploaderBundle\Form\Type\VichFileType;
     'manager_type' => 'orm',
     'model_class' => DocumentFile::class,
 ])]
-class DocumentFileAdmin extends AbstractAdmin
+final class DocumentFileAdmin extends AbstractAdmin
 {
+    use AdminTrait;
+
     protected array $datagridValues = [
         '_sort_order' => 'DESC',
         '_sort_by' => 'createdAt',

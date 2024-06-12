@@ -36,8 +36,6 @@ return static function (DoctrineConfig $doctrine, ContainerConfigurator $contain
 
     /** @var \Symfony\Config\Doctrine\OrmConfig $orm */
     $orm = $doctrine->orm();
-    $orm->enableLazyGhostObjects(true);
-
     $defaultEntityManager = $orm->entityManager('default')
         ->namingStrategy('doctrine.orm.naming_strategy.underscore_number_aware')
         ->autoMapping(true)

@@ -16,7 +16,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method array<CertificateType> findAll()
  * @method array<CertificateType> findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class CertificateTypeRepository extends ServiceEntityRepository
+final class CertificateTypeRepository extends ServiceEntityRepository
 {
     public function __construct(
         ManagerRegistry $registry,

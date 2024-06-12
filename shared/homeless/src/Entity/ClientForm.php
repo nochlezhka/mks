@@ -26,7 +26,7 @@ class ClientForm extends BaseEntity
     #[ORM\Column(type: 'string')]
     private string $name = '';
 
-    #[ORM\OneToMany(mappedBy: 'form', targetEntity: ClientFormField::class)]
+    #[ORM\OneToMany(targetEntity: ClientFormField::class, mappedBy: 'form')]
     private Collection $fields;
 
     public function __construct()

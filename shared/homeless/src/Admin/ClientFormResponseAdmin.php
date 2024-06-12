@@ -14,6 +14,7 @@ use App\Util\BaseEntityUtil;
 use App\Util\ClientFormUtil;
 use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManager;
+use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\FieldDescription\FieldDescriptionInterface;
@@ -25,8 +26,10 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-class ClientFormResponseAdmin extends AbstractAdmin
+abstract class ClientFormResponseAdmin extends AbstractAdmin
 {
+    use AdminTrait;
+
     protected array $datagridValues = [
         '_sort_order' => 'ASC',
         '_sort_by' => 'sort',
