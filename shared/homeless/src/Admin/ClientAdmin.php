@@ -364,7 +364,7 @@ final class ClientAdmin extends AbstractAdmin
 
         $queryBuilder->leftJoin('c1.status', 's1');
         $queryBuilder->andWhere('s1.id IN (:statuses)');
-        $queryBuilder->setParameter('statuses', array_values($data->getValue()->toArray()));
+        $queryBuilder->setParameter('statuses', $data->getValue()->toArray());
 
         return true;
     }

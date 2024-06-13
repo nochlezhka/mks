@@ -34,10 +34,10 @@ final class CertificateTypeRepository extends ServiceEntityRepository
         $queryBuilder = $this->createQueryBuilder('t')
             ->orderBy('t.sort', 'ASC')
             ->where('t.syncId IN (:types)')
-            ->setParameter('types', array_values([
+            ->setParameter('types', [
                 CertificateType::REGISTRATION,
                 CertificateType::TRAVEL,
-            ]))
+            ])
         ;
 
         if (!$certificate->getClient()->hasRegistrationDocument()) {

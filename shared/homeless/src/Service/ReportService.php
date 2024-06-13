@@ -5,6 +5,8 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Entity\ContractStatus;
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Driver\Exception as DBALDriverException;
 use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\ORM\EntityManagerInterface;
@@ -120,10 +122,10 @@ final class ReportService
               AND c.created_at >= :createClientdateFrom
               AND c.created_at <= :createClientFromTo
             ');
-            $stmt->bindValue(':createServicedateFrom', $createServicedateFrom ? date('Y-m-d', strtotime($createServicedateFrom)) : '1960-01-01');
-            $stmt->bindValue(':createServiceFromTo', $createServiceFromTo ? date('Y-m-d', strtotime($createServiceFromTo)) : date('Y-m-d'));
-            $stmt->bindValue(':createClientdateFrom', $createClientdateFrom ? date('Y-m-d', strtotime($createClientdateFrom)) : '1960-01-01');
-            $stmt->bindValue(':createClientFromTo', $createClientFromTo ? date('Y-m-d', strtotime($createClientFromTo)) : date('Y-m-d'));
+            $stmt->bindValue('createServicedateFrom', $createServicedateFrom ? date('Y-m-d', strtotime($createServicedateFrom)) : '1960-01-01');
+            $stmt->bindValue('createServiceFromTo', $createServiceFromTo ? date('Y-m-d', strtotime($createServiceFromTo)) : date('Y-m-d'));
+            $stmt->bindValue('createClientdateFrom', $createClientdateFrom ? date('Y-m-d', strtotime($createClientdateFrom)) : '1960-01-01');
+            $stmt->bindValue('createClientFromTo', $createClientFromTo ? date('Y-m-d', strtotime($createClientFromTo)) : date('Y-m-d'));
         } else {
             $stmt = $this->entityManager->getConnection()->prepare('
             SELECT c.id
@@ -131,8 +133,8 @@ final class ReportService
             WHERE c.created_at >= :createClientdateFrom
               AND c.created_at <= :createClientFromTo
             ');
-            $stmt->bindValue(':createClientdateFrom', $createClientdateFrom ? date('Y-m-d', strtotime($createClientdateFrom)) : '1960-01-01');
-            $stmt->bindValue(':createClientFromTo', $createClientFromTo ? date('Y-m-d', strtotime($createClientFromTo)) : date('Y-m-d'));
+            $stmt->bindValue('createClientdateFrom', $createClientdateFrom ? date('Y-m-d', strtotime($createClientdateFrom)) : '1960-01-01');
+            $stmt->bindValue('createClientFromTo', $createClientFromTo ? date('Y-m-d', strtotime($createClientFromTo)) : date('Y-m-d'));
         }
 
         return $stmt->executeQuery()->fetchAllAssociative();
@@ -166,10 +168,10 @@ final class ReportService
             GROUP BY st.id
             ORDER BY st.sort
         ');
-        $stmt->bindValue(':dateFrom', $dateFrom ?: '1960-01-01');
-        $stmt->bindValue(':dateTo', $dateTo ?: date('Y-m-d'));
+        $stmt->bindValue('dateFrom', $dateFrom ?: '1960-01-01');
+        $stmt->bindValue('dateTo', $dateTo ?: date('Y-m-d'));
         if ($userId) {
-            $stmt->bindValue(':userId', $userId);
+            $stmt->bindValue('userId', $userId);
         }
 
         return $stmt->executeQuery()->fetchAllNumeric();
@@ -189,7 +191,40 @@ final class ReportService
             'сколько раз она была предоставлена',
             'скольким людям она была предоставлена',
         ]]);
-        $stmt = $this->entityManager->getConnection()->prepare('
+        $excludeStatuses = [
+            ContractStatus::IN_PROCESS,
+            ContractStatus::REJECTED_CLIENT_REFUSAL,
+            ContractStatus::REJECTED_OTHER,
+            ContractStatus::REJECTED_CLIENT_NON_APPEARANCE,
+        ];
+
+        if ($userId) {
+            return $this->entityManager->getConnection()->executeQuery('
+                SELECT cit.name,
+                       COUNT(DISTINCT i.id) all_count,
+                       COUNT(DISTINCT c.client_id) client_count
+                FROM contract_item i
+                    JOIN contract c
+                        ON i.contract_id = c.id
+                    JOIN contract_item_type cit
+                        ON i.type_id = cit.id
+                WHERE c.status_id NOT IN (:excludeStatuses)
+                  AND i.date >= :dateFrom
+                  AND i.date <= :dateTo
+                  AND ((i.created_by_id IS NOT NULL AND i.created_by_id = :userId) OR (i.created_by_id IS NULL AND c.created_by_id = :userId))
+                GROUP BY i.type_id
+                ORDER BY cit.sort
+            ', [
+                'excludeStatuses' => $excludeStatuses,
+                'dateFrom' => $dateFrom ?: '1960-01-01',
+                'dateTo' => $dateTo ?: date('Y-m-d'),
+                'userId' => $userId,
+            ], [
+                'excludeStatuses' => ArrayParameterType::INTEGER,
+            ])->fetchAllNumeric();
+        }
+
+        return $this->entityManager->getConnection()->executeQuery('
             SELECT cit.name,
                    COUNT(DISTINCT i.id) all_count,
                    COUNT(DISTINCT c.client_id) client_count
@@ -198,19 +233,16 @@ final class ReportService
                     ON i.contract_id = c.id
                 JOIN contract_item_type cit
                     ON i.type_id = cit.id
-            WHERE i.date >= :dateFrom
+            WHERE c.status_id NOT IN (:excludeStatuses)
+              AND i.date >= :dateFrom
               AND i.date <= :dateTo
-              '.($userId ? 'AND ((i.created_by_id IS NOT NULL AND i.created_by_id = :userId) OR (i.created_by_id IS NULL AND c.created_by_id = :userId))' : '').'
             GROUP BY i.type_id
             ORDER BY cit.sort
-        ');
-        $stmt->bindValue(':dateFrom', $dateFrom ?: '1960-01-01');
-        $stmt->bindValue(':dateTo', $dateTo ?: date('Y-m-d'));
-        if ($userId) {
-            $stmt->bindValue(':userId', $userId);
-        }
-
-        return $stmt->executeQuery()->fetchAllNumeric();
+        ', [
+            'excludeStatuses' => $excludeStatuses,
+            'dateFrom' => $dateFrom ?: '1960-01-01',
+            'dateTo' => $dateTo ?: date('Y-m-d'),
+        ])->fetchAllNumeric();
     }
 
     /**
@@ -267,10 +299,10 @@ final class ReportService
             GROUP BY con.id, h.id
             ORDER BY h.date_to DESC
         ');
-        $stmt->bindValue(':dateFrom', $dateFrom ?: '1960-01-01');
-        $stmt->bindValue(':dateTo', $dateTo ?: date('Y-m-d'));
+        $stmt->bindValue('dateFrom', $dateFrom ?: '1960-01-01');
+        $stmt->bindValue('dateTo', $dateTo ?: date('Y-m-d'));
         if ($userId) {
-            $stmt->bindValue(':userId', $userId);
+            $stmt->bindValue('userId', $userId);
         }
 
         return $stmt->executeQuery()->fetchAllNumeric();
@@ -324,10 +356,10 @@ final class ReportService
             GROUP BY con.id
             ORDER BY con.date_to DESC
         ');
-        $stmt->bindValue(':dateFrom', $dateFrom ?: '1960-01-01');
-        $stmt->bindValue(':dateTo', $dateTo ?: date('Y-m-d'));
+        $stmt->bindValue('dateFrom', $dateFrom ?: '1960-01-01');
+        $stmt->bindValue('dateTo', $dateTo ?: date('Y-m-d'));
         if ($userId) {
-            $stmt->bindValue(':userId', $userId);
+            $stmt->bindValue('userId', $userId);
         }
 
         return $stmt->executeQuery()->fetchAllNumeric();
@@ -374,7 +406,7 @@ final class ReportService
             ORDER BY con.date_to DESC
         ');
         if ($userId) {
-            $stmt->bindValue(':userId', $userId);
+            $stmt->bindValue('userId', $userId);
         }
 
         return $stmt->executeQuery()->fetchAllNumeric();
@@ -407,10 +439,10 @@ final class ReportService
             GROUP BY cit.name
             ORDER BY cit.name
         ');
-        $stmt->bindValue(':dateFrom', $dateFrom ?: '2000-01-01');
-        $stmt->bindValue(':dateTo', $dateTo ?: date('Y-m-d'));
+        $stmt->bindValue('dateFrom', $dateFrom ?: '2000-01-01');
+        $stmt->bindValue('dateTo', $dateTo ?: date('Y-m-d'));
         if ($userId) {
-            $stmt->bindValue(':userId', $userId);
+            $stmt->bindValue('userId', $userId);
         }
 
         return $stmt->executeQuery()->fetchAllNumeric();
