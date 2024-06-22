@@ -21,12 +21,12 @@ class ClientForm extends BaseEntity
      * Зарезервировано под форму анкеты проживающего.
      * Форма с этим ID создаётся миграцией, и не может быть удалена.
      */
-    public const RESIDENT_QUESTIONNAIRE_FORM_ID = 1;
+    public const int RESIDENT_QUESTIONNAIRE_FORM_ID = 1;
 
     #[ORM\Column(type: 'string')]
     private string $name = '';
 
-    #[ORM\OneToMany(mappedBy: 'form', targetEntity: ClientFormField::class)]
+    #[ORM\OneToMany(targetEntity: ClientFormField::class, mappedBy: 'form')]
     private Collection $fields;
 
     public function __construct()

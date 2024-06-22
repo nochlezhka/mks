@@ -11,7 +11,7 @@ use Doctrine\ORM\Events;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 
 #[AsEntityListener(event: Events::postPersist, method: 'postPersist', entity: Contract::class)]
-class ContractListener
+final class ContractListener
 {
     /**
      * При создании договора номер устанавливается равным id

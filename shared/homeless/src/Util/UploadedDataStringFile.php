@@ -7,7 +7,7 @@ namespace App\Util;
 
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-class UploadedDataStringFile extends UploadedFile
+final class UploadedDataStringFile extends UploadedFile
 {
     public function __construct(string $dataString, string $originalName)
     {

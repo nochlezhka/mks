@@ -11,7 +11,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Sonata\IntlBundle\Timezone\TimezoneAwareInterface;
-use Sonata\UserBundle\Entity\BaseUser;
+use Sonata\UserBundle\Entity\BaseUser3;
 use Symfony\Component\Security\Core\User\LegacyPasswordAuthenticatedUserInterface;
 
 /**
@@ -20,9 +20,9 @@ use Symfony\Component\Security\Core\User\LegacyPasswordAuthenticatedUserInterfac
  */
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'fos_user_user')]
-class User extends BaseUser implements BaseEntityInterface, TimezoneAwareInterface, LegacyPasswordAuthenticatedUserInterface
+class User extends BaseUser3 implements BaseEntityInterface, TimezoneAwareInterface, LegacyPasswordAuthenticatedUserInterface
 {
-    public const ROLE_DEFAULT = Role::EMPLOYEE;
+    public const string ROLE_DEFAULT = Role::EMPLOYEE;
 
     #[ORM\Column(type: 'integer')]
     #[ORM\Id]
@@ -81,7 +81,7 @@ class User extends BaseUser implements BaseEntityInterface, TimezoneAwareInterfa
     /**
      * Просмотренные анкеты клиентов
      */
-    #[ORM\OneToMany(mappedBy: 'createdBy', targetEntity: ViewedClient::class)]
+    #[ORM\OneToMany(targetEntity: ViewedClient::class, mappedBy: 'createdBy')]
     #[ORM\OrderBy(['createdAt' => 'DESC'])]
     private Collection $viewedClients;
 
@@ -168,7 +168,7 @@ class User extends BaseUser implements BaseEntityInterface, TimezoneAwareInterfa
         return $this->position;
     }
 
-    public function setPosition(?Position $position = null): self
+    public function setPosition(?Position $position): self
     {
         $this->position = $position;
 
@@ -192,7 +192,7 @@ class User extends BaseUser implements BaseEntityInterface, TimezoneAwareInterfa
         return $this->createdBy;
     }
 
-    public function setCreatedBy(?self $createdBy = null): static
+    public function setCreatedBy(?self $createdBy): static
     {
         $this->createdBy = $createdBy;
 
@@ -204,7 +204,7 @@ class User extends BaseUser implements BaseEntityInterface, TimezoneAwareInterfa
         return $this->updatedBy;
     }
 
-    public function setUpdatedBy(?self $updatedBy = null): static
+    public function setUpdatedBy(?self $updatedBy): static
     {
         $this->updatedBy = $updatedBy;
 

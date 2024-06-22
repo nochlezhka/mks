@@ -9,6 +9,7 @@ use App\Entity\ContractItem;
 use App\Entity\ContractItemType;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
+use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\Form\Type\DateTimePickerType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -21,8 +22,10 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
     'manager_type' => 'orm',
     'model_class' => ContractItem::class,
 ])]
-class ContractItemAdmin extends AbstractAdmin
+final class ContractItemAdmin extends AbstractAdmin
 {
+    use AdminTrait;
+
     protected function configureFormFields(FormMapper $form): void
     {
         $form

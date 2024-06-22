@@ -5,7 +5,7 @@ declare(strict_types=1);
 
 namespace App\Util;
 
-class ClientFormUtil
+final class ClientFormUtil
 {
     /**
      * Преобразует многострочный текст, разделённый переводами строки, в массив строк.

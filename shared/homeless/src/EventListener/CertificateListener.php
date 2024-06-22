@@ -11,7 +11,7 @@ use Doctrine\ORM\Events;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 
 #[AsEntityListener(event: Events::postPersist, method: 'postPersist', entity: Certificate::class)]
-class CertificateListener
+final class CertificateListener
 {
     /**
      * При создании справки срок ее действия должен задаваться как "Текущая дата + 1 год"

@@ -41,7 +41,7 @@ class DocumentFile extends BaseEntity
         return $this->file;
     }
 
-    public function setFile($file = null): self
+    public function setFile(?File $file): self
     {
         $this->file = $file;
 
@@ -81,7 +81,7 @@ class DocumentFile extends BaseEntity
         return $this->client;
     }
 
-    public function setClient(Client $client): self
+    public function setClient(?Client $client): self
     {
         $this->client = $client;
 
@@ -93,7 +93,7 @@ class DocumentFile extends BaseEntity
         return $this->type;
     }
 
-    public function setType(DocumentType $type): self
+    public function setType(?DocumentType $type): self
     {
         $this->type = $type;
 

@@ -14,6 +14,7 @@ use App\Repository\CertificateTypeRepository;
 use App\Repository\DocumentRepository;
 use App\Service\CertificateRecreator;
 use Doctrine\ORM\QueryBuilder;
+use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Form\Type\ChoiceFieldMaskType;
@@ -32,8 +33,9 @@ use Symfony\Component\Form\FormEvents;
     'manager_type' => 'orm',
     'model_class' => Certificate::class,
 ])]
-class CertificateAdmin extends AbstractAdmin
+final class CertificateAdmin extends AbstractAdmin
 {
+    use AdminTrait;
     use UserOwnableTrait;
 
     protected array $datagridValues = [
@@ -150,7 +152,7 @@ class CertificateAdmin extends AbstractAdmin
                 'label' => 'Доп. поле',
                 'template' => '/CRUD/list_certificate_addition.html.twig',
                 'class' => Document::class,
-                'query_builder' => fn (DocumentRepository $documentRepository) => $documentRepository->getRegistrationDocumentsQueryBuilderByClient($this->getParent()->getSubject()),
+                'query_builder' => fn (DocumentRepository $documentRepository): QueryBuilder => $documentRepository->getRegistrationDocumentsQueryBuilderByClient($this->getParent()->getSubject()),
             ])
             ->add(ListMapper::NAME_ACTIONS, ListMapper::TYPE_ACTIONS, [
                 'label' => 'Действие',

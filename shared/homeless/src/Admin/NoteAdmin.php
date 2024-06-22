@@ -7,6 +7,7 @@ namespace App\Admin;
 
 use App\Controller\CRUDController;
 use App\Entity\Note;
+use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\FieldDescription\FieldDescriptionInterface;
 use Sonata\AdminBundle\Form\FormMapper;
@@ -21,8 +22,10 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
     'manager_type' => 'orm',
     'model_class' => Note::class,
 ])]
-class NoteAdmin extends AbstractAdmin
+final class NoteAdmin extends AbstractAdmin
 {
+    use AdminTrait;
+
     protected array $datagridValues = [
         '_sort_order' => 'ASC',
         '_sort_by' => 'createdAt',

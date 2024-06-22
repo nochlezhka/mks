@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/report', name: 'report')]
-class Report extends AbstractController
+final class Report extends AbstractController
 {
     public function __invoke(
         ClientFieldRepository $clientFieldRepository,

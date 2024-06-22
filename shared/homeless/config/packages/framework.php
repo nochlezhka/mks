@@ -5,6 +5,7 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Config\FrameworkConfig;
 
 return static function (FrameworkConfig $framework, ContainerConfigurator $container): void {
@@ -18,15 +19,18 @@ return static function (FrameworkConfig $framework, ContainerConfigurator $conta
         ->httpMethodOverride(true)
         ->trustedHosts(env('TRUSTED_HOSTS'))
         ->trustedProxies(env('TRUSTED_PROXIES'))
+        ->handleAllThrowables(true)
     ;
 
     $framework->session()
         ->cookieLifetime(605080)
         ->gcMaxlifetime(252000)
         ->savePath(param('kernel.project_dir').'/var/sessions/'.param('kernel.environment'))
+        ->cookieSecure('auto')
+        ->cookieSamesite(Cookie::SAMESITE_LAX)
     ;
 
     $framework->phpErrors()
-        ->log()
+        ->log(true)
     ;
 };

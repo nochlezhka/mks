@@ -5,7 +5,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-class DOCXNamingService
+final class DOCXNamingService
 {
     /**
      * Получение названия файла при скачивании

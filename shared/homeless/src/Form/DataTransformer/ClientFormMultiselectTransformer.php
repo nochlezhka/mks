@@ -12,7 +12,7 @@ use Symfony\Component\Form\DataTransformerInterface;
  * Преобразователь поля из текста в массив строк и обратно.
  * Нужен для того, чтобы отрисовывать текстовое поле настраиваемой формы как селект со множественным выбором.
  */
-readonly class ClientFormMultiselectTransformer implements DataTransformerInterface
+final readonly class ClientFormMultiselectTransformer implements DataTransformerInterface
 {
     /**
      * @param int|null $formResponseId ID формы для сообщений об ошибке

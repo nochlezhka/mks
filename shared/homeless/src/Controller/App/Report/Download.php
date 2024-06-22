@@ -18,7 +18,7 @@ use Symfony\Component\Routing\Annotation\Route;
  * @throws \Doctrine\DBAL\Driver\Exception
  */
 #[Route('/report-download', name: 'reportDownload')]
-class Download extends AbstractController
+final class Download extends AbstractController
 {
     public function __invoke(ReportService $reportService, Request $request): Response
     {

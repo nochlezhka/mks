@@ -6,6 +6,7 @@ declare(strict_types=1);
 namespace App\Admin;
 
 use App\Entity\ServiceType;
+use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\FieldDescription\FieldDescriptionInterface;
 use Sonata\AdminBundle\Form\FormMapper;
@@ -20,8 +21,10 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
     'manager_type' => 'orm',
     'model_class' => ServiceType::class,
 ])]
-class ServiceTypeAdmin extends AbstractAdmin
+final class ServiceTypeAdmin extends AbstractAdmin
 {
+    use AdminTrait;
+
     protected array $datagridValues = [
         '_sort_order' => 'ASC',
         '_sort_by' => 'sort',

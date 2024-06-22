@@ -18,7 +18,7 @@ use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 
 // phpcs:disable SlevomatCodingStandard.Classes.RequireConstructorPropertyPromotion.RequiredConstructorPropertyPromotion
-readonly class RenderService
+final readonly class RenderService
 {
     public function __construct(
         private KernelInterface $kernel,

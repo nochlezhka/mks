@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/version', name: 'version')]
-class Version extends AbstractController
+final class Version extends AbstractController
 {
     public function __invoke(
         #[Autowire(env: 'APP_VER')]

@@ -21,7 +21,7 @@ class Region extends BaseEntity
     #[ORM\Column(type: 'string', nullable: true)]
     private ?string $shortName = null;
 
-    #[ORM\OneToMany(mappedBy: 'region', targetEntity: District::class)]
+    #[ORM\OneToMany(targetEntity: District::class, mappedBy: 'region')]
     private Collection $districts;
 
     public function __construct()

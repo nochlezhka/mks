@@ -5,6 +5,8 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Entity\ContractStatus;
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Driver\Exception as DBALDriverException;
 use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\ORM\EntityManagerInterface;
@@ -12,16 +14,16 @@ use PhpOffice\PhpSpreadsheet\Exception as PhpSpreadsheetException;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xls;
 
-class ReportService
+final class ReportService
 {
-    public const ONE_OFF_SERVICES = 'one_off_services';
-    public const COMPLETED_ITEMS = 'completed_items';
-    public const OUTGOING = 'outgoing';
-    public const RESULTS_OF_SUPPORT = 'results_of_support';
-    public const ACCOMPANYING = 'accompanying';
-    public const AGGREGATED = 'aggregated';
-    public const AVERAGE_COMPLETED_ITEMS = 'average_completed_items';
-    public const AGGREGATED2 = 'aggregated2';
+    public const string ONE_OFF_SERVICES = 'one_off_services';
+    public const string COMPLETED_ITEMS = 'completed_items';
+    public const string OUTGOING = 'outgoing';
+    public const string RESULTS_OF_SUPPORT = 'results_of_support';
+    public const string ACCOMPANYING = 'accompanying';
+    public const string AGGREGATED = 'aggregated';
+    public const string AVERAGE_COMPLETED_ITEMS = 'average_completed_items';
+    public const string AGGREGATED2 = 'aggregated2';
 
     private Spreadsheet $doc;
 
@@ -34,14 +36,14 @@ class ReportService
     public function getTypes(): array
     {
         return [
-            static::ONE_OFF_SERVICES => 'Отчет о предоставленных разовых услугах',
-            static::COMPLETED_ITEMS => 'Отчет о выполненных пунктах сервисного плана',
-            static::OUTGOING => 'Отчет о выбывших из приюта',
-            static::RESULTS_OF_SUPPORT => 'Отчет по результатам сопровождения ',
-            static::ACCOMPANYING => 'Отчет по сопровождению',
-            static::AVERAGE_COMPLETED_ITEMS => 'Отчет по средней длительности пунктов сервисных планов',
-            static::AGGREGATED => 'Отчет агрегированный',
-            static::AGGREGATED2 => 'Отчет агрегированный 2',
+            self::ONE_OFF_SERVICES => 'Отчет о предоставленных разовых услугах',
+            self::COMPLETED_ITEMS => 'Отчет о выполненных пунктах сервисного плана',
+            self::OUTGOING => 'Отчет о выбывших из приюта',
+            self::RESULTS_OF_SUPPORT => 'Отчет по результатам сопровождения ',
+            self::ACCOMPANYING => 'Отчет по сопровождению',
+            self::AVERAGE_COMPLETED_ITEMS => 'Отчет по средней длительности пунктов сервисных планов',
+            self::AGGREGATED => 'Отчет агрегированный',
+            self::AGGREGATED2 => 'Отчет агрегированный 2',
         ];
     }
 
@@ -82,14 +84,14 @@ class ReportService
         }
 
         $result = match ($type) {
-            static::ONE_OFF_SERVICES => $this->oneOffServices($dateFrom, $dateTo, $userId),
-            static::COMPLETED_ITEMS => $this->completedItems($dateFrom, $dateTo, $userId),
-            static::OUTGOING => $this->outgoing($dateFrom, $dateTo, $userId),
-            static::RESULTS_OF_SUPPORT => $this->resultsOfSupport($dateFrom, $dateTo, $userId),
-            static::ACCOMPANYING => $this->accompanying($userId),
-            static::AVERAGE_COMPLETED_ITEMS => $this->averageCompletedItems($dateFrom, $dateTo, $userId),
-            static::AGGREGATED => $this->aggregated($createClientdateFrom, $createClientFromTo, $createServicedateFrom, $createServiceFromTo),
-            static::AGGREGATED2 => $this->aggregated2($createClientdateFrom, $createClientFromTo, $createServicedateFrom, $createServiceFromTo, $homelessReason, $disease, $breadwinner),
+            self::ONE_OFF_SERVICES => $this->oneOffServices($dateFrom, $dateTo, $userId),
+            self::COMPLETED_ITEMS => $this->completedItems($dateFrom, $dateTo, $userId),
+            self::OUTGOING => $this->outgoing($dateFrom, $dateTo, $userId),
+            self::RESULTS_OF_SUPPORT => $this->resultsOfSupport($dateFrom, $dateTo, $userId),
+            self::ACCOMPANYING => $this->accompanying($userId),
+            self::AVERAGE_COMPLETED_ITEMS => $this->averageCompletedItems($dateFrom, $dateTo, $userId),
+            self::AGGREGATED => $this->aggregated($createClientdateFrom, $createClientFromTo, $createServicedateFrom, $createServiceFromTo),
+            self::AGGREGATED2 => $this->aggregated2($createClientdateFrom, $createClientFromTo, $createServicedateFrom, $createServiceFromTo, $homelessReason, $disease, $breadwinner),
             default => throw new \RuntimeException('Unexpected report type "'.$type.'"'),
         };
 
@@ -120,12 +122,10 @@ class ReportService
               AND c.created_at >= :createClientdateFrom
               AND c.created_at <= :createClientFromTo
             ');
-            $parameters = [
-                ':createServicedateFrom' => $createServicedateFrom ? date('Y-m-d', strtotime($createServicedateFrom)) : '1960-01-01',
-                ':createServiceFromTo' => $createServiceFromTo ? date('Y-m-d', strtotime($createServiceFromTo)) : date('Y-m-d'),
-                ':createClientdateFrom' => $createClientdateFrom ? date('Y-m-d', strtotime($createClientdateFrom)) : '1960-01-01',
-                ':createClientFromTo' => $createClientFromTo ? date('Y-m-d', strtotime($createClientFromTo)) : date('Y-m-d'),
-            ];
+            $stmt->bindValue('createServicedateFrom', $createServicedateFrom ? date('Y-m-d', strtotime($createServicedateFrom)) : '1960-01-01');
+            $stmt->bindValue('createServiceFromTo', $createServiceFromTo ? date('Y-m-d', strtotime($createServiceFromTo)) : date('Y-m-d'));
+            $stmt->bindValue('createClientdateFrom', $createClientdateFrom ? date('Y-m-d', strtotime($createClientdateFrom)) : '1960-01-01');
+            $stmt->bindValue('createClientFromTo', $createClientFromTo ? date('Y-m-d', strtotime($createClientFromTo)) : date('Y-m-d'));
         } else {
             $stmt = $this->entityManager->getConnection()->prepare('
             SELECT c.id
@@ -133,13 +133,11 @@ class ReportService
             WHERE c.created_at >= :createClientdateFrom
               AND c.created_at <= :createClientFromTo
             ');
-            $parameters = [
-                ':createClientdateFrom' => $createClientdateFrom ? date('Y-m-d', strtotime($createClientdateFrom)) : '1960-01-01',
-                ':createClientFromTo' => $createClientFromTo ? date('Y-m-d', strtotime($createClientFromTo)) : date('Y-m-d'),
-            ];
+            $stmt->bindValue('createClientdateFrom', $createClientdateFrom ? date('Y-m-d', strtotime($createClientdateFrom)) : '1960-01-01');
+            $stmt->bindValue('createClientFromTo', $createClientFromTo ? date('Y-m-d', strtotime($createClientFromTo)) : date('Y-m-d'));
         }
 
-        return $stmt->executeQuery($parameters)->fetchAllAssociative();
+        return $stmt->executeQuery()->fetchAllAssociative();
     }
 
     /**
@@ -157,7 +155,7 @@ class ReportService
             'скольким людям она была предоставлена',
             'сумма',
         ]]);
-        $statement = $this->entityManager->getConnection()->prepare('
+        $stmt = $this->entityManager->getConnection()->prepare('
             SELECT
                 st.name,
                 COUNT(DISTINCT s.id) all_count,
@@ -170,15 +168,13 @@ class ReportService
             GROUP BY st.id
             ORDER BY st.sort
         ');
-        $parameters = [
-            'dateFrom' => $dateFrom ?: '1960-01-01',
-            'dateTo' => $dateTo ?: date('Y-m-d'),
-        ];
+        $stmt->bindValue('dateFrom', $dateFrom ?: '1960-01-01');
+        $stmt->bindValue('dateTo', $dateTo ?: date('Y-m-d'));
         if ($userId) {
-            $parameters['userId'] = $userId;
+            $stmt->bindValue('userId', $userId);
         }
 
-        return $statement->executeQuery($parameters)->fetchAllNumeric();
+        return $stmt->executeQuery()->fetchAllNumeric();
     }
 
     /**
@@ -195,7 +191,40 @@ class ReportService
             'сколько раз она была предоставлена',
             'скольким людям она была предоставлена',
         ]]);
-        $stmt = $this->entityManager->getConnection()->prepare('
+        $excludeStatuses = [
+            ContractStatus::IN_PROCESS,
+            ContractStatus::REJECTED_CLIENT_REFUSAL,
+            ContractStatus::REJECTED_OTHER,
+            ContractStatus::REJECTED_CLIENT_NON_APPEARANCE,
+        ];
+
+        if ($userId) {
+            return $this->entityManager->getConnection()->executeQuery('
+                SELECT cit.name,
+                       COUNT(DISTINCT i.id) all_count,
+                       COUNT(DISTINCT c.client_id) client_count
+                FROM contract_item i
+                    JOIN contract c
+                        ON i.contract_id = c.id
+                    JOIN contract_item_type cit
+                        ON i.type_id = cit.id
+                WHERE c.status_id NOT IN (:excludeStatuses)
+                  AND i.date >= :dateFrom
+                  AND i.date <= :dateTo
+                  AND ((i.created_by_id IS NOT NULL AND i.created_by_id = :userId) OR (i.created_by_id IS NULL AND c.created_by_id = :userId))
+                GROUP BY i.type_id
+                ORDER BY cit.sort
+            ', [
+                'excludeStatuses' => $excludeStatuses,
+                'dateFrom' => $dateFrom ?: '1960-01-01',
+                'dateTo' => $dateTo ?: date('Y-m-d'),
+                'userId' => $userId,
+            ], [
+                'excludeStatuses' => ArrayParameterType::INTEGER,
+            ])->fetchAllNumeric();
+        }
+
+        return $this->entityManager->getConnection()->executeQuery('
             SELECT cit.name,
                    COUNT(DISTINCT i.id) all_count,
                    COUNT(DISTINCT c.client_id) client_count
@@ -204,21 +233,16 @@ class ReportService
                     ON i.contract_id = c.id
                 JOIN contract_item_type cit
                     ON i.type_id = cit.id
-            WHERE i.date >= :dateFrom
+            WHERE c.status_id NOT IN (:excludeStatuses)
+              AND i.date >= :dateFrom
               AND i.date <= :dateTo
-              '.($userId ? 'AND ((i.created_by_id IS NOT NULL AND i.created_by_id = :userId) OR (i.created_by_id IS NULL AND c.created_by_id = :userId))' : '').'
             GROUP BY i.type_id
             ORDER BY cit.sort
-        ');
-        $parameters = [
-            ':dateFrom' => $dateFrom ?: '1960-01-01',
-            ':dateTo' => $dateTo ?: date('Y-m-d'),
-        ];
-        if ($userId) {
-            $parameters[':userId'] = $userId;
-        }
-
-        return $stmt->executeQuery($parameters)->fetchAllNumeric();
+        ', [
+            'excludeStatuses' => $excludeStatuses,
+            'dateFrom' => $dateFrom ?: '1960-01-01',
+            'dateTo' => $dateTo ?: date('Y-m-d'),
+        ])->fetchAllNumeric();
     }
 
     /**
@@ -275,15 +299,13 @@ class ReportService
             GROUP BY con.id, h.id
             ORDER BY h.date_to DESC
         ');
-        $parameters = [
-            ':dateFrom' => $dateFrom ?: '1960-01-01',
-            ':dateTo' => $dateTo ?: date('Y-m-d'),
-        ];
+        $stmt->bindValue('dateFrom', $dateFrom ?: '1960-01-01');
+        $stmt->bindValue('dateTo', $dateTo ?: date('Y-m-d'));
         if ($userId) {
-            $parameters[':userId'] = $userId;
+            $stmt->bindValue('userId', $userId);
         }
 
-        return $stmt->executeQuery($parameters)->fetchAllNumeric();
+        return $stmt->executeQuery()->fetchAllNumeric();
     }
 
     /**
@@ -334,15 +356,13 @@ class ReportService
             GROUP BY con.id
             ORDER BY con.date_to DESC
         ');
-        $parameters = [
-            ':dateFrom' => $dateFrom ?: '1960-01-01',
-            ':dateTo' => $dateTo ?: date('Y-m-d'),
-        ];
+        $stmt->bindValue('dateFrom', $dateFrom ?: '1960-01-01');
+        $stmt->bindValue('dateTo', $dateTo ?: date('Y-m-d'));
         if ($userId) {
-            $parameters[':userId'] = $userId;
+            $stmt->bindValue('userId', $userId);
         }
 
-        return $stmt->executeQuery($parameters)->fetchAllNumeric();
+        return $stmt->executeQuery()->fetchAllNumeric();
     }
 
     /**
@@ -385,12 +405,11 @@ class ReportService
             GROUP BY con.id
             ORDER BY con.date_to DESC
         ');
-        $parameters = [];
         if ($userId) {
-            $parameters[':userId'] = $userId;
+            $stmt->bindValue('userId', $userId);
         }
 
-        return $stmt->executeQuery($parameters)->fetchAllNumeric();
+        return $stmt->executeQuery()->fetchAllNumeric();
     }
 
     /**
@@ -408,7 +427,7 @@ class ReportService
         ]]);
         $stmt = $this->entityManager->getConnection()->prepare('
             SELECT cit.name,
-                   FLOOR(AVG (TO_DAYS(c.date_to) - TO_DAYS(c.date_from))) avg_days
+                   FLOOR(AVG(TO_DAYS(c.date_to) - TO_DAYS(c.date_from))) avg_days
             FROM contract_item i
                 JOIN contract c
                     ON i.contract_id = c.id
@@ -418,16 +437,15 @@ class ReportService
               AND i.date <= :dateTo
               '.($userId ? 'AND ((i.created_by_id IS NOT NULL AND i.created_by_id = :userId) OR (i.created_by_id IS NULL AND c.created_by_id = :userId))' : '').'
             GROUP BY cit.name
-            ORDER BY cit.name');
-        $parameters = [
-            ':dateFrom' => $dateFrom ?: '2000-01-01',
-            ':dateTo' => $dateTo ?: date('Y-m-d'),
-        ];
+            ORDER BY cit.name
+        ');
+        $stmt->bindValue('dateFrom', $dateFrom ?: '2000-01-01');
+        $stmt->bindValue('dateTo', $dateTo ?: date('Y-m-d'));
         if ($userId) {
-            $parameters[':userId'] = $userId;
+            $stmt->bindValue('userId', $userId);
         }
 
-        return $stmt->executeQuery($parameters)->fetchAllNumeric();
+        return $stmt->executeQuery()->fetchAllNumeric();
     }
 
     /**

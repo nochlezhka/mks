@@ -20,17 +20,17 @@ interface BaseEntityInterface
 
     public function getCreatedAt(): ?\DateTimeInterface;
 
-    public function setCreatedAt(?\DateTimeInterface $createdAt = null);
+    public function setCreatedAt(?\DateTimeInterface $createdAt);
 
     public function getUpdatedAt(): ?\DateTimeInterface;
 
-    public function setUpdatedAt(?\DateTimeInterface $updatedAt = null);
+    public function setUpdatedAt(?\DateTimeInterface $updatedAt);
 
     public function getCreatedBy(): ?User;
 
-    public function setCreatedBy(?User $createdBy = null): static;
+    public function setCreatedBy(?User $createdBy): static;
 
     public function getUpdatedBy(): ?User;
 
-    public function setUpdatedBy(?User $updatedBy = null): static;
+    public function setUpdatedBy(?User $updatedBy): static;
 }

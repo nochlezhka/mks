@@ -31,7 +31,7 @@ use Twig\Error\SyntaxError;
 /**
  * @method \App\Entity\User getUser()
  */
-class CRUDController extends SonataCRUDController
+final class CRUDController extends SonataCRUDController
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,

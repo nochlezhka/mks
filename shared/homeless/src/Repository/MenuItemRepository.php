@@ -15,7 +15,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method array<MenuItem> findAll()
  * @method array<MenuItem> findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class MenuItemRepository extends ServiceEntityRepository
+final class MenuItemRepository extends ServiceEntityRepository
 {
     public function __construct(
         ManagerRegistry $registry,

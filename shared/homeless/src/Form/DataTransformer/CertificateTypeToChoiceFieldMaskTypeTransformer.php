@@ -8,7 +8,7 @@ namespace App\Form\DataTransformer;
 use App\Repository\CertificateTypeRepository;
 use Symfony\Component\Form\DataTransformerInterface;
 
-readonly class CertificateTypeToChoiceFieldMaskTypeTransformer implements DataTransformerInterface
+final readonly class CertificateTypeToChoiceFieldMaskTypeTransformer implements DataTransformerInterface
 {
     public function __construct(
         private CertificateTypeRepository $certificateTypeRepository,

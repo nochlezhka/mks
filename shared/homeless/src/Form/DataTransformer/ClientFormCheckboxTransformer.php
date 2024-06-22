@@ -11,7 +11,7 @@ use Symfony\Component\Form\DataTransformerInterface;
  * Преобразователь поля из текста в boolean.
  * Нужен для того, чтобы отрисовывать текстовое поле настраиваемой формы как чекбокс.
  */
-readonly class ClientFormCheckboxTransformer implements DataTransformerInterface
+final readonly class ClientFormCheckboxTransformer implements DataTransformerInterface
 {
     /**
      * @param int|null $formResponseId ID формы для сообщений об ошибке

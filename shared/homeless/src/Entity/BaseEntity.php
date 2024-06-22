@@ -68,7 +68,7 @@ abstract class BaseEntity implements BaseEntityInterface
         return $this->createdAt;
     }
 
-    public function setCreatedAt(?\DateTimeInterface $createdAt = null): static
+    public function setCreatedAt(?\DateTimeInterface $createdAt): static
     {
         $this->createdAt = $createdAt;
 
@@ -80,7 +80,7 @@ abstract class BaseEntity implements BaseEntityInterface
         return $this->updatedAt;
     }
 
-    public function setUpdatedAt(?\DateTimeInterface $updatedAt = null): static
+    public function setUpdatedAt(?\DateTimeInterface $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
 
@@ -92,7 +92,7 @@ abstract class BaseEntity implements BaseEntityInterface
         return $this->createdBy;
     }
 
-    public function setCreatedBy(?User $createdBy = null): static
+    public function setCreatedBy(?User $createdBy): static
     {
         $this->createdBy = $createdBy;
 
@@ -104,7 +104,7 @@ abstract class BaseEntity implements BaseEntityInterface
         return $this->updatedBy;
     }
 
-    public function setUpdatedBy(?User $updatedBy = null): static
+    public function setUpdatedBy(?User $updatedBy): static
     {
         $this->updatedBy = $updatedBy;
 

@@ -8,7 +8,9 @@ namespace App\Repository;
 use App\Entity\Client;
 use App\Entity\ClientFieldValue;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\Query\Parameter;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -17,7 +19,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method array<ClientFieldValue> findAll()
  * @method array<ClientFieldValue> findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class ClientFieldValueRepository extends ServiceEntityRepository
+final class ClientFieldValueRepository extends ServiceEntityRepository
 {
     public function __construct(
         ManagerRegistry $registry,
@@ -56,10 +58,10 @@ class ClientFieldValueRepository extends ServiceEntityRepository
             ->leftJoin('v.field', 'f')
             ->where('v.client = :client')
             ->andWhere('f.code = :fieldCode')
-            ->setParameters([
-                'client' => $client,
-                'fieldCode' => $fieldCode,
-            ])
+            ->setParameters(new ArrayCollection([
+                new Parameter('client', $client),
+                new Parameter('fieldCode', $fieldCode),
+            ]))
             ->getQuery()
             ->getOneOrNullResult()
         ;

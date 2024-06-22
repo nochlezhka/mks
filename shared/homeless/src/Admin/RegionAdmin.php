@@ -7,6 +7,7 @@ namespace App\Admin;
 
 use App\Entity\Region;
 use Knp\Menu\ItemInterface;
+use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Admin\AdminInterface;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
@@ -19,8 +20,10 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
     'manager_type' => 'orm',
     'model_class' => Region::class,
 ])]
-class RegionAdmin extends AbstractAdmin
+final class RegionAdmin extends AbstractAdmin
 {
+    use AdminTrait;
+
     protected array $datagridValues = [
         '_sort_order' => 'ASC',
         '_sort_by' => 'name',

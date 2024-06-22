@@ -7,6 +7,7 @@ namespace App\Admin;
 
 use App\Entity\ClientField;
 use Knp\Menu\ItemInterface;
+use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Admin\AdminInterface;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
@@ -20,8 +21,10 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
     'manager_type' => 'orm',
     'model_class' => ClientField::class,
 ])]
-class ClientFieldAdmin extends AbstractAdmin
+final class ClientFieldAdmin extends AbstractAdmin
 {
+    use AdminTrait;
+
     protected array $datagridValues = [
         '_sort_order' => 'ASC',
         '_sort_by' => 'sort',

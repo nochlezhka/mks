@@ -15,7 +15,7 @@ use Sonata\AdminBundle\Exception\ModelManagerThrowable;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class ClientController extends \Sonata\AdminBundle\Controller\CRUDController
+final class ClientController extends \Sonata\AdminBundle\Controller\CRUDController
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,

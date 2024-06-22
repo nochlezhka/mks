@@ -15,7 +15,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method array<ClientField> findAll()
  * @method array<ClientField> findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class ClientFieldRepository extends ServiceEntityRepository
+final class ClientFieldRepository extends ServiceEntityRepository
 {
     public function __construct(
         ManagerRegistry $registry,

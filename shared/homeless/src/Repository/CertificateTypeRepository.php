@@ -16,7 +16,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method array<CertificateType> findAll()
  * @method array<CertificateType> findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class CertificateTypeRepository extends ServiceEntityRepository
+final class CertificateTypeRepository extends ServiceEntityRepository
 {
     public function __construct(
         ManagerRegistry $registry,
@@ -31,13 +31,13 @@ class CertificateTypeRepository extends ServiceEntityRepository
      */
     public function getAvailableForCertificate(Certificate $certificate): array
     {
-        $queryBuilder = $this->createQueryBuilder('t');
-        $queryBuilder->orderBy('t.sort', 'ASC')
+        $queryBuilder = $this->createQueryBuilder('t')
+            ->orderBy('t.sort', 'ASC')
             ->where('t.syncId IN (:types)')
-            ->setParameter('types', array_values([
+            ->setParameter('types', [
                 CertificateType::REGISTRATION,
                 CertificateType::TRAVEL,
-            ]))
+            ])
         ;
 
         if (!$certificate->getClient()->hasRegistrationDocument()) {
@@ -47,8 +47,6 @@ class CertificateTypeRepository extends ServiceEntityRepository
             ;
         }
 
-        $result = $queryBuilder->getQuery()->execute();
-
-        return $result === null ? [] : $result;
+        return $queryBuilder->getQuery()->getResult() ?? [];
     }
 }

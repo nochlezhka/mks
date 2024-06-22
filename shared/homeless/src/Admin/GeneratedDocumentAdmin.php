@@ -12,6 +12,7 @@ use App\Entity\GeneratedDocumentStartText;
 use App\Entity\GeneratedDocumentType;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
+use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\FieldDescription\FieldDescriptionInterface;
 use Sonata\AdminBundle\Form\FormMapper;
@@ -27,8 +28,10 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
     'manager_type' => 'orm',
     'model_class' => GeneratedDocument::class,
 ])]
-class GeneratedDocumentAdmin extends AbstractAdmin
+final class GeneratedDocumentAdmin extends AbstractAdmin
 {
+    use AdminTrait;
+
     protected array $datagridValues = [
         '_sort_order' => 'DESC',
         '_sort_by' => 'createdAt',

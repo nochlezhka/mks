@@ -7,6 +7,7 @@ namespace App\Admin;
 
 use App\Controller\CRUDController;
 use App\Entity\HistoryDownload;
+use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
@@ -19,8 +20,10 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
     'model_class' => HistoryDownload::class,
 ])]
 
-class HistoryDownloadAdmin extends AbstractAdmin
+final class HistoryDownloadAdmin extends AbstractAdmin
 {
+    use AdminTrait;
+
     protected array $datagridValues = [
         '_sort_order' => 'DESC',
         '_sort_by' => 'date',

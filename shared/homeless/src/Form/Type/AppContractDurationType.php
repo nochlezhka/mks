@@ -11,7 +11,7 @@ use Symfony\Component\Form\Extension\Core\Type\NumberType;
 
 #[AutoconfigureTag(name: 'form.type', attributes: ['alias' => 'app_contract_duration'])]
 
-class AppContractDurationType extends AbstractType
+final class AppContractDurationType extends AbstractType
 {
     public function getBlockPrefix(): string
     {

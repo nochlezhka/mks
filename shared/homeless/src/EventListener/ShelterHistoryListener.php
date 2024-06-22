@@ -16,7 +16,7 @@ use Doctrine\Persistence\Event\LifecycleEventArgs;
 #[AsEntityListener(event: Events::postPersist, method: 'postPersist', entity: ShelterHistory::class)]
 #[AsEntityListener(event: Events::postRemove, method: 'postRemove', entity: ShelterHistory::class)]
 #[AsDoctrineListener(event: Events::onFlush)]
-class ShelterHistoryListener
+final class ShelterHistoryListener
 {
     /**
      * При создании договора номер устанавливается равным id

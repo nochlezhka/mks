@@ -9,6 +9,7 @@ use App\Entity\Document;
 use App\Entity\DocumentType;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
+use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\FieldDescription\FieldDescriptionInterface;
 use Sonata\AdminBundle\Form\FormMapper;
@@ -26,6 +27,8 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
 class DocumentAdmin extends AbstractAdmin
 {
+    use AdminTrait;
+
     protected array $datagridValues = [
         '_sort_order' => 'DESC',
         '_sort_by' => 'createdAt',

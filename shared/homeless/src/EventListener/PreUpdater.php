@@ -9,6 +9,7 @@ use App\Entity\BaseEntityInterface;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Events;
+use Sonata\UserBundle\Model\User as UserModel;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
@@ -17,7 +18,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
  * - кем изменено
  */
 #[AsDoctrineListener(event: Events::preUpdate)]
-readonly class PreUpdater
+final readonly class PreUpdater
 {
     use UserTrait;
 
@@ -34,7 +35,7 @@ readonly class PreUpdater
             return;
         }
 
-        $entity->setUpdatedAt(new \DateTimeImmutable());
+        $entity->setUpdatedAt($entity instanceof UserModel ? new \DateTime() : new \DateTimeImmutable());
         $entity->setUpdatedBy($user);
     }
 }

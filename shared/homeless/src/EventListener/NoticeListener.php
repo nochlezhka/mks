@@ -18,7 +18,7 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
  * при загрузке сущности
  */
 #[AsEntityListener(event: Events::postLoad, method: 'postLoad', entity: Notice::class)]
-readonly class NoticeListener
+final readonly class NoticeListener
 {
     public function __construct(
         private TokenStorageInterface $tokenStorage,
