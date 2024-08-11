@@ -49,17 +49,7 @@ final class NoticeAdmin extends AbstractAdmin
             return false;
         }
 
-        $queryString = null;
-        $valueCount = \count($data->getValue());
-        $valueIndex = 0;
-        foreach ($data->getValue() as $val) {
-            ++$valueIndex;
-            $orOperator = $valueIndex !== $valueCount ? 'OR ' : '';
-
-            $queryString .= "{$alias}.id = {$val} {$orOperator}";
-        }
-
-        $queryBuilder->andWhere("({$queryString})");
+        $queryBuilder->andWhere("({$alias}.id = {$data->getValue()})");
 
         return true;
     }
@@ -74,12 +64,14 @@ final class NoticeAdmin extends AbstractAdmin
             return false;
         }
 
-        if ($data->getValue() === 1) {
-            $queryBuilder->andWhere(':user MEMBER OF '.$alias.'.viewedBy');
-        }
+        switch ($data->getValue()) {
+            case 1:
+                $queryBuilder->andWhere(':user MEMBER OF '.$alias.'.viewedBy');
+                break;
 
-        if ($data->getValue() === 2) {
-            $queryBuilder->andWhere(':user NOT MEMBER OF '.$alias.'.viewedBy');
+            case 2:
+                $queryBuilder->andWhere(':user NOT MEMBER OF '.$alias.'.viewedBy');
+                break;
         }
 
         $queryBuilder->setParameter('user', $this->getUser());

@@ -117,8 +117,13 @@ abstract class ClientFormResponseAdmin extends AbstractAdmin
 
         foreach ($formFields as $field) {
             $fieldName = 'field_'.$field->getId();
-            $fieldDesc = $this->getFieldDescription($field, $fieldName, $subject);
-            $form->add($fieldName, $fieldDesc['type'], $fieldDesc['options']);
+            $fieldDesc = $this->getFieldDescription($field, $field->getId(), $subject);
+            $form->add($fieldName, $fieldDesc['type'], [
+                'getter' => static fn (ClientFormResponse $clientFormResponse) => $clientFormResponse->getFieldValue($field->getId()),
+                'setter' => static fn (ClientFormResponse $clientFormResponse, mixed $value) => $clientFormResponse->setFieldValue($field->getId(), $value),
+                ...$fieldDesc['options'],
+            ]);
+
             if ($fieldDesc['type'] === CheckboxType::class) {
                 // для полей-чекбоксов ещё навешиваем преобразователь типов, т.к. у всех полей значения строкового типа.
                 $formBuilder->get($fieldName)->addModelTransformer(new ClientFormCheckboxTransformer($subject->getId(), $field->getId()));
@@ -187,10 +192,8 @@ abstract class ClientFormResponseAdmin extends AbstractAdmin
     /**
      * По объекту поля формы определяет, какие параметры нужно передать в `FormMapper` админки.
      * Возвращает массив с полями `type` и `options` для метода `$formMapper->add()`
-     *
-     * @param string $fieldName
      */
-    private function getFieldDescription(ClientFormField $field, $fieldName, ClientFormResponse $subject): array
+    private function getFieldDescription(ClientFormField $field, ?int $fieldId, ClientFormResponse $subject): array
     {
         $options = [
             'label' => $field->getName(),
@@ -209,14 +212,14 @@ abstract class ClientFormResponseAdmin extends AbstractAdmin
                 // если в редактируемой анкете у этого поля выставлено значение, которого нет в списке для выбора,
                 // пишем об этом в лог и добавляем значение в список
                 if ($subject?->getId() !== null) {
-                    $value = $subject->__get($fieldName);
+                    $value = $subject->getFieldValue($fieldId);
                     $fieldValues = [];
                     if ($value !== null) {
                         $fieldValues = $field->isMultiselect() ? ClientFormUtil::optionsTextToArray($value) : [$value];
                     }
                     foreach ($fieldValues as $fieldValue) {
                         if (!\array_key_exists($fieldValue, $options['choices'])) {
-                            error_log('Missing choice '.($fieldValue === null ? 'null' : "'{$fieldValue}'").' in field '.$fieldName.' of client form response '.$subject->getId());
+                            error_log('Missing choice '.($fieldValue === null ? 'null' : "'{$fieldValue}'").' in field #'.$fieldId.' of client form response '.$subject->getId());
                             $options['choices'][$fieldValue] = $fieldValue;
                         }
                     }

@@ -567,7 +567,7 @@ final class ClientAdmin extends AbstractAdmin
                 'required' => $field->isRequired(),
                 'attr' => ['class' => ($field->isMandatoryForHomeless() ? 'mandatory-for-homeless' : '').' '.(!$field->isEnabled() && $field->isEnabledForHomeless() ? 'enabled-for-homeless' : '')],
                 'getter' => static fn (Client $client): mixed => $client->getAdditionalFieldValue($field->getCode()),
-                'setter' => static fn (Client $client, $value): null => $client->setAdditionalFieldValue($field->getCode(), $value),
+                'setter' => static fn (Client $client, mixed $value): null => $client->setAdditionalFieldValue($field->getCode(), $value),
             ];
             // если скрываемое поле раньше не было обязательным, разрешаем ему оставаться пустым
             // (это также поддержано в валидации в обработчике `FormEvents::SUBMIT`)
