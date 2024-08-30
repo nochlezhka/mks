@@ -1,7 +1,7 @@
 {% extends '/pdf/certificate/layout.html.twig' %}
 
 {% block header_left %}
-    Направление № <u>{{ certificate.id }}</u>{% if certificate.dateFrom %} от {{ certificate.dateFrom|format_date('none', '<u>«d»</u> <u>MMMM</u> <u>Y</u>') }} года{% endif %} в
+    Направление № <u>{{ certificate.id }}</u>{% if certificate.dateFrom %} от {{ certificate.dateFrom|format_date(pattern: '<u>«d»</u> <u>MMMM</u> <u>Y</u>') }} года{% endif %} в
     {{ employment_name }} {{ employment_address }}
 {% endblock %}
 

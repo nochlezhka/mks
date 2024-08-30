@@ -8,7 +8,7 @@
 {% block header_right %}
     {% if certificate.client %}
         {{ certificate.client.fullname }},<br/>
-        {% if certificate.client.birthDate %}Дата рождения: {{ certificate.client.birthDate|format_date('none', 'dd.MM.yyyy') }}
+        {% if certificate.client.birthDate %}Дата рождения: {{ certificate.client.birthDate|format_date(pattern: 'dd.MM.yyyy') }}
             <br/>{% endif %}
         получает социальную помощь в {{ org_description_short }}.
     {% endif %}
@@ -20,7 +20,7 @@
     Благодарим за содействие!<br/><br/>
 
     {% if certificate.dateFrom %}
-        Дата выдачи: {{ certificate.dateFrom|format_date('none', 'dd.MM.yyyy') }}<br/>
+        Дата выдачи: {{ certificate.dateFrom|format_date(pattern: 'dd.MM.yyyy') }}<br/>
         Справка действительна в течение 30 дней.
     {% endif %}
 {% endblock %}
