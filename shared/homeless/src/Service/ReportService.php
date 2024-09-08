@@ -242,6 +242,8 @@ final class ReportService
             'excludeStatuses' => $excludeStatuses,
             'dateFrom' => $dateFrom ?: '1960-01-01',
             'dateTo' => $dateTo ?: date('Y-m-d'),
+        ], [
+            'excludeStatuses' => ArrayParameterType::INTEGER,
         ])->fetchAllNumeric();
     }
 
@@ -659,17 +661,19 @@ final class ReportService
                     unset($clientsIds[$clientsId]);
                 }
             }
-            $clientsIds = array_keys($clientsIds);
         }
         if ($clientsIds === []) {
             return [];
         }
-        $stmt = $this->entityManager->getConnection()->prepare('
+
+        return $this->entityManager->getConnection()->executeQuery('
             SELECT COUNT(*)
             FROM client c
-            WHERE c.id IN ('.implode(',', $clientsIds).')
-        ');
-
-        return $stmt->executeQuery()->fetchAllNumeric();
+            WHERE c.id IN (:clientsIds)
+        ', [
+            'clientsIds' => array_keys($clientsIds),
+        ], [
+            'clientsIds' => ArrayParameterType::INTEGER,
+        ])->fetchAllNumeric();
     }
 }
