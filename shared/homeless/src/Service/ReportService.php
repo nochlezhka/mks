@@ -57,10 +57,10 @@ final class ReportService
         mixed $dateFrom,
         mixed $dateTo,
         mixed $userId,
-        mixed $createClientdateFrom,
-        mixed $createClientFromTo,
-        mixed $createServicedateFrom,
-        mixed $createServiceFromTo,
+        mixed $clientDateFrom,
+        mixed $clientDateTo,
+        mixed $serviceDateFrom,
+        mixed $serviceDateTo,
         mixed $homelessReason,
         mixed $disease,
         mixed $breadwinner,
@@ -90,8 +90,8 @@ final class ReportService
             self::RESULTS_OF_SUPPORT => $this->resultsOfSupport($dateFrom, $dateTo, $userId),
             self::ACCOMPANYING => $this->accompanying($userId),
             self::AVERAGE_COMPLETED_ITEMS => $this->averageCompletedItems($dateFrom, $dateTo, $userId),
-            self::AGGREGATED => $this->aggregated($createClientdateFrom, $createClientFromTo, $createServicedateFrom, $createServiceFromTo),
-            self::AGGREGATED2 => $this->aggregated2($createClientdateFrom, $createClientFromTo, $createServicedateFrom, $createServiceFromTo, $homelessReason, $disease, $breadwinner),
+            self::AGGREGATED => $this->aggregated($clientDateFrom, $clientDateTo, $serviceDateFrom, $serviceDateTo),
+            self::AGGREGATED2 => $this->aggregated2($clientDateFrom, $clientDateTo, $serviceDateFrom, $serviceDateTo, $homelessReason, $disease, $breadwinner),
             default => throw new \RuntimeException('Unexpected report type "'.$type.'"'),
         };
 
@@ -106,36 +106,34 @@ final class ReportService
      * @throws DBALDriverException
      */
     public function getClients(
-        mixed $createServicedateFrom,
-        mixed $createServiceFromTo,
-        mixed $createClientdateFrom,
-        mixed $createClientFromTo,
+        mixed $serviceDateFrom,
+        mixed $serviceDateTo,
+        mixed $clientDateFrom,
+        mixed $clientDateTo,
     ): array {
-        if ($createServicedateFrom || $createServiceFromTo) {
+        if ($serviceDateFrom || $serviceDateTo) {
             $stmt = $this->entityManager->getConnection()->prepare('
             SELECT c.id
             FROM client c
-            JOIN service s
+              JOIN service s
                 ON s.client_id = c.id
-            WHERE s.created_at >= :createServicedateFrom
-              AND s.created_at <= :createServiceFromTo
-              AND c.created_at >= :createClientdateFrom
-              AND c.created_at <= :createClientFromTo
+            WHERE s.created_at >= :serviceDateFrom
+              AND s.created_at <= :serviceDateTo
+              AND c.created_at >= :clientDateFrom
+              AND c.created_at <= :clientDateTo
             ');
-            $stmt->bindValue('createServicedateFrom', $createServicedateFrom ? date('Y-m-d', strtotime($createServicedateFrom)) : '1960-01-01');
-            $stmt->bindValue('createServiceFromTo', $createServiceFromTo ? date('Y-m-d', strtotime($createServiceFromTo)) : date('Y-m-d'));
-            $stmt->bindValue('createClientdateFrom', $createClientdateFrom ? date('Y-m-d', strtotime($createClientdateFrom)) : '1960-01-01');
-            $stmt->bindValue('createClientFromTo', $createClientFromTo ? date('Y-m-d', strtotime($createClientFromTo)) : date('Y-m-d'));
+            $stmt->bindValue('serviceDateFrom', $serviceDateFrom ? date('Y-m-d', strtotime($serviceDateFrom)) : '1960-01-01');
+            $stmt->bindValue('serviceDateTo', $serviceDateTo ? date('Y-m-d', strtotime($serviceDateTo)) : date('Y-m-d'));
         } else {
             $stmt = $this->entityManager->getConnection()->prepare('
             SELECT c.id
             FROM client c
-            WHERE c.created_at >= :createClientdateFrom
-              AND c.created_at <= :createClientFromTo
+            WHERE c.created_at >= :clientDateFrom
+              AND c.created_at <= :clientDateTo
             ');
-            $stmt->bindValue('createClientdateFrom', $createClientdateFrom ? date('Y-m-d', strtotime($createClientdateFrom)) : '1960-01-01');
-            $stmt->bindValue('createClientFromTo', $createClientFromTo ? date('Y-m-d', strtotime($createClientFromTo)) : date('Y-m-d'));
         }
+        $stmt->bindValue('clientDateFrom', $clientDateFrom ? date('Y-m-d', strtotime($clientDateFrom)) : '1960-01-01');
+        $stmt->bindValue('clientDateTo', $clientDateTo ? date('Y-m-d', strtotime($clientDateTo)) : date('Y-m-d'));
 
         return $stmt->executeQuery()->fetchAllAssociative();
     }
@@ -162,7 +160,8 @@ final class ReportService
                 COUNT(DISTINCT s.client_id) client_count,
                 SUM(s.amount) as sum_amount
             FROM service s
-            JOIN service_type st on s.type_id = st.id
+              JOIN service_type st
+                ON s.type_id = st.id
             WHERE s.created_at >= :dateFrom
               AND s.created_at <= :dateTo '.($userId ? 'AND s.created_by_id = :userId' : '').'
             GROUP BY st.id
@@ -204,10 +203,10 @@ final class ReportService
                        COUNT(DISTINCT i.id) all_count,
                        COUNT(DISTINCT c.client_id) client_count
                 FROM contract_item i
-                    JOIN contract c
-                        ON i.contract_id = c.id
-                    JOIN contract_item_type cit
-                        ON i.type_id = cit.id
+                  JOIN contract c
+                    ON i.contract_id = c.id
+                  JOIN contract_item_type cit
+                    ON i.type_id = cit.id
                 WHERE c.status_id NOT IN (:excludeStatuses)
                   AND i.date >= :dateFrom
                   AND i.date <= :dateTo
@@ -229,10 +228,10 @@ final class ReportService
                    COUNT(DISTINCT i.id) all_count,
                    COUNT(DISTINCT c.client_id) client_count
             FROM contract_item i
-                JOIN contract c
-                    ON i.contract_id = c.id
-                JOIN contract_item_type cit
-                    ON i.type_id = cit.id
+              JOIN contract c
+                ON i.contract_id = c.id
+              JOIN contract_item_type cit
+                ON i.type_id = cit.id
             WHERE c.status_id NOT IN (:excludeStatuses)
               AND i.date >= :dateFrom
               AND i.date <= :dateTo
@@ -268,33 +267,32 @@ final class ReportService
             'ФИО соцработника, открывшего сервисный план',
         ]]);
         $stmt = $this->entityManager->getConnection()->prepare('
-            SELECT
-                c.id,
-                concat(c.lastname, \' \', c.firstname, \' \', c.middlename),
-                h.date_from,
-                h.date_to,
-                GROUP_CONCAT(CONCAT(cit1.name, COALESCE(CONCAT(\'(\', ci1.comment + \')\'), \'\'))),
-                GROUP_CONCAT(CONCAT(cit2.name, COALESCE(CONCAT(\'(\', ci2.comment + \')\'), \'\'))),
-                cs.name,
-                con.comment,
-                concat(u.lastname, \' \', u.firstname, \' \', u.middlename)
+            SELECT c.id,
+                   concat(c.lastname, \' \', c.firstname, \' \', c.middlename),
+                   h.date_from,
+                   h.date_to,
+                   GROUP_CONCAT(CONCAT(cit1.name, COALESCE(CONCAT(\'(\', ci1.comment + \')\'), \'\'))),
+                   GROUP_CONCAT(CONCAT(cit2.name, COALESCE(CONCAT(\'(\', ci2.comment + \')\'), \'\'))),
+                   cs.name,
+                   con.comment,
+                   concat(u.lastname, \' \', u.firstname, \' \', u.middlename)
             FROM contract con
-                JOIN shelter_history h
-                    ON con.id = h.contract_id
-                JOIN fos_user_user u
-                    ON con.created_by_id = u.id
-                JOIN client c
-                    ON con.client_id = c.id
-                LEFT JOIN contract_item ci1
-                    ON con.id = ci1.contract_id AND ci1.date IS NOT NULL
-                LEFT JOIN contract_item_type cit1
-                    ON ci1.type_id = cit1.id
-                LEFT JOIN contract_item ci2
-                    ON con.id = ci2.contract_id AND ci2.date IS NULL
-                LEFT JOIN contract_item_type cit2
-                    ON ci2.type_id = cit2.id
-                JOIN contract_status cs
-                    ON con.status_id = cs.id
+              JOIN shelter_history h
+                ON con.id = h.contract_id
+              JOIN fos_user_user u
+                ON con.created_by_id = u.id
+              JOIN client c
+                ON con.client_id = c.id
+              LEFT JOIN contract_item ci1
+                ON con.id = ci1.contract_id AND ci1.date IS NOT NULL
+              LEFT JOIN contract_item_type cit1
+                ON ci1.type_id = cit1.id
+              LEFT JOIN contract_item ci2
+                ON con.id = ci2.contract_id AND ci2.date IS NULL
+              LEFT JOIN contract_item_type cit2
+                ON ci2.type_id = cit2.id
+              JOIN contract_status cs
+                ON con.status_id = cs.id
             WHERE h.date_to >= :dateFrom
               AND h.date_to <= :dateTo
               '.($userId ? 'AND u.id = :userId' : '').'
@@ -337,20 +335,20 @@ final class ReportService
                    con.comment,
                    concat(u.lastname, \' \', u.firstname, \' \', u.middlename)
             FROM contract con
-                JOIN fos_user_user u
-                    ON con.created_by_id = u.id
-                JOIN client c
-                    ON con.client_id = c.id
-                LEFT JOIN contract_item ci1
-                    ON con.id = ci1.contract_id AND ci1.date IS NOT NULL
-                LEFT JOIN contract_item_type cit1
-                    ON ci1.type_id = cit1.id
-                LEFT JOIN contract_item ci2
-                    ON con.id = ci2.contract_id AND ci2.date IS NULL
-                LEFT JOIN contract_item_type cit2
-                    ON ci2.type_id = cit2.id
-                JOIN contract_status cs
-                    ON con.status_id = cs.id
+              JOIN fos_user_user u
+                ON con.created_by_id = u.id
+              JOIN client c
+                ON con.client_id = c.id
+              LEFT JOIN contract_item ci1
+                ON con.id = ci1.contract_id AND ci1.date IS NOT NULL
+              LEFT JOIN contract_item_type cit1
+                ON ci1.type_id = cit1.id
+              LEFT JOIN contract_item ci2
+                ON con.id = ci2.contract_id AND ci2.date IS NULL
+              LEFT JOIN contract_item_type cit2
+                ON ci2.type_id = cit2.id
+              JOIN contract_status cs
+                ON con.status_id = cs.id
             WHERE con.date_to >= :dateFrom
               AND con.date_to <= :dateTo
               '.($userId ? 'AND u.id = :userId' : '').'
@@ -383,25 +381,24 @@ final class ReportService
             'ФИО соцработника, открывшего сервисный план',
         ]]);
         $stmt = $this->entityManager->getConnection()->prepare('
-            SELECT
-                c.id,
-                concat(c.lastname, \' \', c.firstname, \' \', c.middlename),
-                GROUP_CONCAT(CONCAT(cit1.name, COALESCE(CONCAT(\'(\', ci1.comment + \')\'), \'\'))),
-                cs.name,
-                con.comment,
-                TO_DAYS(con.date_to) - TO_DAYS(con.date_from),
-                concat(u.lastname, \' \', u.firstname, \' \', u.middlename)
+            SELECT c.id,
+                   concat(c.lastname, \' \', c.firstname, \' \', c.middlename),
+                   GROUP_CONCAT(CONCAT(cit1.name, COALESCE(CONCAT(\'(\', ci1.comment + \')\'), \'\'))),
+                   cs.name,
+                   con.comment,
+                   TO_DAYS(con.date_to) - TO_DAYS(con.date_from),
+                   concat(u.lastname, \' \', u.firstname, \' \', u.middlename)
             FROM contract con
-                JOIN fos_user_user u
-                    ON con.created_by_id = u.id
-                JOIN client c
-                    ON con.client_id = c.id
-                LEFT JOIN contract_item ci1
-                    ON con.id = ci1.contract_id
-                LEFT JOIN contract_item_type cit1
-                    ON ci1.type_id = cit1.id
-                JOIN contract_status cs
-                    ON con.status_id = cs.id
+              JOIN fos_user_user u
+                ON con.created_by_id = u.id
+              JOIN client c
+                ON con.client_id = c.id
+              LEFT JOIN contract_item ci1
+                ON con.id = ci1.contract_id
+              LEFT JOIN contract_item_type cit1
+                ON ci1.type_id = cit1.id
+              JOIN contract_status cs
+                ON con.status_id = cs.id
             WHERE '.($userId ? ' u.id = :userId AND ' : '').'
                 status_id = 1
             GROUP BY con.id
@@ -431,10 +428,10 @@ final class ReportService
             SELECT cit.name,
                    FLOOR(AVG(TO_DAYS(c.date_to) - TO_DAYS(c.date_from))) avg_days
             FROM contract_item i
-                JOIN contract c
-                    ON i.contract_id = c.id
-                JOIN contract_item_type cit
-                    ON i.type_id = cit.id
+              JOIN contract c
+                ON i.contract_id = c.id
+              JOIN contract_item_type cit
+                ON i.type_id = cit.id
             WHERE i.date >= :dateFrom
               AND i.date <= :dateTo
               '.($userId ? 'AND ((i.created_by_id IS NOT NULL AND i.created_by_id = :userId) OR (i.created_by_id IS NULL AND c.created_by_id = :userId))' : '').'
@@ -455,47 +452,49 @@ final class ReportService
      * @throws DBALException
      */
     private function aggregated(
-        mixed $createClientdateFrom,
-        mixed $createClientFromTo,
-        mixed $createServicedateFrom,
-        mixed $createServiceFromTo,
+        mixed $clientDateFrom,
+        mixed $clientDateTo,
+        mixed $serviceDateFrom,
+        mixed $serviceDateTo,
     ): array {
         $this->doc->getActiveSheet()->fromArray([[
             'Вопрос',
             'Ответ',
             'Количество',
         ]]);
-        $result = $this->getClients($createServicedateFrom, $createServiceFromTo, $createClientdateFrom, $createClientFromTo);
-        $clientsIds = [];
-        foreach ($result as $item) {
-            $clientsIds[] = $item['id'];
-        }
-        $clientsIds = array_unique($clientsIds);
-        if (!$clientsIds) {
+
+        $clients = $this->getClients($serviceDateFrom, $serviceDateTo, $clientDateFrom, $clientDateTo);
+        if (empty($clients)) {
             return [];
         }
+
+        $clientsIds = [];
+        foreach ($clients as $item) {
+            $clientsIds[] = $item['id'];
+        }
+        $clientsIds = implode(',', array_unique($clientsIds));
 
         $clientCount = $this->entityManager->getConnection()->prepare('
             SELECT COUNT(*)
             FROM client c
-            WHERE c.id IN ('.implode(',', $clientsIds).')
+            WHERE c.id IN ('.$clientsIds.')
         ')->executeQuery()->fetchOne();
         $menCount = $this->entityManager->getConnection()->prepare('
             SELECT COUNT(*)
             FROM client c
-            WHERE c.id IN ('.implode(',', $clientsIds).')
+            WHERE c.id IN ('.$clientsIds.')
               AND c.gender = 1
         ')->executeQuery()->fetchOne();
         $womenCount = $this->entityManager->getConnection()->prepare('
             SELECT COUNT(*)
             FROM client c
-            WHERE c.id IN ('.implode(',', $clientsIds).')
+            WHERE c.id IN ('.$clientsIds.')
               AND c.gender = 2
         ')->executeQuery()->fetchOne();
         $awgAge = $this->entityManager->getConnection()->prepare('
             SELECT CAST(AVG(TIMESTAMPDIFF(YEAR,c.birth_date,curdate())) AS UNSIGNED)
             FROM client c
-            WHERE c.id IN ('.implode(',', $clientsIds).')
+            WHERE c.id IN ('.$clientsIds.')
         ')->executeQuery()->fetchOne();
         $awgHomelessPeriod = $this->entityManager->getConnection()->prepare('
             SELECT CAST(AVG(TIMESTAMPDIFF(YEAR,cfv.datetime,curdate())) AS UNSIGNED)
@@ -504,20 +503,20 @@ final class ReportService
                     ON cf.code = \'homelessFrom\'
                 JOIN client_field_value cfv
                     ON c.id = cfv.client_id AND cfv.field_id = cf.id
-            WHERE c.id IN ('.implode(',', $clientsIds).')',
+            WHERE c.id IN ('.$clientsIds.')',
         )->executeQuery()->fetchOne();
         $haveWork = $this->entityManager->getConnection()->prepare('
             SELECT COUNT(*)
             FROM client c
-                JOIN client_field_value cfv
-                    ON c.id = cfv.client_id AND cfv.option_id IS NULL AND cfv.datetime IS NULL AND cfv.text IS NULL
-                JOIN client_field cf
-                    ON cfv.field_id = cf.id
-                JOIN client_field_value_client_field_option cfvcfo
-                    ON cfv.id = cfvcfo.client_field_value_id
-                JOIN client_field_option cfo
-                    ON cfvcfo.client_field_option_id = cfo.id
-            WHERE c.id IN ('.implode(',', $clientsIds).')
+              JOIN client_field_value cfv
+                ON c.id = cfv.client_id AND cfv.option_id IS NULL AND cfv.datetime IS NULL AND cfv.text IS NULL
+              JOIN client_field cf
+                ON cfv.field_id = cf.id
+              JOIN client_field_value_client_field_option cfvcfo
+                ON cfv.id = cfvcfo.client_field_value_id
+              JOIN client_field_option cfo
+                ON cfvcfo.client_field_option_id = cfo.id
+            WHERE c.id IN ('.$clientsIds.')
               AND cf.code = \'profession\'
         ')->executeQuery()->fetchOne();
 
@@ -526,15 +525,15 @@ final class ReportService
                    cfo.name,
                    COUNT(*)
             FROM client c
-                JOIN client_field_value cfv
-                    ON c.id = cfv.client_id AND cfv.option_id IS NULL AND cfv.datetime IS NULL AND cfv.text IS NULL
-                JOIN client_field cf
-                    ON cfv.field_id = cf.id
-                JOIN client_field_value_client_field_option cfvcfo
-                    ON cfv.id = cfvcfo.client_field_value_id
-                JOIN client_field_option cfo
-                    ON cfvcfo.client_field_option_id = cfo.id
-            WHERE c.id IN ('.implode(',', $clientsIds).')
+              JOIN client_field_value cfv
+                ON c.id = cfv.client_id AND cfv.option_id IS NULL AND cfv.datetime IS NULL AND cfv.text IS NULL
+              JOIN client_field cf
+                ON cfv.field_id = cf.id
+              JOIN client_field_value_client_field_option cfvcfo
+                ON cfv.id = cfvcfo.client_field_value_id
+              JOIN client_field_option cfo
+                ON cfvcfo.client_field_option_id = cfo.id
+            WHERE c.id IN ('.$clientsIds.')
               AND cf.code != \'profession\'
             GROUP BY cf.name, cfo.name
         ')->executeQuery()->fetchAllNumeric();
@@ -544,13 +543,13 @@ final class ReportService
                    cfo.name,
                    COUNT(*)
             FROM client c
-                JOIN client_field_value cfv
-                    ON c.id = cfv.client_id AND cfv.option_id IS NOT NULL
-                JOIN client_field cf
-                    ON cfv.field_id = cf.id
-                JOIN client_field_option cfo
-                    ON cfv.option_id = cfo.id
-            WHERE c.id IN ('.implode(',', $clientsIds).')
+              JOIN client_field_value cfv
+                ON c.id = cfv.client_id AND cfv.option_id IS NOT NULL
+              JOIN client_field cf
+                ON cfv.field_id = cf.id
+              JOIN client_field_option cfo
+                ON cfv.option_id = cfo.id
+            WHERE c.id IN ('.$clientsIds.')
               AND cf.code != \'profession\'
             GROUP BY cf.name, cfo.name
         ')->executeQuery()->fetchAllNumeric();
@@ -575,10 +574,10 @@ final class ReportService
      * @throws DBALDriverException
      */
     private function aggregated2(
-        mixed $createClientdateFrom,
-        mixed $createClientFromTo,
-        mixed $createServicedateFrom,
-        mixed $createServiceFromTo,
+        mixed $clientDateFrom,
+        mixed $clientDateTo,
+        mixed $serviceDateFrom,
+        mixed $serviceDateTo,
         mixed $homelessReason,
         mixed $disease,
         mixed $breadwinner,
@@ -586,84 +585,84 @@ final class ReportService
         $this->doc->getActiveSheet()->fromArray([[
             'Количество',
         ]]);
-        $result = $this->getClients($createServicedateFrom, $createServiceFromTo, $createClientdateFrom, $createClientFromTo);
-        $clientsIds = [];
-        foreach ($result as $item) {
-            $clientsIds[$item['id']] = 0;
-        }
-        if (!$clientsIds) {
+
+        $clients = $this->getClients($serviceDateFrom, $serviceDateTo, $clientDateFrom, $clientDateTo);
+        if (empty($clients)) {
             return [];
         }
+
+        $clientsCounts = [];
+        foreach ($clients as $item) {
+            $clientsCounts[$item['id']] = 0;
+        }
+
         if ($homelessReason || $disease || $breadwinner) {
             if ($disease) {
                 $stmt = $this->entityManager->getConnection()->prepare('
                     SELECT c.id
                     FROM client c
-                        LEFT JOIN client_field_value cfv
-                            ON c.id = cfv.client_id
-                        LEFT JOIN client_field_value_client_field_option cfvcfo
-                            ON cfv.id = cfvcfo.client_field_value_id
-                        LEFT JOIN client_field cf
-                            ON cfv.field_id = cf.id
+                      LEFT JOIN client_field_value cfv
+                        ON c.id = cfv.client_id
+                      LEFT JOIN client_field_value_client_field_option cfvcfo
+                        ON cfv.id = cfvcfo.client_field_value_id
+                      LEFT JOIN client_field cf
+                        ON cfv.field_id = cf.id
                     WHERE cf.code = \'disease\'
                       AND cfvcfo.client_field_option_id IN ('.implode(',', $disease).')
                 ');
-                foreach ($stmt->executeQuery()->fetchAllAssociative() as $item) {
-                    if (!isset($clientsIds[$item['id']])) {
+                foreach ($stmt->executeQuery()->fetchAllAssociative() as $client) {
+                    if (!isset($clientsCounts[$client['id']])) {
                         continue;
                     }
-                    ++$clientsIds[$item['id']];
+                    ++$clientsCounts[$client['id']];
                 }
             }
             if ($homelessReason) {
                 $stmt = $this->entityManager->getConnection()->prepare('
                     SELECT c.id
                     FROM client c
-                        LEFT JOIN client_field_value cfv
-                            ON c.id = cfv.client_id
-                        LEFT JOIN client_field_value_client_field_option cfvcfo
-                            ON cfv.id = cfvcfo.client_field_value_id
-                        LEFT JOIN client_field cf
-                            ON cfv.field_id = cf.id
+                      LEFT JOIN client_field_value cfv
+                        ON c.id = cfv.client_id
+                      LEFT JOIN client_field_value_client_field_option cfvcfo
+                        ON cfv.id = cfvcfo.client_field_value_id
+                      LEFT JOIN client_field cf
+                        ON cfv.field_id = cf.id
                     WHERE cf.code = \'homelessReason\'
                       AND cfvcfo.client_field_option_id IN ('.implode(',', $homelessReason).')
                 ');
-                foreach ($stmt->executeQuery()->fetchAllAssociative() as $item) {
-                    if (!isset($clientsIds[$item['id']])) {
+                foreach ($stmt->executeQuery()->fetchAllAssociative() as $client) {
+                    if (!isset($clientsCounts[$client['id']])) {
                         continue;
                     }
-                    ++$clientsIds[$item['id']];
+                    ++$clientsCounts[$client['id']];
                 }
             }
             if ($breadwinner) {
                 $stmt = $this->entityManager->getConnection()->prepare('
                     SELECT c.id
                     FROM client c
-                        LEFT JOIN client_field_value cfv
-                            ON c.id = cfv.client_id
-                        LEFT JOIN client_field_value_client_field_option cfvcfo
-                            ON cfv.id = cfvcfo.client_field_value_id
-                        LEFT JOIN client_field cf
-                            ON cfv.field_id = cf.id
+                      LEFT JOIN client_field_value cfv
+                        ON c.id = cfv.client_id
+                      LEFT JOIN client_field_value_client_field_option cfvcfo
+                        ON cfv.id = cfvcfo.client_field_value_id
+                      LEFT JOIN client_field cf
+                        ON cfv.field_id = cf.id
                     WHERE cf.code = \'breadwinner\'
                       AND cfvcfo.client_field_option_id IN ('.implode(',', $breadwinner).')
                 ');
-                foreach ($stmt->executeQuery()->fetchAllAssociative() as $item) {
-                    if (!isset($clientsIds[$item['id']])) {
+                foreach ($stmt->executeQuery()->fetchAllAssociative() as $client) {
+                    if (!isset($clientsCounts[$client['id']])) {
                         continue;
                     }
-                    ++$clientsIds[$item['id']];
+                    ++$clientsCounts[$client['id']];
                 }
             }
-            $max = max($clientsIds);
-            foreach ($clientsIds as $clientsId => $value) {
+            $max = max($clientsCounts);
+            foreach ($clientsCounts as $clientsId => $value) {
                 if ($value !== $max) {
-                    unset($clientsIds[$clientsId]);
+                    unset($clientsCounts[$clientsId]);
                 }
             }
-        }
-        if ($clientsIds === []) {
-            return [];
         }
 
         return $this->entityManager->getConnection()->executeQuery('
@@ -671,7 +670,7 @@ final class ReportService
             FROM client c
             WHERE c.id IN (:clientsIds)
         ', [
-            'clientsIds' => array_keys($clientsIds),
+            'clientsIds' => array_keys($clientsCounts),
         ], [
             'clientsIds' => ArrayParameterType::INTEGER,
         ])->fetchAllNumeric();
