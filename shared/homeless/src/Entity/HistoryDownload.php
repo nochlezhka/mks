@@ -34,7 +34,7 @@ class HistoryDownload
 
     public function __toString(): string
     {
-        return sprintf('%s (%s)', $this->user, $this->date->format('d.m.Y'));
+        return \sprintf('%s (%s)', $this->user, $this->date->format('d.m.Y'));
     }
 
     public function getId(): int

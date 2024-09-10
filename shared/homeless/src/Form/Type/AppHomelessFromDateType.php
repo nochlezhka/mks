@@ -51,7 +51,7 @@ final class AppHomelessFromDateType extends AbstractType
 
         if ($options['widget'] === 'single_text') {
             if ($pattern !== null && !str_contains($pattern, 'y') && !str_contains($pattern, 'M') && !str_contains($pattern, 'd')) {
-                throw new InvalidOptionsException(sprintf('The "format" option should contain the letters "y", "M" or "d". Its current value is "%s".', $pattern));
+                throw new InvalidOptionsException(\sprintf('The "format" option should contain the letters "y", "M" or "d". Its current value is "%s".', $pattern));
             }
 
             $builder->addViewTransformer(new DateTimeToLocalizedStringTransformer(
@@ -64,7 +64,7 @@ final class AppHomelessFromDateType extends AbstractType
             ));
         } else {
             if ($pattern !== null && (!str_contains($pattern, 'y') || !str_contains($pattern, 'M') || !str_contains($pattern, 'd'))) {
-                throw new InvalidOptionsException(sprintf('The "format" option should contain the letters "y", "M" and "d". Its current value is "%s".', $pattern));
+                throw new InvalidOptionsException(\sprintf('The "format" option should contain the letters "y", "M" and "d". Its current value is "%s".', $pattern));
             }
 
             $yearOptions = $monthOptions = [

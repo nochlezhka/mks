@@ -46,7 +46,7 @@ final class ClientFormFieldAdmin extends AbstractAdmin
         }
 
         if ($object->isFixed()) {
-            throw new AccessDeniedException(sprintf(
+            throw new AccessDeniedException(\sprintf(
                 'Изменение поля %s запрещено.', $object->getName(),
             ));
         }

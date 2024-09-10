@@ -29,7 +29,7 @@ final readonly class ClientFormMultiselectTransformer implements DataTransformer
             return null;
         }
         if (!\is_string($value)) {
-            error_log(sprintf('Non-string value in multiselect transform. Form response %d: field %d has value %s',
+            error_log(\sprintf('Non-string value in multiselect transform. Form response %d: field %d has value %s',
                 $this->formResponseId, $this->formFieldId, var_export($value, true),
             ));
         }
@@ -40,7 +40,7 @@ final readonly class ClientFormMultiselectTransformer implements DataTransformer
     public function reverseTransform($value): ?string
     {
         if (!\is_array($value)) {
-            error_log(sprintf('Non-array value in multiselect reverseTransform. Form response %d: field %d has value %s',
+            error_log(\sprintf('Non-array value in multiselect reverseTransform. Form response %d: field %d has value %s',
                 $this->formResponseId, $this->formFieldId, var_export($value, true),
             ));
         }

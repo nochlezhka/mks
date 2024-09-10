@@ -22,7 +22,7 @@ final class UserRepository extends ServiceEntityRepository implements PasswordUp
     public function upgradePassword(PasswordAuthenticatedUserInterface $user, string $newHashedPassword): void
     {
         if (!$user instanceof User) {
-            throw new UnsupportedUserException(sprintf('Instances of "%s" are not supported.', get_debug_type($user)));
+            throw new UnsupportedUserException(\sprintf('Instances of "%s" are not supported.', get_debug_type($user)));
         }
         $user->setSalt(null);
         $user->setPassword($newHashedPassword);

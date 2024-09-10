@@ -25,7 +25,7 @@ final readonly class ClientFormCheckboxTransformer implements DataTransformerInt
     public function transform($value): bool
     {
         if ($value !== '0' && $value !== false && $value !== null && $value !== '1' && $this->formResponseId !== null) {
-            error_log(sprintf('Non-boolean value in form response %d: field %d has value %s',
+            error_log(\sprintf('Non-boolean value in form response %d: field %d has value %s',
                 $this->formResponseId, $this->formFieldId, var_export($value, true),
             ));
         }

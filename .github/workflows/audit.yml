@@ -51,6 +51,6 @@ jobs:
           echo "::endgroup::"
 
       - name: Auditor
-        uses: docker://nbgrp/auditor:0.26.0
+        uses: docker://nbgrp/auditor:0.27.0
         with:
           working-directory: shared/homeless

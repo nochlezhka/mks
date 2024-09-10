@@ -50,7 +50,7 @@ final class CRUDController extends SonataCRUDController
     {
         $object = $this->admin->getSubject();
         if (empty($object)) {
-            throw new NotFoundHttpException(sprintf('unable to find the object with id : %s', $request->get($this->admin->getIdParameter())));
+            throw new NotFoundHttpException(\sprintf('unable to find the object with id : %s', $request->get($this->admin->getIdParameter())));
         }
 
         if (!($object instanceof DownloadableInterface)) {

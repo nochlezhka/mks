@@ -40,7 +40,7 @@ final class UserController extends \Sonata\AdminBundle\Controller\CRUDController
         $object = $this->admin->getObject($id);
 
         if (!$object) {
-            throw new NotFoundHttpException(sprintf('unable to find the object with id : %s', $id));
+            throw new NotFoundHttpException(\sprintf('unable to find the object with id : %s', $id));
         }
 
         $currentUserId = $this->getUser()->getId();

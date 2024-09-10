@@ -891,21 +891,23 @@ final class ClientAdmin extends AbstractAdmin
 
         $noticesCount = $this->noticeRepository->getUnviewedCount($this->getSubject(), $user);
 
-        $menu->addChild('Напоминания'.($noticesCount > 0 ? " ({$noticesCount})" : ''), [
-            'uri' => $admin->generateUrl('app.notice.admin.list', [
-                'id' => $id,
-                'filter' => [
-                    'date' => [
-                        'value' => [
-                            'end' => date('d.m.Y'),
+        if ($this->isMenuItemEnabled(MenuItem::CODE_NOTIFICATIONS)) {
+            $menu->addChild('Напоминания'.($noticesCount > 0 ? " ({$noticesCount})" : ''), [
+                'uri' => $admin->generateUrl('app.notice.admin.list', [
+                    'id' => $id,
+                    'filter' => [
+                        'date' => [
+                            'value' => [
+                                'end' => date('d.m.Y'),
+                            ],
+                        ],
+                        'viewed' => [
+                            'value' => 2,
                         ],
                     ],
-                    'viewed' => [
-                        'value' => 2,
-                    ],
-                ],
-            ])],
-        );
+                ])],
+            );
+        }
     }
 
     private static function isAdditionalFieldValueEmpty(mixed $val): bool
