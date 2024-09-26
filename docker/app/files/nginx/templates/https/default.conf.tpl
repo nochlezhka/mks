@@ -21,8 +21,9 @@ server {
 }
 
 server {
-    listen 443 default_server ssl http2;
-    listen [::]:443 ssl http2;
+    listen 443 default_server ssl;
+    listen [::]:443 ssl;
+    http2 on;
 
     server_name ${DOMAIN};
 
