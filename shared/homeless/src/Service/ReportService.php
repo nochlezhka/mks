@@ -22,7 +22,6 @@ final class ReportService
     public const string RESULTS_OF_SUPPORT = 'results_of_support';
     public const string ACCOMPANYING = 'accompanying';
     public const string AGGREGATED = 'aggregated';
-    public const string AVERAGE_COMPLETED_ITEMS = 'average_completed_items';
     public const string AGGREGATED2 = 'aggregated2';
 
     private Spreadsheet $doc;
@@ -41,9 +40,8 @@ final class ReportService
             self::OUTGOING => 'Отчет о выбывших из приюта',
             self::RESULTS_OF_SUPPORT => 'Отчет по результатам сопровождения ',
             self::ACCOMPANYING => 'Отчет по сопровождению',
-            self::AVERAGE_COMPLETED_ITEMS => 'Отчет по средней длительности пунктов сервисных планов',
-            self::AGGREGATED => 'Отчет агрегированный',
-            self::AGGREGATED2 => 'Отчет агрегированный 2',
+            self::AGGREGATED => 'Агрегированный отчет по соц-дем показателям',
+            self::AGGREGATED2 => 'Отчет по количеству клиентов',
         ];
     }
 
@@ -89,7 +87,6 @@ final class ReportService
             self::OUTGOING => $this->outgoing($dateFrom, $dateTo, $userId),
             self::RESULTS_OF_SUPPORT => $this->resultsOfSupport($dateFrom, $dateTo, $userId),
             self::ACCOMPANYING => $this->accompanying($userId),
-            self::AVERAGE_COMPLETED_ITEMS => $this->averageCompletedItems($dateFrom, $dateTo, $userId),
             self::AGGREGATED => $this->aggregated($clientDateFrom, $clientDateTo, $serviceDateFrom, $serviceDateTo),
             self::AGGREGATED2 => $this->aggregated2($clientDateFrom, $clientDateTo, $serviceDateFrom, $serviceDateTo, $homelessReason, $disease, $breadwinner),
             default => throw new \RuntimeException('Unexpected report type "'.$type.'"'),
@@ -151,14 +148,12 @@ final class ReportService
             'название услуги',
             'сколько раз она была предоставлена',
             'скольким людям она была предоставлена',
-            'сумма',
         ]]);
         $stmt = $this->entityManager->getConnection()->prepare('
             SELECT
                 st.name,
                 COUNT(DISTINCT s.id) all_count,
-                COUNT(DISTINCT s.client_id) client_count,
-                SUM(s.amount) as sum_amount
+                COUNT(DISTINCT s.client_id) client_count
             FROM service s
               JOIN service_type st
                 ON s.type_id = st.id
@@ -404,42 +399,6 @@ final class ReportService
             GROUP BY con.id
             ORDER BY con.date_to DESC
         ');
-        if ($userId) {
-            $stmt->bindValue('userId', $userId);
-        }
-
-        return $stmt->executeQuery()->fetchAllNumeric();
-    }
-
-    /**
-     * @throws DBALException
-     * @throws DBALDriverException
-     */
-    private function averageCompletedItems(
-        mixed $dateFrom,
-        mixed $dateTo,
-        mixed $userId,
-    ): array {
-        $this->doc->getActiveSheet()->fromArray([[
-            'название пункта',
-            'средняя длительность',
-        ]]);
-        $stmt = $this->entityManager->getConnection()->prepare('
-            SELECT cit.name,
-                   FLOOR(AVG(TO_DAYS(c.date_to) - TO_DAYS(c.date_from))) avg_days
-            FROM contract_item i
-              JOIN contract c
-                ON i.contract_id = c.id
-              JOIN contract_item_type cit
-                ON i.type_id = cit.id
-            WHERE i.date >= :dateFrom
-              AND i.date <= :dateTo
-              '.($userId ? 'AND ((i.created_by_id IS NOT NULL AND i.created_by_id = :userId) OR (i.created_by_id IS NULL AND c.created_by_id = :userId))' : '').'
-            GROUP BY cit.name
-            ORDER BY cit.name
-        ');
-        $stmt->bindValue('dateFrom', $dateFrom ?: '2000-01-01');
-        $stmt->bindValue('dateTo', $dateTo ?: date('Y-m-d'));
         if ($userId) {
             $stmt->bindValue('userId', $userId);
         }
