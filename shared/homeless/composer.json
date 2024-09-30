@@ -33,7 +33,7 @@
         "symfony/config": "~6.4.0",
         "symfony/console": "~6.4.0",
         "symfony/dependency-injection": "~6.4.0",
-        "symfony/flex": "^1.19",
+        "symfony/flex": "^v2.4.6",
         "symfony/framework-bundle": "~6.4.0",
         "symfony/http-kernel": "~6.4.0",
         "symfony/mailer": "~6.4.0",
@@ -43,10 +43,10 @@
         "symfony/twig-bundle": "~6.4.0",
         "symfony/web-link": "~6.4.0",
         "symfony/webpack-encore-bundle": "^2.0.1",
-        "twbs/bootstrap-sass": "^3.3",
-        "twig/extra-bundle": "^3.5",
-        "twig/intl-extra": "^3.5",
-        "twig/twig": "^3.5",
+        "twbs/bootstrap-sass": "^3.4",
+        "twig/extra-bundle": "^3.13",
+        "twig/intl-extra": "^3.13",
+        "twig/twig": "^3.14",
         "vich/uploader-bundle": "^2.1"
     },
     "require-dev": {
