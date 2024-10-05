@@ -18,10 +18,10 @@ use Doctrine\ORM\Mapping as ORM;
 class ClientFormResponseValue extends BaseEntity
 {
     // константы-значения фиксированных полей
-    public const RESIDENT_QUESTIONNAIRE_TYPE_3_MONTHS = '3 месяца';
-    public const RESIDENT_QUESTIONNAIRE_TYPE_6_MONTHS = '6 месяцев';
-    public const RESIDENT_QUESTIONNAIRE_TYPE_1_YEAR = '1 год';
-    public const RESIDENT_QUESTIONNAIRE_TYPE_2_YEARS = '2 года';
+    public const string RESIDENT_QUESTIONNAIRE_TYPE_3_MONTHS = '3 месяца';
+    public const string RESIDENT_QUESTIONNAIRE_TYPE_6_MONTHS = '6 месяцев';
+    public const string RESIDENT_QUESTIONNAIRE_TYPE_1_YEAR = '1 год';
+    public const string RESIDENT_QUESTIONNAIRE_TYPE_2_YEARS = '2 года';
 
     /**
      * Анкета

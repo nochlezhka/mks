@@ -12,8 +12,9 @@ use App\Entity\MenuItem;
 use App\Entity\Notice;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\Query;
+use Doctrine\ORM\Query\Parameter;
 use Doctrine\ORM\Query\ResultSetMappingBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -23,7 +24,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method array<Notice> findAll()
  * @method array<Notice> findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class NoticeRepository extends ServiceEntityRepository
+final class NoticeRepository extends ServiceEntityRepository
 {
     public function __construct(
         private readonly ContractRepository $contractRepository,
@@ -40,17 +41,16 @@ class NoticeRepository extends ServiceEntityRepository
      */
     public function getUnviewedCount(Client $client, User $user): mixed
     {
-        $result = $this
-            ->createQueryBuilder('n')
+        $result = $this->createQueryBuilder('n')
             ->select('COUNT(n) as cnt')
             ->where('n.client = :client')
             ->andWhere(':user NOT MEMBER OF n.viewedBy')
             ->andWhere('n.date <= :now')
-            ->setParameters([
-                'client' => $client,
-                'user' => $user,
-                'now' => new \DateTimeImmutable(),
-            ])
+            ->setParameters(new ArrayCollection([
+                new Parameter('client', $client),
+                new Parameter('user', $user),
+                new Parameter('now', new \DateTimeImmutable()),
+            ]))
             ->getQuery()
             ->getOneOrNullResult()
         ;
@@ -63,34 +63,36 @@ class NoticeRepository extends ServiceEntityRepository
      */
     public function getAllUserClientsNotice(Client $client, User $user): ?array
     {
-        return $this
-            ->createQueryBuilder('n')
+        return $this->createQueryBuilder('n')
             ->select('n.id, n.text')
             ->where('n.client = :client')
             ->andWhere(':user NOT MEMBER OF n.viewedBy')
             ->andWhere('n.date <= :now')
-            ->setParameters([
-                'client' => $client,
-                'user' => $user,
-                'now' => new \DateTimeImmutable(),
-            ])
+            ->setParameters(new ArrayCollection([
+                new Parameter('client', $client),
+                new Parameter('user', $user),
+                new Parameter('now', new \DateTimeImmutable()),
+            ]))
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult()
         ;
     }
 
-    public function getAllActiveContracts(array $filter): Query
+    /**
+     * @return array<\App\Entity\Contract>
+     */
+    public function getAllActiveContracts(array $filter): array
     {
-        return $this->contractRepository
-            ->createQueryBuilder('cont')
-            ->where('cont.createdBy = :contractCreatedBy')
-            ->andWhere('cont.status = :contractStatus')
-            ->setParameters([
-                'contractCreatedBy' => $filter['contractCreatedBy'],
-                'contractStatus' => $filter['contractStatus'],
-            ])
+        return $this->contractRepository->createQueryBuilder('c')
+            ->where('c.createdBy = :createdBy')
+            ->andWhere('c.status = :status')
+            ->setParameters(new ArrayCollection([
+                new Parameter('createdBy', $filter['contractCreatedBy']),
+                new Parameter('status', $filter['contractStatus']),
+            ]))
             ->getQuery()
+            ->getResult()
         ;
     }
 
@@ -111,17 +113,17 @@ class NoticeRepository extends ServiceEntityRepository
         if (!$isNotification) {
             return [];
         }
+
         $result = [];
 
-        $arContracts = $this->getAllActiveContracts($filter);
-
-        foreach ($arContracts->getResult() as $itm) {
-            $arAllUserClientsNotice = $this->getAllUserClientsNotice($itm->getClient(), $user);
-            if ($arAllUserClientsNotice === null) {
+        foreach ($this->getAllActiveContracts($filter) as $contract) {
+            $client = $contract->getClient();
+            $allUserClientsNotice = $this->getAllUserClientsNotice($client, $user);
+            if ($allUserClientsNotice === null) {
                 continue;
             }
-            $result[$arAllUserClientsNotice['id']] = $arAllUserClientsNotice;
-            $result[$arAllUserClientsNotice['id']]['client'] = $itm->getClient();
+            $result[$allUserClientsNotice['id']] = $allUserClientsNotice;
+            $result[$allUserClientsNotice['id']]['client'] = $client;
         }
 
         $isQuestionnaireLiving = $this->menuItemRepository->isEnableCode(MenuItem::CODE_QUESTIONNAIRE_LIVING);

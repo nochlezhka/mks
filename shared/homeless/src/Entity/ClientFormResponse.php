@@ -31,8 +31,8 @@ class ClientFormResponse extends BaseEntity
      * Поля заполненной анкеты
      */
     #[ORM\OneToMany(
-        mappedBy: 'clientFormResponse',
         targetEntity: ClientFormResponseValue::class,
+        mappedBy: 'clientFormResponse',
         cascade: ['persist', 'remove', 'detach'],
         orphanRemoval: true,
     )]
@@ -53,37 +53,6 @@ class ClientFormResponse extends BaseEntity
     public function __construct()
     {
         $this->values = new ArrayCollection();
-    }
-
-    /**
-     * Магическая функция для чтения значения поля анкеты по её ID.
-     * $r->__get('field_2') вернёт значение поля с ID == 2.
-     * Все поля получаются через $this->getValues().
-     */
-    public function __get(mixed $name): ?string
-    {
-        if (str_starts_with($name, 'field_')) {
-            return $this->getFieldValue((int) substr($name, 6));
-        }
-
-        throw new \LogicException("No field {$name} in ClientFormResponse");
-    }
-
-    /**
-     * Магический метод для админки. Через него выставляются значения полей формы.
-     * Значения полей не будут сами сохранены в БД, а будут прикопаны в массив $this->_submittedFields
-     *
-     * @see _submittedFields
-     */
-    public function __set(mixed $name, mixed $value): void
-    {
-        if (str_starts_with($name, 'field_')) {
-            $this->_submittedFields[substr($name, 6)] = $value;
-
-            return;
-        }
-
-        throw new \LogicException("No field {$name} in ClientFormResponse");
     }
 
     public function __toString(): string
@@ -170,7 +139,7 @@ class ClientFormResponse extends BaseEntity
         return false;
     }
 
-    private function getFieldValue(?int $fieldId): ?string
+    public function getFieldValue(?int $fieldId): ?string
     {
         /** @var ClientFormResponseValue $value */
         foreach ($this->getValues() as $value) {
@@ -180,6 +149,11 @@ class ClientFormResponse extends BaseEntity
         }
 
         return null;
+    }
+
+    public function setFieldValue(int $fieldId, mixed $value): void
+    {
+        $this->_submittedFields[$fieldId] = $value;
     }
 
     /**

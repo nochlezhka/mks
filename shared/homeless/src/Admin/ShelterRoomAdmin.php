@@ -6,6 +6,7 @@ declare(strict_types=1);
 namespace App\Admin;
 
 use App\Entity\ShelterRoom;
+use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Route\RouteCollectionInterface;
@@ -19,8 +20,10 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
     'manager_type' => 'orm',
     'model_class' => ShelterRoom::class,
 ])]
-class ShelterRoomAdmin extends AbstractAdmin
+final class ShelterRoomAdmin extends AbstractAdmin
 {
+    use AdminTrait;
+
     protected array $datagridValues = [
         '_sort_order' => 'DESC',
         '_sort_by' => 'dateFrom',

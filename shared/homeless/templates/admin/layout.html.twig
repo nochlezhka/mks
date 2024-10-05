@@ -68,11 +68,7 @@
 {% endblock sonata_sidebar_search %}
 
 {% block logo %}
-    {% apply spaceless %}
-        <a class="logo" href="{{ path('my_clients') }}">
-            <img src="{{ logo_path }}" style="max-width: 100%;"/>
-        </a>
-    {% endapply %}
+    <a class="logo" href="{{ path('my_clients') }}"><img src="{{ logo_path }}" style="max-width: 100%;"/></a>
 {% endblock %}
 
 {% block side_bar_after_nav_content %}

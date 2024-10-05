@@ -10,7 +10,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\PersistentCollection;
 use Symfony\Component\Form\DataTransformerInterface;
 
-readonly class AdditionalFieldToArrayTransformer implements DataTransformerInterface
+final readonly class AdditionalFieldToArrayTransformer implements DataTransformerInterface
 {
     public function __construct(
         private ClientFieldOptionRepository $clientFieldOptionRepository,

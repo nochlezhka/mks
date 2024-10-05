@@ -6,6 +6,7 @@ declare(strict_types=1);
 namespace App\Admin;
 
 use App\Entity\MenuItem;
+use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Route\RouteCollectionInterface;
@@ -19,8 +20,10 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
     'manager_type' => 'orm',
     'model_class' => MenuItem::class,
 ])]
-class MenuItemAdmin extends AbstractAdmin
+final class MenuItemAdmin extends AbstractAdmin
 {
+    use AdminTrait;
+
     protected array $datagridValues = [
         '_sort_order' => 'ASC',
         '_sort_by' => 'name',

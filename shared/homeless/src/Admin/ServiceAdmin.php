@@ -13,6 +13,7 @@ use App\Form\DataTransformer\ServiceTypeToChoiceFieldMaskTypeTransformer;
 use App\Repository\ServiceTypeRepository;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
+use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\FieldDescription\FieldDescriptionInterface;
@@ -33,8 +34,10 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
     'manager_type' => 'orm',
     'model_class' => Service::class,
 ])]
-class ServiceAdmin extends AbstractAdmin
+final class ServiceAdmin extends AbstractAdmin
 {
+    use AdminTrait;
+
     protected array $datagridValues = [
         '_sort_order' => 'DESC',
         '_sort_by' => 'createdAt',
@@ -57,7 +60,7 @@ class ServiceAdmin extends AbstractAdmin
 
         $hasTypeWithComment = false;
         $hasTypeWithAmount = false;
-        /** @var \App\Entity\ServiceType $serviceType */
+        /** @var ServiceType $serviceType */
         foreach ($serviceTypes as $serviceType) {
             $typeOptions['choices'][$serviceType->getName()] = $serviceType->getId();
             $map = [];

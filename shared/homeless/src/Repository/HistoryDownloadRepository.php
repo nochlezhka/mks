@@ -15,7 +15,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method array<HistoryDownload> findAll()
  * @method array<HistoryDownload> findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class HistoryDownloadRepository extends ServiceEntityRepository
+final class HistoryDownloadRepository extends ServiceEntityRepository
 {
     public function __construct(
         ManagerRegistry $registry,

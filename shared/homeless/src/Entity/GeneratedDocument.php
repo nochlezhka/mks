@@ -125,7 +125,7 @@ class GeneratedDocument extends BaseEntity implements DownloadableInterface
         return $this->startText;
     }
 
-    public function setStartText(GeneratedDocumentStartText $startText): self
+    public function setStartText(?GeneratedDocumentStartText $startText): self
     {
         $this->startText = $startText;
 
@@ -137,7 +137,7 @@ class GeneratedDocument extends BaseEntity implements DownloadableInterface
         return $this->endText;
     }
 
-    public function setEndText(GeneratedDocumentEndText $endText): self
+    public function setEndText(?GeneratedDocumentEndText $endText): self
     {
         $this->endText = $endText;
 

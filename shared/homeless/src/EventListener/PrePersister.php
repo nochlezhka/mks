@@ -9,6 +9,7 @@ use App\Entity\BaseEntityInterface;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Events;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
+use Sonata\UserBundle\Model\User as UserModel;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
@@ -17,7 +18,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
  * - кем создано
  */
 #[AsDoctrineListener(event: Events::prePersist)]
-readonly class PrePersister
+final readonly class PrePersister
 {
     use UserTrait;
 
@@ -35,7 +36,7 @@ readonly class PrePersister
         }
 
         if (empty($entity->getCreatedAt())) {
-            $entity->setCreatedAt(new \DateTimeImmutable());
+            $entity->setCreatedAt($entity instanceof UserModel ? new \DateTime() : new \DateTimeImmutable());
         }
 
         if (empty($entity->getCreatedBy())) {

@@ -22,7 +22,7 @@ class History extends BaseEntity
         return $this->client;
     }
 
-    public function setClient(?Client $client = null): self
+    public function setClient(?Client $client): self
     {
         $this->client = $client;
 

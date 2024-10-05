@@ -20,11 +20,11 @@ use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class AppHomelessFromDateType extends AbstractType
+final class AppHomelessFromDateType extends AbstractType
 {
-    public const DEFAULT_FORMAT = \IntlDateFormatter::MEDIUM;
+    public const int DEFAULT_FORMAT = \IntlDateFormatter::MEDIUM;
 
-    public const HTML5_FORMAT = 'yyyy-MM';
+    public const string HTML5_FORMAT = 'yyyy-MM';
 
     private static array $acceptedFormats = [
         \IntlDateFormatter::FULL,
@@ -51,7 +51,7 @@ class AppHomelessFromDateType extends AbstractType
 
         if ($options['widget'] === 'single_text') {
             if ($pattern !== null && !str_contains($pattern, 'y') && !str_contains($pattern, 'M') && !str_contains($pattern, 'd')) {
-                throw new InvalidOptionsException(sprintf('The "format" option should contain the letters "y", "M" or "d". Its current value is "%s".', $pattern));
+                throw new InvalidOptionsException(\sprintf('The "format" option should contain the letters "y", "M" or "d". Its current value is "%s".', $pattern));
             }
 
             $builder->addViewTransformer(new DateTimeToLocalizedStringTransformer(
@@ -64,7 +64,7 @@ class AppHomelessFromDateType extends AbstractType
             ));
         } else {
             if ($pattern !== null && (!str_contains($pattern, 'y') || !str_contains($pattern, 'M') || !str_contains($pattern, 'd'))) {
-                throw new InvalidOptionsException(sprintf('The "format" option should contain the letters "y", "M" and "d". Its current value is "%s".', $pattern));
+                throw new InvalidOptionsException(\sprintf('The "format" option should contain the letters "y", "M" and "d". Its current value is "%s".', $pattern));
             }
 
             $yearOptions = $monthOptions = [

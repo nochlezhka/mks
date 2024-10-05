@@ -11,7 +11,7 @@ use App\Entity\Client;
 use App\Repository\CertificateTypeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
-readonly class CertificateRecreator
+final readonly class CertificateRecreator
 {
     public function __construct(
         private EntityManagerInterface $entityManager,

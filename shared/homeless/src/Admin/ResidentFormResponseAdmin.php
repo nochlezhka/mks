@@ -20,7 +20,7 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
     'manager_type' => 'orm',
     'model_class' => ClientFormResponse::class,
 ])]
-class ResidentFormResponseAdmin extends ClientFormResponseAdmin
+final class ResidentFormResponseAdmin extends ClientFormResponseAdmin
 {
     protected ?int $formId = ClientForm::RESIDENT_QUESTIONNAIRE_FORM_ID;
 

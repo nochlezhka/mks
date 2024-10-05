@@ -56,7 +56,7 @@
                                         class="tab-pane fade{% if (not app.request.query.has('_tab') and loop.first) or (tab_query_index == loop.index) %} in active{% endif %}"
                                         id="{{ _tab_name }}"
                                     >
-                                        <div class="box-body  container-fluid">
+                                        <div class="box-body container-fluid">
                                             <div class="sonata-ba-collapsed-fields">
                                                 {% if form_tab.description != false %}
                                                     {% if form_tab.translation_domain is defined and form_tab.translation_domain is same as(false) %}

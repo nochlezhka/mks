@@ -26,6 +26,7 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\QueryBuilder;
 use Knp\Menu\ItemInterface as MenuItemInterface;
+use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Admin\AdminInterface;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
@@ -58,8 +59,10 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
     'manager_type' => 'orm',
     'model_class' => Client::class,
 ])]
-class ClientAdmin extends AbstractAdmin
+final class ClientAdmin extends AbstractAdmin
 {
+    use AdminTrait;
+
     protected array $datagridValues = [
         '_sort_order' => 'DESC',
         '_sort_by' => 'contracts.dateFrom',
@@ -218,8 +221,12 @@ class ClientAdmin extends AbstractAdmin
                 }
 
                 $field = $fieldValue->getField();
+                $fieldCode = $field->getCode();
 
-                $options = ['label' => $field->getName()];
+                $options = [
+                    'label' => $field->getName(),
+                    'accessor' => static fn (Client $client): mixed => $client->getAdditionalFieldValue($fieldCode),
+                ];
 
                 switch ($field->getType()) {
                     case ClientField::TYPE_OPTION:
@@ -239,11 +246,15 @@ class ClientAdmin extends AbstractAdmin
                         break;
                 }
 
-                if ($field->getCode() === 'homelessFrom') {
+                if ($fieldCode === 'homelessFrom') {
                     $options['pattern'] = 'MMM y';
                 }
 
-                $showMapperAdditionalInfo[\count($showMapperAdditionalInfo) - 1]['add'] = [self::getAdditionalFieldName($field->getCode()), $field->getShowFieldType(), $options];
+                $showMapperAdditionalInfo[\count($showMapperAdditionalInfo) - 1]['add'] = [
+                    self::getAdditionalFieldName($fieldCode),
+                    $field->getShowFieldType(),
+                    $options,
+                ];
             }
         }
 
@@ -255,8 +266,7 @@ class ClientAdmin extends AbstractAdmin
         foreach ($showMapperAdditionalInfoSort as $showMapperAdditionalInfoSortItems) {
             foreach ($showMapperAdditionalInfoSortItems as $item) {
                 if (isset($item['add'])) {
-                    $reflectionMethod = new \ReflectionMethod(ShowMapper::class, 'add');
-                    $reflectionMethod->invokeArgs($show, $item['add']);
+                    $show->add(...$item['add']);
                 }
             }
         }
@@ -293,7 +303,7 @@ class ClientAdmin extends AbstractAdmin
         }
 
         if ($isUpdate) {
-            foreach ($object->additionalFieldValuesToRemove as $code) {
+            foreach ($object->getAdditionalFieldValuesToRemove() as $code) {
                 $fieldValue = $this->clientFieldValueRepository->findOneByClientAndFieldCode($object, $code);
 
                 if ($fieldValue instanceof ClientFieldValue) {
@@ -304,7 +314,7 @@ class ClientAdmin extends AbstractAdmin
             unset($code, $fieldValue);
         }
 
-        foreach ($object->additionalFieldValues as $code => $value) {
+        foreach ($object->getAdditionalFieldValues() as $code => $value) {
             $field = $this->clientFieldRepository->findOneBy(['code' => $code]);
             $fieldValue = null;
 
@@ -354,7 +364,7 @@ class ClientAdmin extends AbstractAdmin
 
         $queryBuilder->leftJoin('c1.status', 's1');
         $queryBuilder->andWhere('s1.id IN (:statuses)');
-        $queryBuilder->setParameter('statuses', array_values($data->getValue()->toArray()));
+        $queryBuilder->setParameter('statuses', $data->getValue()->toArray());
 
         return true;
     }
@@ -538,6 +548,8 @@ class ClientAdmin extends AbstractAdmin
                     'label' => 'Не бездомный',
                     'label_attr' => ['class' => 'changeSelectinsData'],
                     'required' => false,
+                    'getter' => static fn (Client $client): bool => !$client->isHomeless(),
+                    'setter' => static fn (Client $client, bool $value): Client => $client->setIsHomeless(!$value),
                 ])
             ;
         }
@@ -554,6 +566,8 @@ class ClientAdmin extends AbstractAdmin
                 'label' => $field->getName(),
                 'required' => $field->isRequired(),
                 'attr' => ['class' => ($field->isMandatoryForHomeless() ? 'mandatory-for-homeless' : '').' '.(!$field->isEnabled() && $field->isEnabledForHomeless() ? 'enabled-for-homeless' : '')],
+                'getter' => static fn (Client $client): mixed => $client->getAdditionalFieldValue($field->getCode()),
+                'setter' => static fn (Client $client, mixed $value): null => $client->setAdditionalFieldValue($field->getCode(), $value),
             ];
             // если скрываемое поле раньше не было обязательным, разрешаем ему оставаться пустым
             // (это также поддержано в валидации в обработчике `FormEvents::SUBMIT`)
@@ -593,6 +607,7 @@ class ClientAdmin extends AbstractAdmin
             $form
                 ->add('compliance', CheckboxType::class, [
                     'label' => 'Заявление об обработке персональных данных заполнено',
+                    'mapped' => false,
                     'required' => true,
                 ])
             ;
@@ -642,7 +657,7 @@ class ClientAdmin extends AbstractAdmin
                 continue;
             }
 
-            $options = $event->getForm()->getNormData()->additionalFieldValues;
+            $options = $event->getForm()->getNormData()->getAdditionalFieldValues();
 
             if (!isset($options[$field->getCode()])) {
                 continue;
@@ -663,9 +678,10 @@ class ClientAdmin extends AbstractAdmin
     protected function configureListFields(ListMapper $list): void
     {
         $list
-            ->add('lastContractDuration', 'number', [
+            ->add('lastContractDuration', null, [
                 'template' => '/admin/fields/client_contract_duration_list.html.twig',
                 'label' => ' ',
+                'virtual_field' => true,
             ])
             ->addIdentifier('id', 'number', [
                 'route' => ['name' => 'show'],
@@ -875,21 +891,23 @@ class ClientAdmin extends AbstractAdmin
 
         $noticesCount = $this->noticeRepository->getUnviewedCount($this->getSubject(), $user);
 
-        $menu->addChild('Напоминания'.($noticesCount > 0 ? " ({$noticesCount})" : ''), [
-            'uri' => $admin->generateUrl('app.notice.admin.list', [
-                'id' => $id,
-                'filter' => [
-                    'date' => [
-                        'value' => [
-                            'end' => date('d.m.Y'),
+        if ($this->isMenuItemEnabled(MenuItem::CODE_NOTIFICATIONS)) {
+            $menu->addChild('Напоминания'.($noticesCount > 0 ? " ({$noticesCount})" : ''), [
+                'uri' => $admin->generateUrl('app.notice.admin.list', [
+                    'id' => $id,
+                    'filter' => [
+                        'date' => [
+                            'value' => [
+                                'end' => date('d.m.Y'),
+                            ],
+                        ],
+                        'viewed' => [
+                            'value' => 2,
                         ],
                     ],
-                    'viewed' => [
-                        'value' => 2,
-                    ],
-                ],
-            ])],
-        );
+                ])],
+            );
+        }
     }
 
     private static function isAdditionalFieldValueEmpty(mixed $val): bool
@@ -950,9 +968,11 @@ class ClientAdmin extends AbstractAdmin
     private function addChoiceFieldMaskTypeField(FormMapper $formMapper, ClientField $field, array $options): void
     {
         $options = $this->getProcessedOptionsForChoiceFieldMaskTypeField($options, $field);
-        $transformer = $this->additionalFieldToArrayTransformer;
         $formMapper->add(self::getAdditionalFieldName($field->getCode()), ChoiceFieldMaskType::class, $options);
-        $formMapper->getFormBuilder()->get(self::getAdditionalFieldName($field->getCode()))->addModelTransformer($transformer);
+        $formMapper->getFormBuilder()
+            ->get(self::getAdditionalFieldName($field->getCode()))
+            ->addModelTransformer($this->additionalFieldToArrayTransformer)
+        ;
     }
 
     /**
@@ -960,9 +980,9 @@ class ClientAdmin extends AbstractAdmin
      */
     private function addClientField(FormMapper $form, ClientField $field, array $options): void
     {
-        $addFieldName = self::getAdditionalFieldName($field->getCode());
-        if (isset($this->choiceTypeMaps[$addFieldName])) {
-            $options['map'] = $this->choiceTypeMaps[$addFieldName];
+        $additionalFieldName = self::getAdditionalFieldName($field->getCode());
+        if (isset($this->choiceTypeMaps[$additionalFieldName])) {
+            $options['map'] = $this->choiceTypeMaps[$additionalFieldName];
             $this->addChoiceFieldMaskTypeField($form, $field, $options);
 
             return;
@@ -971,14 +991,16 @@ class ClientAdmin extends AbstractAdmin
         switch ($field->getCode()) {
             case 'homelessFrom':
                 $options['years'] = range(date('Y'), date('Y') - 100);
-                $form->add(self::getAdditionalFieldName($field->getCode()), AppHomelessFromDateType::class, $options);
+                $options['widget'] = 'choice';
+                $form->add($additionalFieldName, AppHomelessFromDateType::class, $options);
                 break;
 
             default:
                 if ($field->getType() === ClientField::TYPE_DATETIME) {
                     $options['input'] = 'datetime_immutable';
+                    $options['widget'] = 'choice';
                 }
-                $form->add(self::getAdditionalFieldName($field->getCode()), $field->getFormFieldType(), $options);
+                $form->add($additionalFieldName, $field->getFormFieldType(), $options);
                 break;
         }
     }
@@ -1055,7 +1077,7 @@ class ClientAdmin extends AbstractAdmin
     }
 
     /**
-     * Возвращает `true` если поле не было скрыто на форме: если его видимость зависила от значения друогого поля,
+     * Возвращает `true` если поле не было скрыто на форме: если его видимость зависела от значения другого поля,
      * и это условие выполнилось
      */
     private function fieldCanBeShown(ClientField $field, FormInterface $form): bool
@@ -1066,17 +1088,17 @@ class ClientAdmin extends AbstractAdmin
         }
 
         foreach ($this->dependantFields[$fieldName] as $choiceField => $map) {
-            $val = $form->get($choiceField)->getData();
-            if ($val instanceof ClientFieldOption) {
-                return isset($map[$val->getId()]);
+            $modelData = $form->get($choiceField)->getData();
+            if ($modelData instanceof ClientFieldOption) {
+                return isset($map[$modelData->getId()]);
             }
-            if (!($val instanceof ArrayCollection)) {
+            if (!($modelData instanceof ArrayCollection)) {
                 continue;
             }
 
-            foreach ($val as $val1) {
-                if ($val1 instanceof ClientFieldOption) {
-                    if (isset($map[$val1->getId()])) {
+            foreach ($modelData as $element) {
+                if ($element instanceof ClientFieldOption) {
+                    if (isset($map[$element->getId()])) {
                         return true;
                     }
                 }

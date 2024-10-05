@@ -39,7 +39,7 @@ class Contract extends BaseEntity implements DownloadableInterface
     #[ORM\ManyToOne(targetEntity: Document::class)]
     private ?Document $document = null;
 
-    #[ORM\OneToMany(mappedBy: 'contract', targetEntity: ContractItem::class, cascade: ['all'], orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: ContractItem::class, mappedBy: 'contract', cascade: ['all'], orphanRemoval: true)]
     #[ORM\OrderBy(['date' => 'DESC', 'id' => 'DESC'])]
     private Collection $items;
 
@@ -52,8 +52,6 @@ class Contract extends BaseEntity implements DownloadableInterface
     {
         return $this->getLabel();
     }
-
-    public function __set($name, $value): void {}
 
     public function getNamePrefix(): string
     {
@@ -149,7 +147,7 @@ class Contract extends BaseEntity implements DownloadableInterface
         return $this->client;
     }
 
-    public function setClient(Client $client): self
+    public function setClient(?Client $client): self
     {
         $this->client = $client;
 
@@ -161,7 +159,7 @@ class Contract extends BaseEntity implements DownloadableInterface
         return $this->status;
     }
 
-    public function setStatus(ContractStatus $status): self
+    public function setStatus(?ContractStatus $status): self
     {
         $this->status = $status;
 
@@ -173,7 +171,7 @@ class Contract extends BaseEntity implements DownloadableInterface
         return $this->document;
     }
 
-    public function setDocument(Document $document): self
+    public function setDocument(?Document $document): self
     {
         $this->document = $document;
 
@@ -195,7 +193,7 @@ class Contract extends BaseEntity implements DownloadableInterface
 
     public function removeItem(ContractItem $item): void
     {
-        $item->setContract();
+        $item->setContract(null);
         $this->items->removeElement($item);
     }
 

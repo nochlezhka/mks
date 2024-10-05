@@ -31,7 +31,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
     'model_class' => User::class,
     'translation_domain' => 'SonataUserBundle',
 ])]
-class UserAdmin extends SonataUserAdmin
+final class UserAdmin extends SonataUserAdmin
 {
     use AdminTrait;
 

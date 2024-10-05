@@ -31,7 +31,7 @@ use Twig\Error\SyntaxError;
 /**
  * @method \App\Entity\User getUser()
  */
-class CRUDController extends SonataCRUDController
+final class CRUDController extends SonataCRUDController
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
@@ -50,7 +50,7 @@ class CRUDController extends SonataCRUDController
     {
         $object = $this->admin->getSubject();
         if (empty($object)) {
-            throw new NotFoundHttpException(sprintf('unable to find the object with id : %s', $request->get($this->admin->getIdParameter())));
+            throw new NotFoundHttpException(\sprintf('unable to find the object with id : %s', $request->get($this->admin->getIdParameter())));
         }
 
         if (!($object instanceof DownloadableInterface)) {

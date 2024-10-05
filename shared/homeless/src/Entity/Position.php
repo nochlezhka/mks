@@ -22,7 +22,7 @@ class Position extends BaseEntity
     /**
      * Пользователи с данной должностью
      */
-    #[ORM\OneToMany(mappedBy: 'position', targetEntity: User::class)]
+    #[ORM\OneToMany(targetEntity: User::class, mappedBy: 'position')]
     private Collection $users;
 
     public function __construct()

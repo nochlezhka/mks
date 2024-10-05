@@ -50,6 +50,17 @@
     </script>
 {% endblock %}
 
+{% block breadcrumb %}
+    <li>
+        <a href="/dashboard">
+            <i class="fa fa-home"></i>
+        </a>
+    </li>
+    <li class="active">
+        <span>Отчёты</span>
+    </li>
+{% endblock %}
+
 {% block sonata_admin_content %}
 
     {% block notice %}

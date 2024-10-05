@@ -68,7 +68,7 @@ class Service extends BaseEntity
         return $this->client;
     }
 
-    public function setClient(Client $client): self
+    public function setClient(?Client $client): self
     {
         $this->client = $client;
 
@@ -80,7 +80,7 @@ class Service extends BaseEntity
         return $this->type;
     }
 
-    public function setType(ServiceType $type): self
+    public function setType(?ServiceType $type): self
     {
         $this->type = $type;
 

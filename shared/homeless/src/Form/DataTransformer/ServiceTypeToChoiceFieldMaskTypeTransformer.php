@@ -8,7 +8,7 @@ namespace App\Form\DataTransformer;
 use App\Repository\ServiceTypeRepository;
 use Symfony\Component\Form\DataTransformerInterface;
 
-readonly class ServiceTypeToChoiceFieldMaskTypeTransformer implements DataTransformerInterface
+final readonly class ServiceTypeToChoiceFieldMaskTypeTransformer implements DataTransformerInterface
 {
     public function __construct(
         private ServiceTypeRepository $serviceTypeRepository,

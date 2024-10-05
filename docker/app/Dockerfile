@@ -1,4 +1,4 @@
-FROM php:8.2.4-fpm-alpine
+FROM php:8.3.8-fpm-alpine
 
 #
 # Setup Moscow time
@@ -36,7 +36,7 @@ RUN apk update \
       nodejs \
       yarn \
  && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer \
- && composer self-update 2.5.1 \
+ && composer self-update 2.7.1 \
  && docker-php-ext-install \
       bcmath \
       gd \

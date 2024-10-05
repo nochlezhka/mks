@@ -56,7 +56,7 @@ class ClientFieldValue extends BaseEntity
      * Имя файла для файлового поля
      */
     #[ORM\Column(type: 'string', nullable: true)]
-    private ?\DateTimeImmutable $filename = null;
+    private ?string $filename = null;
 
     /**
      * Значение поля - файл
@@ -69,7 +69,7 @@ class ClientFieldValue extends BaseEntity
         $this->options = new ArrayCollection();
     }
 
-    public function setFile(?File $file = null): self
+    public function setFile(?File $file): self
     {
         $this->file = $file;
 
@@ -141,12 +141,12 @@ class ClientFieldValue extends BaseEntity
         return $this;
     }
 
-    public function getFilename(): ?\DateTimeImmutable
+    public function getFilename(): ?string
     {
         return $this->filename;
     }
 
-    public function setFilename(?\DateTimeImmutable $filename): self
+    public function setFilename(?string $filename): self
     {
         $this->filename = $filename;
 
