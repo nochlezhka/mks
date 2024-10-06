@@ -25,6 +25,11 @@ server {
     listen [::]:443 ssl;
     http2 on;
 
+    listen 443 quic reuseport;
+    listen [::]:443 quic reuseport;
+    http3 on;
+    add_header Alt-Svc 'h3=":443"; ma=86400';
+
     server_name ${DOMAIN};
 
     ssl_dhparam /etc/nginx/ssl/ssl-dhparams.pem;
