@@ -183,14 +183,17 @@
 
     <rule ref="SlevomatCodingStandard.TypeHints.DeclareStrictTypes">
         <properties>
-            <property name="linesCountBeforeDeclare" value="0" />
+            <property name="linesCountBeforeDeclare" value="1" />
             <property name="linesCountAfterDeclare" value="1" />
             <property name="spacesCountAroundEqualsSign" value="0" />
         </properties>
     </rule>
     <rule ref="SlevomatCodingStandard.TypeHints.DisallowArrayTypeHintSyntax">
         <properties>
-            <property name="traversableTypeHints" value="true" />
+            <property name="traversableTypeHints" type="array">
+                <element value="Traversable" />
+                <element value="\ArrayIterator" />
+            </property>
         </properties>
     </rule>
     <rule ref="SlevomatCodingStandard.TypeHints.NullableTypeForNullDefaultValue" />

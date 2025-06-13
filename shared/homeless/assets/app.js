@@ -1,5 +1,8 @@
-import '../css/lightbox.css'
-import '../css/style.css'
+// SPDX-License-Identifier: BSD-3-Clause
+
+import './bootstrap.js';
+import './css/lightbox.css'
+import './css/style.css'
 
 import 'script-loader!lightbox2/dist/js/lightbox.min'
 import 'script-loader!jquery-slimscroll/jquery.slimscroll.min'
