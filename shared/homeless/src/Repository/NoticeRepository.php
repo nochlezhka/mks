@@ -13,6 +13,7 @@ use App\Entity\Notice;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Parameter;
 use Doctrine\ORM\Query\ResultSetMappingBuilder;
@@ -49,7 +50,7 @@ final class NoticeRepository extends ServiceEntityRepository
             ->setParameters(new ArrayCollection([
                 new Parameter('client', $client),
                 new Parameter('user', $user),
-                new Parameter('now', new \DateTimeImmutable()),
+                new Parameter('now', new \DateTimeImmutable(), Types::DATETIME_IMMUTABLE),
             ]))
             ->getQuery()
             ->getOneOrNullResult()
@@ -71,7 +72,7 @@ final class NoticeRepository extends ServiceEntityRepository
             ->setParameters(new ArrayCollection([
                 new Parameter('client', $client),
                 new Parameter('user', $user),
-                new Parameter('now', new \DateTimeImmutable()),
+                new Parameter('now', new \DateTimeImmutable(), Types::DATETIME_IMMUTABLE),
             ]))
             ->setMaxResults(1)
             ->getQuery()
@@ -99,14 +100,6 @@ final class NoticeRepository extends ServiceEntityRepository
     /**
      * @throws NonUniqueResultException
      */
-    public function getMyClientsNoticeHeaderCount(mixed $filter, User $user): int
-    {
-        return \count($this->getMyClientsNoticeHeader($filter, $user));
-    }
-
-    /**
-     * @throws NonUniqueResultException
-     */
     public function getMyClientsNoticeHeader(mixed $filter, User $user): array
     {
         $isNotification = $this->menuItemRepository->isEnableCode(MenuItem::CODE_NOTIFICATIONS);
@@ -122,27 +115,24 @@ final class NoticeRepository extends ServiceEntityRepository
             if ($allUserClientsNotice === null) {
                 continue;
             }
-            $result[$allUserClientsNotice['id']] = $allUserClientsNotice;
-            $result[$allUserClientsNotice['id']]['client'] = $client;
+            $id = $allUserClientsNotice['id'];
+            $result[$id] = $allUserClientsNotice;
+            $result[$id]['client'] = $client;
         }
 
         $isQuestionnaireLiving = $this->menuItemRepository->isEnableCode(MenuItem::CODE_QUESTIONNAIRE_LIVING);
         if ($isQuestionnaireLiving) {
             $qnrTypeFieldId = ClientFormField::RESIDENT_QUESTIONNAIRE_TYPE_FIELD_ID;
-            $qnrType3Mon = ClientFormResponseValue::RESIDENT_QUESTIONNAIRE_TYPE_3_MONTHS;
-            $qnrType6Mon = ClientFormResponseValue::RESIDENT_QUESTIONNAIRE_TYPE_6_MONTHS;
-            $qnrType1Year = ClientFormResponseValue::RESIDENT_QUESTIONNAIRE_TYPE_1_YEAR;
-            $qnrType2Years = ClientFormResponseValue::RESIDENT_QUESTIONNAIRE_TYPE_2_YEARS;
             $maxResFormTTL = 9999;
             $residentFormsSubquery = "
                 SELECT frv.client_id,
                     MAX(CASE frv.value
                         -- для каждого типа анкеты указано, когда нужно напомнить о заполнении следующей
-                        WHEN '{$qnrType3Mon}' THEN 6
-                        WHEN '{$qnrType6Mon}' THEN 12
-                        WHEN '{$qnrType1Year}' THEN 24
+                        WHEN '".ClientFormResponseValue::RESIDENT_QUESTIONNAIRE_TYPE_3_MONTHS."' THEN 6
+                        WHEN '".ClientFormResponseValue::RESIDENT_QUESTIONNAIRE_TYPE_6_MONTHS."' THEN 12
+                        WHEN '".ClientFormResponseValue::RESIDENT_QUESTIONNAIRE_TYPE_1_YEAR."' THEN 24
                         -- если возвращается {$maxResFormTTL}, то больше не будет напоминаний
-                        WHEN '{$qnrType2Years}' THEN {$maxResFormTTL}
+                        WHEN '".ClientFormResponseValue::RESIDENT_QUESTIONNAIRE_TYPE_2_YEARS."' THEN {$maxResFormTTL}
                         ELSE 0
                         END
                     ) max_ttl_months
