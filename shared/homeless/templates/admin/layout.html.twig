@@ -31,18 +31,19 @@
 
 {% block sonata_top_nav_menu_user_block %}
     {% set userBlock = include(get_global_template('user_block')) %}
+    {% set myClientsNoticeCount = admin.myClientsNoticeCount is defined ? admin.myClientsNoticeCount : 0 %}
     {% if userBlock is not empty %}
         <li class="dropdown user-menu">
             <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                 <i class="fas fa-user fa-fw" aria-hidden="true"></i>
-                {% if admin.myClientsNoticeCount is defined and admin.myClientsNoticeCount > 0 %}
-                    <span style="color: #d20808; font-weight: bold;">(<i class="fas fa-bell" aria-hidden="true"></i> &nbsp;{{ admin.myClientsNoticeCount }})</span>
+                {% if myClientsNoticeCount > 0 %}
+                    <span style="color: #d20808; font-weight: bold;">(<i class="fas fa-bell" aria-hidden="true"></i> &nbsp;{{ myClientsNoticeCount }})</span>
                 {% endif %}
                 <i class="fas fa-caret-down" aria-hidden="true"></i>
             </a>
             <ul class="dropdown-menu dropdown-user">
                 {{ userBlock|raw }}
-                {% if admin.myClientsNoticeCount is defined and admin.myClientsNoticeCount > 0 %}
+                {% if myClientsNoticeCount > 0 %}
                     {% include 'notice_list_header.html.twig' %}
                 {% endif %}
             </ul>

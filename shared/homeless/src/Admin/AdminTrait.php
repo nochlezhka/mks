@@ -76,7 +76,7 @@ trait AdminTrait
             throw new \InvalidArgumentException('Unexpected User type');
         }
 
-        return $this->noticeRepository->getMyClientsNoticeHeaderCount($filter, $user);
+        return \count($this->noticeRepository->getMyClientsNoticeHeader($filter, $user));
     }
 
     /**

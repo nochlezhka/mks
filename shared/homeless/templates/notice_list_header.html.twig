@@ -1,8 +1,9 @@
 <li class="user-body">
     Напоминания
     <ul>
-        {% if admin.myClientsNoticeHeader is not empty %}
-            {% for notice in admin.myClientsNoticeHeader %}
+        {% set myClientsNoticeHeader = admin.myClientsNoticeHeader %}
+        {% if myClientsNoticeHeader is not empty %}
+            {% for notice in myClientsNoticeHeader %}
                 {% if notice.id is defined %}
                     <li><a href="{{ path('admin_app_client_notice_list', {'id': notice.client.id}) }}">{{ notice.client }}: "{{ notice.text }}"</a></li>
                 {% else %}
