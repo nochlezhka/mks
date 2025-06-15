@@ -10,6 +10,7 @@ Encore
     .cleanupOutputBeforeBuild()
     .enableSourceMaps(!Encore.isProduction())
     .enableVersioning(Encore.isProduction())
+    .enableStimulusBridge('./assets/controllers.json')
 
     .configureBabelPresetEnv((config) => {
         config.useBuiltIns = 'usage';
