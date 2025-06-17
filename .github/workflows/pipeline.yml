@@ -22,6 +22,8 @@ env:
 jobs:
   build:
     runs-on: ubuntu-24.04
+    permissions:
+      contents: write
     steps:
       - name: Checkout (PR)
         uses: actions/checkout@v4
@@ -53,10 +55,11 @@ jobs:
       - name: Set application version
         if: github.event_name == 'push'
         id: set_version
-        uses: kvendingoldo/semver-action@v1.20
+        uses: kvendingoldo/git-flow-action@v2.0.2
         with:
-          primary_branch: master
-          enable_github_releases: true
+          enable_github_release: true
+          auto_release_branches: "main"
+          tag_prefix_release: "v"
           github_token: "${{ secrets.GITHUB_TOKEN }}"
 
       - name: Set application version (PR)
