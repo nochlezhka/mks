@@ -17,9 +17,6 @@ class Version20191113055456 extends AbstractMigration
      */
     public function up(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql',
-            'Migration can only be executed safely on \'mysql\'.');
-
         $this->addSql('
             CREATE TABLE client_form_response_value (
                 id INT AUTO_INCREMENT NOT NULL,
@@ -120,9 +117,6 @@ class Version20191113055456 extends AbstractMigration
      */
     public function down(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql',
-            'Migration can only be executed safely on \'mysql\'.');
-
         $this->addSql('ALTER TABLE client_form DROP FOREIGN KEY FK_83143E2DB03A8386');
         $this->addSql('ALTER TABLE client_form DROP FOREIGN KEY FK_83143E2D896DBBDE');
         $this->addSql('ALTER TABLE client_form_field DROP FOREIGN KEY FK_48E6DCDA5FF69B7D');

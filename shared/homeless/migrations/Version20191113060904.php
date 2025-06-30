@@ -22,9 +22,6 @@ class Version20191113060904 extends AbstractMigration
      */
     public function up(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql',
-            'Migration can only be executed safely on \'mysql\'.');
-
         $qnrFormId = ClientForm::RESIDENT_QUESTIONNAIRE_FORM_ID;
         $this->addSql("
             INSERT INTO `client_form`(id, created_by_id, updated_by_id, name, sync_id, sort, created_at, updated_at)
@@ -64,9 +61,6 @@ class Version20191113060904 extends AbstractMigration
      */
     public function down(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql',
-            'Migration can only be executed safely on \'mysql\'.');
-
         $qnrFormId = ClientForm::RESIDENT_QUESTIONNAIRE_FORM_ID;
         $this->addSql("
             DELETE FROM `client_form_field` WHERE form_id = $qnrFormId;
