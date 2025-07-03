@@ -75,7 +75,7 @@ class User extends BaseUser3 implements BaseEntityInterface, TimezoneAwareInterf
     #[ORM\ManyToMany(targetEntity: Notice::class, inversedBy: 'viewedBy')]
     #[ORM\JoinTable(name: 'notice_user')]
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')]
-    #[ORM\InverseJoinColumn(name: 'notice_id', referencedColumnName: 'id', unique: true)]
+    #[ORM\InverseJoinColumn(name: 'notice_id', referencedColumnName: 'id')]
     private Collection $viewedNotices;
 
     /**
