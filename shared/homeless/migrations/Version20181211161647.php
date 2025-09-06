@@ -14,10 +14,7 @@ class Version20181211161647 extends AbstractMigration
      */
     public function up(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
-
-        $this->addSql('alter table client_field
-	add enabled_for_homeless tinyint(1) default 0 null;');
+        $this->addSql('alter table client_field add enabled_for_homeless tinyint(1) default 0 null;');
     }
 
     /**
@@ -25,6 +22,5 @@ class Version20181211161647 extends AbstractMigration
      */
     public function down(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
     }
 }
