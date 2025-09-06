@@ -55,7 +55,7 @@ jobs:
       - name: Set application version
         if: github.event_name == 'push'
         id: set_version
-        uses: kvendingoldo/git-flow-action@v2.0.2
+        uses: kvendingoldo/git-flow-action@v2.2.0
         with:
           primary_branch: "master"
           enable_github_release: true
