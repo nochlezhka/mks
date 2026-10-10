@@ -1,0 +1,29 @@
+root * /var/www/symfony/public
+
+encode zstd gzip
+
+request_body {
+	max_size 30MiB
+}
+
+log
+
+route {
+	# Only the front controller may be executed: a *.php dropped into uploads/ must never run
+	@php {
+		path_regexp (?i)\.php(/|$)
+		not path_regexp ^/index\.php(/|$)
+	}
+	respond @php 404
+
+	# Long cache only for files that exist, so a 404 is never cached
+	@static {
+		path_regexp (?i)\.(jpg|xml|gif|swf|ico|css|zip|rar|doc|xls|js|txt|dtd|png|jpeg|eot|woff|woff2|ttf|svg|html)$
+		file
+	}
+	header @static Cache-Control "public, max-age=315360000"
+
+	# Existing files are left for file_server, everything else goes to index.php
+	php_fastcgi php:9000
+	file_server
+}

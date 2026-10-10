@@ -1,9 +1,9 @@
 version: '3.9'
 services:
-  nginx:
-    container_name: nginx
+  caddy:
+    container_name: caddy
     image: nochlezhka/mks-app:${MKS_VERSION}
-    entrypoint: [ "/etc/nginx/entrypoint.sh" ]
+    entrypoint: [ "/etc/caddy/entrypoint.sh" ]
     links:
       - php
     ports:
@@ -12,26 +12,12 @@ services:
     restart: unless-stopped
     volumes:
       - "./storage/data/uploads:/var/www/symfony/public/uploads"
-      - "./storage/data/letsencrypt:/etc/letsencrypt:ro"
-      - "./storage/data/certbot:/var/www/certbot:ro"
+      - "./storage/data/caddy:/data"
     environment:
-      - DOMAIN=${MKS_DOMAIN}
-      - MODE=${NGINX_MODE}
+      - DOMAIN=${MKS_DOMAIN:-}
+      - EMAIL=${MKS_SUPPORT_EMAIL:-}
+      - MODE=${CADDY_MODE:-http}
 
-  certbot:
-    container_name: certbot
-    image: certbot/certbot:v2.4.0
-    depends_on:
-      - nginx
-    profiles:
-      - certbot
-    entrypoint: "/bin/sh -c \"trap exit TERM; while :; do sleep 10; certbot certonly --reinstall --webroot --webroot-path=/var/www/certbot --email ${MKS_SUPPORT_EMAIL} --agree-tos --no-eff-email -d ${MKS_DOMAIN} --post-hook 'chown -R 1000:1000 /etc/letsencrypt/live /etc/letsencrypt/archive /etc/letsencrypt/archive/${MKS_DOMAIN}/* && chmod 750 /etc/letsencrypt/live/* /etc/letsencrypt/archive/* /etc/letsencrypt/archive/${MKS_DOMAIN}/*'; sleep 12h & wait $${!}; done;\""
-    volumes:
-      - "./storage/data/letsencrypt:/etc/letsencrypt"
-      - "./storage/data/certbot:/var/www/certbot"
-    environment:
-      - MKS_SUPPORT_EMAIL=${MKS_SUPPORT_EMAIL}
-      - MKS_DOMAIN=${MKS_DOMAIN}
   php:
     container_name: mks-app
     image: nochlezhka/mks-app:${MKS_VERSION}

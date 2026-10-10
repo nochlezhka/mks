@@ -16,7 +16,7 @@ RUN addgroup -S --gid 1000 nochlezhka \
  && echo nochlezhka:100000:65536 | tee /etc/subuid | tee /etc/subgid
 
 #
-# Setup & configure php & nginx
+# Setup & configure php & caddy
 # NOTE: it's intentional decision that all versions are pinned,
 #       they can be upgraded later,
 #       but it's a good practice to know which versions we have
@@ -24,15 +24,14 @@ RUN addgroup -S --gid 1000 nochlezhka \
 RUN apk update \
  && apk upgrade \
  && apk add --no-cache \
+      caddy \
       curl \
-      gettext \
       icu-data-full \
       icu-dev \
       icu-libs \
       libpng-dev \
       libreoffice \
       libzip-dev \
-      nginx \
       nodejs \
       yarn \
  && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer \
@@ -45,22 +44,22 @@ RUN apk update \
       pdo_mysql \
       zip \
  \
- && touch /run/nginx.pid \
- && mkdir -p /var/cache/nginx /etc/nginx /var/log/nginx /var/www/symfony/vendor /var/lib/nginx /var/log/php8 \
- && chown -R 1000:1000 /var/www /var/cache/nginx /etc/nginx /var/log/nginx /run/nginx.pid /var/lib/nginx /var/log/php8 \
- && chmod -R 755 /var/www \
- && rm -f /etc/nginx/conf.d/default.conf
+ && mkdir -p /etc/caddy /data /config /var/www/symfony/vendor /var/log/php8 \
+ && chown -R 1000:1000 /var/www /etc/caddy /data /config /var/log/php8 \
+ && chmod -R 755 /var/www
 
 USER 1000:1000
 ENV HOME=/home/nochlezhka \
     USER=nochlezhka \
     XDG_RUNTIME_DIR=/run/user/1000 \
+    XDG_DATA_HOME=/data \
+    XDG_CONFIG_HOME=/config \
     APP_ENV=prod
 
 COPY --chown=nochlezhka shared/homeless /var/www/symfony
 COPY --chown=nochlezhka docker/app/files/php/symfony.ini /usr/local/etc/php/conf.d/
-COPY --chown=nochlezhka docker/app/files/nginx /etc/nginx/
-RUN chmod +x /etc/nginx/entrypoint.sh
+COPY --chown=nochlezhka docker/app/files/caddy /etc/caddy/
+RUN chmod +x /etc/caddy/entrypoint.sh
 
 WORKDIR /var/www/symfony
 
