@@ -1,4 +1,4 @@
-FROM php:8.3.8-fpm-alpine
+FROM php:8.3.36-fpm-alpine
 
 #
 # Setup Moscow time
