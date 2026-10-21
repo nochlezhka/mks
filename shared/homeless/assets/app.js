@@ -7,10 +7,10 @@ import './css/style.css'
 import 'script-loader!lightbox2/dist/js/lightbox.min'
 import 'script-loader!jquery-slimscroll/jquery.slimscroll.min'
 
-import '@yoobic/jpeg-camera-es6/lib/swfobject.min'
-import 'script-loader!@yoobic/jpeg-camera-es6/lib/canvas-to-blob.min'
+import 'jpeg-camera-es6/lib/swfobject.min'
+import 'script-loader!jpeg-camera-es6/lib/canvas-to-blob.min'
 
-import JpegCamera from '@yoobic/jpeg-camera-es6'
+import JpegCamera from 'jpeg-camera-es6'
 
 // Initialized at the end
 let camera;
