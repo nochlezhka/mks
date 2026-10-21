@@ -211,6 +211,11 @@ const jpegCameraInit = function () {
         mirror: true,
         onInit: (webcam) => {
             camera = webcam;
+            // jpeg-camera-es6@1.0.12 defines engineGetcanvas (lowercase c) in the HTML5 engine,
+            // while the base class calls engineGetCanvas, so snapshot.getCanvas() throws
+            if (!webcam.engineGetCanvas) {
+                webcam.engineGetCanvas = webcam.engineGetcanvas;
+            }
         },
         onReady: (info) => {
             $takeSnapshots.show();
