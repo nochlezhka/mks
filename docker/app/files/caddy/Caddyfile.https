@@ -1,0 +1,9 @@
+{
+	admin off
+	email {$EMAIL}
+}
+
+# Plain HTTP on :80 is redirected to HTTPS and used for the ACME challenge automatically
+{$DOMAIN} {
+	import /etc/caddy/site.caddy
+}
