@@ -8,6 +8,20 @@ request_body {
 
 log
 
+# Security headers on every response. "defer" makes them win over anything PHP sends.
+header {
+	# Start with a short max-age; raise to 31536000 once HTTPS is confirmed to work everywhere.
+	# Do NOT add includeSubDomains: homeless.ru has other subdomains.
+	Strict-Transport-Security "max-age=300"
+	X-Content-Type-Options "nosniff"
+	X-Frame-Options "SAMEORIGIN"
+	Referrer-Policy "same-origin"
+	# The client photo form uses the camera, so camera stays allowed for this origin
+	Permissions-Policy "camera=(self), microphone=(), geolocation=(), payment=()"
+	-Server
+	defer
+}
+
 route {
 	# Only the front controller may be executed: a *.php dropped into uploads/ must never run
 	@php {
@@ -16,8 +30,23 @@ route {
 	}
 	respond @php 404
 
+	# index.php is reached only through the rewrite done by php_fastcgi, never directly
+	@direct path /index.php /index.php/*
+	respond @direct 404
+
+	# Client files: never cached by shared caches, and an uploaded .html/.svg must not run script
+	# on our origin (PDF is excluded because Chrome's viewer breaks under CSP sandbox)
+	@uploads path /uploads/* /media/cache/*
+	header @uploads Cache-Control "private, no-cache"
+	@uploads_active {
+		path /uploads/* /media/cache/*
+		not path_regexp (?i)\.pdf$
+	}
+	header @uploads_active Content-Security-Policy "default-src 'none'; sandbox"
+
 	# Long cache only for files that exist, so a 404 is never cached
 	@static {
+		not path /uploads/* /media/cache/*
 		path_regexp (?i)\.(jpg|xml|gif|swf|ico|css|zip|rar|doc|xls|js|txt|dtd|png|jpeg|eot|woff|woff2|ttf|svg|html)$
 		file
 	}
