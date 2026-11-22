@@ -2,7 +2,7 @@ version: '3.9'
 services:
   caddy:
     container_name: caddy
-    image: nochlezhka/mks-app:${MKS_VERSION}
+    image: ${REGISTRY:-docker.io}/nochlezhka/mks-app:${MKS_VERSION}
     entrypoint: [ "/etc/caddy/entrypoint.sh" ]
     links:
       - php
@@ -20,7 +20,7 @@ services:
 
   php:
     container_name: mks-app
-    image: nochlezhka/mks-app:${MKS_VERSION}
+    image: ${REGISTRY:-docker.io}/nochlezhka/mks-app:${MKS_VERSION}
     restart: unless-stopped
     volumes:
       - "./storage/data/uploads:/var/www/symfony/public/uploads"
