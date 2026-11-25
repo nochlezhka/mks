@@ -96,8 +96,8 @@
         "auto-scripts": {
             "security-checker security:check": "script",
             "cache:clear": "symfony-cmd",
-            "assets:install %PUBLIC_DIR%": "symfony-cmd",
-            "ckeditor:install": "symfony-cmd"
+            "ckeditor:install": "symfony-cmd",
+            "assets:install %PUBLIC_DIR%": "symfony-cmd"
         },
         "nba": "docker run --rm -v $PWD:/app --workdir /app nbgrp/auditor:latest"
     }

@@ -17,12 +17,9 @@ class Version20180408112154 extends AbstractMigration
      */
     public function up(Schema $schema): void
     {
-        $this->abortIf(
-            !($this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform),
-            'Migration can only be executed safely on \'mysql\'.'
-        );
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform), "Migration can only be executed safely on 'mysql'.");
 
-        $stmt = $this->connection->prepare('show tables like \'fos_user_user\'');
+        $stmt = $this->connection->prepare("show tables like 'fos_user_user'");
         $query = $stmt->executeQuery();
         if (count($query->fetchAllNumeric())) {
             return;
@@ -229,10 +226,7 @@ class Version20180408112154 extends AbstractMigration
      */
     public function down(Schema $schema): void
     {
-        $this->abortIf(
-            !($this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform),
-            'Migration can only be executed safely on \'mysql\'.'
-        );
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof AbstractMySQLPlatform), "Migration can only be executed safely on 'mysql'.");
 
         $this->addSql('ALTER TABLE fos_user_user DROP FOREIGN KEY FK_C560D761B03A8386');
         $this->addSql('ALTER TABLE fos_user_user DROP FOREIGN KEY FK_C560D761896DBBDE');

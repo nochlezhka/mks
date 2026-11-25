@@ -17,8 +17,6 @@ class Version20200221222527 extends AbstractMigration
      */
     public function up(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
-
         $this->addSql('
             CREATE TABLE meta (
                 id INT AUTO_INCREMENT NOT NULL,
@@ -35,8 +33,6 @@ class Version20200221222527 extends AbstractMigration
      */
     public function down(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
-
         $this->addSql('DROP TABLE meta');
     }
 }

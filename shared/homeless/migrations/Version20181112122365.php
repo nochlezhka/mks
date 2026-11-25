@@ -14,8 +14,6 @@ class Version20181112122365 extends AbstractMigration
      */
     public function up(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
-
         $this->addSql('ALTER TABLE fos_user_user ADD position_text varchar(64) NULL;');
     }
 
@@ -24,8 +22,6 @@ class Version20181112122365 extends AbstractMigration
      */
     public function down(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
-
         $this->addSql('ALTER TABLE fos_user_user DROP position_text');
     }
 }
